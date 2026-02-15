@@ -1,0 +1,106 @@
+{
+  "name": "Fruits",
+  "description": "Liste de vocabulaire anglais : les fruits",
+  "words": [
+    {
+      "english": "Apple",
+      "french": "Pomme"
+    },
+    {
+      "english": "Banana",
+      "french": "Banane"
+    },
+    {
+      "english": "Grapes",
+      "french": "Raisins"
+    },
+    {
+      "english": "Passion fruit",
+      "french": "Fruit de la passion"
+    },
+    {
+      "english": "Pineapple",
+      "french": "Ananas"
+    },
+    {
+      "english": "Lemon",
+      "french": "Citron"
+    },
+    {
+      "english": "Watermelon",
+      "french": "Pastèque"
+    },
+    {
+      "english": "Orange",
+      "french": "Orange"
+    },
+    {
+      "english": "Melon",
+      "french": "Melon"
+    },
+    {
+      "english": "Pear",
+      "french": "Poire"
+    },
+    {
+      "english": "Plum",
+      "french": "Prune"
+    },
+    {
+      "english": "Strawberry",
+      "french": "Fraise"
+    },
+    {
+      "english": "Raspberry",
+      "french": "Framboise"
+    },
+    {
+      "english": "Apricot",
+      "french": "Abricot"
+    },
+    {
+      "english": "Cherry",
+      "french": "Cerise"
+    },
+    {
+      "english": "Walnut",
+      "french": "Noix"
+    },
+    {
+      "english": "Chestnut",
+      "french": "Châtaigne"
+    },
+    {
+      "english": "Papaya",
+      "french": "Papaye"
+    },
+    {
+      "english": "Mango",
+      "french": "Mangue"
+    },
+    {
+      "english": "Grapefruit",
+      "french": "Pamplemousse"
+    },
+    {
+      "english": "Peanut",
+      "french": "Cacahuète"
+    },
+    {
+      "english": "Pumpkin",
+      "french": "Citrouille"
+    },
+    {
+      "english": "Avocado",
+      "french": "Avocat"
+    },
+    {
+      "english": "Olive",
+      "french": "Olive"
+    },
+    {
+      "english": "Peach",
+      "french": "Pêche"
+    }
+  ]
+}

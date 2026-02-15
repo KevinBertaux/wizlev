@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Application éducative pour réviser les tables de multiplication et le vocabulaire anglais">
+    <meta name="author" content="ManabuPlay">
+    <title>ManabuPlay 🎓</title>
+
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Comic+Neue:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <button class="back-btn" id="backBtn" style="display: none;">←</button>
+        <h1>🎓 ManabuPlay 🎓</h1>
+
+        <!-- Menu principal -->
+        <div id="menuSection" class="section active">
+            <div class="menu">
+                <button class="menu-btn math" onclick="startMath()">
+                    ✖️<br>Tables de<br>Multiplication
+                </button>
+                <button class="menu-btn vocab" onclick="startVocab()">
+                    🇬🇧<br>Vocabulaire<br>Anglais
+                </button>
+            </div>
+        </div>
+
+        <!-- Section Mathématiques -->
+        <div id="mathSection" class="section">
+            <div class="settings-box">
+                <label for="tableSelect">Choisir la table :</label>
+                <select id="tableSelect">
+                    <option value="all">Toutes les tables (1-11)</option>
+                    <option value="1">Table de 1</option>
+                    <option value="2">Table de 2</option>
+                    <option value="3">Table de 3</option>
+                    <option value="4">Table de 4</option>
+                    <option value="5">Table de 5</option>
+                    <option value="6">Table de 6</option>
+                    <option value="7">Table de 7</option>
+                    <option value="8">Table de 8</option>
+                    <option value="9">Table de 9</option>
+                    <option value="10">Table de 10</option>
+                    <option value="11">Table de 11</option>
+                </select>
+            </div>
+
+            <div class="score">
+                Score : <span id="score">0</span> / <span id="total">0</span>
+                <span style="margin-left: 20px;">🏆 Série : <span id="streak">0</span></span>
+            </div>
+
+            <div id="feedback"></div>
+
+            <div class="question-box">
+                <div class="question" id="mathQuestion">7 × 8 = ?</div>
+                <input type="number" class="answer-input" id="mathAnswer" placeholder="?" autocomplete="off" min="0">
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn btn-primary" onclick="checkAnswer()">Vérifier ✓</button>
+                <button class="btn btn-secondary" onclick="nextQuestion()">Question suivante →</button>
+            </div>
+        </div>
+
+        <!-- Section Vocabulaire -->
+        <div id="vocabSection" class="section">
+            <div class="settings-box">
+                <label for="vocabListSelect">Choisir une liste :</label>
+                <select id="vocabListSelect" onchange="loadVocabList()">
+                    <option value="fruits">🍎 Fruits</option>
+                    <option value="legumes">🥕 Légumes</option>
+                </select>
+
+                <label for="ttsAccentSelect" style="margin-top: 15px;">Prononciation :</label>
+                <select id="ttsAccentSelect" onchange="setTtsAccent(this.value)">
+                    <option value="en-US">🇺🇸 Anglais américain</option>
+                    <option value="en-GB">🇬🇧 Anglais britannique</option>
+                </select>
+            </div>
+
+            <div class="score">
+                Carte <span id="cardNumber">1</span> / <span id="totalCards">0</span>
+            </div>
+
+            <div class="flashcard-carousel">
+                <button class="carousel-arrow left" onclick="previousCard(event)" aria-label="Carte précédente">❮</button>
+                <div class="flashcard" id="flashcard" onclick="flipCard()">
+                    <div class="tts-inline-control" id="ttsInlineControl">
+                        <div class="tts-inline-label">Écouter</div>
+                        <button class="tts-inline-btn" id="ttsToggleBtn" onclick="toggleSpeakWord(event)" aria-label="Écouter le mot">▶️</button>
+                    </div>
+                    <div class="flashcard-content">
+                        <div class="flashcard-word" id="vocabWord">Chargement...</div>
+                        <div class="flashcard-translation" id="vocabTranslation" style="display: none;"></div>
+                    </div>
+                    <div class="flashcard-hint">Cliquez pour révéler la traduction</div>
+                </div>
+                <button class="carousel-arrow right" onclick="nextCard(event)" aria-label="Carte suivante">❯</button>
+            </div>
+
+            <div id="ttsStatus" class="tts-status" aria-live="polite"></div>
+
+            <div class="vocab-controls">
+                <button class="btn btn-secondary" onclick="shuffleCards()">🔀 Mélanger</button>
+            </div>
+
+        </div>
+
+        <p class="app-version">Version 0.3.0 - 13 février 2026</p>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/math.js"></script>
+    <script src="assets/js/vocabulary.js"></script>
+    <script src="assets/js/app.js"></script>
+</body>
+
+</html>
+
