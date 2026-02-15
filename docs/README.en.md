@@ -83,19 +83,9 @@ manabuplay/
 │       ├── AdminView.vue
 │       ├── LegalMentionsView.vue
 │       └── LegalPrivacyView.vue
-├── legacy/
-│   ├── index.v0.3.0.html
-│   ├── js/
-│   │   ├── app.js
-│   │   ├── math.js
-│   │   └── vocabulary.js
-│   └── data/
-│       ├── vocab-fruits.json
-│       └── vocab-legumes.json
 └── docs/
     ├── README.fr.md
     ├── README.en.md
-    ├── MIGRATION.md
     └── QA-CHECKLIST.fr.md
 ```
 
@@ -164,4 +154,7 @@ Detailed step-by-step setup guide (French):
 ## 📄 License
 
 Free to use for personal and educational purposes.
+
+
+
 

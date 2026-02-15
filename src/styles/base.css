@@ -45,7 +45,15 @@ a {
 }
 
 .brand {
-  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+}
+
+.brand-logo {
+  display: block;
+  height: 32px;
+  width: auto;
 }
 
 .main-nav {
@@ -63,7 +71,6 @@ a {
 .main-nav a.router-link-active {
   background: rgba(78, 205, 196, 0.2);
 }
-
 .burger {
   display: none;
   border: 1px solid var(--line);
@@ -168,3 +175,7 @@ a {
     align-items: flex-start;
   }
 }
+
+
+
+

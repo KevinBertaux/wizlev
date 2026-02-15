@@ -20,7 +20,9 @@ function toggleMenu() {
 <template>
   <div class="app-shell">
     <header class="topbar">
-      <router-link to="/" class="brand">ManabuPlay</router-link>
+      <router-link to="/" class="brand" aria-label="Accueil">
+        <img src="/brand-logo.png" alt="ManabuPlay" class="brand-logo" />
+      </router-link>
 
       <button
         class="burger"
@@ -34,10 +36,9 @@ function toggleMenu() {
       </button>
 
       <nav id="main-nav" class="main-nav" :class="{ open: navOpen }">
-        <router-link to="/">Accueil</router-link>
         <router-link to="/math">Math</router-link>
         <router-link to="/vocab">Langues</router-link>
-        <router-link to="/admin">Admin</router-link>
+
       </nav>
     </header>
 
