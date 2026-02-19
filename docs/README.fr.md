@@ -65,4 +65,3 @@ Application web educative (SPA Vue 3 + Vite) pour aider les enfants a reviser le
 - Git cheat sheet: `docs/GIT-CHEATSHEET.fr.md`
 - Guide panel interne FR: `docs/PANEL-INTERNE.fr.md`
 - Guide panel interne EN: `docs/PANEL-INTERNE.en.md`
-- Backend Laravel V2 (archive technique): `docs/BACKEND-LARAVEL-V2.fr.md`

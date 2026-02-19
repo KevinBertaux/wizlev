@@ -65,4 +65,3 @@ Educational web app (Vue 3 + Vite SPA) to help children practice math and vocabu
 - Git cheat sheet: `docs/GIT-CHEATSHEET.fr.md`
 - Internal panel guide FR: `docs/PANEL-INTERNE.fr.md`
 - Internal panel guide EN: `docs/PANEL-INTERNE.en.md`
-- Laravel backend V2 (technical archive): `docs/BACKEND-LARAVEL-V2.fr.md`

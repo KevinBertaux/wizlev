@@ -67,7 +67,6 @@ manabuplay/
 - Checklist QA: `docs/QA-CHECKLIST.fr.md`
 - Securite secrets (ggshield): `docs/SECURITY-SECRETS.fr.md`
 - Git cheat sheet: `docs/GIT-CHEATSHEET.fr.md`
-- Backend Laravel V2 (archive technique): `docs/BACKEND-LARAVEL-V2.fr.md`
 - Guide panel interne (FR): `docs/PANEL-INTERNE.fr.md`
 - Internal panel guide (EN): `docs/PANEL-INTERNE.en.md`
 
