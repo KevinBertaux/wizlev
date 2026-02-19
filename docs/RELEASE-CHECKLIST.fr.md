@@ -1,57 +1,48 @@
 # Checklist Release Hebdo (quota Netlify contraint)
 
-Objectif: limiter a **1 deploy production par semaine** jusqu'au **9 mars 2026**.
+Objectif: limiter a **1 deploy production par semaine** jusqu'au reset quota.
 
 ## Regles
 
 - Pas de deploy production hors fenetre hebdomadaire validee.
-- Les commits peuvent continuer sur le repo sans deploy prod systematique.
-- Un seul responsable valide le Go/No-Go final.
-
-## Fenetres de deploy cibles
-
-- Semaine du 16 fevrier 2026 (1 deploy max)
-- Semaine du 23 fevrier 2026 (1 deploy max)
-- Semaine du 2 mars 2026 (1 deploy max)
-- Revue du quota apres reset du 9 mars 2026
+- Les merges `feature/*` se font vers `feat/0.4.0-prep`.
+- La branche `main` ne recoit que des merges de release valides.
 
 ## Pre-check local (obligatoire)
 
 - [ ] `npm install` OK
 - [ ] `npm test` OK
+- [ ] `npm run test:e2e` OK
 - [ ] `npm run build` OK
-- [ ] Verification rapide routes: `/`, `/math`, `/vocab`, `/legal/mentions-legales`, `/legal/confidentialite`
-- [ ] Verification acces zone interne (URL privee) + identifiants
-- [ ] Verification que le menu n'expose pas `Admin`
+- [ ] Verification routes publiques: `/`, `/math`, `/vocab`, `/legal/mentions-legales`, `/legal/confidentialite`
+- [ ] Verification acces zone interne via URL privee `/-/studio-ops`
+- [ ] Verification menu public: aucun acces admin visible
 - [ ] Verification favicon/logo/header
-- [ ] Verification captures/docs mises a jour si necessaire
 
 ## Go/No-Go contenu
 
-- [ ] Changelog/notes de version prets (meme format court)
 - [ ] Version cible confirmee (ex: `0.4.0`)
-- [ ] Aucun secret dans le repo (`.env` non commit)
-- [ ] Mentions legales et confidentialite coherentes avec le comportement reel
+- [ ] Notes de version courtes preparees
+- [ ] Aucun secret commite (`.env` local uniquement)
+- [ ] Mentions legales/confidentialite coherentes avec le comportement reel
 - [ ] Aucune regression critique ouverte
 
 ## Check Netlify avant publication
 
-- [ ] Builds auto geres selon la strategie budget (pause/reprise)
-- [ ] Branche cible confirmee (`main`)
-- [ ] Variables d'environnement prod verifiees
-- [ ] Deploy preview valide si budget disponible (optionnel)
+- [ ] Branche de publication confirmee (`main`)
+- [ ] Variables d'environnement production verifiees
+- [ ] Build preview valide (si budget deploy disponible)
+- [ ] Budget deploy encore suffisant
 
 ## Publication
 
-- [ ] Push final sur branche de publication
+- [ ] Merge `feat/0.4.0-prep` -> `main`
+- [ ] Push final sur `main`
 - [ ] Deploy Netlify lance et termine avec succes
 - [ ] Verification post-deploy sur URL publique
-- [ ] Badge Netlify status vert dans la doc
 
 ## Post-release
 
 - [ ] Tag Git cree (ex: `v0.4.0`)
-- [ ] `ROADMAP.md` mis a jour (fait/reste a faire)
+- [ ] `ROADMAP.md` mis a jour
 - [ ] Prochaine fenetre hebdo planifiee
-
-

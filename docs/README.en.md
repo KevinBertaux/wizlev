@@ -1,36 +1,33 @@
-# 🎓 ManabuPlay
+# ManabuPlay
 
 Educational web app (Vue 3 + Vite SPA) to help children practice math and vocabulary.
 
-[🇫🇷 Version française](README.fr.md)
+[Version francaise](README.fr.md)
 
-## 🏷️ Version
+## Version
 
-- Current version: `0.3.0` (February 13, 2026)
+- Stable baseline: `0.3.0` (February 13, 2026)
+- Current preparation branch: `0.4.0-prep`
 
-## ✨ Current features
+## Current features
 
-### 📊 Math (`/math`)
+### Math (`/math`)
 - Multiplication tables quiz (1-11 + all tables mode)
 - Score, total answers, and streak tracking
 - Keyboard validation (`Enter`) with duplicate-submit prevention
 
-### 🇬🇧 English vocabulary (`/vocab`)
-- Flashcards for fruits/vegetables (25 words each)
+### English vocabulary (`/vocab`)
+- Fruit/vegetable flashcards (25 words each)
 - Arrow, keyboard, and mobile swipe navigation
-- English TTS with 🇺🇸/🇬🇧 accent selection
+- English TTS with US/UK accent selection
 
-### 🛠️ Internal zone V1 (restricted access)
-- Edit list name/description/words
-- Add/remove words
-- Import JSON / export JSON / copy JSON
-- Local `localStorage` save (immediately visible in `/vocab`)
+### Internal panel V1 (restricted access)
+- Local edit of list name/description/words
+- JSON import / export / copy
+- Local `localStorage` save
+- Accessed through private URL `/-/studio-ops` (not visible in public menu)
 
-### 🧾 Netlify/Decap CMS (`/cms/`)
-- Collaborative editing of versioned content files
-- Automatic Git commits through Git Gateway (once enabled on Netlify)
-
-## 🚀 Local setup
+## Local setup
 
 ### Prerequisites
 - Node.js LTS (v24+ recommended)
@@ -39,133 +36,33 @@ Educational web app (Vue 3 + Vite SPA) to help children practice math and vocabu
 ### Run
 1. `npm install`
 2. `npm run dev`
-3. Open the printed URL (example: `http://localhost:5173`)
+3. Open printed URL (example: `http://localhost:5173`)
 
 ### Quality checks
-- Unit tests: `npm test`
+- Unit/integration tests: `npm test`
+- Browser E2E tests: `npm run test:e2e`
 - Production build: `npm run build`
 
-## 📁 Project structure
+## SPA routes
 
-```text
-manabuplay/
-├── index.html
-├── package.json
-├── public/
-│   ├── _redirects
-│   └── cms/
-│       ├── index.html
-│       └── config.yml
-├── src/
-│   ├── App.vue
-│   ├── main.js
-│   ├── router/
-│   │   └── index.js
-│   ├── styles/
-│   │   └── base.css
-│   ├── content/
-│   │   └── vocab/
-│   │       └── en/
-│   │           ├── fruits.json
-│   │           └── legumes.json
-│   ├── features/
-│   │   ├── math/
-│   │   │   ├── quizEngine.js
-│   │   │   └── quizEngine.test.js
-│   │   └── vocab/
-│   │       ├── adminPayload.js
-│   │       ├── adminPayload.test.js
-│   │       └── vocabLists.js
-│   └── views/
-│       ├── HomeView.vue
-│       ├── MathView.vue
-│       ├── VocabView.vue
-│       ├── AdminView.vue
-│       ├── LegalMentionsView.vue
-│       └── LegalPrivacyView.vue
-└── docs/
-    ├── README.fr.md
-    ├── README.en.md
-    └── QA-CHECKLIST.fr.md
-```
+- `/`: Home
+- `/math`: Math module
+- `/vocab`: Vocabulary module
+- `/-/studio-ops`: Internal login
+- `/-/studio-ops/panel`: Internal panel
+- `/aide/panel-interne`: Internal panel guide (FR)
+- `/help/internal-panel`: Internal panel guide (EN)
+- `/legal/mentions-legales`: Legal notices
+- `/legal/confidentialite`: Privacy policy
+- `/cms/`: Decap CMS
 
-## 🧭 SPA routes
+## Documentation
 
-- `/` : Home
-- `/math` : Math module
-- `/vocab` : Vocabulary module
-- Internal zone: local editing (undocumented URL)
-- `/aide/panel-interne` : Internal panel guide (FR)
-- `/help/internal-panel` : Internal panel guide (EN)
-- `/legal/mentions-legales` : Legal notices (placeholder)
-- `/legal/confidentialite` : Privacy page (placeholder)
-
-Static route:
-- `/cms/` : Decap CMS
-
-## ✍️ Editing vocabulary content
-
-### Option A (team recommended): CMS
-1. Open `/cms/`
-2. Sign in (Netlify Identity)
-3. Edit lists
-4. Publish (auto Git commit)
-
-### Option B (developer)
-1. Edit `src/content/vocab/en/*.json`
-2. Commit/push
-
-### Option C (quick local test)
-1. Use the protected internal zone
-2. Save locally (localStorage)
-
-## 🌐 Netlify deployment (Vue SPA)
-
-### Recommended settings
-- Build command: `npm run build`
-- Publish directory: `dist`
-
-### SPA redirect
-`public/_redirects`:
-```text
-/* /index.html 200
-```
-
-### CMS activation (once on Netlify)
-1. Enable **Identity**
-2. Enable **Git Gateway**
-3. Invite CMS editors
-
-Detailed step-by-step setup guide (French):
-- `docs/SETUP-GITHUB-NETLIFY-CMS.fr.md`
-
-## 📱 Compatibility
-
-- ✅ Chrome / Edge / Brave
-- ✅ Firefox
-- ✅ Safari (recent iOS/macOS)
-- ✅ Desktop + mobile
-- ✅ Internet connection required (no PWA offline mode yet)
-
-## ⚠️ Current limitations
-
-- Internal zone stays local to one device/browser (localStorage)
-- No advanced role model (RBAC) for CMS yet
-- Legal pages are still placeholders in-app
-
-## 📄 License
-
-Free to use for personal and educational purposes.
-
-
-
-
-
-## Laravel Backend V2
-
-- Backend V2 guide (French): `docs/BACKEND-LARAVEL-V2.fr.md`
-- Internal panel guide (FR): `docs/PANEL-INTERNE.fr.md`
-- Internal panel guide (EN): `docs/PANEL-INTERNE.en.md`
-
-
-
+- QA checklist: `docs/QA-CHECKLIST.fr.md`
+- Release checklist: `docs/RELEASE-CHECKLIST.fr.md`
+- GitHub/Netlify/CMS setup: `docs/SETUP-GITHUB-NETLIFY-CMS.fr.md`
+- Secrets security: `docs/SECURITY-SECRETS.fr.md`
+- Git cheat sheet: `docs/GIT-CHEATSHEET.fr.md`
+- Internal panel guide FR: `docs/PANEL-INTERNE.fr.md`
+- Internal panel guide EN: `docs/PANEL-INTERNE.en.md`
+- Laravel backend V2 (technical archive): `docs/BACKEND-LARAVEL-V2.fr.md`

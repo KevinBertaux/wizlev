@@ -2,114 +2,59 @@
 
 ## Cadre de version interne
 
-- `0.1.0` Prototype initial HTML/CSS/JS
-- `0.2.0` Migration architecture vers Vue 3 + Vite (SPA)
-- `0.3.0` Stabilisation fonctionnelle (Math/Vocab/Admin V1 + TTS + docs)
-- `0.4.0` Prochaine release cible: consolidation produit + pipeline deploy sobre + backlog prioritaire
+- `0.1.0`: prototype initial HTML/CSS/JS
+- `0.2.0`: migration architecture vers Vue 3 + Vite (SPA)
+- `0.3.0`: stabilisation fonctionnelle (Math/Vocab + TTS + zone interne V1)
+- `0.4.0-prep`: branche de preparation release actuelle
 
-## Strategie "1 deploy/semaine max" jusqu'au 9 mars 2026
+## Strategie deploy (quota Netlify)
 
-- Contrainte budget identifiee: cout deploy Netlify eleve, quota limite avant reset.
-- Geler les deploiements automatiques non essentiels (pause builds sur Netlify).
-- Fenetres cibles: semaine du 16 fevrier, 23 fevrier, 2 mars 2026.
-- Reprise cadence normale apres reset quota du 9 mars 2026.
+- Objectif: 1 deploy production max par semaine jusqu'au reset quota.
+- Les commits peuvent continuer sur branches feature sans deploy prod.
+- Validation finale uniquement apres checklist release complete.
 
-## Livre (historique consolide)
+## Etat actuel (0.4.0-prep)
 
-### Produit et architecture
-- Migration SPA vers Vue 3 + Vite
-- Routage principal (`/`, `/math`, `/vocab`, `/admin`, pages legales)
-- Redirection SPA Netlify (`public/_redirects`)
-- Renommage global du projet en **ManabuPlay**
-- README racine oriente GitHub vitrine
+### Fait
 
-### Module Math
-- Quiz tables 1 a 11 + mode toutes tables
-- Correction multi-validation clavier (`Entree` maintenue)
-- Mise a jour immediate de la question lors du changement de table
-- Blocage des reponses negatives
-- Score / total / serie stabilises
+- [x] Merge `feat/admin-lite-guard` -> `feat/0.4.0-prep`
+- [x] Route interne non visible dans le menu public
+- [x] Protection front-only: identifiant + hash, rate limit, blocage progressif, timeout session
+- [x] Message d'erreur d'auth generique (pas de detail id/mot de passe)
+- [x] Documentation panel interne FR/EN
+- [x] Tests unitaires auth/router/vocab listes
+- [x] Tests E2E Playwright (flux complet `/-/studio-ops` + checks accessibilite de base)
+- [x] Hook ggshield local + scan CI GitGuardian
 
-### Module Langues (anglais)
-- Source vocabulaire JSON externe (single source of truth)
-- Flashcards fruits/legumes (25 mots)
-- Navigation clavier/fleches/swipe mobile
-- Refonte UI carte (centrage, hierarchie texte, etats)
-- Integration TTS V1 (clic uniquement, pas d'autoplay)
-- Choix accent anglais US/UK
-- Bouton Play/Stop unique
-- Masquage bouton TTS si non supporte
-- Correction messages parasites TTS sur interruption/changement de carte
-- Compatibilite de migration des cles `localStorage` legacy -> nouvelles cles
+### A faire avant release 0.4.0
 
-### Admin V1
-- Migration admin local dans `/admin`
-- Edition listes JSON (nom, description, mots)
-- Ajout/suppression/import/export/copie JSON
-- Amelioration UX ajout de mots (bouton flottant, focus)
-- Aucune liste prechargee par defaut
-- Protection par mot de passe de la route `/admin`
-- Mot de passe configurable via `.env` (`VITE_ADMIN_PASSWORD`)
-- Retrait des acces visuels `Admin` dans l'interface (acces URL direct uniquement)
+- [ ] Verifier et figer le numero de version final (`0.4.0`)
+- [ ] Nettoyer/clarifier la place du dossier `backend/` (archive technique V2 non active sur Netlify)
+- [ ] Revue finale des textes legaux en production
+- [ ] QA mobile complete (Math + Vocab + zone interne)
+- [ ] Release notes courtes + tag Git
 
-### CMS / Netlify
-- Structure Decap CMS en place (`/cms`)
-- Documentation pas-a-pas GitHub -> Netlify -> Identity -> Git Gateway
-- Clarification blocage Git Gateway si site non connecte en CD GitHub/GitLab
-
-### Conformite et documentation
-- Mentions legales redigees (editeur non-professionnel, anonymisation publique)
-- Politique de confidentialite redigee (RGPD + mineurs + stockage local)
-- Mention explicite du cadre mineurs (<15 ans pour consentement futur)
-- Documentation alignee avec le comportement reel
-- Favicon pack complet integre (`favicon_io`)
-
-### UX / Navigation
-- Remplacement boutons precedent/suivant vocab par fleches type carrousel
-- Deplacement bouton melanger (iterations UI)
-- Logo de marque en header cliquable
-- Capture doc d'accueil mise a jour sans bloc Admin
-
-## References operationnelles
-
-- Checklist release hebdo: `docs/RELEASE-CHECKLIST.fr.md`
-
-## A faire (priorise)
+## Backlog produit
 
 ### Priorite haute
-- [ ] Remplacer la protection front `/admin` par une protection serveur reelle (auth robuste)
-- [ ] Finaliser Identity + Git Gateway en production avec workflow test complet
-- [x] Ecrire une checklist release legere (Go/No-Go avant deploy hebdo)
-- [ ] Mettre en place un `CHANGELOG.md` versionne
 
-### Priorite produit
-- [ ] Ajouter module Math: divisions
-- [ ] Ajouter module Math: symetrie
-- [ ] Ajouter base module Langues: espagnol
-- [ ] Definir structure de contenu multi-langue (`src/content/vocab/en`, `es`, ...)
+- [ ] Module Math: divisions
+- [ ] Module Math: symetrie
+- [ ] Enrichissement contenu anglais (nouvelles listes)
 
-### Priorite qualite
-- [ ] Ajouter tests E2E parcours critiques (nav, admin protege, tts, math)
-- [ ] Ajouter tests unitaires route guard admin
-- [ ] Ajouter controle QA mobile systematique avant chaque deploy
+### Priorite moyenne
 
-### Priorite conformite
-- [ ] Verification juridique finale par professionnel (mentions/confidentialite)
-- [ ] Formaliser procedure d'exercice des droits RGPD (reponse sous delai)
-- [ ] Preparer registre simplifie des traitements (meme minimal)
+- [ ] Base structure multi-langues (anglais + espagnol)
+- [ ] Historique local des meilleurs scores par module
+- [ ] Amelioration UX panel interne (edition lots, recherche)
 
-### Priorite ops
-- [ ] Documenter strategie branches (`main`, `feature/*`, `fix/*`, `docs/*`)
-- [ ] Definir convention commits (`feat`, `fix`, `docs`, `chore`)
-- [ ] Ajouter tags release (`v0.4.0`, etc.)
+### Plus tard
 
-## Definition de version recommandee
+- [ ] Reprendre la piste backend V2 (Laravel) quand hebergement adapte
+- [ ] Auth serveur reelle (roles, comptes, API)
 
-- Regle active: SemVer en phase pre-1.0 (`0.MINOR.PATCH`)
-- `MINOR` pour feature/changement visible
-- `PATCH` pour correctif sans nouvelle capacite
-- Passage en `1.0.0` quand produit + process de release + conformite sont stabilises
+## Workflow branches (regle retenue)
 
-## Cible de la prochaine version
-
-- [ ] Proposition: preparer `0.4.0` juste avant le prochain deploy hebdomadaire valide
+- `feature/*` -> merge vers `feat/0.4.0-prep`
+- `feat/0.4.0-prep` -> merge vers `main` quand release validee
+- `main` reste la branche stable/deployable
