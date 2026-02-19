@@ -50,7 +50,6 @@
 
 ### Plus tard
 
-- [ ] Reprendre la piste backend V2 (Laravel) quand hebergement adapte
 - [ ] Auth serveur reelle (roles, comptes, API)
 
 ## Workflow branches (regle retenue)

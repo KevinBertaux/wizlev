@@ -49,7 +49,6 @@ manabuplay/
   public/
   docs/
   tests/e2e/
-  backend/ (branche technique V2, non utilisee pour la release Netlify 0.4.0)
 ```
 
 ## Protection Zone Interne
