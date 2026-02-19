@@ -65,6 +65,8 @@ manabuplay/
 - Securite secrets (ggshield): `docs/SECURITY-SECRETS.fr.md`
 - Git cheat sheet: `docs/GIT-CHEATSHEET.fr.md`
 - Backend Laravel V2: `docs/BACKEND-LARAVEL-V2.fr.md`
+- Guide panel interne (FR): `docs/PANEL-INTERNE.fr.md`
+- Internal panel guide (EN): `docs/PANEL-INTERNE.en.md`
 
 ## Securite secrets
 
@@ -75,6 +77,7 @@ manabuplay/
 ## Version
 
 - `0.3.0` - 13 fevrier 2026
+
 
 
 

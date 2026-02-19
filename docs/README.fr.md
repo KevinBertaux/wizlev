@@ -95,6 +95,8 @@ manabuplay/
 - `/math` : Module Math
 - `/vocab` : Module vocabulaire
 - Zone interne : edition locale (URL non documentee)
+- `/aide/panel-interne` : Guide panel interne (FR)
+- `/help/internal-panel` : Internal panel guide (EN)
 - `/legal/mentions-legales` : Mentions légales (placeholder)
 - `/legal/confidentialite` : Confidentialité (placeholder)
 
@@ -162,5 +164,8 @@ Projet libre d'utilisation pour usage personnel et éducatif.
 ## Backend Laravel V2
 
 - Guide backend V2: `docs/BACKEND-LARAVEL-V2.fr.md`
+- Guide panel interne FR: `docs/PANEL-INTERNE.fr.md`
+- Guide panel interne EN: `docs/PANEL-INTERNE.en.md`
+
 
 

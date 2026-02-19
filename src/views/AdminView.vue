@@ -114,7 +114,7 @@ function buildPayload() {
 
 function saveCurrentList() {
   if (!selectedList.value) {
-    setStatus('error', 'Choisis d\'abord une liste a modifier.');
+    setStatus('error', 'Choisis d\'abord une liste à modifier.');
     return;
   }
 
@@ -131,18 +131,18 @@ function saveCurrentList() {
   }
 
   draft.value = createDraft(selectedList.value);
-  setStatus('success', 'Liste sauvegardee localement. Le module vocabulaire utilise maintenant cette version.');
+  setStatus('success', 'Liste sauvegardée localement. Le module vocabulaire utilise maintenant cette version.');
 }
 
 function resetCurrentList() {
   if (!selectedList.value) {
-    setStatus('error', 'Choisis d\'abord une liste a modifier.');
+    setStatus('error', 'Choisis d\'abord une liste à modifier.');
     return;
   }
 
   resetVocabList(selectedList.value);
   draft.value = createDraft(selectedList.value);
-  setStatus('success', 'Liste reinitialisee a la version par defaut.');
+  setStatus('success', 'Liste réinitialisée à la version par défaut.');
 }
 
 const previewJson = ref('');
@@ -157,7 +157,7 @@ watch(
 
 async function copyJsonToClipboard() {
   if (!selectedList.value) {
-    setStatus('error', 'Choisis d\'abord une liste a modifier.');
+    setStatus('error', 'Choisis d\'abord une liste à modifier.');
     return;
   }
 
@@ -168,21 +168,21 @@ async function copyJsonToClipboard() {
   }
 
   if (!navigator.clipboard?.writeText) {
-    setStatus('error', 'Copie non supportee par ce navigateur.');
+    setStatus('error', 'Copie non supportée par ce navigateur.');
     return;
   }
 
   try {
     await navigator.clipboard.writeText(JSON.stringify(result.payload, null, 2));
-    setStatus('success', 'JSON copie dans le presse-papiers.');
+    setStatus('success', 'JSON copié dans le presse-papiers.');
   } catch {
-    setStatus('error', 'Copie refusee par le navigateur.');
+    setStatus('error', 'Copie refusée par le navigateur.');
   }
 }
 
 function downloadJson() {
   if (!selectedList.value) {
-    setStatus('error', 'Choisis d\'abord une liste a modifier.');
+    setStatus('error', 'Choisis d\'abord une liste à modifier.');
     return;
   }
 
@@ -201,12 +201,12 @@ function downloadJson() {
   link.download = fileName;
   link.click();
   URL.revokeObjectURL(link.href);
-  setStatus('success', `Fichier ${fileName} telecharge.`);
+  setStatus('success', `Fichier ${fileName} téléchargé.`);
 }
 
 async function importJson(event) {
   if (!selectedList.value) {
-    setStatus('error', 'Choisis d\'abord une liste a modifier.');
+    setStatus('error', 'Choisis d\'abord une liste à modifier.');
     event.target.value = '';
     return;
   }
@@ -236,7 +236,7 @@ async function importJson(event) {
           : [emptyWord()],
     };
 
-    setStatus('success', 'Fichier JSON importe. Pense a sauvegarder pour l\'activer.');
+    setStatus('success', 'Fichier JSON importé. Pense à sauvegarder pour l\'activer.');
   } catch {
     setStatus('error', 'Import impossible: fichier JSON invalide.');
   } finally {
@@ -270,18 +270,18 @@ onUnmounted(() => {
 <template>
   <section class="page-block admin-page">
     <div class="admin-header">
-      <h1>Edition de listes de vocabulaire</h1>
+      <h1>Édition de listes de vocabulaire</h1>
       <div class="admin-header-actions">
-        <button class="btn btn-danger" type="button" @click="logout">Deconnexion</button>
+        <button class="btn btn-danger" type="button" @click="logout">Déconnexion</button>
       </div>
     </div>
 
     <p class="intro">
-      V1: edite les listes localement dans ton navigateur, puis exporte en JSON pour versionner dans le repo.
+      <router-link class="intro-link" to="/aide/panel-interne">Documentation du panel interne</router-link>
     </p>
 
     <div class="admin-card">
-      <label for="listSelect">Liste a modifier</label>
+      <label for="listSelect">Liste à modifier</label>
       <select id="listSelect" v-model="selectedList">
         <option value="">-- Choisir une liste --</option>
         <option v-for="option in vocabListOptions" :key="option.key" :value="option.key">
@@ -298,7 +298,7 @@ onUnmounted(() => {
       </template>
 
       <p v-else class="empty-state">
-        Selectionne une liste pour commencer l'edition.
+        Sélectionne une liste pour commencer l'édition.
       </p>
     </div>
 
@@ -310,7 +310,7 @@ onUnmounted(() => {
 
       <div class="words-grid words-grid-head">
         <span>Anglais</span>
-        <span>Francais</span>
+        <span>Français</span>
         <span>Action</span>
       </div>
 
@@ -324,7 +324,7 @@ onUnmounted(() => {
         <input
           v-model="word.french"
           type="text"
-          placeholder="Traduction francaise"
+          placeholder="Traduction française"
           @keydown.enter.prevent="onFrenchInputEnter(index)"
         />
         <button class="btn btn-danger" type="button" @click="removeWord(index)">Supprimer</button>
@@ -343,13 +343,13 @@ onUnmounted(() => {
           Sauvegarder (local)
         </button>
         <button class="btn btn-secondary" type="button" @click="resetCurrentList">
-          Reinitialiser
+          Réinitialiser
         </button>
         <button class="btn btn-secondary" type="button" @click="copyJsonToClipboard">
           Copier JSON
         </button>
         <button class="btn btn-secondary" type="button" @click="downloadJson">
-          Telecharger JSON
+          Télécharger JSON
         </button>
       </div>
 
@@ -362,7 +362,7 @@ onUnmounted(() => {
     </div>
 
     <div class="admin-card" v-if="selectedList && previewJson">
-      <h2>Apercu JSON</h2>
+      <h2>Aperçu JSON</h2>
       <pre>{{ previewJson }}</pre>
     </div>
   </section>
@@ -394,6 +394,11 @@ onUnmounted(() => {
 
 .intro {
   margin-top: 10px;
+}
+
+.intro-link {
+  text-decoration: underline;
+  font-weight: 700;
 }
 
 .admin-card {
@@ -529,3 +534,4 @@ pre {
   }
 }
 </style>
+
