@@ -27,9 +27,3 @@ node_modules/
 # Environnement
 .env
 .env.local
-# Playwright
-playwright-report/
-test-results/
-
-# Added by ggshield
-.cache_ggshield

@@ -1,6 +1,5 @@
 <script setup>
-import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { computed, nextTick, ref, watch } from 'vue';
 import {
   getVocabList,
   resetVocabList,
@@ -8,15 +7,11 @@ import {
   vocabListOptions,
 } from '@/features/vocab/vocabLists';
 import { buildVocabPayload } from '@/features/vocab/adminPayload';
-import { clearAdminSession, getAdminSessionRemainingMs } from '@/features/admin/auth';
 
-const router = useRouter();
 const selectedList = ref('');
 const statusType = ref('');
 const statusMessage = ref('');
 const englishInputRefs = ref([]);
-const sessionRemainingMs = ref(getAdminSessionRemainingMs());
-let sessionTimerId;
 
 function emptyWord() {
   return { english: '', french: '' };
@@ -59,15 +54,6 @@ function setStatus(type, message) {
 function clearStatus() {
   statusType.value = '';
   statusMessage.value = '';
-}
-
-function refreshSessionRemaining() {
-  sessionRemainingMs.value = getAdminSessionRemainingMs();
-}
-
-async function logout() {
-  clearAdminSession();
-  await router.replace({ name: 'studio-ops-login' });
 }
 
 watch(selectedList, (newList) => {
@@ -114,7 +100,7 @@ function buildPayload() {
 
 function saveCurrentList() {
   if (!selectedList.value) {
-    setStatus('error', 'Choisis d\'abord une liste à modifier.');
+    setStatus('error', 'Choisis d’abord une liste à modifier.');
     return;
   }
 
@@ -131,12 +117,12 @@ function saveCurrentList() {
   }
 
   draft.value = createDraft(selectedList.value);
-  setStatus('success', 'Liste sauvegardée localement. Le module vocabulaire utilise maintenant cette version.');
+  setStatus('success', 'Liste sauvegardée localement. La page /vocab utilise maintenant cette version.');
 }
 
 function resetCurrentList() {
   if (!selectedList.value) {
-    setStatus('error', 'Choisis d\'abord une liste à modifier.');
+    setStatus('error', 'Choisis d’abord une liste à modifier.');
     return;
   }
 
@@ -145,19 +131,17 @@ function resetCurrentList() {
   setStatus('success', 'Liste réinitialisée à la version par défaut.');
 }
 
-const previewJson = ref('');
-watch(
-  draft,
-  () => {
-    const result = buildPayload();
-    previewJson.value = result.ok ? JSON.stringify(result.payload, null, 2) : '';
-  },
-  { deep: true, immediate: true }
-);
+const previewJson = computed(() => {
+  const result = buildPayload();
+  if (!result.ok) {
+    return '';
+  }
+  return JSON.stringify(result.payload, null, 2);
+});
 
 async function copyJsonToClipboard() {
   if (!selectedList.value) {
-    setStatus('error', 'Choisis d\'abord une liste à modifier.');
+    setStatus('error', 'Choisis d’abord une liste à modifier.');
     return;
   }
 
@@ -182,7 +166,7 @@ async function copyJsonToClipboard() {
 
 function downloadJson() {
   if (!selectedList.value) {
-    setStatus('error', 'Choisis d\'abord une liste à modifier.');
+    setStatus('error', 'Choisis d’abord une liste à modifier.');
     return;
   }
 
@@ -206,7 +190,7 @@ function downloadJson() {
 
 async function importJson(event) {
   if (!selectedList.value) {
-    setStatus('error', 'Choisis d\'abord une liste à modifier.');
+    setStatus('error', 'Choisis d’abord une liste à modifier.');
     event.target.value = '';
     return;
   }
@@ -250,34 +234,16 @@ function onFrenchInputEnter(index) {
   }
   addWordAndFocus();
 }
-
-onMounted(() => {
-  sessionTimerId = window.setInterval(() => {
-    refreshSessionRemaining();
-    if (sessionRemainingMs.value <= 0) {
-      logout();
-    }
-  }, 1000);
-});
-
-onUnmounted(() => {
-  if (sessionTimerId) {
-    window.clearInterval(sessionTimerId);
-  }
-});
 </script>
 
 <template>
   <section class="page-block admin-page">
-    <div class="admin-header">
-      <h1>Édition de listes de vocabulaire</h1>
-      <div class="admin-header-actions">
-        <button class="btn btn-danger" type="button" @click="logout">Déconnexion</button>
-      </div>
-    </div>
-
+    <h1>Administration - Listes de vocabulaire</h1>
     <p class="intro">
-      <router-link class="intro-link" to="/aide/panel-interne">Documentation du panel interne</router-link>
+      V1: édite les listes localement dans ton navigateur, puis exporte en JSON pour versionner dans le repo.
+    </p>
+    <p class="intro muted">
+      Édition collaborative Netlify/Decap CMS disponible sur <a href="/cms/" target="_blank" rel="noreferrer">/cms/</a>.
     </p>
 
     <div class="admin-card">
@@ -298,7 +264,7 @@ onUnmounted(() => {
       </template>
 
       <p v-else class="empty-state">
-        Sélectionne une liste pour commencer l'édition.
+        Sélectionne une liste pour commencer l’édition.
       </p>
     </div>
 
@@ -374,31 +340,16 @@ onUnmounted(() => {
   margin-inline: auto;
 }
 
-.admin-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.admin-header h1 {
-  margin: 0;
-}
-
-.admin-header-actions {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
 .intro {
-  margin-top: 10px;
+  margin-top: 0;
 }
 
-.intro-link {
+.muted {
+  color: #4b5f79;
+}
+
+.muted a {
   text-decoration: underline;
-  font-weight: 700;
 }
 
 .admin-card {
@@ -534,4 +485,3 @@ pre {
   }
 }
 </style>
-

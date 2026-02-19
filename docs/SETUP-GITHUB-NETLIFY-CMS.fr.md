@@ -52,7 +52,7 @@ git push -u origin main
    - `/`
    - `/math`
    - `/vocab`
-   - zone interne protegee (acces prive)
+   - `/admin`
 3. Vérifie que `public/_redirects` est bien pris en compte (`/* /index.html 200`).
 
 ## 5. Activer Netlify Identity
@@ -119,14 +119,12 @@ Vérifie `public/cms/config.yml`:
 
 ### Les changements CMS n'apparaissent pas sur `/vocab`
 - Attendre la fin du redeploy Netlify.
-- Verifier qu'aucun override local (zone interne en localStorage) ne masque la source versionnee.
+- Vérifier qu'aucun override local (`/admin` en localStorage) ne masque la source versionnée.
 
 ## 12. Bonnes pratiques
 
 1. Utiliser `Invite only` pour limiter l'accès CMS.
 2. Sauvegarder une branche stable (`main`) et faire les évolutions en PR.
 3. Garder les changements de contenu dans `src/content/...`.
-4. Conserver la zone interne pour tests locaux uniquement.
-
-
+4. Conserver `/admin` pour tests locaux uniquement.
 
