@@ -18,6 +18,16 @@ const routes = [
     component: () => import('@/views/VocabView.vue'),
   },
   {
+    path: '/aide/panel-interne',
+    name: 'internal-panel-help-fr',
+    component: () => import('@/views/InternalPanelHelpFrView.vue'),
+  },
+  {
+    path: '/help/internal-panel',
+    name: 'internal-panel-help-en',
+    component: () => import('@/views/InternalPanelHelpEnView.vue'),
+  },
+  {
     path: '/-/studio-ops',
     name: 'studio-ops-login',
     component: () => import('@/views/AdminAccessView.vue'),
