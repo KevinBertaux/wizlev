@@ -1,10 +1,124 @@
+import identiteEcole from '@/content/vocab/en/identite-ecole.json';
+import salutationsPolitesse from '@/content/vocab/en/salutations-politesse.json';
+import tempsSemaine from '@/content/vocab/en/temps-semaine.json';
+import consignesClasse from '@/content/vocab/en/consignes-classe.json';
+import reglesClasse from '@/content/vocab/en/regles-classe.json';
+import materielScolaire from '@/content/vocab/en/materiel-scolaire.json';
+import activitesCapacites from '@/content/vocab/en/activites-capacites.json';
+import fetesSymboles from '@/content/vocab/en/fetes-symboles.json';
+import paysNationalites from '@/content/vocab/en/pays-nationalites.json';
+import prepositionsLieu from '@/content/vocab/en/prepositions-lieu.json';
+import villePersonnes from '@/content/vocab/en/ville-personnes.json';
+import maisonVetements from '@/content/vocab/en/maison-vetements.json';
+import animauxObjets from '@/content/vocab/en/animaux-objets.json';
+import alimentsBoissons from '@/content/vocab/en/aliments-boissons.json';
 import fruits from '@/content/vocab/en/fruits.json';
 import legumes from '@/content/vocab/en/legumes.json';
+import fruits2 from '@/content/vocab/en/fruits-2.json';
+import legumes2 from '@/content/vocab/en/legumes-2.json';
 
 const STORAGE_PREFIX = 'manabuplay_vocab_list_';
 const LEGACY_STORAGE_PREFIX = 'revision_enfants_vocab_list_';
 
 const baseVocabLists = {
+  identiteEcole: {
+    key: 'identiteEcole',
+    label: '🧑 Identité et école',
+    name: identiteEcole.name,
+    description: identiteEcole.description,
+    words: identiteEcole.words,
+  },
+  salutationsPolitesse: {
+    key: 'salutationsPolitesse',
+    label: '👋 Salutations et politesse',
+    name: salutationsPolitesse.name,
+    description: salutationsPolitesse.description,
+    words: salutationsPolitesse.words,
+  },
+  tempsSemaine: {
+    key: 'tempsSemaine',
+    label: '📅 Temps et semaine',
+    name: tempsSemaine.name,
+    description: tempsSemaine.description,
+    words: tempsSemaine.words,
+  },
+  consignesClasse: {
+    key: 'consignesClasse',
+    label: '📘 Consignes de classe',
+    name: consignesClasse.name,
+    description: consignesClasse.description,
+    words: consignesClasse.words,
+  },
+  reglesClasse: {
+    key: 'reglesClasse',
+    label: '🚫 Règles de classe',
+    name: reglesClasse.name,
+    description: reglesClasse.description,
+    words: reglesClasse.words,
+  },
+  materielScolaire: {
+    key: 'materielScolaire',
+    label: '✏️ Matériel scolaire',
+    name: materielScolaire.name,
+    description: materielScolaire.description,
+    words: materielScolaire.words,
+  },
+  activitesCapacites: {
+    key: 'activitesCapacites',
+    label: '⚽ Activités et capacités',
+    name: activitesCapacites.name,
+    description: activitesCapacites.description,
+    words: activitesCapacites.words,
+  },
+  fetesSymboles: {
+    key: 'fetesSymboles',
+    label: '🎉 Fêtes et symboles',
+    name: fetesSymboles.name,
+    description: fetesSymboles.description,
+    words: fetesSymboles.words,
+  },
+  paysNationalites: {
+    key: 'paysNationalites',
+    label: '🌍 Pays et nationalités',
+    name: paysNationalites.name,
+    description: paysNationalites.description,
+    words: paysNationalites.words,
+  },
+  prepositionsLieu: {
+    key: 'prepositionsLieu',
+    label: '📍 Prépositions de lieu',
+    name: prepositionsLieu.name,
+    description: prepositionsLieu.description,
+    words: prepositionsLieu.words,
+  },
+  villePersonnes: {
+    key: 'villePersonnes',
+    label: '🏙️ Ville et personnes',
+    name: villePersonnes.name,
+    description: villePersonnes.description,
+    words: villePersonnes.words,
+  },
+  maisonVetements: {
+    key: 'maisonVetements',
+    label: '🏠 Maison et vêtements',
+    name: maisonVetements.name,
+    description: maisonVetements.description,
+    words: maisonVetements.words,
+  },
+  animauxObjets: {
+    key: 'animauxObjets',
+    label: '🦊 Animaux et objets divers',
+    name: animauxObjets.name,
+    description: animauxObjets.description,
+    words: animauxObjets.words,
+  },
+  alimentsBoissons: {
+    key: 'alimentsBoissons',
+    label: '🍽️ Aliments et boissons',
+    name: alimentsBoissons.name,
+    description: alimentsBoissons.description,
+    words: alimentsBoissons.words,
+  },
   fruits: {
     key: 'fruits',
     label: '🍎 Fruits',
@@ -18,6 +132,20 @@ const baseVocabLists = {
     name: legumes.name,
     description: legumes.description,
     words: legumes.words,
+  },
+  fruits2: {
+    key: 'fruits2',
+    label: '🍏 Fruits 2',
+    name: fruits2.name,
+    description: fruits2.description,
+    words: fruits2.words,
+  },
+  legumes2: {
+    key: 'legumes2',
+    label: '🥬 Légumes 2',
+    name: legumes2.name,
+    description: legumes2.description,
+    words: legumes2.words,
   },
 };
 

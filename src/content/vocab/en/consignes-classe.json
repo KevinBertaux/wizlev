@@ -1,0 +1,58 @@
+{
+  "name": "Consignes de classe",
+  "description": "Actions demandees par le professeur.",
+  "words": [
+    {
+      "english": "Stand up!",
+      "french": "Levez-vous !"
+    },
+    {
+      "english": "Sit down!",
+      "french": "Asseyez-vous !"
+    },
+    {
+      "english": "Listen!",
+      "french": "Ecoutez !"
+    },
+    {
+      "english": "Read the text",
+      "french": "Lisez le texte"
+    },
+    {
+      "english": "Put up your hands!",
+      "french": "Levez vos mains !"
+    },
+    {
+      "english": "Open your books",
+      "french": "Ouvrez vos livres"
+    },
+    {
+      "english": "Close your books",
+      "french": "Fermez vos livres"
+    },
+    {
+      "english": "Look at the board",
+      "french": "Regardez le tableau"
+    },
+    {
+      "english": "Take a pencil",
+      "french": "Prenez un crayon"
+    },
+    {
+      "english": "Write your name",
+      "french": "Ecrivez votre prenom"
+    },
+    {
+      "english": "Be quiet!",
+      "french": "Taisez-vous !"
+    },
+    {
+      "english": "Everybody's here!",
+      "french": "Tout le monde est la !"
+    },
+    {
+      "english": "Nobody's absent!",
+      "french": "Personne n'est absent !"
+    }
+  ]
+}

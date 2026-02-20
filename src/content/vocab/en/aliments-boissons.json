@@ -1,0 +1,62 @@
+{
+  "name": "Aliments et boissons",
+  "description": "Nourriture generale.",
+  "words": [
+    {
+      "english": "Food",
+      "french": "Nourriture"
+    },
+    {
+      "english": "Salad",
+      "french": "Salade"
+    },
+    {
+      "english": "Fish",
+      "french": "Poisson"
+    },
+    {
+      "english": "Meat",
+      "french": "Viande"
+    },
+    {
+      "english": "Pasta",
+      "french": "Pates"
+    },
+    {
+      "english": "Chocolate",
+      "french": "Chocolat"
+    },
+    {
+      "english": "Cookies",
+      "french": "Cookies"
+    },
+    {
+      "english": "Cake",
+      "french": "Gateau"
+    },
+    {
+      "english": "Cheese",
+      "french": "Fromage"
+    },
+    {
+      "english": "Tea",
+      "french": "The"
+    },
+    {
+      "english": "Coffee",
+      "french": "Cafe"
+    },
+    {
+      "english": "Milk",
+      "french": "Lait"
+    },
+    {
+      "english": "Water",
+      "french": "Eau"
+    },
+    {
+      "english": "Drinks",
+      "french": "Boissons"
+    }
+  ]
+}

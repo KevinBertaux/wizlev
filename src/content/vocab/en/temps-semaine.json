@@ -1,0 +1,38 @@
+{
+  "name": "Temps et semaine",
+  "description": "Jours et reperes temporels.",
+  "words": [
+    {
+      "english": "Midday / Noon",
+      "french": "Midi"
+    },
+    {
+      "english": "Monday",
+      "french": "Lundi"
+    },
+    {
+      "english": "Tuesday",
+      "french": "Mardi"
+    },
+    {
+      "english": "Wednesday",
+      "french": "Mercredi"
+    },
+    {
+      "english": "Thursday",
+      "french": "Jeudi"
+    },
+    {
+      "english": "Friday",
+      "french": "Vendredi"
+    },
+    {
+      "english": "Saturday",
+      "french": "Samedi"
+    },
+    {
+      "english": "Sunday",
+      "french": "Dimanche"
+    }
+  ]
+}

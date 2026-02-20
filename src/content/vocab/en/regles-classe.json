@@ -1,0 +1,34 @@
+{
+  "name": "Regles de classe",
+  "description": "Interdictions et bon comportement.",
+  "words": [
+    {
+      "english": "Don't use your mobiles in class",
+      "french": "N'utilisez pas vos portables en classe"
+    },
+    {
+      "english": "Don't talk in class",
+      "french": "Ne parlez pas en classe"
+    },
+    {
+      "english": "Don't eat chewing gum",
+      "french": "Ne mangez pas de chewing-gum"
+    },
+    {
+      "english": "Don't read comics in class",
+      "french": "Ne lisez pas de BD en classe"
+    },
+    {
+      "english": "Don't listen to music in class",
+      "french": "N'ecoutez pas de musique en classe"
+    },
+    {
+      "english": "Don't write on your desk",
+      "french": "N'ecrivez pas sur vos bureaux"
+    },
+    {
+      "english": "Don't run in the corridors",
+      "french": "Ne courez pas dans les couloirs"
+    }
+  ]
+}

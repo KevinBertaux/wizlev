@@ -1,0 +1,106 @@
+{
+  "name": "Légumes 2",
+  "description": "Liste de vocabulaire anglais : les légumes (ancienne liste).",
+  "words": [
+    {
+      "english": "Bean",
+      "french": "Haricot"
+    },
+    {
+      "english": "Cabbage",
+      "french": "Chou"
+    },
+    {
+      "english": "Cauliflower",
+      "french": "Chou-fleur"
+    },
+    {
+      "english": "Leek",
+      "french": "Poireau"
+    },
+    {
+      "english": "Peas",
+      "french": "Petits pois"
+    },
+    {
+      "english": "Potato",
+      "french": "Pomme de terre"
+    },
+    {
+      "english": "Tomato",
+      "french": "Tomate"
+    },
+    {
+      "english": "Turnip",
+      "french": "Navet"
+    },
+    {
+      "english": "Broccoli",
+      "french": "Brocoli"
+    },
+    {
+      "english": "Brussels sprout",
+      "french": "Chou de Bruxelles"
+    },
+    {
+      "english": "Cucumber",
+      "french": "Concombre"
+    },
+    {
+      "english": "Mushroom",
+      "french": "Champignon"
+    },
+    {
+      "english": "Artichoke",
+      "french": "Artichaut"
+    },
+    {
+      "english": "Asparagus",
+      "french": "Asperge"
+    },
+    {
+      "english": "Onion",
+      "french": "Oignon"
+    },
+    {
+      "english": "Radish",
+      "french": "Radis"
+    },
+    {
+      "english": "Spinach",
+      "french": "Epinard"
+    },
+    {
+      "english": "Beetroot",
+      "french": "Betterave"
+    },
+    {
+      "english": "Carrot",
+      "french": "Carotte"
+    },
+    {
+      "english": "Celery",
+      "french": "Celeri"
+    },
+    {
+      "english": "Endive",
+      "french": "Endive"
+    },
+    {
+      "english": "Lentil",
+      "french": "Lentille"
+    },
+    {
+      "english": "Eggplant",
+      "french": "Aubergine"
+    },
+    {
+      "english": "Courgette",
+      "french": "Courgette"
+    },
+    {
+      "english": "Garlic",
+      "french": "Ail"
+    }
+  ]
+}

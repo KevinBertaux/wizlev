@@ -1,0 +1,42 @@
+{
+  "name": "Prepositions de lieu",
+  "description": "Se reperer dans l'espace.",
+  "words": [
+    {
+      "english": "On",
+      "french": "Sur"
+    },
+    {
+      "english": "In",
+      "french": "Dans / Dedans"
+    },
+    {
+      "english": "Under",
+      "french": "Dessous / Sous"
+    },
+    {
+      "english": "In front of",
+      "french": "Devant"
+    },
+    {
+      "english": "Behind",
+      "french": "Derriere"
+    },
+    {
+      "english": "Next to",
+      "french": "A cote de"
+    },
+    {
+      "english": "Between",
+      "french": "Entre"
+    },
+    {
+      "english": "Over",
+      "french": "Au-dessus"
+    },
+    {
+      "english": "Among",
+      "french": "Parmi"
+    }
+  ]
+}

@@ -1,106 +1,46 @@
 {
   "name": "Légumes",
-  "description": "Liste de vocabulaire anglais : les légumes",
+  "description": "Liste légumes (nouvelle).",
   "words": [
     {
-      "english": "Bean",
-      "french": "Haricot"
+      "english": "A carrot",
+      "french": "Une carotte"
     },
     {
-      "english": "Cabbage",
-      "french": "Chou"
+      "english": "A potato",
+      "french": "Une pomme de terre"
     },
     {
-      "english": "Cauliflower",
-      "french": "Chou-fleur"
+      "english": "Beans",
+      "french": "Des petits pois"
     },
     {
-      "english": "Leek",
-      "french": "Poireau"
+      "english": "An artichoke",
+      "french": "Un artichaut"
     },
     {
-      "english": "Peas",
-      "french": "Petits pois"
+      "english": "A leek",
+      "french": "Un poireau"
     },
     {
-      "english": "Potato",
-      "french": "Pomme de terre"
+      "english": "A cabbage",
+      "french": "Un chou"
     },
     {
-      "english": "Tomato",
-      "french": "Tomate"
+      "english": "A cauliflower",
+      "french": "Un chou-fleur"
+    },
+    {
+      "english": "Spinach",
+      "french": "Epinard"
     },
     {
       "english": "Turnip",
       "french": "Navet"
     },
     {
-      "english": "Broccoli",
-      "french": "Brocoli"
-    },
-    {
-      "english": "Brussels sprout",
-      "french": "Chou de Bruxelles"
-    },
-    {
-      "english": "Cucumber",
-      "french": "Concombre"
-    },
-    {
-      "english": "Mushroom",
-      "french": "Champignon"
-    },
-    {
-      "english": "Artichoke",
-      "french": "Artichaut"
-    },
-    {
-      "english": "Asparagus",
-      "french": "Asperge"
-    },
-    {
-      "english": "Onion",
-      "french": "Oignon"
-    },
-    {
-      "english": "Radish",
-      "french": "Radis"
-    },
-    {
-      "english": "Spinach",
-      "french": "Épinard"
-    },
-    {
-      "english": "Beetroot",
-      "french": "Betterave"
-    },
-    {
-      "english": "Carrot",
-      "french": "Carotte"
-    },
-    {
-      "english": "Celery",
-      "french": "Céleri"
-    },
-    {
-      "english": "Endive",
-      "french": "Endive"
-    },
-    {
-      "english": "Lentil",
-      "french": "Lentille"
-    },
-    {
-      "english": "Eggplant",
-      "french": "Aubergine"
-    },
-    {
-      "english": "Courgette",
-      "french": "Courgette"
-    },
-    {
-      "english": "Garlic",
-      "french": "Ail"
+      "english": "Brussels sprouts",
+      "french": "Choux de Bruxelles"
     }
   ]
 }

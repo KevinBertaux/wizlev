@@ -1,0 +1,34 @@
+{
+  "name": "Ville et personnes",
+  "description": "Objets urbains et personnages du quotidien.",
+  "words": [
+    {
+      "english": "A bin",
+      "french": "Une poubelle"
+    },
+    {
+      "english": "A bench",
+      "french": "Un banc"
+    },
+    {
+      "english": "A pram / stroller",
+      "french": "Une poussette"
+    },
+    {
+      "english": "A kid",
+      "french": "Un enfant"
+    },
+    {
+      "english": "A little girl",
+      "french": "Une petite fille"
+    },
+    {
+      "english": "An old man",
+      "french": "Un vieil homme"
+    },
+    {
+      "english": "A baby-sitter",
+      "french": "Une baby-sitter"
+    }
+  ]
+}

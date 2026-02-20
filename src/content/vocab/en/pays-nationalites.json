@@ -1,0 +1,74 @@
+{
+  "name": "Pays et nationalites",
+  "description": "Geographie culturelle et nationalites.",
+  "words": [
+    {
+      "english": "Where are you from?",
+      "french": "D'ou viens-tu ?"
+    },
+    {
+      "english": "What is your nationality?",
+      "french": "Quelle est ta nationalite ?"
+    },
+    {
+      "english": "The British Isles",
+      "french": "Les iles britanniques"
+    },
+    {
+      "english": "The United Kingdom",
+      "french": "Le Royaume-Uni"
+    },
+    {
+      "english": "Great Britain / British",
+      "french": "Grande-Bretagne / Britannique"
+    },
+    {
+      "english": "England / English",
+      "french": "Angleterre / Anglais"
+    },
+    {
+      "english": "Scotland / Scottish",
+      "french": "Ecosse / Ecossais"
+    },
+    {
+      "english": "Wales / Welsh",
+      "french": "Pays de Galles / Gallois"
+    },
+    {
+      "english": "Northern Ireland / Irish",
+      "french": "Irlande du Nord / Irlandais du Nord"
+    },
+    {
+      "english": "The Republic of Ireland / Irish",
+      "french": "La republique d'Irlande / Irlandais"
+    },
+    {
+      "english": "U.S.A",
+      "french": "Etats-Unis d'Amerique"
+    },
+    {
+      "english": "American",
+      "french": "Americain"
+    },
+    {
+      "english": "Spain / Spanish",
+      "french": "Espagne / Espagnol"
+    },
+    {
+      "english": "Portugal / Portuguese",
+      "french": "Portugal / Portugais"
+    },
+    {
+      "english": "Italy / Italian",
+      "french": "Italie / Italien"
+    },
+    {
+      "english": "Japan / Japanese",
+      "french": "Japon / Japonais"
+    },
+    {
+      "english": "China / Chinese",
+      "french": "Chine / Chinois"
+    }
+  ]
+}

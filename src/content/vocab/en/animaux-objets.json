@@ -1,0 +1,54 @@
+{
+  "name": "Animaux et objets divers",
+  "description": "Animaux et noms concrets simples.",
+  "words": [
+    {
+      "english": "A parrot",
+      "french": "Un perroquet"
+    },
+    {
+      "english": "A bee",
+      "french": "Une abeille"
+    },
+    {
+      "english": "A lamb",
+      "french": "Un agneau"
+    },
+    {
+      "english": "A fox",
+      "french": "Un renard"
+    },
+    {
+      "english": "A bear",
+      "french": "Un ours"
+    },
+    {
+      "english": "A snake",
+      "french": "Un serpent"
+    },
+    {
+      "english": "An ox",
+      "french": "Un boeuf"
+    },
+    {
+      "english": "A mat",
+      "french": "Un tapis"
+    },
+    {
+      "english": "A key",
+      "french": "Une cle"
+    },
+    {
+      "english": "A pear",
+      "french": "Une poire"
+    },
+    {
+      "english": "A stick",
+      "french": "Un baton"
+    },
+    {
+      "english": "A clock",
+      "french": "Une horloge"
+    }
+  ]
+}

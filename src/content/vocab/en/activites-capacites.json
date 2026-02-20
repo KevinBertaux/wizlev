@@ -1,0 +1,86 @@
+{
+  "name": "Activites et capacites",
+  "description": "Loisirs, sports et niveau de maitrise.",
+  "words": [
+    {
+      "english": "Sing",
+      "french": "Chanter"
+    },
+    {
+      "english": "Draw",
+      "french": "Dessiner"
+    },
+    {
+      "english": "Skate",
+      "french": "Patiner"
+    },
+    {
+      "english": "Ice-skate",
+      "french": "Faire du patin a glace"
+    },
+    {
+      "english": "Swim",
+      "french": "Nager"
+    },
+    {
+      "english": "Ski",
+      "french": "Skier"
+    },
+    {
+      "english": "Act",
+      "french": "Faire l'acteur"
+    },
+    {
+      "english": "Paint",
+      "french": "Peindre"
+    },
+    {
+      "english": "Cook",
+      "french": "Cuisiner"
+    },
+    {
+      "english": "Play football",
+      "french": "Jouer au foot"
+    },
+    {
+      "english": "Play the guitar",
+      "french": "Faire de la guitare"
+    },
+    {
+      "english": "Ride a bike",
+      "french": "Faire du velo"
+    },
+    {
+      "english": "Ride a horse",
+      "french": "Monter a cheval"
+    },
+    {
+      "english": "Can you dance?",
+      "french": "Sais-tu danser ?"
+    },
+    {
+      "english": "How well can you play rugby?",
+      "french": "A quel niveau sais-tu jouer au rugby ?"
+    },
+    {
+      "english": "I can't play rugby at all",
+      "french": "Je ne sais pas du tout jouer au rugby"
+    },
+    {
+      "english": "A little",
+      "french": "Un peu"
+    },
+    {
+      "english": "Quite well",
+      "french": "Plutot bien"
+    },
+    {
+      "english": "Very well",
+      "french": "Tres bien"
+    },
+    {
+      "english": "Extremely well",
+      "french": "Extremement bien"
+    }
+  ]
+}

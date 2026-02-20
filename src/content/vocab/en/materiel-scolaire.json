@@ -1,0 +1,46 @@
+{
+  "name": "Materiel scolaire",
+  "description": "Objets utilises en classe.",
+  "words": [
+    {
+      "english": "A pen",
+      "french": "Un stylo"
+    },
+    {
+      "english": "A pencil",
+      "french": "Un crayon a papier"
+    },
+    {
+      "english": "A felt-tip pen",
+      "french": "Un feutre"
+    },
+    {
+      "english": "A highlighter",
+      "french": "Un surligneur"
+    },
+    {
+      "english": "A rubber / an eraser",
+      "french": "Une gomme"
+    },
+    {
+      "english": "A ruler",
+      "french": "Une regle"
+    },
+    {
+      "english": "A glue stick",
+      "french": "Une colle"
+    },
+    {
+      "english": "Scissors",
+      "french": "Des ciseaux"
+    },
+    {
+      "english": "A pencil case",
+      "french": "Une trousse"
+    },
+    {
+      "english": "A school bag",
+      "french": "Un cartable"
+    }
+  ]
+}

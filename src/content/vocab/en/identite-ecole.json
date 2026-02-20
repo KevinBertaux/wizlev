@@ -1,0 +1,42 @@
+{
+  "name": "Identite et ecole",
+  "description": "Se presenter et vocabulaire scolaire de base.",
+  "words": [
+    {
+      "english": "Surname",
+      "french": "Nom de famille"
+    },
+    {
+      "english": "First name",
+      "french": "Prenom"
+    },
+    {
+      "english": "School year",
+      "french": "Annee scolaire"
+    },
+    {
+      "english": "Teacher",
+      "french": "Professeur(e)"
+    },
+    {
+      "english": "Copy-book / Notebook",
+      "french": "Cahier"
+    },
+    {
+      "english": "To spell",
+      "french": "Epeler"
+    },
+    {
+      "english": "What's your name?",
+      "french": "Comment tu t'appelles ?"
+    },
+    {
+      "english": "This is Max",
+      "french": "C'est Max"
+    },
+    {
+      "english": "Who am I?",
+      "french": "Qui suis-je ?"
+    }
+  ]
+}
