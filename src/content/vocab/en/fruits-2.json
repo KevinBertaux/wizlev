@@ -1,5 +1,6 @@
 {
   "name": "Fruits 2",
+  "label": "🍏 Fruits 2",
   "description": "Liste de vocabulaire anglais : les fruits (ancienne liste).",
   "words": [
     {
@@ -28,7 +29,7 @@
     },
     {
       "english": "Watermelon",
-      "french": "Pasteque"
+      "french": "Pastèque"
     },
     {
       "english": "Orange",
@@ -68,7 +69,7 @@
     },
     {
       "english": "Chestnut",
-      "french": "Chataigne"
+      "french": "Châtaigne"
     },
     {
       "english": "Papaya",
@@ -84,7 +85,7 @@
     },
     {
       "english": "Peanut",
-      "french": "Cacahuete"
+      "french": "Cacahuète"
     },
     {
       "english": "Pumpkin",
@@ -100,7 +101,7 @@
     },
     {
       "english": "Peach",
-      "french": "Peche"
+      "french": "Pêche"
     }
   ]
 }

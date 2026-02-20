@@ -1,6 +1,7 @@
 {
-  "name": "Identite et ecole",
-  "description": "Se presenter et vocabulaire scolaire de base.",
+  "name": "Identité et école",
+  "label": "🧑 Identité et école",
+  "description": "Se présenter et vocabulaire scolaire de base.",
   "words": [
     {
       "english": "Surname",
@@ -8,11 +9,11 @@
     },
     {
       "english": "First name",
-      "french": "Prenom"
+      "french": "Prénom"
     },
     {
       "english": "School year",
-      "french": "Annee scolaire"
+      "french": "Année scolaire"
     },
     {
       "english": "Teacher",
@@ -24,7 +25,7 @@
     },
     {
       "english": "To spell",
-      "french": "Epeler"
+      "french": "Épeler"
     },
     {
       "english": "What's your name?",

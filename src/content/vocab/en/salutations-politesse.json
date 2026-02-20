@@ -1,5 +1,6 @@
 {
   "name": "Salutations et politesse",
+  "label": "👋 Salutations et politesse",
   "description": "Expressions du quotidien.",
   "words": [
     {
@@ -12,7 +13,7 @@
     },
     {
       "english": "Good afternoon",
-      "french": "Bonjour (l'apres-midi)"
+      "french": "Bonjour (l'après-midi)"
     },
     {
       "english": "Good evening",
@@ -32,7 +33,7 @@
     },
     {
       "english": "I'm very well",
-      "french": "Je vais tres bien"
+      "french": "Je vais très bien"
     },
     {
       "english": "What about you?",
@@ -48,23 +49,23 @@
     },
     {
       "english": "I'm sorry",
-      "french": "Je suis desole(e)"
+      "french": "Je suis désolé(e)"
     },
     {
       "english": "See you later",
-      "french": "A plus tard"
+      "french": "À plus tard"
     },
     {
       "english": "See you soon",
-      "french": "A bientot"
+      "french": "À bientôt"
     },
     {
       "english": "See you on Monday",
-      "french": "A lundi"
+      "french": "À lundi"
     },
     {
       "english": "Have a nice day",
-      "french": "Passe une bonne journee !"
+      "french": "Passe une bonne journée !"
     },
     {
       "english": "Have a good weekend!",
@@ -80,7 +81,7 @@
     },
     {
       "english": "Tired",
-      "french": "Fatigue"
+      "french": "Fatigué"
     },
     {
       "english": "Dead",

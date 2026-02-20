@@ -1,6 +1,7 @@
 {
-  "name": "Fetes et symboles",
-  "description": "Lexique culturel et celebration.",
+  "name": "Fêtes et symboles",
+  "label": "🎉 Fêtes et symboles",
+  "description": "Lexique culturel et célébration.",
   "words": [
     {
       "english": "A flag",
@@ -8,11 +9,11 @@
     },
     {
       "english": "A maple",
-      "french": "Un erable"
+      "french": "Un érable"
     },
     {
       "english": "Maple syrup",
-      "french": "Du sirop d'erable"
+      "french": "Du sirop d'érable"
     },
     {
       "english": "A leaf",
@@ -24,7 +25,7 @@
     },
     {
       "english": "Mashed potatoes",
-      "french": "Puree de patate"
+      "french": "Purée de patate"
     },
     {
       "english": "Gravy",
@@ -32,7 +33,7 @@
     },
     {
       "english": "A pumpkin pie",
-      "french": "Une tarte a la citrouille"
+      "french": "Une tarte à la citrouille"
     },
     {
       "english": "Thankful",
@@ -60,7 +61,7 @@
     },
     {
       "english": "To celebrate",
-      "french": "Feter"
+      "french": "Fêter"
     },
     {
       "english": "The thistle",
@@ -80,11 +81,7 @@
     },
     {
       "english": "The shamrock",
-      "french": "Le trefle"
-    },
-    {
-      "english": "A flag",
-      "french": "Un drapeau"
+      "french": "Le trèfle"
     }
   ]
 }

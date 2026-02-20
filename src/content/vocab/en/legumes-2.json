@@ -1,5 +1,6 @@
 {
   "name": "Légumes 2",
+  "label": "🥬 Légumes 2",
   "description": "Liste de vocabulaire anglais : les légumes (ancienne liste).",
   "words": [
     {
@@ -68,7 +69,7 @@
     },
     {
       "english": "Spinach",
-      "french": "Epinard"
+      "french": "Épinard"
     },
     {
       "english": "Beetroot",
@@ -80,7 +81,7 @@
     },
     {
       "english": "Celery",
-      "french": "Celeri"
+      "french": "Céleri"
     },
     {
       "english": "Endive",

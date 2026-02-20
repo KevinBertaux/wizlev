@@ -1,5 +1,6 @@
 {
   "name": "Animaux et objets divers",
+  "label": "🦊 Animaux et objets divers",
   "description": "Animaux et noms concrets simples.",
   "words": [
     {
@@ -28,7 +29,7 @@
     },
     {
       "english": "An ox",
-      "french": "Un boeuf"
+      "french": "Un bœuf"
     },
     {
       "english": "A mat",
@@ -36,7 +37,7 @@
     },
     {
       "english": "A key",
-      "french": "Une cle"
+      "french": "Une clé"
     },
     {
       "english": "A pear",
@@ -44,7 +45,7 @@
     },
     {
       "english": "A stick",
-      "french": "Un baton"
+      "french": "Un bâton"
     },
     {
       "english": "A clock",

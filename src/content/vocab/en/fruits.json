@@ -1,5 +1,6 @@
 {
   "name": "Fruits",
+  "label": "🍎 Fruits",
   "description": "Liste fruits (nouvelle).",
   "words": [
     {
@@ -44,7 +45,7 @@
     },
     {
       "english": "A peach",
-      "french": "Une peche"
+      "french": "Une pêche"
     },
     {
       "english": "A cherry",

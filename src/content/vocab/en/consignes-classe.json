@@ -1,6 +1,7 @@
 {
   "name": "Consignes de classe",
-  "description": "Actions demandees par le professeur.",
+  "label": "📘 Consignes de classe",
+  "description": "Actions demandées par le professeur.",
   "words": [
     {
       "english": "Stand up!",
@@ -12,7 +13,7 @@
     },
     {
       "english": "Listen!",
-      "french": "Ecoutez !"
+      "french": "Écoutez !"
     },
     {
       "english": "Read the text",
@@ -40,7 +41,7 @@
     },
     {
       "english": "Write your name",
-      "french": "Ecrivez votre prenom"
+      "french": "Écrivez votre prénom"
     },
     {
       "english": "Be quiet!",
@@ -48,7 +49,7 @@
     },
     {
       "english": "Everybody's here!",
-      "french": "Tout le monde est la !"
+      "french": "Tout le monde est là !"
     },
     {
       "english": "Nobody's absent!",

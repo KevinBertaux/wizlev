@@ -160,7 +160,7 @@ onUnmounted(() => {
       <span>🥇 Meilleure série : {{ bestStreak }}</span>
     </div>
 
-    <div v-if="!tableSelect" class="feedback feedback-incorrect">Sélectionne une table pour commencer.</div>
+    <div v-if="!tableSelect" class="feedback feedback-incorrect">Sélectionner une table pour commencer.</div>
 
     <div
       v-if="tableSelect && feedbackMain"
@@ -328,3 +328,4 @@ onUnmounted(() => {
   }
 }
 </style>
+

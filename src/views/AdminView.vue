@@ -1,5 +1,5 @@
 <script setup>
-import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import {
   getVocabList,
@@ -53,6 +53,15 @@ function createDraft(listKey) {
 
 const draft = ref(createDraft(selectedList.value));
 
+const adminListOptionsWithCount = computed(() =>
+  vocabListOptions.map((option) => {
+    const currentList = getVocabList(option.key);
+    return {
+      ...option,
+      wordCount: Array.isArray(currentList?.words) ? currentList.words.length : option.wordCount || 0,
+    };
+  })
+);
 function setStatus(type, message) {
   statusType.value = type;
   statusMessage.value = message;
@@ -116,7 +125,7 @@ function buildPayload() {
 
 function saveCurrentList() {
   if (!selectedList.value) {
-    setStatus('error', 'Choisis d\'abord une liste à modifier.');
+    setStatus('error', 'Choisir d\'abord une liste à modifier.');
     return;
   }
 
@@ -138,7 +147,7 @@ function saveCurrentList() {
 
 function resetCurrentList() {
   if (!selectedList.value) {
-    setStatus('error', 'Choisis d\'abord une liste à modifier.');
+    setStatus('error', 'Choisir d\'abord une liste à modifier.');
     return;
   }
 
@@ -159,7 +168,7 @@ watch(
 
 async function copyJsonToClipboard() {
   if (!selectedList.value) {
-    setStatus('error', 'Choisis d\'abord une liste à modifier.');
+    setStatus('error', 'Choisir d\'abord une liste à modifier.');
     return;
   }
 
@@ -184,7 +193,7 @@ async function copyJsonToClipboard() {
 
 function downloadJson() {
   if (!selectedList.value) {
-    setStatus('error', 'Choisis d\'abord une liste à modifier.');
+    setStatus('error', 'Choisir d\'abord une liste à modifier.');
     return;
   }
 
@@ -208,7 +217,7 @@ function downloadJson() {
 
 async function importJson(event) {
   if (!selectedList.value) {
-    setStatus('error', 'Choisis d\'abord une liste à modifier.');
+    setStatus('error', 'Choisir d\'abord une liste à modifier.');
     event.target.value = '';
     return;
   }
@@ -287,8 +296,8 @@ onUnmounted(() => {
       <label for="listSelect">Liste à modifier</label>
       <select id="listSelect" v-model="selectedList">
         <option value="">-- Choisir une liste --</option>
-        <option v-for="option in vocabListOptions" :key="option.key" :value="option.key">
-          {{ option.label }}
+        <option v-for="option in adminListOptionsWithCount" :key="option.key" :value="option.key">
+          {{ option.label }} ({{ option.wordCount }} mots)
         </option>
       </select>
 
@@ -301,7 +310,7 @@ onUnmounted(() => {
       </template>
 
       <p v-else class="empty-state">
-        Sélectionne une liste pour commencer l'édition.
+        Sélectionner une liste pour commencer l'édition.
       </p>
     </div>
 
@@ -537,6 +546,11 @@ pre {
   }
 }
 </style>
+
+
+
+
+
 
 
 

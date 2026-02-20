@@ -1,6 +1,7 @@
 {
-  "name": "Activites et capacites",
-  "description": "Loisirs, sports et niveau de maitrise.",
+  "name": "Activités et capacités",
+  "label": "⚽ Activités et capacités",
+  "description": "Loisirs, sports et niveau de maîtrise.",
   "words": [
     {
       "english": "Sing",
@@ -16,7 +17,7 @@
     },
     {
       "english": "Ice-skate",
-      "french": "Faire du patin a glace"
+      "french": "Faire du patin à glace"
     },
     {
       "english": "Swim",
@@ -48,11 +49,11 @@
     },
     {
       "english": "Ride a bike",
-      "french": "Faire du velo"
+      "french": "Faire du vélo"
     },
     {
       "english": "Ride a horse",
-      "french": "Monter a cheval"
+      "french": "Monter à cheval"
     },
     {
       "english": "Can you dance?",
@@ -60,7 +61,7 @@
     },
     {
       "english": "How well can you play rugby?",
-      "french": "A quel niveau sais-tu jouer au rugby ?"
+      "french": "À quel niveau sais-tu jouer au rugby ?"
     },
     {
       "english": "I can't play rugby at all",
@@ -72,15 +73,15 @@
     },
     {
       "english": "Quite well",
-      "french": "Plutot bien"
+      "french": "Plutôt bien"
     },
     {
       "english": "Very well",
-      "french": "Tres bien"
+      "french": "Très bien"
     },
     {
       "english": "Extremely well",
-      "french": "Extremement bien"
+      "french": "Extrêmement bien"
     }
   ]
 }

@@ -1,6 +1,7 @@
 {
-  "name": "Materiel scolaire",
-  "description": "Objets utilises en classe.",
+  "name": "Matériel scolaire",
+  "label": "✏️ Matériel scolaire",
+  "description": "Objets utilisés en classe.",
   "words": [
     {
       "english": "A pen",
@@ -8,7 +9,7 @@
     },
     {
       "english": "A pencil",
-      "french": "Un crayon a papier"
+      "french": "Un crayon à papier"
     },
     {
       "english": "A felt-tip pen",
@@ -24,7 +25,7 @@
     },
     {
       "english": "A ruler",
-      "french": "Une regle"
+      "french": "Une règle"
     },
     {
       "english": "A glue stick",

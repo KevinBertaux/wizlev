@@ -1,6 +1,7 @@
 {
-  "name": "Maison, etats et vetements",
-  "description": "Objets de la maison, adjectifs et vetements.",
+  "name": "Maison, états et vêtements",
+  "label": "🏠 Maison et vêtements",
+  "description": "Objets de la maison, adjectifs et vêtements.",
   "words": [
     {
       "english": "Small",
@@ -24,7 +25,7 @@
     },
     {
       "english": "Messy",
-      "french": "Desordonne"
+      "french": "Désordonné"
     },
     {
       "english": "A wall",

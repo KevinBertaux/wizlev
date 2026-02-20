@@ -1,18 +1,19 @@
 {
-  "name": "Pays et nationalites",
-  "description": "Geographie culturelle et nationalites.",
+  "name": "Pays et nationalités",
+  "label": "🌍 Pays et nationalités",
+  "description": "Géographie culturelle et nationalités.",
   "words": [
     {
       "english": "Where are you from?",
-      "french": "D'ou viens-tu ?"
+      "french": "D'où viens-tu ?"
     },
     {
       "english": "What is your nationality?",
-      "french": "Quelle est ta nationalite ?"
+      "french": "Quelle est ta nationalité ?"
     },
     {
       "english": "The British Isles",
-      "french": "Les iles britanniques"
+      "french": "Les îles britanniques"
     },
     {
       "english": "The United Kingdom",
@@ -28,7 +29,7 @@
     },
     {
       "english": "Scotland / Scottish",
-      "french": "Ecosse / Ecossais"
+      "french": "Écosse / Écossais"
     },
     {
       "english": "Wales / Welsh",
@@ -40,15 +41,15 @@
     },
     {
       "english": "The Republic of Ireland / Irish",
-      "french": "La republique d'Irlande / Irlandais"
+      "french": "La république d'Irlande / Irlandais"
     },
     {
       "english": "U.S.A",
-      "french": "Etats-Unis d'Amerique"
+      "french": "États-Unis d'Amérique"
     },
     {
       "english": "American",
-      "french": "Americain"
+      "french": "Américain"
     },
     {
       "english": "Spain / Spanish",
@@ -69,6 +70,10 @@
     {
       "english": "China / Chinese",
       "french": "Chine / Chinois"
+    },
+    {
+      "english": "A flag",
+      "french": "Un drapeau"
     }
   ]
 }

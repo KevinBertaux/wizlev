@@ -1,6 +1,7 @@
 {
   "name": "Aliments et boissons",
-  "description": "Nourriture generale.",
+  "label": "🍽️ Aliments et boissons",
+  "description": "Nourriture générale.",
   "words": [
     {
       "english": "Food",
@@ -20,7 +21,7 @@
     },
     {
       "english": "Pasta",
-      "french": "Pates"
+      "french": "Pâtes"
     },
     {
       "english": "Chocolate",
@@ -32,7 +33,7 @@
     },
     {
       "english": "Cake",
-      "french": "Gateau"
+      "french": "Gâteau"
     },
     {
       "english": "Cheese",
@@ -40,11 +41,11 @@
     },
     {
       "english": "Tea",
-      "french": "The"
+      "french": "Thé"
     },
     {
       "english": "Coffee",
-      "french": "Cafe"
+      "french": "Café"
     },
     {
       "english": "Milk",

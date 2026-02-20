@@ -1,6 +1,7 @@
 {
-  "name": "Prepositions de lieu",
-  "description": "Se reperer dans l'espace.",
+  "name": "Prépositions de lieu",
+  "label": "📍 Prépositions de lieu",
+  "description": "Se repérer dans l'espace.",
   "words": [
     {
       "english": "On",
@@ -20,11 +21,11 @@
     },
     {
       "english": "Behind",
-      "french": "Derriere"
+      "french": "Derrière"
     },
     {
       "english": "Next to",
-      "french": "A cote de"
+      "french": "À côté de"
     },
     {
       "english": "Between",

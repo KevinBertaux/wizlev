@@ -1,6 +1,7 @@
 {
   "name": "Temps et semaine",
-  "description": "Jours et reperes temporels.",
+  "label": "📅 Temps et semaine",
+  "description": "Jours et repères temporels.",
   "words": [
     {
       "english": "Midday / Noon",

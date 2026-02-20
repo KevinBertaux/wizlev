@@ -1,5 +1,6 @@
 {
-  "name": "Regles de classe",
+  "name": "Règles de classe",
+  "label": "🚫 Règles de classe",
   "description": "Interdictions et bon comportement.",
   "words": [
     {
@@ -20,11 +21,11 @@
     },
     {
       "english": "Don't listen to music in class",
-      "french": "N'ecoutez pas de musique en classe"
+      "french": "N'écoutez pas de musique en classe"
     },
     {
       "english": "Don't write on your desk",
-      "french": "N'ecrivez pas sur vos bureaux"
+      "french": "N'écrivez pas sur vos bureaux"
     },
     {
       "english": "Don't run in the corridors",

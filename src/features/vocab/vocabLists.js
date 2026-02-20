@@ -23,126 +23,126 @@ const LEGACY_STORAGE_PREFIX = 'revision_enfants_vocab_list_';
 const baseVocabLists = {
   identiteEcole: {
     key: 'identiteEcole',
-    label: '🧑 Identité et école',
+    label: identiteEcole.label || identiteEcole.name,
     name: identiteEcole.name,
     description: identiteEcole.description,
     words: identiteEcole.words,
   },
   salutationsPolitesse: {
     key: 'salutationsPolitesse',
-    label: '👋 Salutations et politesse',
+    label: salutationsPolitesse.label || salutationsPolitesse.name,
     name: salutationsPolitesse.name,
     description: salutationsPolitesse.description,
     words: salutationsPolitesse.words,
   },
   tempsSemaine: {
     key: 'tempsSemaine',
-    label: '📅 Temps et semaine',
+    label: tempsSemaine.label || tempsSemaine.name,
     name: tempsSemaine.name,
     description: tempsSemaine.description,
     words: tempsSemaine.words,
   },
   consignesClasse: {
     key: 'consignesClasse',
-    label: '📘 Consignes de classe',
+    label: consignesClasse.label || consignesClasse.name,
     name: consignesClasse.name,
     description: consignesClasse.description,
     words: consignesClasse.words,
   },
   reglesClasse: {
     key: 'reglesClasse',
-    label: '🚫 Règles de classe',
+    label: reglesClasse.label || reglesClasse.name,
     name: reglesClasse.name,
     description: reglesClasse.description,
     words: reglesClasse.words,
   },
   materielScolaire: {
     key: 'materielScolaire',
-    label: '✏️ Matériel scolaire',
+    label: materielScolaire.label || materielScolaire.name,
     name: materielScolaire.name,
     description: materielScolaire.description,
     words: materielScolaire.words,
   },
   activitesCapacites: {
     key: 'activitesCapacites',
-    label: '⚽ Activités et capacités',
+    label: activitesCapacites.label || activitesCapacites.name,
     name: activitesCapacites.name,
     description: activitesCapacites.description,
     words: activitesCapacites.words,
   },
   fetesSymboles: {
     key: 'fetesSymboles',
-    label: '🎉 Fêtes et symboles',
+    label: fetesSymboles.label || fetesSymboles.name,
     name: fetesSymboles.name,
     description: fetesSymboles.description,
     words: fetesSymboles.words,
   },
   paysNationalites: {
     key: 'paysNationalites',
-    label: '🌍 Pays et nationalités',
+    label: paysNationalites.label || paysNationalites.name,
     name: paysNationalites.name,
     description: paysNationalites.description,
     words: paysNationalites.words,
   },
   prepositionsLieu: {
     key: 'prepositionsLieu',
-    label: '📍 Prépositions de lieu',
+    label: prepositionsLieu.label || prepositionsLieu.name,
     name: prepositionsLieu.name,
     description: prepositionsLieu.description,
     words: prepositionsLieu.words,
   },
   villePersonnes: {
     key: 'villePersonnes',
-    label: '🏙️ Ville et personnes',
+    label: villePersonnes.label || villePersonnes.name,
     name: villePersonnes.name,
     description: villePersonnes.description,
     words: villePersonnes.words,
   },
   maisonVetements: {
     key: 'maisonVetements',
-    label: '🏠 Maison et vêtements',
+    label: maisonVetements.label || maisonVetements.name,
     name: maisonVetements.name,
     description: maisonVetements.description,
     words: maisonVetements.words,
   },
   animauxObjets: {
     key: 'animauxObjets',
-    label: '🦊 Animaux et objets divers',
+    label: animauxObjets.label || animauxObjets.name,
     name: animauxObjets.name,
     description: animauxObjets.description,
     words: animauxObjets.words,
   },
   alimentsBoissons: {
     key: 'alimentsBoissons',
-    label: '🍽️ Aliments et boissons',
+    label: alimentsBoissons.label || alimentsBoissons.name,
     name: alimentsBoissons.name,
     description: alimentsBoissons.description,
     words: alimentsBoissons.words,
   },
   fruits: {
     key: 'fruits',
-    label: '🍎 Fruits',
+    label: fruits.label || fruits.name,
     name: fruits.name,
     description: fruits.description,
     words: fruits.words,
   },
   legumes: {
     key: 'legumes',
-    label: '🥕 Légumes',
+    label: legumes.label || legumes.name,
     name: legumes.name,
     description: legumes.description,
     words: legumes.words,
   },
   fruits2: {
     key: 'fruits2',
-    label: '🍏 Fruits 2',
+    label: fruits2.label || fruits2.name,
     name: fruits2.name,
     description: fruits2.description,
     words: fruits2.words,
   },
   legumes2: {
     key: 'legumes2',
-    label: '🥬 Légumes 2',
+    label: legumes2.label || legumes2.name,
     name: legumes2.name,
     description: legumes2.description,
     words: legumes2.words,
@@ -154,6 +154,7 @@ export const vocabLists = baseVocabLists;
 export const vocabListOptions = Object.values(baseVocabLists).map((list) => ({
   key: list.key,
   label: list.label,
+  wordCount: Array.isArray(list.words) ? list.words.length : 0,
 }));
 
 function cloneWords(words) {
@@ -250,3 +251,6 @@ export function resetVocabList(listKey) {
   localStorage.removeItem(getStorageKey(listKey));
   localStorage.removeItem(getLegacyStorageKey(listKey));
 }
+
+
+
