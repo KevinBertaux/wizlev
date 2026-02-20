@@ -1,6 +1,6 @@
 # Checklist QA V1
 
-## Preparation
+## Préparation
 
 1. Lancer `npm install`
 2. Lancer `npm run dev`
@@ -9,72 +9,79 @@
 ## Smoke tests
 
 1. Navigation:
-   - Verifier les routes `/`, `/math`, `/vocab`
-   - Verifier menu burger sur mobile
+   - Vérifier les routes `/`, `/math`, `/vocab`
+   - Vérifier menu burger sur mobile
 2. Build:
-   - Executer `npm run build` sans erreur
+   - Exécuter `npm run build` sans erreur
 3. Tests:
-   - Executer `npm test` sans echec
-   - Executer `npm run test:e2e` sans echec
+   - Exécuter `npm test` sans échec
+   - Exécuter `npm run test:e2e` sans échec
 
 ## Math (`/math`)
 
-1. Changer de table et verifier mise a jour immediate de la question
-2. Reponse correcte:
+1. Vérifier qu'aucune table n'est sélectionnée par défaut
+2. Changer de table et vérifier mise à jour immédiate de la question
+3. Réponse correcte:
    - Score +1
    - Total +1
-   - Serie +1
-3. Reponse incorrecte:
-   - Score inchange
+   - Série +1
+4. Réponse incorrecte:
+   - Score inchangé
    - Total +1
-   - Serie remise a 0
-4. Reponse negative:
+   - Série remise à 0
+5. Réponse négative:
    - Message d'erreur
-   - Total inchange
-5. Maintenir `Entree`:
-   - Pas de multi-increment du score
+   - Total inchangé
+6. Maintenir `Entrée`:
+   - Pas de multi-incrément du score
+7. Vérifier meilleure série:
+   - Persistante au rechargement (localStorage)
 
 ## Vocab (`/vocab`)
 
-1. Fleches carrousel:
-   - Gauche/droite fonctionnent
-2. Clavier:
+1. Vérifier qu'aucune liste n'est sélectionnée par défaut
+2. Dropdown listes:
+   - Affiche `Titre (xx mots)`
+   - Nombre mis à jour si la liste est modifiée localement
+3. Description de liste:
+   - Visible et cohérente avec la liste choisie
+4. Navigation cartes:
+   - Flèches gauche/droite fonctionnent
    - `ArrowLeft`/`ArrowRight` changent de carte
-3. Swipe mobile:
-   - Un seul changement par geste horizontal
-4. Flip carte:
+   - Swipe mobile = un seul changement par geste
+5. Flip carte:
    - Affiche/masque traduction correctement
-5. TTS:
+6. TTS:
    - Bouton play/stop fonctionne
-   - Changement accent US/UK pris en compte
-   - Pas de message parasite lors d'interruption volontaire
+   - Accent US/UK appliqué
+   - Vitesse de lecture (0.85x, 1x, 1.15x) appliquée
+   - En mode FR -> EN, bouton TTS masqué avant révélation
+7. Sens de carte:
+   - Anglais -> Français
+   - Français -> Anglais
 
 ## Zone interne (`/-/studio-ops`)
 
-1. Connexion avec identifiants valides -> acces panel
+1. Connexion avec identifiants valides -> accès panel
 2. Identifiants invalides:
-   - Message generique
+   - Message générique
    - Affichage tentatives restantes
 3. Blocage:
-   - 3 echecs => blocage temporaire
-   - Champs et bouton desactives pendant blocage
+   - 3 échecs => blocage temporaire
+   - Champs et bouton désactivés pendant blocage
 4. Session:
    - Expiration de session => redirection login
-5. Edition listes:
+5. Édition listes:
+   - Dropdown affiche `Titre (xx mots)`
    - Import JSON valide/invalide
-   - Copie JSON / telechargement JSON
+   - Copie JSON / téléchargement JSON
    - Sauvegarde locale visible dans `/vocab`
 
-## CMS (`/cms/`) - si active sur Netlify
-
-1. Connexion Netlify Identity
-2. Edition d'une liste
-3. Publication (commit Git auto)
-4. Verification contenu apres redeploy
-
-## Regression
+## Régression
 
 1. Recharger la page:
-   - Accent TTS conserve
-   - Overrides localStorage conserves
-2. Verifier qu'aucune erreur JS n'apparait dans la console
+   - Accent TTS conservé
+   - Vitesse TTS conservée
+   - Sens de carte conservé
+   - Overrides localStorage conservés
+2. Vérifier qu'aucune erreur JS n'apparait dans la console

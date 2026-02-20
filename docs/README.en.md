@@ -2,27 +2,33 @@
 
 Educational web app (Vue 3 + Vite SPA) to help children practice math and vocabulary.
 
-[Version francaise](README.fr.md)
+[Version française](README.fr.md)
 
 ## Version
 
 - Current version: `0.4.0-prep`
-- Last update: `19 February 2026` (fr-FR date: 19 février 2026)
+- Last update: `20 February 2026` (fr-FR date: 20 février 2026)
 
 ## Current features
 
 ### Math (`/math`)
-- Multiplication tables quiz (1-11 + all tables mode)
-- Score, total answers, and streak tracking
+- Multiplication tables quiz (0-11 + all tables mode)
+- Score, total answers, current streak, and best streak (localStorage)
 - Keyboard validation (`Enter`) with duplicate-submit prevention
+- No table selected by default
 
 ### English vocabulary (`/vocab`)
-- Fruit/vegetable flashcards (25 words each)
-- Arrow, keyboard, and mobile swipe navigation
-- English TTS with US/UK accent selection
+- External JSON lists with title, description, and words
+- Dropdown with dynamic word count (`xx words`)
+- No list selected by default
+- Flashcards: arrows, keyboard, and mobile swipe navigation
+- English TTS: US/UK accent + reading speed (3 levels)
+- Card direction: English -> French or French -> English
+- TTS button hidden in FR -> EN mode until translation is revealed
 
 ### Internal panel V1 (restricted access)
 - Local edit of list name/description/words
+- Admin dropdown with dynamic word count
 - JSON import / export / copy
 - Local `localStorage` save
 - Accessed through private URL `/-/studio-ops` (not visible in public menu)
@@ -54,15 +60,12 @@ Educational web app (Vue 3 + Vite SPA) to help children practice math and vocabu
 - `/help/internal-panel`: Internal panel guide (EN)
 - `/legal/mentions-legales`: Legal notices
 - `/legal/confidentialite`: Privacy policy
-- `/cms/`: Decap CMS
 
 ## Documentation
 
 - QA checklist: `docs/QA-CHECKLIST.fr.md`
 - Release checklist: `docs/RELEASE-CHECKLIST.fr.md`
-- GitHub/Netlify/CMS setup: `docs/SETUP-GITHUB-NETLIFY-CMS.fr.md`
 - Secrets security: `docs/SECURITY-SECRETS.fr.md`
 - Git cheat sheet: `docs/GIT-CHEATSHEET.fr.md`
 - Internal panel guide FR: `docs/PANEL-INTERNE.fr.md`
 - Internal panel guide EN: `docs/PANEL-INTERNE.en.md`
-
