@@ -5,7 +5,7 @@
 - `0.1.0`: prototype initial HTML/CSS/JS
 - `0.2.0`: migration architecture vers Vue 3 + Vite (SPA)
 - `0.3.0`: stabilisation fonctionnelle (Math/Vocab + TTS + zone interne V1)
-- `0.4.0-prep`: branche de preparation release actuelle
+- `0.4.0`: version stable actuelle
 
 ## Strategie deploy (quota Netlify)
 
@@ -13,7 +13,7 @@
 - Les commits peuvent continuer sur branches feature sans deploy prod.
 - Validation finale uniquement apres checklist release complete.
 
-## Etat actuel (0.4.0-prep)
+## Etat actuel (0.4.0)
 
 ### Fait
 
@@ -57,3 +57,4 @@
 - `feature/*` -> merge vers `feat/0.4.0-prep`
 - `feat/0.4.0-prep` -> merge vers `main` quand release validee
 - `main` reste la branche stable/deployable
+

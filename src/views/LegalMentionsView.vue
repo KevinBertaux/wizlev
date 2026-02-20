@@ -4,7 +4,7 @@
     <p class="updated">Dernière mise à jour : 19 février 2026</p>
 
     <h2>Version de l'application</h2>
-    <p>Version en cours : <strong>0.4.0-prep</strong><br />
+    <p>Version en cours : <strong>0.4.0</strong><br />
       Dernière modification : 19 février 2026</p>
 
     <h2>Éditeur du site</h2>
@@ -90,4 +90,5 @@ a {
   text-decoration: underline;
 }
 </style>
+
 

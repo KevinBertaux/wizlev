@@ -16,7 +16,7 @@ const statusType = ref('');
 const statusMessage = ref('');
 const englishInputRefs = ref([]);
 const sessionRemainingMs = ref(getAdminSessionRemainingMs());
-const APP_VERSION = '0.4.0-prep';
+const APP_VERSION = '0.4.0';
 const LAST_UPDATE_FR = '19 février 2026';
 let sessionTimerId;
 
@@ -546,6 +546,7 @@ pre {
   }
 }
 </style>
+
 
 
 
