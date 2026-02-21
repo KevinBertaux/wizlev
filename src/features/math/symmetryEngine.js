@@ -1,22 +1,40 @@
-const GRID_SIZE = 5;
-const AXES = ['vertical', 'horizontal'];
+import symmetryShapesConfig from '../../content/math/symmetry-shapes.v1.json';
+
+const DEFAULT_GRID_SIZE = 5;
+const DEFAULT_AXES = ['vertical', 'horizontal'];
+
+function toPoint(point) {
+  return {
+    x: Number(point?.x),
+    y: Number(point?.y),
+  };
+}
+
+function normalizeShapes(config) {
+  const shapes = Array.isArray(config?.shapes) ? config.shapes : [];
+
+  return shapes
+    .map((shape) => (Array.isArray(shape?.points) ? shape.points.map(toPoint) : []))
+    .filter((points) =>
+      points.every((point) => Number.isInteger(point.x) && Number.isInteger(point.y))
+    );
+}
+
+const GRID_SIZE = Number.isInteger(symmetryShapesConfig?.gridSize)
+  ? symmetryShapesConfig.gridSize
+  : DEFAULT_GRID_SIZE;
+const AXES =
+  Array.isArray(symmetryShapesConfig?.axes) && symmetryShapesConfig.axes.length > 0
+    ? symmetryShapesConfig.axes
+    : DEFAULT_AXES;
 
 // Shapes are authored for vertical mode (left side of the axis) and re-used for
 // horizontal mode via transposition.
-const BASE_SHAPES = [
-  [{ x: 0, y: 1 }, { x: 1, y: 2 }, { x: 0, y: 3 }],
-  [{ x: 1, y: 0 }, { x: 0, y: 2 }, { x: 1, y: 4 }],
-  [{ x: 0, y: 0 }, { x: 1, y: 1 }, { x: 1, y: 3 }, { x: 0, y: 4 }],
-  [{ x: 0, y: 2 }, { x: 1, y: 2 }, { x: 1, y: 3 }],
-  [{ x: 0, y: 1 }, { x: 1, y: 1 }, { x: 1, y: 2 }, { x: 0, y: 3 }],
-  [{ x: 1, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 3 }],
-  [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 0, y: 2 }],
-  [{ x: 0, y: 2 }, { x: 1, y: 1 }, { x: 1, y: 2 }, { x: 0, y: 4 }],
-  [{ x: 1, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 2 }, { x: 0, y: 3 }, { x: 1, y: 4 }],
-  [{ x: 0, y: 0 }, { x: 1, y: 2 }, { x: 0, y: 4 }],
-  [{ x: 1, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 2 }, { x: 0, y: 3 }],
-  [{ x: 0, y: 0 }, { x: 1, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 3 }, { x: 0, y: 4 }],
-];
+const BASE_SHAPES = normalizeShapes(symmetryShapesConfig);
+
+if (BASE_SHAPES.length === 0) {
+  throw new Error('Symmetry shapes dataset is empty or invalid.');
+}
 
 export const SYMMETRY_BASE_SHAPE_COUNT = BASE_SHAPES.length;
 
