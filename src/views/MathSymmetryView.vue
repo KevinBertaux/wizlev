@@ -1,11 +1,12 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref } from 'vue';
-import { evaluateSymmetryAnswer, generateSymmetryQuestion } from '@/features/math/symmetryEngine';
+import { createSymmetryQuestionBag, evaluateSymmetryAnswer } from '@/features/math/symmetryEngine';
 
 const BEST_STREAK_KEY = 'manabuplay_symmetry_best_streak_v1';
 const AUTO_NEXT_DELAY_MS = 2000;
 
-const currentQuestion = ref(generateSymmetryQuestion());
+const questionBag = createSymmetryQuestionBag();
+const currentQuestion = ref(questionBag.next());
 const selectedOptionId = ref('');
 const hasChecked = ref(false);
 const feedbackType = ref('');
@@ -55,7 +56,7 @@ function clearNextQuestionTimeout() {
 
 function nextQuestion() {
   clearNextQuestionTimeout();
-  currentQuestion.value = generateSymmetryQuestion();
+  currentQuestion.value = questionBag.next();
   selectedOptionId.value = '';
   hasChecked.value = false;
   feedbackType.value = '';
@@ -232,13 +233,6 @@ onUnmounted(() => {
           :y2="line.y2"
           class="grid-line"
         />
-        <line
-          :x1="axisLine(currentQuestion.axis, currentQuestion.gridSize).x1"
-          :y1="axisLine(currentQuestion.axis, currentQuestion.gridSize).y1"
-          :x2="axisLine(currentQuestion.axis, currentQuestion.gridSize).x2"
-          :y2="axisLine(currentQuestion.axis, currentQuestion.gridSize).y2"
-          class="axis-line"
-        />
         <polygon
           v-if="shouldCloseShape(currentQuestion.baseShape)"
           :points="shapePoints(currentQuestion.baseShape, currentQuestion.gridSize)"
@@ -256,6 +250,13 @@ onUnmounted(() => {
           :cy="pointToPixel(point, currentQuestion.gridSize).y"
           r="3.2"
           class="shape-dot"
+        />
+        <line
+          :x1="axisLine(currentQuestion.axis, currentQuestion.gridSize).x1"
+          :y1="axisLine(currentQuestion.axis, currentQuestion.gridSize).y1"
+          :x2="axisLine(currentQuestion.axis, currentQuestion.gridSize).x2"
+          :y2="axisLine(currentQuestion.axis, currentQuestion.gridSize).y2"
+          class="axis-line"
         />
       </svg>
     </div>
@@ -280,13 +281,6 @@ onUnmounted(() => {
             :y2="line.y2"
             class="grid-line"
           />
-          <line
-            :x1="axisLine(currentQuestion.axis, currentQuestion.gridSize).x1"
-            :y1="axisLine(currentQuestion.axis, currentQuestion.gridSize).y1"
-            :x2="axisLine(currentQuestion.axis, currentQuestion.gridSize).x2"
-            :y2="axisLine(currentQuestion.axis, currentQuestion.gridSize).y2"
-            class="axis-line"
-          />
           <polygon
             v-if="shouldCloseShape(option.points)"
             :points="shapePoints(option.points, currentQuestion.gridSize)"
@@ -304,6 +298,13 @@ onUnmounted(() => {
             :cy="pointToPixel(point, currentQuestion.gridSize).y"
             r="3.2"
             class="shape-dot"
+          />
+          <line
+            :x1="axisLine(currentQuestion.axis, currentQuestion.gridSize).x1"
+            :y1="axisLine(currentQuestion.axis, currentQuestion.gridSize).y1"
+            :x2="axisLine(currentQuestion.axis, currentQuestion.gridSize).x2"
+            :y2="axisLine(currentQuestion.axis, currentQuestion.gridSize).y2"
+            class="axis-line"
           />
         </svg>
       </button>
@@ -405,7 +406,7 @@ onUnmounted(() => {
 }
 
 .axis-line {
-  stroke: #6c5ce7;
+  stroke: #4ecdc4;
   stroke-width: 2;
   stroke-dasharray: 4 3;
 }
@@ -484,3 +485,5 @@ onUnmounted(() => {
   }
 }
 </style>
+
+

@@ -14,9 +14,12 @@ function normalizeShapes(config) {
   const shapes = Array.isArray(config?.shapes) ? config.shapes : [];
 
   return shapes
-    .map((shape) => (Array.isArray(shape?.points) ? shape.points.map(toPoint) : []))
-    .filter((points) =>
-      points.every((point) => Number.isInteger(point.x) && Number.isInteger(point.y))
+    .map((shape, index) => ({
+      id: typeof shape?.id === 'string' && shape.id.trim() ? shape.id.trim() : `shape-${index + 1}`,
+      points: Array.isArray(shape?.points) ? shape.points.map(toPoint) : [],
+    }))
+    .filter((shape) =>
+      shape.points.every((point) => Number.isInteger(point.x) && Number.isInteger(point.y))
     );
 }
 
@@ -35,6 +38,8 @@ const BASE_SHAPES = normalizeShapes(symmetryShapesConfig);
 if (BASE_SHAPES.length === 0) {
   throw new Error('Symmetry shapes dataset is empty or invalid.');
 }
+
+const SHAPES_BY_ID = new Map(BASE_SHAPES.map((shape) => [shape.id, shape]));
 
 export const SYMMETRY_BASE_SHAPE_COUNT = BASE_SHAPES.length;
 
@@ -75,6 +80,113 @@ function pickRenderMode(baseShape, randomFn) {
     return 'open';
   }
   return randomFn() < 0.5 ? 'open' : 'closed';
+}
+
+function seedKey(seed) {
+  return `${seed.axis}|${seed.shapeId}`;
+}
+
+function getShapeById(shapeId) {
+  return SHAPES_BY_ID.get(shapeId) || BASE_SHAPES[0];
+}
+
+function shuffleList(items, randomFn) {
+  const list = [...items];
+  for (let i = list.length - 1; i > 0; i -= 1) {
+    const j = randomIndex(i + 1, randomFn);
+    [list[i], list[j]] = [list[j], list[i]];
+  }
+  return list;
+}
+
+function buildAxisSeeds(axis, randomFn) {
+  return shuffleList(
+    BASE_SHAPES.map((shape) => ({ axis, shapeId: shape.id })),
+    randomFn
+  );
+}
+
+function takeNextSeed(seeds, lastMeta, allowFallback = true) {
+  if (seeds.length === 0) {
+    return null;
+  }
+
+  const candidateIndex = seeds.findIndex(
+    (seed) => seed.shapeId !== lastMeta.shapeId && seedKey(seed) !== lastMeta.pairKey
+  );
+
+  if (candidateIndex === -1) {
+    return allowFallback ? seeds.shift() || null : null;
+  }
+
+  const [candidate] = seeds.splice(candidateIndex, 1);
+  return candidate;
+}
+
+function buildBalancedCycle(lastMeta, randomFn) {
+  const verticalSeeds = buildAxisSeeds('vertical', randomFn);
+  const horizontalSeeds = buildAxisSeeds('horizontal', randomFn);
+  const cycle = [];
+
+  let preferredAxis = randomFn() < 0.5 ? 'vertical' : 'horizontal';
+  let localLast = lastMeta;
+
+  while (verticalSeeds.length > 0 || horizontalSeeds.length > 0) {
+    const primary = preferredAxis === 'vertical' ? verticalSeeds : horizontalSeeds;
+    const secondary = preferredAxis === 'vertical' ? horizontalSeeds : verticalSeeds;
+
+    let next = takeNextSeed(primary, localLast, false);
+    if (!next) {
+      next = takeNextSeed(secondary, localLast, false);
+    }
+    if (!next) {
+      next = takeNextSeed(primary, localLast, true) || takeNextSeed(secondary, localLast, true);
+    }
+    if (!next) {
+      break;
+    }
+
+    cycle.push(next);
+    localLast = {
+      shapeId: next.shapeId,
+      pairKey: seedKey(next),
+    };
+    preferredAxis = preferredAxis === 'vertical' ? 'horizontal' : 'vertical';
+  }
+
+  return cycle;
+}
+
+export function createSymmetryQuestionBag(randomFn = Math.random) {
+  let queue = [];
+  let lastMeta = {
+    shapeId: '',
+    pairKey: '',
+  };
+
+  function refill() {
+    queue = buildBalancedCycle(lastMeta, randomFn);
+  }
+
+  return {
+    next() {
+      if (queue.length === 0) {
+        refill();
+      }
+
+      const seed = queue.shift();
+      if (!seed) {
+        return generateSymmetryQuestion(randomFn);
+      }
+
+      lastMeta = {
+        shapeId: seed.shapeId,
+        pairKey: seedKey(seed),
+      };
+
+      return buildQuestionFromSeed(seed, randomFn);
+    },
+  };
 }
 
 export function mirrorPointVertical(point, gridSize = GRID_SIZE) {
@@ -139,11 +251,10 @@ function toOptionShape(shape) {
   };
 }
 
-export function generateSymmetryQuestion(randomFn = Math.random) {
-  const axis = AXES[randomIndex(AXES.length, randomFn)];
-  const seedShape = BASE_SHAPES[randomIndex(BASE_SHAPES.length, randomFn)];
-  const baseShape = shapeForAxis(seedShape, axis);
-  const correctShape = mirrorShapeByAxis(baseShape, axis);
+function buildQuestionFromSeed(seed, randomFn) {
+  const seedShape = getShapeById(seed.shapeId);
+  const baseShape = shapeForAxis(seedShape.points, seed.axis);
+  const correctShape = mirrorShapeByAxis(baseShape, seed.axis);
   const renderMode = pickRenderMode(baseShape, randomFn);
 
   const options = [];
@@ -157,7 +268,7 @@ export function generateSymmetryQuestion(randomFn = Math.random) {
   });
   usedKeys.add(correctOption.key);
 
-  const distractors = createDistractors(baseShape, correctShape, axis);
+  const distractors = createDistractors(baseShape, correctShape, seed.axis);
   for (const shape of distractors) {
     const candidate = toOptionShape(shape);
     if (usedKeys.has(candidate.key)) {
@@ -176,7 +287,9 @@ export function generateSymmetryQuestion(randomFn = Math.random) {
       break;
     }
 
-    const mirroredFallback = toOptionShape(mirrorShapeByAxis(shapeForAxis(fallbackShape, axis), axis));
+    const mirroredFallback = toOptionShape(
+      mirrorShapeByAxis(shapeForAxis(fallbackShape.points, seed.axis), seed.axis)
+    );
     if (usedKeys.has(mirroredFallback.key)) {
       continue;
     }
@@ -190,9 +303,12 @@ export function generateSymmetryQuestion(randomFn = Math.random) {
   }
 
   while (options.length < 4) {
-    const randomShape = shapeForAxis(BASE_SHAPES[randomIndex(BASE_SHAPES.length, randomFn)], axis);
+    const randomShape = shapeForAxis(
+      BASE_SHAPES[randomIndex(BASE_SHAPES.length, randomFn)].points,
+      seed.axis
+    );
     const shifted = toOptionShape(
-      axis === 'horizontal' ? shiftPoints(randomShape, 0, 2) : shiftPoints(randomShape, 2, 0)
+      seed.axis === 'horizontal' ? shiftPoints(randomShape, 0, 2) : shiftPoints(randomShape, 2, 0)
     );
     if (shifted.points.length < 3 || usedKeys.has(shifted.key)) {
       continue;
@@ -214,17 +330,24 @@ export function generateSymmetryQuestion(randomFn = Math.random) {
   const correctOptionId = options.find((option) => option.isCorrect)?.id || '';
 
   return {
-    axis,
+    axis: seed.axis,
+    shapeId: seed.shapeId,
     gridSize: GRID_SIZE,
     renderMode,
     prompt:
-      axis === 'horizontal'
+      seed.axis === 'horizontal'
         ? "Choisis la figure symétrique par rapport à l'axe horizontal."
         : "Choisis la figure symétrique par rapport à l'axe vertical.",
     baseShape,
     options,
     correctOptionId,
   };
+}
+
+export function generateSymmetryQuestion(randomFn = Math.random) {
+  const axis = AXES[randomIndex(AXES.length, randomFn)];
+  const seedShape = BASE_SHAPES[randomIndex(BASE_SHAPES.length, randomFn)];
+  return buildQuestionFromSeed({ axis, shapeId: seedShape.id }, randomFn);
 }
 
 export function evaluateSymmetryAnswer(question, selectedOptionId) {
@@ -246,3 +369,4 @@ export function evaluateSymmetryAnswer(question, selectedOptionId) {
       : `Ce n'est pas la bonne symétrie. Observe bien l'axe ${axisLabel}.`,
   };
 }
+

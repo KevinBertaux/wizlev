@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  createSymmetryQuestionBag,
   evaluateSymmetryAnswer,
   generateSymmetryQuestion,
   mirrorPointHorizontal,
@@ -82,6 +83,7 @@ describe('generateSymmetryQuestion', () => {
     expect(question.prompt).toContain('axe horizontal');
     expect(question.options).toHaveLength(4);
   });
+
   it('sets render mode to open when random mode draw is below 0.5', () => {
     const random = sequenceRandom([0.01, 0.01, 0.2, 0.3, 0.5, 0.7, 0.9]);
     const question = generateSymmetryQuestion(random);
@@ -126,6 +128,42 @@ describe('generateSymmetryQuestion', () => {
   });
 });
 
+describe('createSymmetryQuestionBag', () => {
+  it('builds a full balanced cycle without duplicate axis-shape pairs', () => {
+    const bag = createSymmetryQuestionBag(sequenceRandom([0.2, 0.8, 0.4, 0.6, 0.1, 0.9]));
+    const pairKeys = new Set();
+    let verticalCount = 0;
+    let horizontalCount = 0;
+
+    for (let i = 0; i < SYMMETRY_BASE_SHAPE_COUNT * 2; i += 1) {
+      const question = bag.next();
+      pairKeys.add(`${question.axis}|${question.shapeId}`);
+      if (question.axis === 'horizontal') {
+        horizontalCount += 1;
+      } else {
+        verticalCount += 1;
+      }
+    }
+
+    expect(pairKeys.size).toBe(SYMMETRY_BASE_SHAPE_COUNT * 2);
+    expect(verticalCount).toBe(SYMMETRY_BASE_SHAPE_COUNT);
+    expect(horizontalCount).toBe(SYMMETRY_BASE_SHAPE_COUNT);
+  });
+
+  it('avoids the same shape twice in a row over many draws', () => {
+    const bag = createSymmetryQuestionBag(sequenceRandom([0.3, 0.7, 0.2, 0.8, 0.1, 0.9, 0.4, 0.6]));
+
+    let previous = null;
+    for (let i = 0; i < SYMMETRY_BASE_SHAPE_COUNT * 4; i += 1) {
+      const question = bag.next();
+      if (previous) {
+        expect(question.shapeId).not.toBe(previous.shapeId);
+      }
+      previous = question;
+    }
+  });
+});
+
 describe('evaluateSymmetryAnswer', () => {
   it('rejects empty selection', () => {
     const result = evaluateSymmetryAnswer({ axis: 'vertical', correctOptionId: 'correct' }, '');
@@ -146,5 +184,3 @@ describe('evaluateSymmetryAnswer', () => {
     expect(result.message).toContain('axe horizontal');
   });
 });
-
-
