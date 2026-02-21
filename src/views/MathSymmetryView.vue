@@ -214,7 +214,7 @@ onUnmounted(() => {
   <section class="page-block symmetry-page">
     <h1>Math - Symétrie</h1>
 
-    <div class="score-panel">
+    <div class="mp-panel-info">
       <span>Score : {{ score }} / {{ total }}</span>
       <span>🏆 Série : {{ streak }}</span>
       <span>🥇 Meilleure série : {{ bestStreak }}</span>
@@ -310,9 +310,11 @@ onUnmounted(() => {
       </button>
     </div>
 
-    <div class="actions">
-      <button class="btn btn-primary" type="button" :disabled="!canCheck" @click="checkAnswer">Vérifier</button>
-      <button class="btn btn-secondary" type="button" @click="nextQuestion">Question suivante</button>
+    <div class="mp-actions">
+      <button class="mp-btn mp-btn-primary" type="button" :disabled="!canCheck" @click="checkAnswer">
+        Vérifier
+      </button>
+      <button class="mp-btn mp-btn-secondary" type="button" @click="nextQuestion">Question suivante</button>
     </div>
 
     <div v-if="feedbackMessage" class="feedback" :class="feedbackType === 'correct' ? 'ok' : 'ko'">
@@ -327,18 +329,6 @@ onUnmounted(() => {
 .symmetry-page {
   max-width: 860px;
   margin-inline: auto;
-}
-
-.score-panel {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 20px;
-  margin-bottom: 12px;
-  padding: 10px;
-  border-radius: 12px;
-  font-weight: 700;
-  background: rgba(78, 205, 196, 0.14);
 }
 
 .prompt-box {
@@ -421,37 +411,6 @@ onUnmounted(() => {
   fill: #243041;
 }
 
-.actions {
-  margin-top: 12px;
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.btn {
-  border: none;
-  border-radius: 10px;
-  padding: 10px 14px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, #4ecdc4, #6fe7dd);
-  color: white;
-}
-
-.btn-secondary {
-  background: linear-gradient(135deg, #a29bfe, #6c5ce7);
-  color: white;
-}
-
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
 .feedback {
   margin-top: 10px;
   text-align: center;
@@ -485,5 +444,3 @@ onUnmounted(() => {
   }
 }
 </style>
-
-

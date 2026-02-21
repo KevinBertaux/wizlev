@@ -10,6 +10,11 @@
   --brand: #ff6b6b;
   --brand-2: #4ecdc4;
   --line: #d9e1ed;
+  --ok: #1f7a5c;
+  --ko: #b33939;
+  --btn-primary-grad: linear-gradient(135deg, #4ecdc4, #6fe7dd);
+  --btn-secondary-grad: linear-gradient(135deg, #a29bfe, #6c5ce7);
+  --panel-info-bg: rgba(78, 205, 196, 0.14);
 }
 
 * {
@@ -81,6 +86,7 @@ a:focus-visible {
 .main-nav a.router-link-active {
   background: rgba(78, 205, 196, 0.2);
 }
+
 .burger {
   display: none;
   border: 1px solid var(--line);
@@ -134,6 +140,70 @@ a:focus-visible {
 
 .muted {
   color: var(--muted);
+}
+
+.mp-panel-info {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  text-align: center;
+  font-size: 1.2em;
+  margin-bottom: 14px;
+  font-weight: 700;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--panel-info-bg);
+}
+
+.mp-feedback {
+  text-align: center;
+  font-size: 1.2em;
+  font-weight: 700;
+  border-radius: 14px;
+  margin-bottom: 16px;
+  padding: 16px;
+}
+
+.mp-feedback-success {
+  background: linear-gradient(135deg, #95e1d3, #a8e6cf);
+  color: var(--text);
+}
+
+.mp-feedback-error {
+  background: linear-gradient(135deg, #ff7675, #fab1a0);
+  color: #ffffff;
+}
+
+.mp-actions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.mp-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mp-btn-primary {
+  background: var(--btn-primary-grad);
+  color: #ffffff;
+}
+
+.mp-btn-secondary {
+  background: var(--btn-secondary-grad);
+  color: #ffffff;
+}
+
+.mp-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .site-footer {
@@ -192,5 +262,3 @@ a:focus-visible {
     gap: 8px;
   }
 }
-
-
