@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --bg: #f3f7ff;
   --surface: #ffffff;
@@ -188,4 +192,5 @@ a:focus-visible {
     gap: 8px;
   }
 }
+
 
