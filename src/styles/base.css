@@ -14,8 +14,8 @@
   --ok: #1f7a5c;
   --ko: #b33939;
 
-  --btn-primary-grad: linear-gradient(135deg, #0d7d73, #157f75);
-  --btn-secondary-grad: linear-gradient(135deg, #6b59f0, #5c4ce0);
+  --btn-primary-grad: linear-gradient(135deg, #0b7aa0, #0e7f87);
+  --btn-secondary-grad: linear-gradient(135deg, #6a58ee, #6350ea);
   --btn-danger-grad: linear-gradient(135deg, #be4611, #aa2450);
 
   --panel-info-bg: rgba(0, 128, 208, 0.12);
