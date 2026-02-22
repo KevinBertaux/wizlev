@@ -71,7 +71,7 @@
     <h2>11. Contact</h2>
     <p>
       Pour toute question relative à ces CGU:
-      <a href="mailto:kevinbertaux+manabuplay@gmail.com">kevinbertaux+manabuplay@gmail.com</a>
+      kevinbertaux+manabuplay [at] gmail [dot] com
     </p>
   </section>
 </template>
@@ -107,3 +107,4 @@ a {
   text-decoration: underline;
 }
 </style>
+

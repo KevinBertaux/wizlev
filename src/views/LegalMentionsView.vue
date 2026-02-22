@@ -26,7 +26,7 @@
     <h2>Contact</h2>
     <p>
       Pour toute question (légale, contenu, données personnelles) :
-      <a href="mailto:kevinbertaux+manabuplay@gmail.com">kevinbertaux+manabuplay@gmail.com</a>
+      kevinbertaux+manabuplay [at] gmail [dot] com
     </p>
 
     <h2>Hébergement</h2>
@@ -90,6 +90,7 @@ a {
   text-decoration: underline;
 }
 </style>
+
 
 
 

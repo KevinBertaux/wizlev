@@ -7,7 +7,7 @@
     <p>
       Le site <strong>ManabuPlay</strong> est exploité par un éditeur non professionnel.
       Contact vie privée :
-      <a href="mailto:kevinbertaux+manabuplay@gmail.com">kevinbertaux+manabuplay@gmail.com</a>
+      kevinbertaux+manabuplay [at] gmail [dot] com
     </p>
 
     <h2>2. Données traitées</h2>
@@ -75,7 +75,7 @@
     </p>
     <p>
       Pour exercer vos droits :
-      <a href="mailto:kevinbertaux+manabuplay@gmail.com">kevinbertaux+manabuplay@gmail.com</a>
+      kevinbertaux+manabuplay [at] gmail [dot] com
     </p>
     <p>
       Vous pouvez également introduire une réclamation auprès de la CNIL :
@@ -137,6 +137,7 @@ a {
   text-decoration: underline;
 }
 </style>
+
 
 
 
