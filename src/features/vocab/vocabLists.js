@@ -18,7 +18,6 @@ import fruits2 from '@/content/vocab/en/fruits-2.json';
 import legumes2 from '@/content/vocab/en/legumes-2.json';
 
 const STORAGE_PREFIX = 'manabuplay_vocab_list_';
-const LEGACY_STORAGE_PREFIX = 'revision_enfants_vocab_list_';
 
 const baseVocabLists = {
   identiteEcole: {
@@ -190,9 +189,6 @@ function getStorageKey(listKey) {
   return `${STORAGE_PREFIX}${listKey}`;
 }
 
-function getLegacyStorageKey(listKey) {
-  return `${LEGACY_STORAGE_PREFIX}${listKey}`;
-}
 
 export function getVocabList(listKey) {
   const baseList = baseVocabLists[listKey];
@@ -204,26 +200,14 @@ export function getVocabList(listKey) {
     return sanitizeListPayload(baseList, baseList);
   }
 
-  const currentRaw = localStorage.getItem(getStorageKey(listKey));
-  const legacyRaw = localStorage.getItem(getLegacyStorageKey(listKey));
-  const raw = currentRaw || legacyRaw;
+  const raw = localStorage.getItem(getStorageKey(listKey));
   if (!raw) {
     return sanitizeListPayload(baseList, baseList);
   }
 
   try {
     const parsed = JSON.parse(raw);
-    const sanitized = sanitizeListPayload(parsed, baseList);
-
-    if (!currentRaw && legacyRaw) {
-      try {
-        localStorage.setItem(getStorageKey(listKey), JSON.stringify(sanitized));
-      } catch {
-        // Ignore migration write failures and keep serving legacy payload.
-      }
-    }
-
-    return sanitized;
+    return sanitizeListPayload(parsed, baseList);
   } catch {
     return sanitizeListPayload(baseList, baseList);
   }
@@ -249,7 +233,6 @@ export function resetVocabList(listKey) {
     return;
   }
   localStorage.removeItem(getStorageKey(listKey));
-  localStorage.removeItem(getLegacyStorageKey(listKey));
 }
 
 

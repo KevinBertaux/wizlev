@@ -89,22 +89,6 @@ describe('vocabLists storage behavior', () => {
     });
   });
 
-  it('migrates legacy storage key into current key', () => {
-    const legacyKey = 'revision_enfants_vocab_list_fruits';
-    storage.setItem(
-      legacyKey,
-      JSON.stringify({
-        name: 'Legacy Fruits',
-        description: 'old',
-        words: [{ english: 'Pear', french: 'Poire' }],
-      })
-    );
-
-    const list = getVocabList('fruits');
-
-    expect(list.name).toBe('Legacy Fruits');
-    expect(storage.getItem('manabuplay_vocab_list_fruits')).not.toBeNull();
-  });
 
   it('falls back to base list when stored JSON is invalid', () => {
     const baseline = getVocabList('fruits');
@@ -114,14 +98,12 @@ describe('vocabLists storage behavior', () => {
     expect(list).toEqual(baseline);
   });
 
-  it('resets both current and legacy overrides', () => {
+  it('resets current override', () => {
     storage.setItem('manabuplay_vocab_list_fruits', JSON.stringify({ name: 'Current', words: [] }));
-    storage.setItem('revision_enfants_vocab_list_fruits', JSON.stringify({ name: 'Legacy', words: [] }));
 
     resetVocabList('fruits');
 
     expect(storage.getItem('manabuplay_vocab_list_fruits')).toBeNull();
-    expect(storage.getItem('revision_enfants_vocab_list_fruits')).toBeNull();
   });
 
 
@@ -139,30 +121,6 @@ describe('vocabLists storage behavior', () => {
     expect(saved).toBe(false);
   });
 
-  it('keeps legacy read working even when migration write fails', () => {
-    const legacyKey = 'revision_enfants_vocab_list_fruits';
-    storage.map.set(
-      legacyKey,
-      JSON.stringify({
-        name: 'Legacy Fruits',
-        description: 'old',
-        words: [{ english: 'Pear', french: 'Poire' }],
-      })
-    );
-
-    const originalSetItem = storage.setItem.bind(storage);
-    storage.setItem = (key, value) => {
-      if (key === 'manabuplay_vocab_list_fruits') {
-        throw new Error('QuotaExceededError');
-      }
-      originalSetItem(key, value);
-    };
-
-    const list = getVocabList('fruits');
-
-    expect(list.name).toBe('Legacy Fruits');
-    expect(storage.getItem('manabuplay_vocab_list_fruits')).toBeNull();
-  });
   it('returns null / false for unknown list keys', () => {
     expect(getVocabList('unknown-key')).toBeNull();
     expect(saveVocabList('unknown-key', { name: 'x', words: [] })).toBe(false);
