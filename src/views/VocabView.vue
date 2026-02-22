@@ -559,25 +559,38 @@ onUnmounted(() => {
 .carousel-arrow {
   width: 52px;
   height: 52px;
-  border: none;
+  border: 1px solid transparent;
   border-radius: 50%;
   background: var(--btn-secondary-grad);
-  color: #ffffff;
+  color: var(--ink-inverse);
   font-size: 1.3em;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 2px 0 rgba(15, 23, 42, 0.14);
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.18s ease,
+    filter 0.18s ease,
+    border-color 0.18s ease;
 }
 
 .carousel-arrow:hover,
 .carousel-arrow:focus-visible {
-  filter: brightness(1.05);
+  transform: translateY(-1px);
+  filter: brightness(1.05) saturate(1.03);
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.2);
+}
+
+.carousel-arrow:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 0 rgba(15, 23, 42, 0.16);
 }
 
 .flashcard {
   position: relative;
-  background: #fff;
+  background: #fbfdff;
   border-radius: 18px;
   min-height: 260px;
   padding: 42px 22px;
@@ -598,7 +611,7 @@ onUnmounted(() => {
   font-size: 1.02rem;
   color: #25374d;
   letter-spacing: 0.02em;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.65);
+  text-shadow: 0 1px 1px rgba(247, 249, 252, 0.65);
 }
 
 .flashcard.flipped {
@@ -667,16 +680,35 @@ onUnmounted(() => {
   width: 46px;
   height: 46px;
   border-radius: 50%;
-  border: 2px solid rgba(36, 48, 65, 0.2);
-  background: #fff;
+  border: 2px solid rgba(36, 48, 65, 0.26);
+  background: #fbfdff;
   color: #243041;
   font-size: 1.15em;
   cursor: pointer;
+  box-shadow: 0 2px 0 rgba(15, 23, 42, 0.12);
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.18s ease,
+    background-color 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.tts-inline-btn:hover,
+.tts-inline-btn:focus-visible {
+  transform: translateY(-1px);
+  border-color: #2f4e6f;
+  background: #f2f7ff;
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.18);
+}
+
+.tts-inline-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 0 rgba(15, 23, 42, 0.14);
 }
 
 .flashcard.flipped .flashcard-count {
   color: #0f5f5a;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.6);
+  text-shadow: 0 1px 1px rgba(247, 249, 252, 0.6);
 }
 
 .flashcard.flipped .tts-inline-btn {
@@ -699,22 +731,35 @@ onUnmounted(() => {
 }
 
 .btn {
-  border: none;
+  border: 1px solid transparent;
   border-radius: 12px;
   padding: 12px 20px;
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
+  box-shadow: 0 2px 0 rgba(15, 23, 42, 0.14);
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.18s ease,
+    filter 0.18s ease,
+    border-color 0.18s ease;
 }
 
 .btn-secondary {
   background: var(--btn-secondary-grad);
-  color: #ffffff;
+  color: var(--ink-inverse);
 }
 
 .btn:hover:not(:disabled),
 .btn:focus-visible:not(:disabled) {
-  filter: brightness(1.05);
+  transform: translateY(-1px);
+  filter: brightness(1.05) saturate(1.03);
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.2);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 0 rgba(15, 23, 42, 0.16);
 }
 
 @media (max-width: 820px) {

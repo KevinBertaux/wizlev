@@ -359,7 +359,7 @@ onUnmounted(() => {
   margin-inline: auto;
   border-radius: 12px;
   border: 1px solid #c6d5e8;
-  background: #fff;
+  background: #fbfdff;
 }
 
 .options-grid {
@@ -372,17 +372,31 @@ onUnmounted(() => {
 
 .option-btn {
   position: relative;
-  border: 1px solid #9ab0c8;
+  border: 1px solid #8ea8c2;
   border-radius: 12px;
-  background: #fff;
+  background: #fbfdff;
   padding: 10px 10px 8px;
   display: grid;
   justify-items: center;
   cursor: pointer;
+  box-shadow: 0 2px 0 rgba(15, 23, 42, 0.12);
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease,
+    background-color 0.18s ease;
 }
 
 .option-btn:hover {
-  background: #f6faff;
+  background: #ebf4ff;
+  border-color: #55789e;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.18);
+}
+
+.option-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 0 rgba(15, 23, 42, 0.14);
 }
 
 .option-label {

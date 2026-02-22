@@ -167,26 +167,40 @@ onUnmounted(() => {
 }
 
 .btn {
-  border: none;
+  border: 1px solid transparent;
   border-radius: 10px;
   padding: 10px 14px;
   font-weight: 700;
   cursor: pointer;
+  box-shadow: 0 2px 0 rgba(15, 23, 42, 0.14);
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.18s ease,
+    filter 0.18s ease,
+    border-color 0.18s ease;
 }
 
 .btn-primary {
   background: var(--btn-primary-grad);
-  color: #ffffff;
+  color: var(--ink-inverse);
 }
 
 .btn:hover:not(:disabled),
 .btn:focus-visible:not(:disabled) {
-  filter: brightness(1.05);
+  transform: translateY(-1px);
+  filter: brightness(1.05) saturate(1.03);
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.2);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 0 rgba(15, 23, 42, 0.16);
 }
 
 .btn:disabled {
-  opacity: 0.6;
+  opacity: 0.62;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .status {
