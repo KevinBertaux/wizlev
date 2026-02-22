@@ -3,8 +3,10 @@ import { nextTick, onUnmounted, ref, watch } from 'vue';
 import { evaluateAnswer, generateQuestion } from '@/features/math/quizEngine';
 import MotivationToast from '@/components/MotivationToast.vue';
 import QuizActions from '@/components/QuizActions.vue';
+import QuizEmptyState from '@/components/QuizEmptyState.vue';
 import QuizFeedbackBanner from '@/components/QuizFeedbackBanner.vue';
 import QuizScoreBar from '@/components/QuizScoreBar.vue';
+import QuizSelectField from '@/components/QuizSelectField.vue';
 import { useQuizFlow } from '@/composables/useQuizFlow';
 import {
   buildMotivationToast,
@@ -14,6 +16,21 @@ import {
 
 const BEST_STREAK_KEY = 'manabuplay_math_best_streak_v1';
 const AUTO_NEXT_DELAY_MS = 2000;
+const tableOptions = [
+  { value: '0', label: 'Table de 0' },
+  { value: '1', label: 'Table de 1' },
+  { value: '2', label: 'Table de 2' },
+  { value: '3', label: 'Table de 3' },
+  { value: '4', label: 'Table de 4' },
+  { value: '5', label: 'Table de 5' },
+  { value: '6', label: 'Table de 6' },
+  { value: '7', label: 'Table de 7' },
+  { value: '8', label: 'Table de 8' },
+  { value: '9', label: 'Table de 9' },
+  { value: '10', label: 'Table de 10' },
+  { value: '11', label: 'Table de 11' },
+  { value: 'all', label: 'Toutes les tables (0-11)' },
+];
 
 const tableSelect = ref('');
 const answerInput = ref('');
@@ -158,23 +175,13 @@ onUnmounted(() => {
     <h1>Math - Tables de multiplication</h1>
 
     <div class="settings-box">
-      <label for="tableSelect">Choisir la table :</label>
-      <select id="tableSelect" v-model="tableSelect">
-        <option value="">-- Sélectionner une table --</option>
-        <option value="0">Table de 0</option>
-        <option value="1">Table de 1</option>
-        <option value="2">Table de 2</option>
-        <option value="3">Table de 3</option>
-        <option value="4">Table de 4</option>
-        <option value="5">Table de 5</option>
-        <option value="6">Table de 6</option>
-        <option value="7">Table de 7</option>
-        <option value="8">Table de 8</option>
-        <option value="9">Table de 9</option>
-        <option value="10">Table de 10</option>
-        <option value="11">Table de 11</option>
-        <option value="all">Toutes les tables (0-11)</option>
-      </select>
+      <QuizSelectField
+        v-model="tableSelect"
+        select-id="tableSelect"
+        label="Choisir la table :"
+        placeholder="-- Sélectionner une table --"
+        :options="tableOptions"
+      />
     </div>
 
     <QuizScoreBar
@@ -188,7 +195,7 @@ onUnmounted(() => {
       <MotivationToast :message="toastMessage" :tone="toastTone" />
     </div>
 
-    <div v-if="!tableSelect" class="empty-list-state">Choisir une table pour commencer.</div>
+    <QuizEmptyState v-if="!tableSelect" message="Choisir une table pour commencer." />
 
     <QuizFeedbackBanner
       v-if="tableSelect && feedbackMain"
@@ -226,36 +233,6 @@ onUnmounted(() => {
   padding: 18px;
   border-radius: 14px;
   margin-bottom: 18px;
-}
-
-.settings-box label {
-  display: block;
-  margin: 0 0 8px;
-  font-weight: 700;
-}
-
-.settings-box select {
-  width: 100%;
-  padding: 10px;
-  border-radius: 10px;
-  border: 1px solid #9ab0c8;
-  background: white;
-}
-
-.settings-box select:focus-visible {
-  border-color: #1d4ed8;
-  box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.16);
-  outline: none;
-}
-
-.empty-list-state {
-  text-align: center;
-  font-weight: 700;
-  color: #3a4b61;
-  background: rgba(78, 205, 196, 0.12);
-  border: 1px dashed #7ab8c3;
-  border-radius: 12px;
-  padding: 16px;
 }
 
 .motivation-toast-anchor {
