@@ -5,7 +5,6 @@ import { getVocabList, vocabListOptions } from '@/features/vocab/vocabLists';
 const ttsAccentStorageKey = 'manabuplay_tts_accent';
 const ttsRateStorageKey = 'manabuplay_tts_rate';
 const cardDirectionStorageKey = 'manabuplay_vocab_card_direction';
-const legacyTtsAccentStorageKey = 'revision_enfants_tts_accent';
 const ttsSupported =
   typeof window !== 'undefined' &&
   'speechSynthesis' in window &&
@@ -323,11 +322,9 @@ watch(cardDirection, (direction) => {
 
 onMounted(() => {
   if (typeof window !== 'undefined') {
-    const savedAccent =
-      localStorage.getItem(ttsAccentStorageKey) || localStorage.getItem(legacyTtsAccentStorageKey);
+    const savedAccent = localStorage.getItem(ttsAccentStorageKey);
     if (savedAccent === 'en-US' || savedAccent === 'en-GB') {
       ttsAccent.value = savedAccent;
-      localStorage.setItem(ttsAccentStorageKey, savedAccent);
     }
 
     const savedRate = localStorage.getItem(ttsRateStorageKey);
