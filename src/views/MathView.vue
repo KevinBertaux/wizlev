@@ -1,10 +1,11 @@
 <script setup>
-import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
+import { nextTick, onUnmounted, ref, watch } from 'vue';
 import { evaluateAnswer, generateQuestion } from '@/features/math/quizEngine';
 import MotivationToast from '@/components/MotivationToast.vue';
 import QuizActions from '@/components/QuizActions.vue';
 import QuizFeedbackBanner from '@/components/QuizFeedbackBanner.vue';
 import QuizScoreBar from '@/components/QuizScoreBar.vue';
+import { useQuizFlow } from '@/composables/useQuizFlow';
 import {
   buildMotivationToast,
   MOTIVATION_TOAST_DURATION_MS,
@@ -12,20 +13,11 @@ import {
 } from '@/features/motivation/toastEngine';
 
 const BEST_STREAK_KEY = 'manabuplay_math_best_streak_v1';
+const AUTO_NEXT_DELAY_MS = 2000;
 
 const tableSelect = ref('');
-const score = ref(0);
-const total = ref(0);
-const streak = ref(0);
-const bestStreak = ref(0);
 const answerInput = ref('');
 const answerField = ref(null);
-const feedbackType = ref('');
-const feedbackMain = ref('');
-const feedbackExtra = ref('');
-const hasAnsweredCurrentQuestion = ref(false);
-const currentQuestion = ref(null);
-const nextQuestionTimeoutId = ref(null);
 const toastMessage = ref('');
 const toastTone = ref('streak');
 const toastTimeoutId = ref(null);
@@ -33,40 +25,27 @@ const motivationState = ref({
   hasShownX3InSession: false,
   hasShownRecordInRun: false,
 });
-const canCheck = computed(() => !hasAnsweredCurrentQuestion.value);
-
-function readBestStreak() {
-  if (typeof window === 'undefined') {
-    return 0;
-  }
-
-  try {
-    const raw = window.localStorage.getItem(BEST_STREAK_KEY);
-    const parsed = Number.parseInt(raw ?? '0', 10);
-    return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
-  } catch {
-    return 0;
-  }
-}
-
-function saveBestStreak(value) {
-  if (typeof window === 'undefined') {
-    return;
-  }
-
-  try {
-    window.localStorage.setItem(BEST_STREAK_KEY, String(value));
-  } catch {
-    // Ignore localStorage failures (private mode/quota).
-  }
-}
-
-function clearNextQuestionTimeout() {
-  if (nextQuestionTimeoutId.value) {
-    clearTimeout(nextQuestionTimeoutId.value);
-    nextQuestionTimeoutId.value = null;
-  }
-}
+const {
+  score,
+  total,
+  streak,
+  bestStreak,
+  currentQuestion,
+  hasChecked,
+  canCheck,
+  feedbackType,
+  feedbackMain,
+  feedbackExtra,
+  setFeedback,
+  setChecked,
+  nextQuestion,
+  applyProgress,
+  scheduleAutoNext,
+  clearAutoNextTimeout,
+} = useQuizFlow({
+  bestStreakKey: BEST_STREAK_KEY,
+  autoNextDelayMs: AUTO_NEXT_DELAY_MS,
+});
 
 function clearToastTimeout() {
   if (toastTimeoutId.value) {
@@ -94,25 +73,20 @@ function focusAnswerField() {
   });
 }
 
-function nextQuestion() {
-  clearNextQuestionTimeout();
-  hasAnsweredCurrentQuestion.value = false;
-  feedbackType.value = '';
-  feedbackMain.value = '';
-  feedbackExtra.value = '';
+function loadNextQuestion() {
   answerInput.value = '';
 
-  if (!tableSelect.value) {
-    currentQuestion.value = null;
-    return;
+  const next = nextQuestion({
+    isReady: () => Boolean(tableSelect.value),
+    buildQuestion: () => generateQuestion(tableSelect.value),
+  });
+  if (next) {
+    focusAnswerField();
   }
-
-  currentQuestion.value = generateQuestion(tableSelect.value);
-  focusAnswerField();
 }
 
 function checkAnswer() {
-  if (!currentQuestion.value || hasAnsweredCurrentQuestion.value) {
+  if (!currentQuestion.value || hasChecked.value) {
     return;
   }
 
@@ -124,24 +98,22 @@ function checkAnswer() {
     streak: streak.value,
   });
 
-  feedbackType.value = result.feedbackType;
-  feedbackMain.value = result.feedbackMain;
-  feedbackExtra.value = result.feedbackExtra;
+  setFeedback({
+    type: result.feedbackType,
+    main: result.feedbackMain,
+    extra: result.feedbackExtra,
+  });
 
   if (!result.isValid) {
     return;
   }
 
-  hasAnsweredCurrentQuestion.value = true;
-  score.value = result.nextScore;
-  total.value = result.nextTotal;
-  streak.value = result.nextStreak;
-  const bestStreakBefore = bestStreak.value;
-
-  if (streak.value > bestStreak.value) {
-    bestStreak.value = streak.value;
-    saveBestStreak(bestStreak.value);
-  }
+  setChecked(true);
+  const { bestStreakBefore } = applyProgress({
+    nextScore: result.nextScore,
+    nextTotal: result.nextTotal,
+    nextStreak: result.nextStreak,
+  });
 
   if (result.feedbackType === 'correct') {
     const motivation = buildMotivationToast({
@@ -152,10 +124,9 @@ function checkAnswer() {
     motivationState.value = motivation.state;
     showMotivationToast(motivation.toast);
 
-    nextQuestionTimeoutId.value = setTimeout(() => {
-      nextQuestionTimeoutId.value = null;
-      nextQuestion();
-    }, 2000);
+    scheduleAutoNext(() => {
+      loadNextQuestion();
+    });
   } else {
     motivationState.value = resetMotivationRunState(motivationState.value);
   }
@@ -163,8 +134,8 @@ function checkAnswer() {
 
 function onAnswerKeydown(event) {
   if (event.key === 'Enter' && !event.repeat) {
-    if (hasAnsweredCurrentQuestion.value) {
-      nextQuestion();
+    if (hasChecked.value) {
+      loadNextQuestion();
     } else {
       checkAnswer();
     }
@@ -173,15 +144,11 @@ function onAnswerKeydown(event) {
 
 watch(tableSelect, () => {
   motivationState.value = resetMotivationRunState(motivationState.value);
-  nextQuestion();
-});
-
-onMounted(() => {
-  bestStreak.value = readBestStreak();
+  loadNextQuestion();
 });
 
 onUnmounted(() => {
-  clearNextQuestionTimeout();
+  clearAutoNextTimeout();
   clearToastTimeout();
 });
 </script>
@@ -244,7 +211,7 @@ onUnmounted(() => {
       />
     </div>
 
-    <QuizActions v-if="tableSelect" :can-check="canCheck" @check="checkAnswer" @next="nextQuestion" />
+    <QuizActions v-if="tableSelect" :can-check="canCheck" @check="checkAnswer" @next="loadNextQuestion" />
   </section>
 </template>
 
