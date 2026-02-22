@@ -1,5 +1,5 @@
 <script setup>
-import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
+import { nextTick, onMounted, ref, watch } from 'vue';
 import { evaluateAnswer, generateQuestion } from '@/features/math/quizEngine';
 
 const BEST_STREAK_KEY = 'manabuplay_math_best_streak_v1';
@@ -15,7 +15,6 @@ const feedbackType = ref('');
 const feedbackMain = ref('');
 const feedbackExtra = ref('');
 const hasAnsweredCurrentQuestion = ref(false);
-const nextQuestionTimeoutId = ref(null);
 const currentQuestion = ref(null);
 
 function readBestStreak() {
@@ -44,13 +43,6 @@ function saveBestStreak(value) {
   }
 }
 
-function clearNextQuestionTimeout() {
-  if (nextQuestionTimeoutId.value) {
-    clearTimeout(nextQuestionTimeoutId.value);
-    nextQuestionTimeoutId.value = null;
-  }
-}
-
 function focusAnswerField() {
   nextTick(() => {
     answerField.value?.focus();
@@ -58,7 +50,6 @@ function focusAnswerField() {
 }
 
 function nextQuestion() {
-  clearNextQuestionTimeout();
   hasAnsweredCurrentQuestion.value = false;
   feedbackType.value = '';
   feedbackMain.value = '';
@@ -104,16 +95,15 @@ function checkAnswer() {
     bestStreak.value = streak.value;
     saveBestStreak(bestStreak.value);
   }
-
-  nextQuestionTimeoutId.value = setTimeout(() => {
-    nextQuestionTimeoutId.value = null;
-    nextQuestion();
-  }, 2000);
 }
 
 function onAnswerKeydown(event) {
   if (event.key === 'Enter' && !event.repeat) {
-    checkAnswer();
+    if (hasAnsweredCurrentQuestion.value) {
+      nextQuestion();
+    } else {
+      checkAnswer();
+    }
   }
 }
 
@@ -123,10 +113,6 @@ watch(tableSelect, () => {
 
 onMounted(() => {
   bestStreak.value = readBestStreak();
-});
-
-onUnmounted(() => {
-  clearNextQuestionTimeout();
 });
 </script>
 
@@ -160,7 +146,7 @@ onUnmounted(() => {
       <span>🥇 Meilleure série : {{ bestStreak }}</span>
     </div>
 
-    <div v-if="!tableSelect" class="empty-list-state">Sélectionner une table pour commencer.</div>
+    <div v-if="!tableSelect" class="empty-list-state">Choisir une table pour commencer.</div>
 
     <div
       v-if="tableSelect && feedbackMain"
@@ -285,8 +271,6 @@ onUnmounted(() => {
   }
 }
 </style>
-
-
 
 
 
