@@ -2,6 +2,7 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { createSymmetryQuestionBag, evaluateSymmetryAnswer } from '@/features/math/symmetryEngine';
 import MotivationToast from '@/components/MotivationToast.vue';
+import QuizActions from '@/components/QuizActions.vue';
 import QuizFeedbackBanner from '@/components/QuizFeedbackBanner.vue';
 import QuizScoreBar from '@/components/QuizScoreBar.vue';
 import {
@@ -373,12 +374,7 @@ onUnmounted(() => {
       </button>
     </div>
 
-    <div class="mp-actions">
-      <button class="mp-btn mp-btn-primary" type="button" :disabled="!canCheck" @click="checkAnswer">
-        Vérifier ✓
-      </button>
-      <button class="mp-btn mp-btn-secondary" type="button" @click="nextQuestion">Question suivante →</button>
-    </div>
+    <QuizActions :can-check="canCheck" @check="checkAnswer" @next="nextQuestion" />
 
     <p class="hint">Raccourcis clavier: 1, 2, 3, 4 pour choisir une option, Entrée pour vérifier/suivant.</p>
   </section>

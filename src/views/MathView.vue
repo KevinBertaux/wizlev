@@ -2,6 +2,7 @@
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import { evaluateAnswer, generateQuestion } from '@/features/math/quizEngine';
 import MotivationToast from '@/components/MotivationToast.vue';
+import QuizActions from '@/components/QuizActions.vue';
 import QuizFeedbackBanner from '@/components/QuizFeedbackBanner.vue';
 import QuizScoreBar from '@/components/QuizScoreBar.vue';
 import {
@@ -243,14 +244,7 @@ onUnmounted(() => {
       />
     </div>
 
-    <div v-if="tableSelect" class="mp-actions">
-      <button class="mp-btn mp-btn-primary" type="button" :disabled="!canCheck" @click="checkAnswer">
-        Vérifier ✓
-      </button>
-      <button class="mp-btn mp-btn-secondary" type="button" @click="nextQuestion">
-        Question suivante →
-      </button>
-    </div>
+    <QuizActions v-if="tableSelect" :can-check="canCheck" @check="checkAnswer" @next="nextQuestion" />
   </section>
 </template>
 
