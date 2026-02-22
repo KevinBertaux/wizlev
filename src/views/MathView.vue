@@ -154,18 +154,18 @@ onUnmounted(() => {
       </select>
     </div>
 
-    <div class="score-panel">
+    <div v-if="tableSelect" class="mp-panel-info">
       <span>Score : {{ score }} / {{ total }}</span>
       <span>🏆 Série : {{ streak }}</span>
       <span>🥇 Meilleure série : {{ bestStreak }}</span>
     </div>
 
-    <div v-if="!tableSelect" class="feedback feedback-incorrect">Sélectionner une table pour commencer.</div>
+    <div v-if="!tableSelect" class="empty-list-state">Sélectionner une table pour commencer.</div>
 
     <div
       v-if="tableSelect && feedbackMain"
-      class="feedback"
-      :class="feedbackType === 'correct' ? 'feedback-correct' : 'feedback-incorrect'"
+      class="mp-feedback"
+      :class="feedbackType === 'correct' ? 'mp-feedback-success' : 'mp-feedback-error'"
     >
       <div>{{ feedbackMain }}</div>
       <div v-if="feedbackExtra" class="feedback-extra">{{ feedbackExtra }}</div>
@@ -185,9 +185,11 @@ onUnmounted(() => {
       />
     </div>
 
-    <div class="actions">
-      <button class="btn btn-primary" type="button" :disabled="!tableSelect" @click="checkAnswer">Vérifier ✓</button>
-      <button class="btn btn-secondary" type="button" :disabled="!tableSelect" @click="nextQuestion">
+    <div v-if="tableSelect" class="mp-actions">
+      <button class="mp-btn mp-btn-primary" type="button" @click="checkAnswer">
+        Vérifier ✓
+      </button>
+      <button class="mp-btn mp-btn-secondary" type="button" @click="nextQuestion">
         Question suivante →
       </button>
     </div>
@@ -217,41 +219,24 @@ onUnmounted(() => {
   width: 100%;
   padding: 10px;
   border-radius: 10px;
-  border: 1px solid #b6c7db;
+  border: 1px solid #9ab0c8;
   background: white;
 }
 
-.score-panel {
-  display: flex;
-  justify-content: center;
-  gap: 22px;
-  flex-wrap: wrap;
+.settings-box select:focus-visible {
+  border-color: #1d4ed8;
+  box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.16);
+  outline: none;
+}
+
+.empty-list-state {
   text-align: center;
-  font-size: 1.2em;
-  margin-bottom: 14px;
   font-weight: 700;
-  padding: 12px;
+  color: #3a4b61;
+  background: rgba(78, 205, 196, 0.12);
+  border: 1px dashed #7ab8c3;
   border-radius: 12px;
-  background: rgba(78, 205, 196, 0.14);
-}
-
-.feedback {
-  text-align: center;
-  font-size: 1.2em;
-  font-weight: 700;
-  border-radius: 14px;
-  margin-bottom: 16px;
   padding: 16px;
-}
-
-.feedback-correct {
-  background: linear-gradient(135deg, #95e1d3, #a8e6cf);
-  color: #243041;
-}
-
-.feedback-incorrect {
-  background: linear-gradient(135deg, #ff7675, #fab1a0);
-  color: white;
 }
 
 .feedback-extra {
@@ -283,38 +268,10 @@ onUnmounted(() => {
   font-weight: 700;
 }
 
-.answer-input:focus {
+.answer-input:focus-visible {
   outline: none;
-  border-color: #4ecdc4;
-}
-
-.actions {
-  text-align: center;
-}
-
-.btn {
-  border: none;
-  border-radius: 12px;
-  padding: 12px 20px;
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  margin: 4px;
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, #4ecdc4, #6fe7dd);
-  color: white;
-}
-
-.btn-secondary {
-  background: linear-gradient(135deg, #a29bfe, #6c5ce7);
-  color: white;
-}
-
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+  border-color: #1d4ed8;
+  box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.16);
 }
 
 @media (max-width: 820px) {
@@ -328,4 +285,9 @@ onUnmounted(() => {
   }
 }
 </style>
+
+
+
+
+
 

@@ -154,28 +154,53 @@ onUnmounted(() => {
 
 .auth-form input {
   width: 100%;
-  border: 1px solid #c2d0e1;
+  border: 1px solid #9ab0c8;
   border-radius: 10px;
   padding: 10px;
   background: white;
 }
 
+.auth-form input:focus-visible {
+  border-color: #1d4ed8;
+  box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.16);
+  outline: none;
+}
+
 .btn {
-  border: none;
+  border: 1px solid transparent;
   border-radius: 10px;
   padding: 10px 14px;
   font-weight: 700;
   cursor: pointer;
+  box-shadow: 0 2px 0 rgba(15, 23, 42, 0.14);
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.18s ease,
+    filter 0.18s ease,
+    border-color 0.18s ease;
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #4ecdc4, #6fe7dd);
-  color: white;
+  background: var(--btn-primary-grad);
+  color: var(--ink-inverse);
+}
+
+.btn:hover:not(:disabled),
+.btn:focus-visible:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.05) saturate(1.03);
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.2);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 0 rgba(15, 23, 42, 0.16);
 }
 
 .btn:disabled {
-  opacity: 0.6;
+  opacity: 0.62;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .status {
@@ -187,3 +212,5 @@ onUnmounted(() => {
   color: #b33939;
 }
 </style>
+
+

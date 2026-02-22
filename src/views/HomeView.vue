@@ -1,25 +1,25 @@
 <template>
   <section class="home-v1">
     <div class="page-block section-block">
-      <h1>Mathématiques</h1>
+      <h1>🧮 Mathématiques</h1>
       <div class="cards-grid two-cols">
         <router-link class="home-card" to="/math">
-          <h2>Multiplications</h2>
+          <h2>✖️ Multiplications</h2>
           <p>Tables de 0 à 11, score, série et entraînement progressif.</p>
         </router-link>
 
         <router-link class="home-card" to="/math/symetrie">
-          <h2>Symétrie</h2>
+          <h2>🪞 Symétrie</h2>
           <p>Module en préparation, accès déjà branché.</p>
         </router-link>
       </div>
     </div>
 
     <div class="page-block section-block">
-      <h1>Langues</h1>
+      <h1>🗣️ Langues</h1>
       <div class="cards-grid one-col">
         <router-link class="home-card" to="/vocab">
-          <h2>Anglais</h2>
+          <h2>🇬🇧 Anglais</h2>
           <p>Apprends l'anglais avec des listes, des flashcards et la lecture des mots à voix haute.</p>
         </router-link>
       </div>
@@ -52,10 +52,16 @@
 
 .home-card {
   display: block;
-  border: 1px solid var(--line);
+  border: 1px solid #bfd1e8;
   border-radius: 14px;
   padding: 16px;
-  background: linear-gradient(150deg, #fff 0%, #f5faff 100%);
+  background: linear-gradient(150deg, #fbfdff 0%, #f2f8ff 100%);
+  box-shadow: 0 2px 0 rgba(15, 23, 42, 0.1);
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease,
+    background 0.18s ease;
 }
 
 .home-card h2 {
@@ -64,8 +70,21 @@
 
 .home-card p {
   margin: 0;
-  color: var(--muted);
+  color: #34465d;
   line-height: 1.45;
+}
+
+.home-card:hover,
+.home-card:focus-visible {
+  border-color: #2f4e6f;
+  background: linear-gradient(150deg, #f7fbff 0%, #e9f3ff 100%);
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.14);
+  transform: translateY(-2px);
+}
+
+.home-card:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 0 rgba(15, 23, 42, 0.12);
 }
 
 @media (max-width: 860px) {
@@ -74,5 +93,6 @@
   }
 }
 </style>
+
 
 

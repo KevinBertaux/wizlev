@@ -16,8 +16,8 @@ const statusType = ref('');
 const statusMessage = ref('');
 const englishInputRefs = ref([]);
 const sessionRemainingMs = ref(getAdminSessionRemainingMs());
-const APP_VERSION = '0.4.0';
-const LAST_UPDATE_FR = '19 février 2026';
+const APP_VERSION = '0.5.0-prep';
+const LAST_UPDATE_FR = '22 février 2026';
 let sessionTimerId;
 
 function emptyWord() {
@@ -431,10 +431,17 @@ onUnmounted(() => {
 .admin-card input,
 .admin-card select {
   width: 100%;
-  border: 1px solid #c2d0e1;
+  border: 1px solid #9ab0c8;
   border-radius: 10px;
   padding: 10px;
   background: white;
+}
+
+.admin-card input:focus-visible,
+.admin-card select:focus-visible {
+  border-color: #1d4ed8;
+  box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.16);
+  outline: none;
 }
 
 .empty-state {
@@ -483,26 +490,50 @@ onUnmounted(() => {
 }
 
 .btn {
-  border: none;
+  border: 1px solid transparent;
   border-radius: 10px;
   padding: 10px 14px;
   font-weight: 700;
   cursor: pointer;
+  box-shadow: 0 2px 0 rgba(15, 23, 42, 0.14);
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.18s ease,
+    filter 0.18s ease,
+    border-color 0.18s ease;
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #4ecdc4, #6fe7dd);
-  color: white;
+  background: var(--btn-primary-grad);
+  color: var(--ink-inverse);
 }
 
 .btn-secondary {
-  background: linear-gradient(135deg, #a29bfe, #6c5ce7);
-  color: white;
+  background: var(--btn-secondary-grad);
+  color: var(--ink-inverse);
 }
 
 .btn-danger {
-  background: linear-gradient(135deg, #ff7675, #e17055);
-  color: white;
+  background: var(--btn-danger-grad);
+  color: var(--ink-inverse);
+}
+
+.btn:hover:not(:disabled),
+.btn:focus-visible:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.05) saturate(1.03);
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.2);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 0 rgba(15, 23, 42, 0.16);
+}
+
+.btn:disabled {
+  opacity: 0.62;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
 .import-label {
@@ -546,6 +577,10 @@ pre {
   }
 }
 </style>
+
+
+
+
 
 
 

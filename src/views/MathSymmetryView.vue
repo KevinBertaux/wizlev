@@ -214,7 +214,7 @@ onUnmounted(() => {
   <section class="page-block symmetry-page">
     <h1>Math - Symétrie</h1>
 
-    <div class="score-panel">
+    <div class="mp-panel-info">
       <span>Score : {{ score }} / {{ total }}</span>
       <span>🏆 Série : {{ streak }}</span>
       <span>🥇 Meilleure série : {{ bestStreak }}</span>
@@ -310,9 +310,11 @@ onUnmounted(() => {
       </button>
     </div>
 
-    <div class="actions">
-      <button class="btn btn-primary" type="button" :disabled="!canCheck" @click="checkAnswer">Vérifier</button>
-      <button class="btn btn-secondary" type="button" @click="nextQuestion">Question suivante</button>
+    <div class="mp-actions">
+      <button class="mp-btn mp-btn-primary" type="button" :disabled="!canCheck" @click="checkAnswer">
+        Vérifier
+      </button>
+      <button class="mp-btn mp-btn-secondary" type="button" @click="nextQuestion">Question suivante</button>
     </div>
 
     <div v-if="feedbackMessage" class="feedback" :class="feedbackType === 'correct' ? 'ok' : 'ko'">
@@ -325,59 +327,92 @@ onUnmounted(() => {
 
 <style scoped>
 .symmetry-page {
-  max-width: 860px;
+  max-width: 820px;
   margin-inline: auto;
 }
 
-.score-panel {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 20px;
-  margin-bottom: 12px;
-  padding: 10px;
-  border-radius: 12px;
-  font-weight: 700;
-  background: rgba(78, 205, 196, 0.14);
+.symmetry-page :deep(.mp-panel-info) {
+  font-size: 1.05em;
+  padding: 8px;
+  margin-bottom: 8px;
+  gap: 12px;
+}
+
+.symmetry-page :deep(.mp-actions) {
+  margin-top: 18px;
 }
 
 .prompt-box {
-  margin-bottom: 14px;
+  margin-bottom: 8px;
   text-align: center;
 }
 
 .prompt-box p {
-  margin: 0 0 10px;
+  margin: 0 0 6px;
   font-weight: 700;
 }
 
 .shape-preview {
-  width: 170px;
-  height: 170px;
+  display: block;
+  width: 150px;
+  height: 150px;
+  margin-inline: auto;
   border-radius: 12px;
-  border: 1px solid #d9e1ed;
-  background: #fff;
+  border: 1px solid #c6d5e8;
+  background: #fbfdff;
 }
 
 .options-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  gap: 8px;
+  max-width: 620px;
+  margin-inline: auto;
 }
 
 .option-btn {
-  border: 1px solid #c8d4e6;
+  position: relative;
+  border: 1px solid #8ea8c2;
   border-radius: 12px;
-  background: #fff;
-  padding: 8px;
+  background: #fbfdff;
+  padding: 10px 10px 8px;
   display: grid;
-  gap: 6px;
   justify-items: center;
   cursor: pointer;
+  box-shadow: 0 2px 0 rgba(15, 23, 42, 0.12);
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.option-btn:hover {
+  background: #ebf4ff;
+  border-color: #55789e;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.18);
+}
+
+.option-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 0 rgba(15, 23, 42, 0.14);
 }
 
 .option-label {
-  font-weight: 700;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  min-width: 24px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #243041;
+  background: #e6f9f7;
+  border: 1px solid #bfece7;
+  text-align: center;
 }
 
 .option-preview {
@@ -386,8 +421,8 @@ onUnmounted(() => {
 }
 
 .option-btn.is-selected {
-  border-color: #4ecdc4;
-  box-shadow: 0 0 0 2px rgba(78, 205, 196, 0.2);
+  border-color: #1d4ed8;
+  box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.2);
 }
 
 .option-btn.is-correct {
@@ -406,7 +441,7 @@ onUnmounted(() => {
 }
 
 .axis-line {
-  stroke: #4ecdc4;
+  stroke: #0f766e;
   stroke-width: 2;
   stroke-dasharray: 4 3;
 }
@@ -421,39 +456,8 @@ onUnmounted(() => {
   fill: #243041;
 }
 
-.actions {
-  margin-top: 12px;
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.btn {
-  border: none;
-  border-radius: 10px;
-  padding: 10px 14px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, #4ecdc4, #6fe7dd);
-  color: white;
-}
-
-.btn-secondary {
-  background: linear-gradient(135deg, #a29bfe, #6c5ce7);
-  color: white;
-}
-
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
 .feedback {
-  margin-top: 10px;
+  margin-top: 6px;
   text-align: center;
   font-weight: 700;
 }
@@ -467,23 +471,26 @@ onUnmounted(() => {
 }
 
 .hint {
-  margin: 10px 0 0;
+  margin: 6px 0 0;
   text-align: center;
   color: var(--muted);
-  font-size: 0.94rem;
+  font-size: 0.88rem;
 }
 
-@media (max-width: 860px) {
+@media (max-width: 700px) {
   .options-grid {
     grid-template-columns: 1fr;
   }
 
   .shape-preview,
   .option-preview {
-    width: 136px;
-    height: 136px;
+    width: 120px;
+    height: 120px;
   }
 }
 </style>
+
+
+
 
 

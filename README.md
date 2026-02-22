@@ -67,6 +67,7 @@ manabuplay/
 - Git cheat sheet: `docs/GIT-CHEATSHEET.fr.md`
 - Guide panel interne (FR): `docs/PANEL-INTERNE.fr.md`
 - Internal panel guide (EN): `docs/PANEL-INTERNE.en.md`
+- Charte UI/UX (FR): `docs/UI-RULES.fr.md`
 
 ## Sécurité secrets
 
@@ -78,5 +79,6 @@ manabuplay/
 
 - Version en cours: `0.5.0-prep`
 - Dernière modification: `22 février 2026` (fr-FR)
+
 
 
