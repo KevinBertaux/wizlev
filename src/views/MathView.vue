@@ -13,7 +13,6 @@ import QuizSegmentedControl from '@/components/QuizSegmentedControl.vue';
 import QuizScoreBar from '@/components/QuizScoreBar.vue';
 import QuizTableSelector from '@/components/QuizTableSelector.vue';
 import { useQuizFlow } from '@/composables/useQuizFlow';
-import { useRoute } from 'vue-router';
 import {
   buildMotivationToast,
   MOTIVATION_TOAST_DURATION_MS,
@@ -32,7 +31,6 @@ const ORDER_OPTIONS = Object.freeze([
   { value: 'ordered', label: "Dans l'ordre" },
   { value: 'mixed', label: 'Tout mélanger' },
 ]);
-const route = useRoute();
 
 const selectedTables = ref([]);
 const questionOrderMode = ref('ordered');
@@ -82,65 +80,8 @@ const firstTryPercent = computed(() => {
   return Math.round((firstTryCorrect.value / firstTryTotal.value) * 100);
 });
 
-function parseClampedInt(value, { min = 0, max = Number.MAX_SAFE_INTEGER, fallback = 0 } = {}) {
-  const parsed = Number.parseInt(String(value ?? ''), 10);
-  if (!Number.isFinite(parsed)) {
-    return fallback;
-  }
-  return Math.max(min, Math.min(max, parsed));
-}
-
-const isDebugMode = computed(() => {
-  if (!import.meta.env.DEV) {
-    return false;
-  }
-  const value = String(route.query.debug ?? '').toLowerCase();
-  return value === '1' || value === 'true';
-});
-
-const isDebugDone = computed(() => {
-  if (!isDebugMode.value) {
-    return false;
-  }
-  const value = String(route.query.done ?? '').toLowerCase();
-  return value === '1' || value === 'true';
-});
-
-const debugScore = computed(() =>
-  parseClampedInt(route.query.score, {
-    min: 0,
-    max: 9999,
-    fallback: score.value,
-  })
-);
-
-const debugTotal = computed(() =>
-  parseClampedInt(route.query.total, {
-    min: 1,
-    max: 9999,
-    fallback: Math.max(1, total.value || 12),
-  })
-);
-
-const debugFirstTryPercent = computed(() =>
-  parseClampedInt(route.query.first, {
-    min: 0,
-    max: 100,
-    fallback: firstTryPercent.value,
-  })
-);
-
-const displayScore = computed(() => (isDebugDone.value ? debugScore.value : score.value));
-const displayTotal = computed(() => (isDebugDone.value ? debugTotal.value : total.value));
-const displayFirstTryPercent = computed(() =>
-  isDebugDone.value ? debugFirstTryPercent.value : firstTryPercent.value
-);
-const isSessionCompletePanelVisible = computed(
-  () => isDebugDone.value || (selectedTables.value.length > 0 && sessionCompleted.value)
-);
-
 const firstTryBadge = computed(() => {
-  const pct = displayFirstTryPercent.value;
+  const pct = firstTryPercent.value;
   if (pct >= 90) {
     return { emoji: '🏆', label: 'Excellent !' };
   }
@@ -460,20 +401,17 @@ onUnmounted(() => {
       :extra="feedbackExtra"
     />
 
-    <div v-if="isSessionCompletePanelVisible" class="session-complete">
+    <div v-if="selectedTables.length > 0 && sessionCompleted" class="session-complete">
       <p class="session-complete-title">🎉 Session terminée !</p>
       <p class="session-complete-tier">{{ firstTryBadge.emoji }} {{ firstTryBadge.label }}</p>
-      <p class="session-complete-score">Score : {{ displayScore }} / {{ displayTotal }}</p>
-      <p class="session-complete-percent">{{ displayFirstTryPercent }}%</p>
+      <p class="session-complete-score">Score : {{ score }} / {{ total }}</p>
+      <p class="session-complete-percent">{{ firstTryPercent }}%</p>
       <button class="mp-btn mp-btn-secondary" type="button" @click="restartSession">
         Nouvelle session
       </button>
     </div>
 
-    <div
-      v-if="selectedTables.length > 0 && currentQuestion && !sessionCompleted && !isDebugDone"
-      class="question-layout"
-    >
+    <div v-if="selectedTables.length > 0 && currentQuestion && !sessionCompleted" class="question-layout">
       <div class="question-box">
         <div class="question">{{ currentQuestion.num1 }} × {{ currentQuestion.num2 }} = ?</div>
         <input
@@ -498,7 +436,7 @@ onUnmounted(() => {
     </div>
 
     <QuizActions
-      v-if="selectedTables.length > 0 && currentQuestion && !sessionCompleted && !isDebugDone"
+      v-if="selectedTables.length > 0 && currentQuestion && !sessionCompleted"
       :can-check="canCheck"
       @check="checkAnswer"
       @next="loadNextQuestion"
