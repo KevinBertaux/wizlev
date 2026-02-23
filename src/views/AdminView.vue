@@ -29,6 +29,7 @@ import {
   resetSymmetryShapesOverride,
   saveSymmetryShapesOverride,
 } from '@/features/math/symmetryShapeStore';
+import { getRoadmapEntries, ROADMAP_PRIORITY_ORDER } from '@/features/admin/roadmapStore';
 
 const router = useRouter();
 const selectedList = ref('');
@@ -58,6 +59,7 @@ const sidebarGroups = Object.freeze([
     label: 'Administration',
     items: [
       { id: 'overview', icon: '📊', label: "Vue d'ensemble" },
+      { id: 'roadmap', icon: '🗺️', label: 'Roadmap & Scopes' },
       { id: 'maintenance', icon: '🧹', label: 'Maintenance locale' },
     ],
   },
@@ -65,6 +67,7 @@ const sidebarGroups = Object.freeze([
 
 const sectionTitleMap = Object.freeze({
   overview: 'Dashboard admin',
+  roadmap: 'Roadmap & Scopes',
   vocab: 'Édition de listes de vocabulaire',
   symmetry: 'Formes de symétrie',
   maintenance: 'Maintenance locale',
@@ -398,60 +401,119 @@ function onFrenchInputEnter(index) {
   addWordAndFocus();
 }
 
-const scopeItems = ref([
-  { id: 'crit-cms', priority: 'Crit', label: 'Supprimer les traces CMS legacy', done: true },
-  { id: 'crit-legal', priority: 'Crit', label: 'Harmoniser les pages légales et les dates', done: true },
-  { id: 'crit-static', priority: 'Crit', label: 'Conserver un mode 100% statique Netlify', done: true },
-  { id: 'crit-release-tests', priority: 'Crit', label: 'Validation pré-release complète (test/e2e/build)', done: false },
-  { id: 'crit-qa', priority: 'Crit', label: 'QA manuelle finale desktop + mobile', done: false },
-  { id: 'crit-merge-main', priority: 'Crit', label: 'Merge vers main + déploiement Netlify', done: false },
-
-  { id: 'high-home', priority: 'High', label: 'Refonte Accueil V1 par sections matières', done: true },
-  { id: 'high-sym-v1', priority: 'High', label: 'Symétrie V1 QCM (axes vertical + horizontal)', done: true },
-  { id: 'high-sym-open-close', priority: 'High', label: 'Symétrie: enrichissement formes ouvert/fermé', done: true },
-  { id: 'high-math-default', priority: 'High', label: 'Multiplications: table 0 + aucune sélection par défaut', done: true },
-  { id: 'high-math-feedback', priority: 'High', label: 'Multiplications/Symétrie: feedbacks harmonisés', done: true },
-  { id: 'high-toast', priority: 'High', label: 'Système de motivation (toast + jalons)', done: true },
-  { id: 'high-tailwind', priority: 'High', label: 'Tailwind v3 intégré (sans refonte brutale)', done: true },
-  { id: 'high-bag-core', priority: 'High', label: 'Système de sac réutilisable extrait', done: true },
-  { id: 'high-bag-usage', priority: 'High', label: 'Système de sac branché Symétrie + Multiplications', done: true },
-  { id: 'high-difficulty', priority: 'High', label: 'Multiplications: difficultés Découverte/Standard/Renforcé/Infini', done: true },
-  { id: 'high-difficulty-ui', priority: 'High', label: 'UI de difficulté (boutons segmentés)', done: true },
-  { id: 'high-keypad', priority: 'High', label: 'Pavé numérique desktop/tablette', done: true },
-  { id: 'high-weather', priority: 'High', label: 'Ajouter la liste anglaise Weather (EN/FR)', done: false },
-  { id: 'high-admin-sym', priority: 'High', label: 'Admin: gestion des formes de symétrie', done: false },
-  { id: 'high-admin-reset', priority: 'High', label: 'Admin: RAZ locale granulaire + rollback', done: false },
-  { id: 'high-admin-dashboard', priority: 'High', label: 'Admin: dashboard avec sidebar repliable', done: false },
-
-  { id: 'med-refactor-ui', priority: 'Med', label: 'Refactor composants quiz partagés', done: true },
-  { id: 'med-refactor-flow', priority: 'Med', label: 'Refactor logique quiz (useQuizFlow)', done: true },
-  { id: 'med-refactor-admin', priority: 'Med', label: 'Refactor admin (status/session countdown)', done: true },
-  { id: 'med-refactor-legal', priority: 'Med', label: 'Refactor layout pages légales', done: true },
-  { id: 'med-docs-pass', priority: 'Med', label: 'Passage de cohérence docs final 0.5.0', done: false },
-
-  { id: 'low-copy', priority: 'Low', label: 'Ajustements micro-copy non bloquants', done: false },
-  { id: 'low-polish', priority: 'Low', label: 'Polissage visuel léger', done: false },
-  { id: 'low-css', priority: 'Low', label: 'Refactor CSS mineur restant', done: false },
-  { id: 'low-clean', priority: 'Low', label: 'Nettoyage technique léger', done: false },
-]);
-
-const scopeDoneCount = computed(() => scopeItems.value.filter((item) => item.done).length);
-const scopeTotalCount = computed(() => scopeItems.value.length);
-const scopeProgressPercent = computed(() =>
-  scopeTotalCount.value ? Math.round((scopeDoneCount.value / scopeTotalCount.value) * 100) : 0
+const scopePriorityOrder = ROADMAP_PRIORITY_ORDER;
+const roadmapEntries = Object.freeze(getRoadmapEntries());
+const selectedRoadmapId = ref(
+  roadmapEntries.find((entry) => entry.id === APP_VERSION)?.id || roadmapEntries[0]?.id || ''
 );
-const scopePriorityOrder = Object.freeze(['Crit', 'High', 'Med', 'Low']);
-const scopeByPriority = computed(() =>
-  scopePriorityOrder.map((priority) => ({
-    priority,
-    items: scopeItems.value.filter((item) => item.priority === priority),
-  }))
+
+const activeRoadmapEntry = computed(() => {
+  return roadmapEntries.find((entry) => entry.id === selectedRoadmapId.value) || roadmapEntries[0] || null;
+});
+
+const filterPriority = ref('all');
+const filterDone = ref('all');
+const filterDomain = ref('all');
+const filterFeature = ref('all');
+const sortKey1 = ref('priority');
+const sortDir1 = ref('asc');
+const sortKey2 = ref('done');
+const sortDir2 = ref('asc');
+const sortKey3 = ref('domain');
+const sortDir3 = ref('asc');
+
+const roadmapDomainOptions = computed(() => {
+  const items = activeRoadmapEntry.value?.items || [];
+  return [...new Set(items.map((item) => item.domain))].sort((a, b) => a.localeCompare(b, 'fr'));
+});
+
+const roadmapFeatureOptions = computed(() => {
+  const items = activeRoadmapEntry.value?.items || [];
+  return [...new Set(items.map((item) => item.feature))].sort((a, b) => a.localeCompare(b, 'fr'));
+});
+
+const filteredRoadmapItems = computed(() => {
+  const items = activeRoadmapEntry.value?.items || [];
+  return items.filter((item) => {
+    if (filterPriority.value !== 'all' && item.priority !== filterPriority.value) {
+      return false;
+    }
+    if (filterDone.value === 'done' && !item.done) {
+      return false;
+    }
+    if (filterDone.value === 'todo' && item.done) {
+      return false;
+    }
+    if (filterDomain.value !== 'all' && item.domain !== filterDomain.value) {
+      return false;
+    }
+    if (filterFeature.value !== 'all' && item.feature !== filterFeature.value) {
+      return false;
+    }
+    return true;
+  });
+});
+
+function valueForSortKey(item, key) {
+  if (key === 'priority') {
+    return scopePriorityOrder.indexOf(item.priority);
+  }
+  if (key === 'done') {
+    return item.done ? 1 : 0;
+  }
+  if (key === 'domain') {
+    return item.domain;
+  }
+  if (key === 'feature') {
+    return item.feature;
+  }
+  return item.label;
+}
+
+function compareBySortKey(a, b, key, dir) {
+  const av = valueForSortKey(a, key);
+  const bv = valueForSortKey(b, key);
+  let result = 0;
+
+  if (typeof av === 'number' && typeof bv === 'number') {
+    result = av - bv;
+  } else {
+    result = String(av).localeCompare(String(bv), 'fr', { sensitivity: 'base' });
+  }
+
+  return dir === 'desc' ? -result : result;
+}
+
+const sortedRoadmapItems = computed(() => {
+  const list = [...filteredRoadmapItems.value];
+  list.sort((a, b) => {
+    const tri1 = compareBySortKey(a, b, sortKey1.value, sortDir1.value);
+    if (tri1 !== 0) {
+      return tri1;
+    }
+
+    const tri2 = compareBySortKey(a, b, sortKey2.value, sortDir2.value);
+    if (tri2 !== 0) {
+      return tri2;
+    }
+
+    return compareBySortKey(a, b, sortKey3.value, sortDir3.value);
+  });
+  return list;
+});
+
+const activeScopeDoneCount = computed(() => {
+  const items = activeRoadmapEntry.value?.items || [];
+  return items.filter((item) => item.done).length;
+});
+const activeScopeTotalCount = computed(() => activeRoadmapEntry.value?.items?.length || 0);
+const activeScopeProgressPercent = computed(() =>
+  activeScopeTotalCount.value ? Math.round((activeScopeDoneCount.value / activeScopeTotalCount.value) * 100) : 0
 );
 
 const dashboardMetrics = ref({
   vocabListCount: 0,
   englishWordCount: 0,
-  spanishWordCount: 0,
   symmetryShapeCount: 0,
   storageKeyCount: 0,
 });
@@ -468,7 +530,6 @@ function refreshDashboardMetrics() {
   dashboardMetrics.value = {
     vocabListCount: vocabListOptions.length,
     englishWordCount,
-    spanishWordCount: 0,
     symmetryShapeCount: Array.isArray(symmetryConfig?.shapes) ? symmetryConfig.shapes.length : 0,
     storageKeyCount: snapshot.filter((entry) => entry.exists).length,
   };
@@ -699,6 +760,17 @@ function formatDateTimeFr(isoString) {
   return date.toLocaleString('fr-FR');
 }
 
+function formatDateFr(isoString) {
+  if (!isoString) {
+    return '-';
+  }
+  const date = new Date(isoString);
+  if (Number.isNaN(date.getTime())) {
+    return isoString;
+  }
+  return date.toLocaleDateString('fr-FR');
+}
+
 refreshSymmetryDraft();
 refreshMaintenanceData();
 refreshDashboardMetrics();
@@ -813,10 +885,6 @@ refreshDashboardMetrics();
               <p class="stat-value">{{ dashboardMetrics.englishWordCount }}</p>
             </article>
             <article class="admin-card">
-              <h2>🇪🇸 Mots espagnol</h2>
-              <p class="stat-value">{{ dashboardMetrics.spanishWordCount }}</p>
-            </article>
-            <article class="admin-card">
               <h2>🧩 Formes symétrie</h2>
               <p class="stat-value">{{ dashboardMetrics.symmetryShapeCount }}</p>
             </article>
@@ -825,25 +893,152 @@ refreshDashboardMetrics();
               <p class="stat-value">{{ dashboardMetrics.storageKeyCount }}</p>
             </article>
           </div>
+        </section>
 
+        <section v-else-if="selectedSection === 'roadmap'" class="admin-section">
           <article class="admin-card">
             <div class="scope-head">
-              <h2>Scope 0.5.0</h2>
-              <span class="scope-chip">{{ scopeDoneCount }} / {{ scopeTotalCount }} - {{ scopeProgressPercent }}%</span>
-            </div>
-            <div class="progress-track">
-              <div class="progress-fill" :style="{ width: `${scopeProgressPercent}%` }" />
+              <h2>Roadmap & Scopes</h2>
+              <span class="scope-chip">
+                {{ activeScopeDoneCount }} / {{ activeScopeTotalCount }} - {{ activeScopeProgressPercent }}%
+              </span>
             </div>
 
-            <section v-for="group in scopeByPriority" :key="group.priority" class="scope-priority-block">
-              <h3 class="scope-priority-title">{{ group.priority }}</h3>
-              <ul class="scope-list">
-                <li v-for="item in group.items" :key="item.id" :class="{ done: item.done }">
-                  <span>{{ item.done ? '✅' : '⌛' }}</span>
-                  <span>{{ item.label }}</span>
-                </li>
-              </ul>
-            </section>
+            <div class="roadmap-toolbar">
+              <div>
+                <label for="roadmapVersion">Version / vue</label>
+                <select id="roadmapVersion" v-model="selectedRoadmapId">
+                  <option v-for="entry in roadmapEntries" :key="entry.id" :value="entry.id">
+                    {{ entry.title }}
+                  </option>
+                </select>
+              </div>
+              <div class="roadmap-meta">
+                <span>Début: {{ formatDateFr(activeRoadmapEntry?.startDate) }}</span>
+                <span>Fin: {{ formatDateFr(activeRoadmapEntry?.endDate) }}</span>
+              </div>
+            </div>
+
+            <div class="progress-track">
+              <div class="progress-fill" :style="{ width: `${activeScopeProgressPercent}%` }" />
+            </div>
+
+            <div class="roadmap-filters">
+              <div>
+                <label for="filterPriority">Priorité</label>
+                <select id="filterPriority" v-model="filterPriority">
+                  <option value="all">Toutes</option>
+                  <option v-for="priority in scopePriorityOrder" :key="priority" :value="priority">{{ priority }}</option>
+                </select>
+              </div>
+              <div>
+                <label for="filterDone">État</label>
+                <select id="filterDone" v-model="filterDone">
+                  <option value="all">Tous</option>
+                  <option value="todo">Non fait</option>
+                  <option value="done">Fait</option>
+                </select>
+              </div>
+              <div>
+                <label for="filterDomain">Catégorie</label>
+                <select id="filterDomain" v-model="filterDomain">
+                  <option value="all">Toutes</option>
+                  <option v-for="domain in roadmapDomainOptions" :key="domain" :value="domain">{{ domain }}</option>
+                </select>
+              </div>
+              <div>
+                <label for="filterFeature">Sous-catégorie</label>
+                <select id="filterFeature" v-model="filterFeature">
+                  <option value="all">Toutes</option>
+                  <option v-for="feature in roadmapFeatureOptions" :key="feature" :value="feature">{{ feature }}</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="roadmap-sorts">
+              <h3>Tri multi-niveaux</h3>
+              <div class="roadmap-sort-grid">
+                <div>
+                  <label for="sortKey1">Tri 1</label>
+                  <select id="sortKey1" v-model="sortKey1">
+                    <option value="priority">Priorité</option>
+                    <option value="done">État</option>
+                    <option value="domain">Catégorie</option>
+                    <option value="feature">Sous-catégorie</option>
+                    <option value="label">Libellé</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="sortDir1">Ordre 1</label>
+                  <select id="sortDir1" v-model="sortDir1">
+                    <option value="asc">Asc</option>
+                    <option value="desc">Desc</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="sortKey2">Tri 2</label>
+                  <select id="sortKey2" v-model="sortKey2">
+                    <option value="priority">Priorité</option>
+                    <option value="done">État</option>
+                    <option value="domain">Catégorie</option>
+                    <option value="feature">Sous-catégorie</option>
+                    <option value="label">Libellé</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="sortDir2">Ordre 2</label>
+                  <select id="sortDir2" v-model="sortDir2">
+                    <option value="asc">Asc</option>
+                    <option value="desc">Desc</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="sortKey3">Tri 3</label>
+                  <select id="sortKey3" v-model="sortKey3">
+                    <option value="priority">Priorité</option>
+                    <option value="done">État</option>
+                    <option value="domain">Catégorie</option>
+                    <option value="feature">Sous-catégorie</option>
+                    <option value="label">Libellé</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="sortDir3">Ordre 3</label>
+                  <select id="sortDir3" v-model="sortDir3">
+                    <option value="asc">Asc</option>
+                    <option value="desc">Desc</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="roadmap-table-wrap">
+              <table class="roadmap-table">
+                <thead>
+                  <tr>
+                    <th>Priorité</th>
+                    <th>État</th>
+                    <th>Catégorie</th>
+                    <th>Sous-catégorie</th>
+                    <th>Item</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="item in sortedRoadmapItems" :key="item.id">
+                    <td>
+                      <span class="priority-chip" :class="`p-${item.priority.toLowerCase()}`">{{ item.priority }}</span>
+                    </td>
+                    <td>{{ item.done ? '✅ Fait' : '⌛ Non fait' }}</td>
+                    <td>{{ item.domain }}</td>
+                    <td>{{ item.feature }}</td>
+                    <td>{{ item.label }}</td>
+                  </tr>
+                  <tr v-if="sortedRoadmapItems.length === 0">
+                    <td colspan="5" class="meta-line">Aucun item pour ces filtres.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </article>
         </section>
 
@@ -1384,33 +1579,100 @@ refreshDashboardMetrics();
   background: linear-gradient(135deg, #4dc79f, #3aa981);
 }
 
-.scope-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.roadmap-toolbar {
   display: grid;
-  gap: 8px;
+  grid-template-columns: minmax(240px, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+  margin-bottom: 10px;
 }
 
-.scope-list li {
+.roadmap-meta {
   display: grid;
-  grid-template-columns: 20px 1fr;
-  gap: 8px;
-  align-items: baseline;
+  gap: 4px;
+  color: #4b5f79;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
-.scope-list li.done {
-  color: #1f6a4d;
-}
-
-.scope-priority-block + .scope-priority-block {
+.roadmap-filters {
   margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 10px;
 }
 
-.scope-priority-title {
+.roadmap-sorts {
+  margin-top: 12px;
+}
+
+.roadmap-sorts h3 {
   margin: 0 0 8px;
   font-size: 0.95rem;
   color: #2d4d69;
+}
+
+.roadmap-sort-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.roadmap-table-wrap {
+  margin-top: 12px;
+  overflow: auto;
+  border: 1px solid #d8e4ef;
+  border-radius: 12px;
+}
+
+.roadmap-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px;
+}
+
+.roadmap-table th,
+.roadmap-table td {
+  padding: 10px;
+  border-bottom: 1px solid #e5edf5;
+  text-align: left;
+  vertical-align: top;
+}
+
+.roadmap-table thead th {
+  position: sticky;
+  top: 0;
+  background: #f4f9ff;
+  z-index: 1;
+  color: #1f3953;
+}
+
+.priority-chip {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.priority-chip.p-crit {
+  background: #ffe8e8;
+  color: #9a1d1d;
+}
+
+.priority-chip.p-high {
+  background: #fff0da;
+  color: #8b5a12;
+}
+
+.priority-chip.p-med {
+  background: #e8f0ff;
+  color: #234d93;
+}
+
+.priority-chip.p-low {
+  background: #e6f7ec;
+  color: #226a45;
 }
 
 .table-header {
@@ -1640,6 +1902,14 @@ pre {
 
   .words-grid-head {
     display: none;
+  }
+
+  .roadmap-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .roadmap-meta {
+    white-space: normal;
   }
 
   .sym-grid {

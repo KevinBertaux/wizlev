@@ -1,0 +1,37 @@
+{
+  "version": "backlog",
+  "items": [
+    {
+      "id": "bl-sym-45",
+      "priority": "High",
+      "domain": "math",
+      "feature": "symetrie",
+      "label": "Symétrie 45° gauche/droite",
+      "done": false
+    },
+    {
+      "id": "bl-history-scores",
+      "priority": "Med",
+      "domain": "math",
+      "feature": "scores",
+      "label": "Historique local des meilleurs scores par module/profil",
+      "done": false
+    },
+    {
+      "id": "bl-admin-advanced",
+      "priority": "Med",
+      "domain": "admin",
+      "feature": "dashboard",
+      "label": "UX admin V2 (édition par lots, filtres avancés)",
+      "done": false
+    },
+    {
+      "id": "bl-auth-server",
+      "priority": "Low",
+      "domain": "admin",
+      "feature": "auth",
+      "label": "Authentification serveur avec rôles (quand infra prête)",
+      "done": false
+    }
+  ]
+}
