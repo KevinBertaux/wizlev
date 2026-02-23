@@ -42,6 +42,11 @@
 - [x] Système de difficulté (Multiplications): modes `Découverte` / `Standard` / `Renforcé` / `Infini`.
 - [x] Système de difficulté (Multiplications): UI de sélection difficulté (boutons segmentés).
 - [x] Multiplications: pavé numérique desktop/tablette.
+- [ ] Vocabulaire Anglais: ajouter la liste `Weather` (EN/FR) et l'intégrer au parcours de révision.
+- [ ] Admin: ajouter la gestion des formes de symétrie (ajout/édition/suppression).
+- [ ] Admin: ajouter une action de maintenance pour vider le `localStorage` (avec confirmation).
+- [ ] Admin: afficher le scope/roadmap avec barre de progression.
+- [ ] Admin: lancer une refonte de l'interface (ergonomie et cohérence visuelle).
 
 ---
 
@@ -87,6 +92,7 @@
 - [ ] Module Math: divisions.
 - [ ] Évolution Symétrie V2 (placement de points sur quadrillage).
 - [ ] Monétisation à cadrer (pub kids-safe + conformité RGPD/CNIL).
+- [ ] Symétrie: axes diagonaux 45° (gauche/droite).
 
 ### Priorité moyenne
 
