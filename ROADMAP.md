@@ -39,9 +39,9 @@
 - [x] Durcissement UX/admin léger (messages clairs, import/export JSON plus fiable).
 - [x] Système de sac (général): moteur réutilisable (`questionBag`) extrait.
 - [x] Système de sac (intégrations): branché sur Symétrie et Multiplications.
-- [ ] Système de difficulté (Multiplications): modes "Toutes les tables" à finaliser (facile/normal/difficile/avancé/expert/infini).
-- [ ] Système de difficulté (Multiplications): UI de sélection difficulté (boutons segmentés).
-- [ ] Multiplications: pavé numérique desktop/tablette.
+- [x] Système de difficulté (Multiplications): modes `Découverte` / `Standard` / `Renforcé` / `Infini`.
+- [x] Système de difficulté (Multiplications): UI de sélection difficulté (boutons segmentés).
+- [x] Multiplications: pavé numérique desktop/tablette.
 
 ---
 
