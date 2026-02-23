@@ -1,4 +1,5 @@
 import symmetryShapesConfig from '../../content/math/symmetry-shapes.v1.json';
+import { createRefillBag, pullNextItem, randomIndex, shuffleList } from '../common/questionBag';
 
 const DEFAULT_GRID_SIZE = 5;
 const DEFAULT_AXES = ['vertical', 'horizontal'];
@@ -71,10 +72,6 @@ function shiftPoints(points, shiftX, shiftY) {
     .filter(keepInGrid);
 }
 
-function randomIndex(length, randomFn) {
-  return Math.floor(randomFn() * length);
-}
-
 function pickRenderMode(baseShape, randomFn) {
   if (baseShape.length < 3) {
     return 'open';
@@ -90,15 +87,6 @@ function getShapeById(shapeId) {
   return SHAPES_BY_ID.get(shapeId) || BASE_SHAPES[0];
 }
 
-function shuffleList(items, randomFn) {
-  const list = [...items];
-  for (let i = list.length - 1; i > 0; i -= 1) {
-    const j = randomIndex(i + 1, randomFn);
-    [list[i], list[j]] = [list[j], list[i]];
-  }
-  return list;
-}
-
 function buildAxisSeeds(axis, randomFn) {
   return shuffleList(
     BASE_SHAPES.map((shape) => ({ axis, shapeId: shape.id })),
@@ -107,20 +95,11 @@ function buildAxisSeeds(axis, randomFn) {
 }
 
 function takeNextSeed(seeds, lastMeta, allowFallback = true) {
-  if (seeds.length === 0) {
-    return null;
-  }
-
-  const candidateIndex = seeds.findIndex(
-    (seed) => seed.shapeId !== lastMeta.shapeId && seedKey(seed) !== lastMeta.pairKey
+  return pullNextItem(
+    seeds,
+    (seed) => seed.shapeId !== lastMeta.shapeId && seedKey(seed) !== lastMeta.pairKey,
+    allowFallback
   );
-
-  if (candidateIndex === -1) {
-    return allowFallback ? seeds.shift() || null : null;
-  }
-
-  const [candidate] = seeds.splice(candidateIndex, 1);
-  return candidate;
 }
 
 function buildBalancedCycle(lastMeta, randomFn) {
@@ -158,23 +137,18 @@ function buildBalancedCycle(lastMeta, randomFn) {
 }
 
 export function createSymmetryQuestionBag(randomFn = Math.random) {
-  let queue = [];
   let lastMeta = {
     shapeId: '',
     pairKey: '',
   };
 
-  function refill() {
-    queue = buildBalancedCycle(lastMeta, randomFn);
-  }
+  const bag = createRefillBag({
+    refill: () => buildBalancedCycle(lastMeta, randomFn),
+  });
 
   return {
     next() {
-      if (queue.length === 0) {
-        refill();
-      }
-
-      const seed = queue.shift();
+      const seed = bag.next();
       if (!seed) {
         return generateSymmetryQuestion(randomFn);
       }
@@ -369,4 +343,3 @@ export function evaluateSymmetryAnswer(question, selectedOptionId) {
       : `Ce n'est pas la bonne symétrie. Observe bien l'axe ${axisLabel}.`,
   };
 }
-
