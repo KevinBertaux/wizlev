@@ -93,6 +93,7 @@
 - [ ] Base structure multi-langues complète (anglais + espagnol).
 - [ ] Historique local des meilleurs scores par module/profil.
 - [ ] UX admin V2 (édition par lots, recherche, filtres, validation avancée).
+- [ ] Timer d'exercice configurable (par module/niveau).
 - [ ] Système global d'info-bulles (tooltips) cohérent sur tout le site.
 
 ### Plus tard
