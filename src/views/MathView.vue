@@ -1,5 +1,5 @@
 <script setup>
-import { nextTick, onUnmounted, ref, watch } from 'vue';
+import { computed, nextTick, onUnmounted, ref, watch } from 'vue';
 import {
   createMultiplicationQuizSession,
   evaluateAnswer,
@@ -9,9 +9,11 @@ import QuizActions from '@/components/QuizActions.vue';
 import QuizEmptyState from '@/components/QuizEmptyState.vue';
 import QuizFeedbackBanner from '@/components/QuizFeedbackBanner.vue';
 import QuizNumericPad from '@/components/QuizNumericPad.vue';
+import QuizSegmentedControl from '@/components/QuizSegmentedControl.vue';
 import QuizScoreBar from '@/components/QuizScoreBar.vue';
 import QuizTableSelector from '@/components/QuizTableSelector.vue';
 import { useQuizFlow } from '@/composables/useQuizFlow';
+import { useRoute } from 'vue-router';
 import {
   buildMotivationToast,
   MOTIVATION_TOAST_DURATION_MS,
@@ -20,13 +22,29 @@ import {
 
 const BEST_STREAK_KEY = 'manabuplay_math_best_streak_v1';
 const AUTO_NEXT_DELAY_MS = 2000;
+const DIFFICULTY_OPTIONS = Object.freeze([
+  { value: 'discovery', label: 'Découverte' },
+  { value: 'standard', label: 'Standard' },
+  { value: 'reinforced', label: 'Renforcé' },
+  { value: 'infinite', label: 'Infini' },
+]);
+const ORDER_OPTIONS = Object.freeze([
+  { value: 'ordered', label: "Dans l'ordre" },
+  { value: 'mixed', label: 'Tout mélanger' },
+]);
+const route = useRoute();
 
 const selectedTables = ref([]);
 const questionOrderMode = ref('ordered');
+const difficultyId = ref('standard');
+const passAfterWrong = ref(false);
 const reviewErrorsEnabled = ref(true);
 const answerInput = ref('');
 const answerField = ref(null);
 const quizSession = ref(null);
+const sessionCompleted = ref(false);
+const firstTryTotal = ref(0);
+const firstTryCorrect = ref(0);
 const toastMessage = ref('');
 const toastTone = ref('streak');
 const toastTimeoutId = ref(null);
@@ -50,11 +68,98 @@ const {
   nextQuestion,
   applyProgress,
   scheduleAutoNext,
+  resetProgress,
   clearAutoNextTimeout,
 } = useQuizFlow({
   bestStreakKey: BEST_STREAK_KEY,
   autoNextDelayMs: AUTO_NEXT_DELAY_MS,
 });
+
+const firstTryPercent = computed(() => {
+  if (firstTryTotal.value <= 0) {
+    return 0;
+  }
+  return Math.round((firstTryCorrect.value / firstTryTotal.value) * 100);
+});
+
+function parseClampedInt(value, { min = 0, max = Number.MAX_SAFE_INTEGER, fallback = 0 } = {}) {
+  const parsed = Number.parseInt(String(value ?? ''), 10);
+  if (!Number.isFinite(parsed)) {
+    return fallback;
+  }
+  return Math.max(min, Math.min(max, parsed));
+}
+
+const isDebugMode = computed(() => {
+  if (!import.meta.env.DEV) {
+    return false;
+  }
+  const value = String(route.query.debug ?? '').toLowerCase();
+  return value === '1' || value === 'true';
+});
+
+const isDebugDone = computed(() => {
+  if (!isDebugMode.value) {
+    return false;
+  }
+  const value = String(route.query.done ?? '').toLowerCase();
+  return value === '1' || value === 'true';
+});
+
+const debugScore = computed(() =>
+  parseClampedInt(route.query.score, {
+    min: 0,
+    max: 9999,
+    fallback: score.value,
+  })
+);
+
+const debugTotal = computed(() =>
+  parseClampedInt(route.query.total, {
+    min: 1,
+    max: 9999,
+    fallback: Math.max(1, total.value || 12),
+  })
+);
+
+const debugFirstTryPercent = computed(() =>
+  parseClampedInt(route.query.first, {
+    min: 0,
+    max: 100,
+    fallback: firstTryPercent.value,
+  })
+);
+
+const displayScore = computed(() => (isDebugDone.value ? debugScore.value : score.value));
+const displayTotal = computed(() => (isDebugDone.value ? debugTotal.value : total.value));
+const displayFirstTryPercent = computed(() =>
+  isDebugDone.value ? debugFirstTryPercent.value : firstTryPercent.value
+);
+const isSessionCompletePanelVisible = computed(
+  () => isDebugDone.value || (selectedTables.value.length > 0 && sessionCompleted.value)
+);
+
+const firstTryBadge = computed(() => {
+  const pct = displayFirstTryPercent.value;
+  if (pct >= 90) {
+    return { emoji: '🏆', label: 'Excellent !' };
+  }
+  if (pct >= 75) {
+    return { emoji: '🌟', label: 'Très bien !' };
+  }
+  if (pct >= 60) {
+    return { emoji: '👍', label: 'Bien joué !' };
+  }
+  if (pct >= 40) {
+    return { emoji: '📘', label: 'Continue !' };
+  }
+  return { emoji: '💪', label: "On s'entraîne encore !" };
+});
+
+function resetFirstTryStats() {
+  firstTryTotal.value = 0;
+  firstTryCorrect.value = 0;
+}
 
 function clearToastTimeout() {
   if (toastTimeoutId.value) {
@@ -82,12 +187,12 @@ function focusAnswerField() {
   });
 }
 
-function setOrderMode(mode) {
-  questionOrderMode.value = mode === 'mixed' ? 'mixed' : 'ordered';
-}
-
 function toggleReviewErrors() {
   reviewErrorsEnabled.value = !reviewErrorsEnabled.value;
+}
+
+function togglePassAfterWrong() {
+  passAfterWrong.value = !passAfterWrong.value;
 }
 
 function hasAnyTableSelected() {
@@ -101,6 +206,7 @@ function loadNextQuestion() {
     isReady: () => hasAnyTableSelected(),
     buildQuestion: () => quizSession.value?.next() || null,
   });
+  sessionCompleted.value = Boolean(quizSession.value?.getState?.().isCompleted);
   if (next) {
     focusAnswerField();
   }
@@ -140,13 +246,16 @@ function submitFromPad() {
 function resetQuizSession() {
   if (!hasAnyTableSelected()) {
     quizSession.value = null;
+    sessionCompleted.value = false;
     return;
   }
   quizSession.value = createMultiplicationQuizSession({
     tables: selectedTables.value,
     mode: questionOrderMode.value,
+    difficulty: difficultyId.value,
     reviewErrorsEnabled: reviewErrorsEnabled.value,
   });
+  sessionCompleted.value = false;
 }
 
 function reviewBannerMain() {
@@ -192,6 +301,16 @@ function checkAnswer() {
     return;
   }
 
+  const stateBeforeMark = quizSession.value?.getState?.();
+  const isMainFirstTry =
+    currentQuestion.value?.source === 'main' && stateBeforeMark?.phase === 'main';
+  if (isMainFirstTry) {
+    firstTryTotal.value += 1;
+    if (result.feedbackType === 'correct') {
+      firstTryCorrect.value += 1;
+    }
+  }
+
   quizSession.value?.markAnswer({
     question: currentQuestion.value,
     isCorrect: result.feedbackType === 'correct',
@@ -218,7 +337,20 @@ function checkAnswer() {
     });
   } else {
     motivationState.value = resetMotivationRunState(motivationState.value);
+    if (passAfterWrong.value) {
+      scheduleAutoNext(() => {
+        loadNextQuestion();
+      });
+    }
   }
+}
+
+function restartSession() {
+  motivationState.value = resetMotivationRunState(motivationState.value);
+  resetProgress();
+  resetFirstTryStats();
+  resetQuizSession();
+  loadNextQuestion();
 }
 
 function onAnswerKeydown(event) {
@@ -231,8 +363,10 @@ function onAnswerKeydown(event) {
   }
 }
 
-watch([selectedTables, questionOrderMode, reviewErrorsEnabled], () => {
+watch([selectedTables, questionOrderMode, difficultyId, reviewErrorsEnabled], () => {
   motivationState.value = resetMotivationRunState(motivationState.value);
+  resetProgress();
+  resetFirstTryStats();
   resetQuizSession();
   loadNextQuestion();
 });
@@ -251,29 +385,35 @@ onUnmounted(() => {
       <QuizTableSelector v-model="selectedTables" label="Choisir les tables :" />
 
       <div class="settings-row">
-        <div class="settings-inline">
-          <p class="settings-label">Ordre des questions :</p>
-          <div class="segmented-control" role="radiogroup" aria-label="Ordre des questions">
-            <button
-              type="button"
-              class="segment-btn"
-              :class="{ 'is-active': questionOrderMode === 'ordered' }"
-              :aria-pressed="questionOrderMode === 'ordered'"
-              @click="setOrderMode('ordered')"
-            >
-              Dans l'ordre
-            </button>
-            <button
-              type="button"
-              class="segment-btn"
-              :class="{ 'is-active': questionOrderMode === 'mixed' }"
-              :aria-pressed="questionOrderMode === 'mixed'"
-              @click="setOrderMode('mixed')"
-            >
-              Tout mélanger
-            </button>
-          </div>
-        </div>
+        <QuizSegmentedControl
+          v-model="difficultyId"
+          label="Difficulté :"
+          aria-label="Choix de la difficulté"
+          :options="DIFFICULTY_OPTIONS"
+        />
+
+        <QuizSegmentedControl
+          v-model="questionOrderMode"
+          label="Ordre des questions :"
+          aria-label="Ordre des questions"
+          :options="ORDER_OPTIONS"
+        />
+
+        <label class="review-toggle">
+          <span class="settings-label review-toggle-label">Passer après erreur</span>
+          <button
+            type="button"
+            class="toggle-btn"
+            role="switch"
+            :aria-checked="passAfterWrong"
+            :class="{ 'is-on': passAfterWrong }"
+            @click="togglePassAfterWrong"
+          >
+            <span class="toggle-track">
+              <span class="toggle-thumb" />
+            </span>
+          </button>
+        </label>
 
         <label class="review-toggle">
           <span class="settings-label review-toggle-label">Revoir mes erreurs</span>
@@ -320,7 +460,20 @@ onUnmounted(() => {
       :extra="feedbackExtra"
     />
 
-    <div v-if="selectedTables.length > 0 && currentQuestion" class="question-layout">
+    <div v-if="isSessionCompletePanelVisible" class="session-complete">
+      <p class="session-complete-title">🎉 Session terminée !</p>
+      <p class="session-complete-tier">{{ firstTryBadge.emoji }} {{ firstTryBadge.label }}</p>
+      <p class="session-complete-score">Score : {{ displayScore }} / {{ displayTotal }}</p>
+      <p class="session-complete-percent">{{ displayFirstTryPercent }}%</p>
+      <button class="mp-btn mp-btn-secondary" type="button" @click="restartSession">
+        Nouvelle session
+      </button>
+    </div>
+
+    <div
+      v-if="selectedTables.length > 0 && currentQuestion && !sessionCompleted && !isDebugDone"
+      class="question-layout"
+    >
       <div class="question-box">
         <div class="question">{{ currentQuestion.num1 }} × {{ currentQuestion.num2 }} = ?</div>
         <input
@@ -345,7 +498,7 @@ onUnmounted(() => {
     </div>
 
     <QuizActions
-      v-if="selectedTables.length > 0"
+      v-if="selectedTables.length > 0 && currentQuestion && !sessionCompleted && !isDebugDone"
       :can-check="canCheck"
       @check="checkAnswer"
       @next="loadNextQuestion"
@@ -378,48 +531,12 @@ onUnmounted(() => {
 .settings-row {
   display: grid;
   gap: 10px;
-  width: min(320px, 100%);
+  width: min(360px, 100%);
   margin-inline: auto;
 }
 
-.settings-inline {
-  display: grid;
-  gap: 6px;
-}
-
-.segmented-control {
-  display: flex;
-  border: 1px solid #9bb9d3;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #f3faff;
-}
-
-.segment-btn {
-  border: 0;
-  border-right: 1px solid #9bb9d3;
-  background: transparent;
-  color: #1d4b6a;
-  font-weight: 700;
-  padding: 10px 10px;
-  min-height: 44px;
+.settings-row :deep(.segmented-field) {
   width: 100%;
-  cursor: pointer;
-  transition: background-color 0.18s ease, color 0.18s ease;
-}
-
-.segment-btn:last-child {
-  border-right: 0;
-}
-
-.segment-btn:hover,
-.segment-btn:focus-visible {
-  background: #deefff;
-}
-
-.segment-btn.is-active {
-  color: var(--ink-inverse);
-  background: var(--btn-secondary-grad);
 }
 
 .review-toggle {
@@ -484,8 +601,8 @@ onUnmounted(() => {
 
 .motivation-toast-anchor {
   position: relative;
-  height: 10px;
-  margin-bottom: 10px;
+  height: 0;
+  margin: 0;
 }
 
 .question-box {
@@ -508,6 +625,34 @@ onUnmounted(() => {
 
 .question-pad {
   justify-self: stretch;
+}
+
+.session-complete {
+  margin-bottom: 18px;
+  border: 1px solid #bfd8ec;
+  border-radius: 14px;
+  background: #f6fbff;
+  padding: 14px;
+  text-align: center;
+  display: grid;
+  gap: 10px;
+}
+
+.session-complete p {
+  margin: 0;
+}
+
+.session-complete-title,
+.session-complete-tier,
+.session-complete-score {
+  font-weight: 700;
+}
+
+.session-complete-percent {
+  font-size: clamp(2rem, 5vw, 2.6rem);
+  line-height: 1;
+  font-weight: 800;
+  color: #1d4b6a;
 }
 
 .question {

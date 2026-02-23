@@ -131,6 +131,20 @@ export function useQuizFlow({ bestStreakKey = '', autoNextDelayMs = 2000 } = {})
     }, autoNextDelayMs);
   }
 
+  function resetProgress({ keepBestStreak = true } = {}) {
+    clearAutoNextTimeout();
+    score.value = 0;
+    total.value = 0;
+    streak.value = 0;
+    setChecked(false);
+    clearFeedback();
+
+    if (!keepBestStreak) {
+      bestStreak.value = 0;
+      saveBestStreak(bestStreakKey, 0);
+    }
+  }
+
   onMounted(() => {
     bestStreak.value = readBestStreak(bestStreakKey);
   });
@@ -158,6 +172,7 @@ export function useQuizFlow({ bestStreakKey = '', autoNextDelayMs = 2000 } = {})
     applyProgress,
     applyAttempt,
     scheduleAutoNext,
+    resetProgress,
     clearAutoNextTimeout,
   };
 }

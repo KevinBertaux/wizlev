@@ -494,8 +494,8 @@ onUnmounted(() => {
 
 .motivation-toast-anchor {
   position: relative;
-  height: 10px;
-  margin-bottom: 10px;
+  height: 0;
+  margin: 0;
 }
 
 @media (max-width: 700px) {
