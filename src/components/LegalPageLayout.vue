@@ -12,7 +12,7 @@ defineProps({
 </script>
 
 <template>
-  <section class="page-block legal-page">
+  <section class="page-block legal legal-page">
     <h1>{{ title }}</h1>
     <p class="updated">Dernière mise à jour : {{ updatedAt }}</p>
     <slot />
@@ -29,6 +29,12 @@ defineProps({
   color: #4b5f79;
   font-weight: 600;
   margin-top: -4px;
+}
+
+.legal-page h1 {
+  font-size: clamp(1.9rem, 2.8vw, 2.35rem);
+  line-height: 1.2;
+  margin-bottom: 10px;
 }
 
 :slotted(h2) {
