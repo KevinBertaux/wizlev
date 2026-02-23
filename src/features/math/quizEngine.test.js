@@ -100,6 +100,7 @@ describe('createMultiplicationQuizSession', () => {
     const session = createMultiplicationQuizSession({
       tables: [7, 3],
       mode: 'ordered',
+      difficulty: 'discovery',
       reviewErrorsEnabled: false,
       randomFn: () => 0.5,
     });
@@ -117,6 +118,7 @@ describe('createMultiplicationQuizSession', () => {
     const session = createMultiplicationQuizSession({
       tables: [2, 9],
       mode: 'mixed',
+      difficulty: 'discovery',
       reviewErrorsEnabled: false,
       randomFn: () => 0.5,
     });
@@ -134,6 +136,7 @@ describe('createMultiplicationQuizSession', () => {
     const session = createMultiplicationQuizSession({
       tables: [4],
       mode: 'ordered',
+      difficulty: 'discovery',
       reviewErrorsEnabled: true,
       randomFn: withRandomSequence([0.05, 0.12, 0.19, 0.26, 0.33, 0.4, 0.47, 0.54, 0.61, 0.68, 0.75, 0.82]),
     });
@@ -156,6 +159,7 @@ describe('createMultiplicationQuizSession', () => {
     const session = createMultiplicationQuizSession({
       tables: [6],
       mode: 'ordered',
+      difficulty: 'discovery',
       reviewErrorsEnabled: true,
       randomFn: () => 0.5,
     });
@@ -183,6 +187,7 @@ describe('createMultiplicationQuizSession', () => {
     const session = createMultiplicationQuizSession({
       tables: [4],
       mode: 'ordered',
+      difficulty: 'discovery',
       reviewErrorsEnabled: false,
       randomFn: () => 0.5,
     });
@@ -195,13 +200,15 @@ describe('createMultiplicationQuizSession', () => {
     }
 
     const next = session.next();
-    expect(next.source).toBe('main');
+    expect(next).toBeNull();
+    expect(session.getState().isCompleted).toBe(true);
   });
 
   it('replays review errors in the same order they were made', () => {
     const session = createMultiplicationQuizSession({
       tables: [5],
       mode: 'ordered',
+      difficulty: 'discovery',
       reviewErrorsEnabled: true,
       randomFn: () => 0.5,
     });
@@ -222,6 +229,109 @@ describe('createMultiplicationQuizSession', () => {
 
     expect(`${review1.num1}x${review1.num2}`).toBe(`${firstWrong.num1}x${firstWrong.num2}`);
     expect(`${review2.num1}x${review2.num2}`).toBe(`${secondWrong.num1}x${secondWrong.num2}`);
+  });
+
+  it('shuffles review errors in reinforced mode', () => {
+    const session = createMultiplicationQuizSession({
+      tables: [5],
+      mode: 'ordered',
+      difficulty: 'reinforced',
+      reviewErrorsEnabled: true,
+      randomFn: () => 0,
+    });
+
+    const firstWrong = session.next();
+    session.markAnswer({ question: firstWrong, isCorrect: false });
+
+    const secondWrong = session.next();
+    session.markAnswer({ question: secondWrong, isCorrect: false });
+
+    for (let i = 0; i < 34; i += 1) {
+      const question = session.next();
+      session.markAnswer({ question, isCorrect: true });
+    }
+
+    const review1 = session.next();
+    const review2 = session.next();
+
+    expect(`${review1.num1}x${review1.num2}`).toBe(`${secondWrong.num1}x${secondWrong.num2}`);
+    expect(`${review2.num1}x${review2.num2}`).toBe(`${firstWrong.num1}x${firstWrong.num2}`);
+  });
+
+  it('completes finite discovery session after one cycle when review is disabled', () => {
+    const session = createMultiplicationQuizSession({
+      tables: [9],
+      mode: 'ordered',
+      difficulty: 'discovery',
+      reviewErrorsEnabled: false,
+      randomFn: () => 0.5,
+    });
+
+    for (let i = 0; i < 12; i += 1) {
+      expect(session.next()).not.toBeNull();
+    }
+
+    expect(session.next()).toBeNull();
+    expect(session.getState().isCompleted).toBe(true);
+  });
+
+  it('uses extended cycle for standard difficulty', () => {
+    const session = createMultiplicationQuizSession({
+      tables: [9],
+      mode: 'ordered',
+      difficulty: 'standard',
+      reviewErrorsEnabled: false,
+      randomFn: () => 0.5,
+    });
+
+    for (let i = 0; i < 24; i += 1) {
+      expect(session.next()).not.toBeNull();
+    }
+
+    expect(session.next()).toBeNull();
+    expect(session.getState().isCompleted).toBe(true);
+  });
+
+  it('keeps infinite difficulty open after many questions', () => {
+    const session = createMultiplicationQuizSession({
+      tables: [9],
+      mode: 'ordered',
+      difficulty: 'infinite',
+      reviewErrorsEnabled: false,
+      randomFn: () => 0.5,
+    });
+
+    for (let i = 0; i < 60; i += 1) {
+      expect(session.next()).not.toBeNull();
+    }
+
+    expect(session.getState().isCompleted).toBe(false);
+  });
+
+  it('runs infinite mode in mini-batches of 12 before review', () => {
+    const session = createMultiplicationQuizSession({
+      tables: [2, 3],
+      mode: 'mixed',
+      difficulty: 'infinite',
+      reviewErrorsEnabled: true,
+      randomFn: () => 0.25,
+    });
+
+    const firstWrong = session.next();
+    session.markAnswer({ question: firstWrong, isCorrect: false });
+
+    for (let i = 0; i < 11; i += 1) {
+      const question = session.next();
+      session.markAnswer({ question, isCorrect: true });
+    }
+
+    const afterBatch = session.next();
+    expect(afterBatch.source).toBe('review');
+
+    // Review should not end infinite mode.
+    session.markAnswer({ question: afterBatch, isCorrect: true });
+    expect(session.next()).not.toBeNull();
+    expect(session.getState().isCompleted).toBe(false);
   });
 });
 
