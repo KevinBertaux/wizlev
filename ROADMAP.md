@@ -43,10 +43,10 @@
 - [x] Système de difficulté (Multiplications): UI de sélection difficulté (boutons segmentés).
 - [x] Multiplications: pavé numérique desktop/tablette.
 - [ ] Vocabulaire Anglais: ajouter la liste `Weather` (EN/FR) et l'intégrer au parcours de révision.
-- [ ] Admin: ajouter la gestion des formes de symétrie (ajout/édition/suppression).
-- [ ] Admin: ajouter une action de maintenance pour vider le `localStorage` (avec confirmation).
-- [ ] Admin: afficher le scope/roadmap avec barre de progression.
-- [ ] Admin: lancer une refonte de l'interface (ergonomie et cohérence visuelle).
+- [x] Admin: ajouter la gestion des formes de symétrie (ajout/édition/suppression).
+- [x] Admin: ajouter une action de maintenance pour vider le `localStorage` (avec confirmation).
+- [x] Admin: afficher le scope/roadmap avec barre de progression.
+- [x] Admin: lancer une refonte de l'interface (ergonomie et cohérence visuelle).
 
 ---
 

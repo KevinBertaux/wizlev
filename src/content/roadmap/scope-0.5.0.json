@@ -87,7 +87,7 @@
       "domain": "admin",
       "feature": "dashboard",
       "label": "Dashboard admin avec sidebar repliable + navigation interne",
-      "done": false
+      "done": true
     },
     {
       "id": "scope-050-high-admin-maintenance",
@@ -95,7 +95,7 @@
       "domain": "admin",
       "feature": "maintenance",
       "label": "Maintenance locale (RAZ granulaire + rollback)",
-      "done": false
+      "done": true
     },
     {
       "id": "scope-050-med-refactor",
@@ -123,4 +123,3 @@
     }
   ]
 }
-
