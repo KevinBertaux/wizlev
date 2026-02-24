@@ -2,7 +2,7 @@
   "version": "0.3.0",
   "items": [
     {
-      "id": "030-vue-vite-migration",
+      "id": "scope-030-vue-vite-migration",
       "priority": "Crit",
       "domain": "infra",
       "feature": "migration",
@@ -10,7 +10,7 @@
       "done": true
     },
     {
-      "id": "030-router-setup",
+      "id": "scope-030-router-setup",
       "priority": "High",
       "domain": "infra",
       "feature": "routing",
@@ -18,7 +18,7 @@
       "done": true
     },
     {
-      "id": "030-content-json",
+      "id": "scope-030-content-json",
       "priority": "High",
       "domain": "langues",
       "feature": "anglais",
@@ -26,7 +26,7 @@
       "done": true
     },
     {
-      "id": "030-legacy-archive",
+      "id": "scope-030-legacy-archive",
       "priority": "Med",
       "domain": "infra",
       "feature": "cleanup",
@@ -35,3 +35,4 @@
     }
   ]
 }
+

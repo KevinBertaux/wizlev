@@ -2,7 +2,7 @@
   "version": "backlog",
   "items": [
     {
-      "id": "bl-sym-45",
+      "id": "backlog-sym-45",
       "priority": "High",
       "domain": "math",
       "feature": "symetrie",
@@ -10,7 +10,7 @@
       "done": false
     },
     {
-      "id": "bl-history-scores",
+      "id": "backlog-history-scores",
       "priority": "Med",
       "domain": "math",
       "feature": "scores",
@@ -18,7 +18,7 @@
       "done": false
     },
     {
-      "id": "bl-admin-advanced",
+      "id": "backlog-admin-advanced",
       "priority": "Med",
       "domain": "admin",
       "feature": "dashboard",
@@ -26,7 +26,23 @@
       "done": false
     },
     {
-      "id": "bl-auth-server",
+      "id": "backlog-tailwind-v4-migration",
+      "priority": "Med",
+      "domain": "ui",
+      "feature": "stack-css",
+      "label": "Migration technique vers Tailwind CSS v4 (branche dédiée + validation non-régression)",
+      "done": false
+    },
+    {
+      "id": "backlog-ui-rework-post-v4",
+      "priority": "Med",
+      "domain": "ui",
+      "feature": "design-system",
+      "label": "Refonte globale CSS/UI/UX pour exploiter pleinement Tailwind v4 (tokens, composants, cohérence cross-modules)",
+      "done": false
+    },
+    {
+      "id": "backlog-auth-server",
       "priority": "Low",
       "domain": "admin",
       "feature": "auth",
@@ -35,3 +51,4 @@
     }
   ]
 }
+

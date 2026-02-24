@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "items": [
     {
-      "id": "020-math-fixes",
+      "id": "scope-020-math-fixes",
       "priority": "High",
       "domain": "math",
       "feature": "multiplications",
@@ -10,7 +10,7 @@
       "done": true
     },
     {
-      "id": "020-tts-v1",
+      "id": "scope-020-tts-v1",
       "priority": "High",
       "domain": "langues",
       "feature": "anglais",
@@ -18,7 +18,7 @@
       "done": true
     },
     {
-      "id": "020-vocab-card-refine",
+      "id": "scope-020-vocab-card-refine",
       "priority": "High",
       "domain": "langues",
       "feature": "anglais",
@@ -26,7 +26,7 @@
       "done": true
     },
     {
-      "id": "020-versioning-doc",
+      "id": "scope-020-versioning-doc",
       "priority": "Med",
       "domain": "docs",
       "feature": "release",
@@ -35,3 +35,4 @@
     }
   ]
 }
+

@@ -2,7 +2,7 @@
   "version": "0.4.0",
   "items": [
     {
-      "id": "040-static-netlify",
+      "id": "scope-040-static-netlify",
       "priority": "Crit",
       "domain": "infra",
       "feature": "deployment",
@@ -10,7 +10,7 @@
       "done": true
     },
     {
-      "id": "040-admin-lite-guard",
+      "id": "scope-040-admin-lite-guard",
       "priority": "High",
       "domain": "admin",
       "feature": "auth",
@@ -18,7 +18,7 @@
       "done": true
     },
     {
-      "id": "040-legal-pages",
+      "id": "scope-040-legal-pages",
       "priority": "High",
       "domain": "legal",
       "feature": "pages",
@@ -26,7 +26,7 @@
       "done": true
     },
     {
-      "id": "040-tests-build",
+      "id": "scope-040-tests-build",
       "priority": "Med",
       "domain": "infra",
       "feature": "quality",
@@ -35,3 +35,4 @@
     }
   ]
 }
+

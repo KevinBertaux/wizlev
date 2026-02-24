@@ -61,6 +61,7 @@ const sidebarGroups = Object.freeze([
       { id: 'overview', icon: '📊', label: "Vue d'ensemble" },
       { id: 'roadmap', icon: '🗺️', label: 'Roadmap & Scopes' },
       { id: 'maintenance', icon: '🧹', label: 'Maintenance locale' },
+      { id: 'admin-help', icon: '📘', label: 'Aide' },
     ],
   },
 ]);
@@ -71,6 +72,7 @@ const sectionTitleMap = Object.freeze({
   vocab: 'Édition de listes de vocabulaire',
   symmetry: 'Formes de symétrie',
   maintenance: 'Maintenance locale',
+  'admin-help': 'Documentation du panel interne',
 });
 
 function readSidebarCollapsed() {
@@ -82,6 +84,7 @@ function readSidebarCollapsed() {
 
 const selectedSection = ref('overview');
 const sidebarCollapsed = ref(readSidebarCollapsed());
+const mobileSidebarOpen = ref(false);
 const activeSectionTitle = computed(() => sectionTitleMap[selectedSection.value] || 'Dashboard admin');
 const sidebarOpen = ref({
   math: false,
@@ -189,14 +192,21 @@ function toggleSidebarGroup(groupId) {
   if (sidebarCollapsed.value) {
     return;
   }
+  const shouldOpen = !sidebarOpen.value[groupId];
+  const nextState = Object.keys(sidebarOpen.value).reduce((acc, key) => {
+    acc[key] = false;
+    return acc;
+  }, {});
+
+  nextState[groupId] = shouldOpen;
   sidebarOpen.value = {
-    ...sidebarOpen.value,
-    [groupId]: !sidebarOpen.value[groupId],
+    ...nextState,
   };
 }
 
 function switchSection(sectionId) {
   selectedSection.value = sectionId;
+  mobileSidebarOpen.value = false;
   clearStatus();
 }
 
@@ -204,7 +214,16 @@ function clearSidebarSearch() {
   sidebarSearchQuery.value = '';
 }
 
+function toggleMobileSidebar() {
+  mobileSidebarOpen.value = !mobileSidebarOpen.value;
+}
+
+function closeMobileSidebar() {
+  mobileSidebarOpen.value = false;
+}
+
 async function logout() {
+  mobileSidebarOpen.value = false;
   clearAdminSession();
   await router.replace({ name: 'studio-ops-login' });
 }
@@ -421,6 +440,57 @@ const sortKey2 = ref('done');
 const sortDir2 = ref('asc');
 const sortKey3 = ref('domain');
 const sortDir3 = ref('asc');
+const sortKeyOptions = Object.freeze([
+  { key: 'priority', label: 'Priorité' },
+  { key: 'done', label: 'État' },
+  { key: 'domain', label: 'Catégorie' },
+  { key: 'feature', label: 'Sous-catégorie' },
+  { key: 'label', label: 'Libellé' },
+]);
+
+function getSortKeyByLevel(level) {
+  if (level === 1) {
+    return sortKey1.value;
+  }
+  if (level === 2) {
+    return sortKey2.value;
+  }
+  return sortKey3.value;
+}
+
+function getSortDirByLevel(level) {
+  if (level === 1) {
+    return sortDir1.value;
+  }
+  if (level === 2) {
+    return sortDir2.value;
+  }
+  return sortDir3.value;
+}
+
+function setSortKeyByLevel(level, key) {
+  if (level === 1) {
+    sortKey1.value = key;
+    return;
+  }
+  if (level === 2) {
+    sortKey2.value = key;
+    return;
+  }
+  sortKey3.value = key;
+}
+
+function toggleSortDirByLevel(level) {
+  if (level === 1) {
+    sortDir1.value = sortDir1.value === 'asc' ? 'desc' : 'asc';
+    return;
+  }
+  if (level === 2) {
+    sortDir2.value = sortDir2.value === 'asc' ? 'desc' : 'asc';
+    return;
+  }
+  sortDir3.value = sortDir3.value === 'asc' ? 'desc' : 'asc';
+}
 
 const roadmapDomainOptions = computed(() => {
   const items = activeRoadmapEntry.value?.items || [];
@@ -777,9 +847,15 @@ refreshDashboardMetrics();
 </script>
 
 <template>
-  <section class="page-block admin-page">
-    <div class="admin-dashboard" :class="{ 'is-collapsed': sidebarCollapsed }">
-      <aside class="admin-sidebar">
+  <section class="admin-page">
+    <div class="admin-dashboard" :class="{ 'is-collapsed': sidebarCollapsed, 'is-mobile-sidebar-open': mobileSidebarOpen }">
+      <button
+        class="admin-sidebar-backdrop"
+        type="button"
+        aria-label="Fermer le panneau latéral"
+        @click="closeMobileSidebar"
+      />
+      <aside id="adminSidebarPanel" class="admin-sidebar">
         <div class="sidebar-head">
           <div class="sidebar-head-main">
             <button class="sidebar-toggle" type="button" @click="toggleSidebar">
@@ -820,6 +896,11 @@ refreshDashboardMetrics();
           </button>
         </div>
 
+        <button class="btn btn-danger sidebar-logout" type="button" @click="logout">
+          <span v-if="!sidebarCollapsed">Déconnexion</span>
+          <span v-else>⏻</span>
+        </button>
+
         <nav class="sidebar-nav">
           <section v-for="group in filteredSidebarGroups" :key="group.id" class="sidebar-group">
             <button
@@ -832,44 +913,49 @@ refreshDashboardMetrics();
                 <span class="sidebar-icon">{{ group.icon }}</span>
                 <span v-if="!sidebarCollapsed" class="sidebar-group-label">{{ group.label }}</span>
               </span>
-              <span v-if="!sidebarCollapsed" class="sidebar-chevron">
-                {{ isSidebarGroupOpen(group.id) ? '▾' : '▸' }}
+              <span v-if="!sidebarCollapsed" class="sidebar-chevron" :class="{ 'is-open': isSidebarGroupOpen(group.id) }">
+                ▸
               </span>
             </button>
 
-            <div v-if="!sidebarCollapsed && isSidebarGroupOpen(group.id)" class="sidebar-children">
-              <button
-                v-for="item in group.items"
-                :key="item.id"
-                class="sidebar-child-link"
-                :class="{ 'is-active': selectedSection === item.id }"
-                type="button"
-                @click="switchSection(item.id)"
-              >
-                <span class="sidebar-child-icon">{{ item.icon }}</span>
-                <span class="sidebar-child-label">{{ item.label }}</span>
-              </button>
-            </div>
+            <Transition name="sidebar-accordion">
+              <div v-if="!sidebarCollapsed && isSidebarGroupOpen(group.id)" class="sidebar-children">
+                <button
+                  v-for="item in group.items"
+                  :key="item.id"
+                  class="sidebar-child-link"
+                  :class="{ 'is-active': selectedSection === item.id }"
+                  type="button"
+                  @click="switchSection(item.id)"
+                >
+                  <span class="sidebar-child-icon">{{ item.icon }}</span>
+                  <span class="sidebar-child-label">{{ item.label }}</span>
+                </button>
+              </div>
+            </Transition>
           </section>
 
           <p v-if="!sidebarCollapsed && !sidebarHasSearchResults" class="sidebar-empty">
             Aucun résultat.
           </p>
         </nav>
-
-        <button class="btn btn-danger" type="button" @click="logout">
-          <span v-if="!sidebarCollapsed">Déconnexion</span>
-          <span v-else>⏻</span>
-        </button>
       </aside>
 
       <div class="admin-main">
         <header class="admin-header">
-          <div>
+          <div class="admin-header-main">
             <h1>{{ activeSectionTitle }}</h1>
             <p class="meta-line">Version {{ APP_VERSION }} - Dernière modification : {{ LAST_UPDATE_FR }}</p>
           </div>
-          <router-link class="intro-link" to="/aide/panel-interne">Documentation du panel interne</router-link>
+          <button
+            class="mobile-sidebar-trigger"
+            type="button"
+            aria-controls="adminSidebarPanel"
+            :aria-expanded="mobileSidebarOpen ? 'true' : 'false'"
+            @click="toggleMobileSidebar"
+          >
+            ☰ Sections
+          </button>
         </header>
 
         <AdminStatusBanner :message="statusMessage" :tone="statusType || 'info'" />
@@ -899,9 +985,7 @@ refreshDashboardMetrics();
           <article class="admin-card">
             <div class="scope-head">
               <h2>Roadmap & Scopes</h2>
-              <span class="scope-chip">
-                {{ activeScopeDoneCount }} / {{ activeScopeTotalCount }} - {{ activeScopeProgressPercent }}%
-              </span>
+              <span class="scope-summary-pill">{{ activeScopeDoneCount }}/{{ activeScopeTotalCount }} • {{ activeScopeProgressPercent }}%</span>
             </div>
 
             <div class="roadmap-toolbar">
@@ -919,8 +1003,10 @@ refreshDashboardMetrics();
               </div>
             </div>
 
-            <div class="progress-track">
-              <div class="progress-fill" :style="{ width: `${activeScopeProgressPercent}%` }" />
+            <div class="scope-progress-block">
+              <div class="progress-track">
+                <div class="progress-fill" :style="{ width: `${activeScopeProgressPercent}%` }" />
+              </div>
             </div>
 
             <div class="roadmap-filters">
@@ -935,8 +1021,8 @@ refreshDashboardMetrics();
                 <label for="filterDone">État</label>
                 <select id="filterDone" v-model="filterDone">
                   <option value="all">Tous</option>
-                  <option value="todo">Non fait</option>
-                  <option value="done">Fait</option>
+                  <option value="todo">⌛</option>
+                  <option value="done">✅</option>
                 </select>
               </div>
               <div>
@@ -957,57 +1043,36 @@ refreshDashboardMetrics();
 
             <div class="roadmap-sorts">
               <h3>Tri multi-niveaux</h3>
-              <div class="roadmap-sort-grid">
-                <div>
-                  <label for="sortKey1">Tri 1</label>
-                  <select id="sortKey1" v-model="sortKey1">
-                    <option value="priority">Priorité</option>
-                    <option value="done">État</option>
-                    <option value="domain">Catégorie</option>
-                    <option value="feature">Sous-catégorie</option>
-                    <option value="label">Libellé</option>
-                  </select>
-                </div>
-                <div>
-                  <label for="sortDir1">Ordre 1</label>
-                  <select id="sortDir1" v-model="sortDir1">
-                    <option value="asc">Asc</option>
-                    <option value="desc">Desc</option>
-                  </select>
-                </div>
-                <div>
-                  <label for="sortKey2">Tri 2</label>
-                  <select id="sortKey2" v-model="sortKey2">
-                    <option value="priority">Priorité</option>
-                    <option value="done">État</option>
-                    <option value="domain">Catégorie</option>
-                    <option value="feature">Sous-catégorie</option>
-                    <option value="label">Libellé</option>
-                  </select>
-                </div>
-                <div>
-                  <label for="sortDir2">Ordre 2</label>
-                  <select id="sortDir2" v-model="sortDir2">
-                    <option value="asc">Asc</option>
-                    <option value="desc">Desc</option>
-                  </select>
-                </div>
-                <div>
-                  <label for="sortKey3">Tri 3</label>
-                  <select id="sortKey3" v-model="sortKey3">
-                    <option value="priority">Priorité</option>
-                    <option value="done">État</option>
-                    <option value="domain">Catégorie</option>
-                    <option value="feature">Sous-catégorie</option>
-                    <option value="label">Libellé</option>
-                  </select>
-                </div>
-                <div>
-                  <label for="sortDir3">Ordre 3</label>
-                  <select id="sortDir3" v-model="sortDir3">
-                    <option value="asc">Asc</option>
-                    <option value="desc">Desc</option>
-                  </select>
+              <div class="roadmap-sort-stack">
+                <div v-for="level in [1, 2, 3]" :key="`sort-${level}`" class="roadmap-sort-row">
+                  <span class="roadmap-sort-label">Tri {{ level }}</span>
+                  <div class="roadmap-sort-pill-group">
+                    <button
+                      v-for="option in sortKeyOptions"
+                      :key="`sort-${level}-${option.key}`"
+                      class="roadmap-sort-pill"
+                      :class="{ 'is-active': getSortKeyByLevel(level) === option.key }"
+                      type="button"
+                      @click="setSortKeyByLevel(level, option.key)"
+                    >
+                      {{ option.label }}
+                    </button>
+                  </div>
+                  <button
+                    class="roadmap-sort-dir-btn"
+                    type="button"
+                    :aria-label="`Basculer ordre tri ${level}`"
+                    @click="toggleSortDirByLevel(level)"
+                  >
+                    <svg
+                      viewBox="0 0 16 16"
+                      aria-hidden="true"
+                      class="roadmap-sort-dir-icon"
+                      :class="{ 'is-desc': getSortDirByLevel(level) === 'desc' }"
+                    >
+                      <path d="M8 3l3.5 4.5h-7L8 3zM8 13l-3.5-4.5h7L8 13z" />
+                    </svg>
+                  </button>
                 </div>
               </div>
             </div>
@@ -1020,7 +1085,7 @@ refreshDashboardMetrics();
                     <th>État</th>
                     <th>Catégorie</th>
                     <th>Sous-catégorie</th>
-                    <th>Item</th>
+                    <th>Description</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1028,7 +1093,7 @@ refreshDashboardMetrics();
                     <td>
                       <span class="priority-chip" :class="`p-${item.priority.toLowerCase()}`">{{ item.priority }}</span>
                     </td>
-                    <td>{{ item.done ? '✅ Fait' : '⌛ Non fait' }}</td>
+                    <td>{{ item.done ? '✅' : '⌛' }}</td>
                     <td>{{ item.domain }}</td>
                     <td>{{ item.feature }}</td>
                     <td>{{ item.label }}</td>
@@ -1142,6 +1207,85 @@ refreshDashboardMetrics();
           </div>
         </section>
 
+        <section v-else-if="selectedSection === 'admin-help'" class="admin-section">
+          <article class="admin-card internal-help-card">
+            <h2>Documentation du panel interne</h2>
+            <p class="meta-line">
+              Version: {{ APP_VERSION }} - Dernière modification: {{ LAST_UPDATE_FR }}.
+            </p>
+
+            <p>
+              Cette aide reste intégrée au dashboard pour éviter de sortir du panel pendant l’édition.
+              Version anglaise:
+              <router-link to="/help/internal-panel">Internal panel documentation</router-link>.
+            </p>
+
+            <h3 id="scope">Périmètre</h3>
+            <ul>
+              <li>Édition locale dans le navigateur (stockage <a href="#glossary-localstorage">localStorage</a>).</li>
+              <li>Aucun backend requis pour cette version.</li>
+              <li>Export JSON pour versionner les données dans le repo Git.</li>
+            </ul>
+
+            <h3 id="security">Accès et sécurité</h3>
+            <ul>
+              <li>Connexion par identifiant + mot de passe (vérification par hash côté client).</li>
+              <li>Blocage niveau 1: 3 essais invalides puis 30 minutes.</li>
+              <li>Blocage niveau 2: un nouvel essai invalide après niveau 1 déclenche 24 heures de blocage.</li>
+              <li>Session temporaire: expiration automatique par timeout.</li>
+            </ul>
+
+            <h3 id="workflow">Workflow recommandé</h3>
+            <ol>
+              <li>Se connecter au panel interne.</li>
+              <li>Choisir la liste à modifier.</li>
+              <li>Éditer les mots (anglais/français), puis sauvegarder localement.</li>
+              <li>Vérifier le rendu dans le module Langues.</li>
+              <li>Exporter le JSON, puis commit/push dans le repo.</li>
+            </ol>
+
+            <h3 id="json-ops">Opérations JSON</h3>
+            <ul>
+              <li><strong>Copier JSON</strong>: audit rapide ou partage ponctuel.</li>
+              <li><strong>Télécharger JSON</strong>: fichier prêt à versionner.</li>
+              <li><strong>Importer JSON</strong>: recharge une liste existante dans le panel.</li>
+              <li><strong>Réinitialiser</strong>: revient à la version par défaut du projet.</li>
+            </ul>
+
+            <h3 id="limits">Limites connues</h3>
+            <ul>
+              <li>Protection front-only: ce n’est pas une sécurité serveur forte.</li>
+              <li>Les données locales sont liées à l’appareil/navigateur en cours.</li>
+              <li>Effacement navigateur peut supprimer les modifications locales.</li>
+            </ul>
+
+            <h3 id="troubleshooting">Dépannage</h3>
+            <ul>
+              <li>Accès bloqué: attendre la fin du compte à rebours affiché.</li>
+              <li>Session expirée: se reconnecter.</li>
+              <li>Doute sur les données: réinitialiser puis réimporter un JSON de référence.</li>
+            </ul>
+
+            <h3 id="glossary">Glossaire</h3>
+            <dl>
+              <dt id="glossary-localstorage">localStorage</dt>
+              <dd>Stockage persistant dans le navigateur, propre à un domaine.</dd>
+
+              <dt id="glossary-hash">Hash (SHA-256)</dt>
+              <dd>Empreinte irréversible pour vérifier un mot de passe sans le stocker en clair.</dd>
+
+              <dt id="glossary-timeout">Timeout de session</dt>
+              <dd>Durée limite d’une session connectée avant déconnexion automatique.</dd>
+
+              <dt id="glossary-front-only">Front-only security</dt>
+              <dd>Protection implémentée uniquement côté navigateur, sans contrôle serveur.</dd>
+
+              <dt id="glossary-json">JSON</dt>
+              <dd>Format texte structuré pour stocker et échanger des données.</dd>
+            </dl>
+          </article>
+        </section>
+
         <section v-else class="admin-section">
           <div class="admin-card">
             <h2>Réinitialisation granulaire</h2>
@@ -1214,87 +1358,115 @@ refreshDashboardMetrics();
 
 <style scoped>
 .admin-page {
-  max-width: 1200px;
-  margin-inline: auto;
+  width: 100%;
+  min-height: calc(100dvh - 146px);
 }
 
 .admin-dashboard {
+  position: relative;
   display: grid;
-  grid-template-columns: 260px minmax(0, 1fr);
-  gap: 16px;
-  align-items: start;
+  grid-template-columns: 272px minmax(0, 1fr);
+  gap: 0;
+  align-items: stretch;
+  min-height: calc(100dvh - 146px);
+  border: 1px solid #d4deea;
+  border-radius: 4px;
+  background: #f2f6fb;
+  overflow: hidden;
 }
 
 .admin-dashboard.is-collapsed {
-  grid-template-columns: 88px minmax(0, 1fr);
+  grid-template-columns: 84px minmax(0, 1fr);
+}
+
+.admin-sidebar-backdrop {
+  display: none;
 }
 
 .admin-sidebar {
-  border: 1px solid #d9e1ed;
-  border-radius: 14px;
-  padding: 12px;
-  background: linear-gradient(180deg, #f8fbff, #f0f7ff);
+  border-right: 1px solid #d7e1ec;
+  padding: 8px 6px;
+  background: #f3f7fb;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  position: sticky;
-  top: 10px;
-  align-self: start;
-  max-height: calc(100dvh - 20px);
+  gap: 6px;
+  min-height: 0;
   overflow: hidden;
 }
 
 .sidebar-head {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+  gap: 6px;
+  padding: 0 4px 6px;
+  border-bottom: 1px solid #dde7f1;
 }
 
 .sidebar-head-main {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   min-width: 0;
 }
 
 .sidebar-title {
+  font-size: 0.91rem;
   font-weight: 800;
+  color: #1d3752;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .sidebar-toggle {
-  border: 1px solid #9ab0c8;
-  border-radius: 10px;
-  background: #deefff;
-  min-height: 40px;
-  min-width: 44px;
+  border: 1px solid #b5c6d8;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #1f4368;
+  min-height: 36px;
+  min-width: 38px;
   font-weight: 800;
   cursor: pointer;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
 }
 
 .sidebar-home {
-  border: 1px solid #9ab0c8;
-  border-radius: 10px;
-  background: #f8fcff;
-  min-height: 40px;
-  min-width: 44px;
+  border: 1px solid #b5c6d8;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #1f4368;
+  min-height: 36px;
+  min-width: 38px;
   font-size: 1rem;
   cursor: pointer;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
 }
 
+.sidebar-toggle:hover,
+.sidebar-toggle:focus-visible,
 .sidebar-home:hover,
 .sidebar-home:focus-visible {
-  background: #e5f2ff;
+  background: #dcecff;
+  border-color: #6a9fcf;
+  color: #112f49;
 }
 
 .sidebar-home.is-active {
-  border-color: #67a6d7;
-  background: #d8ebff;
+  border-color: #67a5d6;
+  background: #d9ecff;
+  color: #123a5d;
 }
 
 .sidebar-nav {
   display: grid;
-  gap: 8px;
+  gap: 4px;
   min-height: 0;
   overflow-y: auto;
   padding-right: 2px;
@@ -1314,9 +1486,10 @@ refreshDashboardMetrics();
 
 .sidebar-search input {
   width: 100%;
-  border: 1px solid #9ab0c8;
-  border-radius: 10px;
-  padding: 9px 12px 9px 30px;
+  border: 1px solid #b5c6d8;
+  border-radius: 4px;
+  height: 36px;
+  padding: 8px 12px 8px 30px;
   background: #ffffff;
 }
 
@@ -1325,8 +1498,8 @@ refreshDashboardMetrics();
 }
 
 .sidebar-search input:focus-visible {
-  border-color: #1d4ed8;
-  box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.16);
+  border-color: #2475b8;
+  box-shadow: 0 0 0 2px rgba(36, 117, 184, 0.18);
   outline: none;
 }
 
@@ -1342,17 +1515,18 @@ refreshDashboardMetrics();
   top: 50%;
   transform: translateY(-50%);
   border: 1px solid #c7d4e2;
-  border-radius: 8px;
-  background: #f8fcff;
+  border-radius: 4px;
+  background: #ffffff;
   width: 24px;
   height: 24px;
   line-height: 1;
+  color: #245175;
   cursor: pointer;
 }
 
 .sidebar-search-clear:hover,
 .sidebar-search-clear:focus-visible {
-  background: #e7f2ff;
+  background: #e7f0fb;
 }
 
 .sidebar-empty {
@@ -1364,28 +1538,39 @@ refreshDashboardMetrics();
 
 .sidebar-group {
   display: grid;
-  gap: 6px;
+  gap: 4px;
 }
 
 .sidebar-group-toggle {
-  border: 1px solid #bdd2e6;
-  border-radius: 12px;
-  height: 44px;
-  background: #fbfdff;
+  border: 1px solid #cfdce9;
+  border-radius: 4px;
+  height: 36px;
+  background: #ffffff;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  padding: 0 10px;
+  gap: 8px;
+  padding: 0 9px;
   font-weight: 700;
-  color: #1a3651;
+  color: #1b3856;
   cursor: pointer;
   overflow: hidden;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
 }
 
 .sidebar-group-toggle:hover,
 .sidebar-group-toggle:focus-visible {
-  background: #e5f2ff;
+  background: #dcecff;
+  border-color: #6b9ecf;
+  color: #112f49;
+}
+
+.sidebar-group-toggle.is-open {
+  border-color: #91b3d4;
+  background: #e7f2ff;
 }
 
 .sidebar-group-left {
@@ -1410,36 +1595,71 @@ refreshDashboardMetrics();
 
 .sidebar-chevron {
   font-size: 0.85rem;
+  transition: transform 0.2s ease;
+}
+
+.sidebar-chevron.is-open {
+  transform: rotate(90deg);
 }
 
 .sidebar-children {
   border-left: 2px solid #d3e2f0;
-  margin-left: 12px;
-  padding-left: 8px;
+  margin-left: 8px;
+  padding-left: 6px;
   display: grid;
-  gap: 6px;
+  gap: 4px;
+}
+
+.sidebar-accordion-enter-active,
+.sidebar-accordion-leave-active {
+  overflow: hidden;
+  transition:
+    max-height 0.22s ease,
+    opacity 0.18s ease,
+    transform 0.18s ease;
+}
+
+.sidebar-accordion-enter-from,
+.sidebar-accordion-leave-to {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-2px);
+}
+
+.sidebar-accordion-enter-to,
+.sidebar-accordion-leave-from {
+  max-height: 240px;
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .sidebar-child-link {
-  border: 1px solid #c8d9ea;
-  border-radius: 10px;
-  height: 44px;
-  background: #f8fcff;
+  border: 1px solid #d1deea;
+  border-radius: 4px;
+  height: 34px;
+  background: #ffffff;
   display: grid;
   grid-template-columns: 18px 1fr;
   align-items: center;
-  gap: 8px;
-  padding: 0 10px;
+  gap: 6px;
+  padding: 0 9px;
   text-align: left;
-  color: #1a3651;
+  color: #1a3753;
   font-weight: 700;
   cursor: pointer;
   min-width: 0;
+  text-decoration: none;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
 }
 
 .sidebar-child-link:hover,
 .sidebar-child-link:focus-visible {
-  background: #e8f3ff;
+  background: #dcecff;
+  border-color: #6f9fcd;
+  color: #112f49;
 }
 
 .sidebar-child-label {
@@ -1449,17 +1669,36 @@ refreshDashboardMetrics();
 }
 
 .sidebar-child-link.is-active {
-  border-color: #67a6d7;
-  background: #d8ebff;
+  border-color: #67a5d6;
+  background: #d9ecff;
+  color: #133a5d;
 }
 
 .admin-dashboard.is-collapsed .sidebar-group-toggle {
   justify-content: center;
+  padding: 0;
 }
 
-.admin-sidebar > .btn-danger {
-  margin-top: auto;
+.admin-dashboard.is-collapsed .sidebar-head {
+  grid-template-columns: 1fr;
+}
+
+.admin-dashboard.is-collapsed .sidebar-head-main {
+  justify-content: center;
+}
+
+.admin-dashboard.is-collapsed .sidebar-toggle,
+.admin-dashboard.is-collapsed .sidebar-home {
   width: 100%;
+}
+
+.admin-dashboard.is-collapsed .sidebar-group-left {
+  justify-content: center;
+}
+
+.sidebar-logout {
+  width: 100%;
+  margin-top: 2px;
 }
 
 .admin-dashboard.is-collapsed .sidebar-children {
@@ -1467,45 +1706,123 @@ refreshDashboardMetrics();
 }
 
 .admin-main {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
+  background: #ffffff;
 }
 
 .admin-header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  padding: 12px 16px 10px;
+  border-bottom: 1px solid #e0e8f1;
+  background: #ffffff;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
   flex-wrap: wrap;
 }
 
-.admin-header h1 {
-  margin: 0;
+.admin-header-main {
+  min-width: 0;
 }
 
-.intro-link {
-  text-decoration: underline;
+.admin-header h1 {
+  margin: 0;
+  font-size: 1.4rem;
+  line-height: 1.2;
+  color: #132f4c;
+}
+
+.mobile-sidebar-trigger {
+  display: none;
+  border: 1px solid #9cb7d1;
+  border-radius: 4px;
+  min-height: 36px;
+  padding: 6px 10px;
+  background: #ffffff;
+  color: #1c4368;
   font-weight: 700;
+  cursor: pointer;
+}
+
+.mobile-sidebar-trigger:hover,
+.mobile-sidebar-trigger:focus-visible {
+  background: #dcecff;
+  border-color: #679bcb;
 }
 
 .admin-section {
   display: grid;
-  gap: 14px;
+  gap: 12px;
+  padding: 10px 14px 14px;
 }
 
 .admin-card {
-  border: 1px solid #d9e1ed;
-  border-radius: 14px;
-  padding: 14px;
-  background: #fbfdff;
+  border: 1px solid #d9e2ee;
+  border-radius: 4px;
+  padding: 10px;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+}
+
+.admin-card h2,
+.admin-card h3 {
+  margin: 0;
+}
+
+.internal-help-card {
+  line-height: 1.55;
+}
+
+.internal-help-card h2 {
+  margin: 0 0 8px;
+}
+
+.internal-help-card h3 {
+  margin: 18px 0 8px;
+  font-size: 1.02rem;
+}
+
+.internal-help-card p,
+.internal-help-card li,
+.internal-help-card dd {
+  margin: 0;
+}
+
+.internal-help-card ul,
+.internal-help-card ol {
+  margin: 8px 0 0;
+  padding-left: 22px;
+  display: grid;
+  gap: 6px;
+}
+
+.internal-help-card dl {
+  margin: 8px 0 0;
+}
+
+.internal-help-card dt {
+  margin-top: 10px;
+  font-weight: 700;
+}
+
+.internal-help-card dd {
+  margin-left: 0;
 }
 
 .compact-card {
   margin-top: 10px;
+  background: #f8fbff;
+  border-style: dashed;
 }
 
 .admin-card label {
   display: block;
-  margin-top: 10px;
+  margin-top: 8px;
   margin-bottom: 6px;
   font-weight: 700;
 }
@@ -1513,16 +1830,18 @@ refreshDashboardMetrics();
 .admin-card input,
 .admin-card select {
   width: 100%;
-  border: 1px solid #9ab0c8;
-  border-radius: 10px;
-  padding: 10px;
-  background: white;
+  border: 1px solid #b5c6d8;
+  border-radius: 4px;
+  padding: 8px 9px;
+  min-height: 36px;
+  background: #ffffff;
+  color: #20354a;
 }
 
 .admin-card input:focus-visible,
 .admin-card select:focus-visible {
-  border-color: #1d4ed8;
-  box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.16);
+  border-color: #2475b8;
+  box-shadow: 0 0 0 2px rgba(36, 117, 184, 0.18);
   outline: none;
 }
 
@@ -1534,14 +1853,15 @@ refreshDashboardMetrics();
 
 .stat-grid {
   display: grid;
-  gap: 10px;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
 }
 
 .stat-value {
   margin: 8px 0 0;
-  font-size: 1.8rem;
+  font-size: 1.65rem;
   font-weight: 800;
+  color: #133a5d;
 }
 
 .scope-head {
@@ -1549,15 +1869,17 @@ refreshDashboardMetrics();
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .scope-chip {
-  border: 1px solid #bdd2e6;
-  border-radius: 999px;
+  border: 1px solid #c4d6e8;
+  border-radius: 4px;
   padding: 4px 10px;
   font-size: 0.88rem;
   font-weight: 700;
+  color: #264b6e;
+  background: #f5f9fe;
 }
 
 .scope-chip.active {
@@ -1566,25 +1888,42 @@ refreshDashboardMetrics();
 }
 
 .progress-track {
-  height: 12px;
-  border-radius: 999px;
-  border: 1px solid #c3d5e6;
+  height: 9px;
+  border-radius: 4px;
+  border: 1px solid #cddbea;
   overflow: hidden;
-  background: #eef4fa;
-  margin-bottom: 12px;
+  background: #edf3fa;
+  margin-bottom: 8px;
 }
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(135deg, #4dc79f, #3aa981);
+  background: linear-gradient(135deg, #2fbb8c, #0f9f95);
+}
+
+.scope-summary-pill {
+  border: 1px solid #bcd2e7;
+  border-radius: 4px;
+  background: #f2f8ff;
+  color: #1e4367;
+  padding: 6px 10px;
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.scope-progress-block {
+  border: 1px solid #d8e6f3;
+  border-radius: 4px;
+  background: #f7fbff;
+  padding: 7px 8px;
 }
 
 .roadmap-toolbar {
   display: grid;
   grid-template-columns: minmax(240px, 1fr) auto;
-  gap: 10px;
+  gap: 8px;
   align-items: end;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .roadmap-meta {
@@ -1596,14 +1935,14 @@ refreshDashboardMetrics();
 }
 
 .roadmap-filters {
-  margin-top: 10px;
+  margin-top: 8px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  gap: 10px;
+  gap: 8px;
 }
 
 .roadmap-sorts {
-  margin-top: 12px;
+  margin-top: 10px;
 }
 
 .roadmap-sorts h3 {
@@ -1612,28 +1951,104 @@ refreshDashboardMetrics();
   color: #2d4d69;
 }
 
-.roadmap-sort-grid {
+.roadmap-sort-stack {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 10px;
+  gap: 8px;
+}
+
+.roadmap-sort-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.roadmap-sort-label {
+  font-weight: 700;
+  color: #2c4a66;
+  min-width: 40px;
+}
+
+.roadmap-sort-pill-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.roadmap-sort-pill {
+  border: 1px solid #c4d8eb;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #204261;
+  padding: 4px 9px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
+}
+
+.roadmap-sort-pill:hover,
+.roadmap-sort-pill:focus-visible {
+  background: #edf4fc;
+  border-color: #93b3d1;
+  color: #163956;
+}
+
+.roadmap-sort-pill.is-active {
+  border-color: #73a9d8;
+  background: #d9ebff;
+  color: #12395d;
+}
+
+.roadmap-sort-dir-btn {
+  border: 1px solid #bfd4e8;
+  border-radius: 4px;
+  background: #ffffff;
+  width: 40px;
+  height: 32px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.roadmap-sort-dir-btn:hover,
+.roadmap-sort-dir-btn:focus-visible {
+  background: #edf4fc;
+}
+
+.roadmap-sort-dir-icon {
+  width: 16px;
+  height: 16px;
+  fill: #2d5d87;
+  transition: transform 0.2s ease;
+}
+
+.roadmap-sort-dir-icon.is-desc {
+  transform: rotate(180deg);
 }
 
 .roadmap-table-wrap {
-  margin-top: 12px;
-  overflow: auto;
-  border: 1px solid #d8e4ef;
-  border-radius: 12px;
+  margin-top: 10px;
+  overflow-x: auto;
+  max-width: 100%;
+  border: 1px solid #d5e1ec;
+  border-radius: 4px;
 }
 
 .roadmap-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 720px;
+  table-layout: fixed;
+  min-width: 0;
 }
 
 .roadmap-table th,
 .roadmap-table td {
-  padding: 10px;
+  padding: 8px 9px;
   border-bottom: 1px solid #e5edf5;
   text-align: left;
   vertical-align: top;
@@ -1642,14 +2057,44 @@ refreshDashboardMetrics();
 .roadmap-table thead th {
   position: sticky;
   top: 0;
-  background: #f4f9ff;
+  background: #f0f6fc;
   z-index: 1;
   color: #1f3953;
 }
 
+.roadmap-table tbody tr:nth-child(even) {
+  background: #fbfdff;
+}
+
+.roadmap-table th:nth-child(1),
+.roadmap-table td:nth-child(1) {
+  width: 92px;
+}
+
+.roadmap-table th:nth-child(2),
+.roadmap-table td:nth-child(2) {
+  width: 62px;
+  text-align: center;
+}
+
+.roadmap-table th:nth-child(3),
+.roadmap-table td:nth-child(3) {
+  width: 120px;
+}
+
+.roadmap-table th:nth-child(4),
+.roadmap-table td:nth-child(4) {
+  width: 140px;
+}
+
+.roadmap-table td:nth-child(5) {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
 .priority-chip {
   display: inline-block;
-  border-radius: 999px;
+  border-radius: 4px;
   padding: 2px 8px;
   font-size: 0.82rem;
   font-weight: 800;
@@ -1718,7 +2163,7 @@ refreshDashboardMetrics();
   grid-template-columns: 1fr auto;
   align-items: center;
   border: 1px solid #9bb9d3;
-  border-radius: 12px;
+  border-radius: 4px;
   padding: 10px;
   background: #f3faff;
 }
@@ -1739,8 +2184,9 @@ refreshDashboardMetrics();
   gap: 6px 10px;
   align-items: start;
   border: 1px solid #d7e4f0;
-  border-radius: 10px;
+  border-radius: 4px;
   padding: 8px;
+  background: #ffffff;
 }
 
 .storage-item input[type='checkbox'] {
@@ -1763,7 +2209,7 @@ refreshDashboardMetrics();
 .confirm-box {
   margin-top: 12px;
   border: 1px solid #efb0b0;
-  border-radius: 12px;
+  border-radius: 4px;
   padding: 12px;
   background: #fff8f8;
 }
@@ -1786,7 +2232,7 @@ refreshDashboardMetrics();
 
 .history-item {
   border: 1px solid #d4e1ee;
-  border-radius: 12px;
+  border-radius: 4px;
   padding: 10px;
   display: flex;
   justify-content: space-between;
@@ -1816,49 +2262,52 @@ refreshDashboardMetrics();
 
 .btn {
   border: 1px solid transparent;
-  border-radius: 10px;
-  padding: 10px 14px;
+  border-radius: 4px;
+  min-height: 34px;
+  padding: 7px 10px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 2px 0 rgba(15, 23, 42, 0.14);
   transition:
-    transform 0.12s ease,
-    box-shadow 0.18s ease,
-    filter 0.18s ease,
-    border-color 0.18s ease;
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    filter 0.18s ease;
 }
 
 .btn-primary {
-  background: var(--btn-primary-grad);
-  color: var(--ink-inverse);
+  background: #0b7aa0;
+  border-color: #086283;
+  color: #f7fbff;
 }
 
 .btn-secondary {
-  background: var(--btn-secondary-grad);
-  color: var(--ink-inverse);
+  background: #6350ea;
+  border-color: #4e3ed2;
+  color: #f7fbff;
 }
 
 .btn-danger {
-  background: var(--btn-danger-grad);
-  color: var(--ink-inverse);
+  background: #b54519;
+  border-color: #903513;
+  color: #f7fbff;
 }
 
 .btn:hover:not(:disabled),
 .btn:focus-visible:not(:disabled) {
-  transform: translateY(-1px);
-  filter: brightness(1.05) saturate(1.03);
-  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.2);
+  filter: brightness(1.1);
 }
 
 .btn:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: 0 2px 0 rgba(15, 23, 42, 0.16);
+  filter: brightness(0.98);
 }
 
 .btn:disabled {
   opacity: 0.62;
   cursor: not-allowed;
-  box-shadow: none;
+}
+
+.btn:focus-visible {
+  outline: 2px solid #0f7dc9;
+  outline-offset: 2px;
 }
 
 .import-label {
@@ -1870,30 +2319,97 @@ pre {
   overflow-x: auto;
   background: #1e2633;
   color: #d9e1ed;
-  border-radius: 10px;
+  border-radius: 4px;
   padding: 12px;
 }
 
-@media (max-width: 860px) {
-  .admin-sidebar {
-    position: static;
-    max-height: none;
+:deep(.admin-status) {
+  margin: 10px 16px 0;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-chevron,
+  .sidebar-accordion-enter-active,
+  .sidebar-accordion-leave-active {
+    transition: none !important;
   }
+}
+
+@media (max-width: 860px) {
+  .admin-page {
+    min-height: auto;
+  }
+
   .admin-dashboard,
   .admin-dashboard.is-collapsed {
     grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .admin-sidebar {
+    position: fixed;
+    top: 56px;
+    left: 0;
+    bottom: 0;
+    width: min(320px, 88vw);
+    z-index: 70;
+    border-right: 1px solid #d7e1ec;
+    box-shadow: 0 18px 32px rgba(15, 23, 42, 0.22);
+    transform: translateX(-102%);
+    transition: transform 0.22s ease;
+    max-height: none;
+    pointer-events: none;
+  }
+
+  .admin-dashboard.is-mobile-sidebar-open .admin-sidebar {
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+
+  .admin-sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    border: 0;
+    background: rgba(12, 25, 42, 0.34);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .admin-dashboard.is-mobile-sidebar-open .admin-sidebar-backdrop {
+    display: block;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .mobile-sidebar-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sidebar-logout {
+    margin-bottom: 8px;
   }
 
   .sidebar-nav {
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns: 1fr;
+    padding-right: 0;
   }
 
-  .admin-dashboard.is-collapsed .sidebar-group-toggle {
-    justify-content: space-between;
+  .admin-sidebar {
+    padding-top: 12px;
   }
 
-  .admin-dashboard.is-collapsed .sidebar-children {
-    display: grid;
+  .admin-header {
+    position: static;
+    padding: 10px 12px;
+  }
+
+  .admin-section {
+    padding: 12px;
   }
 
   .words-grid {
@@ -1912,6 +2428,15 @@ pre {
     white-space: normal;
   }
 
+  .roadmap-sort-row {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .roadmap-sort-label {
+    min-width: 0;
+  }
+
   .sym-grid {
     grid-template-columns: 1fr;
   }
@@ -1922,3 +2447,4 @@ pre {
   }
 }
 </style>
+

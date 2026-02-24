@@ -2,7 +2,7 @@
   "version": "0.5.0-prep",
   "items": [
     {
-      "id": "050-crit-cms",
+      "id": "scope-050-crit-cms",
       "priority": "Crit",
       "domain": "infra",
       "feature": "cleanup",
@@ -10,7 +10,7 @@
       "done": true
     },
     {
-      "id": "050-crit-legal",
+      "id": "scope-050-crit-legal",
       "priority": "Crit",
       "domain": "legal",
       "feature": "pages",
@@ -18,7 +18,7 @@
       "done": true
     },
     {
-      "id": "050-crit-static",
+      "id": "scope-050-crit-static",
       "priority": "Crit",
       "domain": "infra",
       "feature": "deployment",
@@ -26,7 +26,7 @@
       "done": true
     },
     {
-      "id": "050-crit-release-tests",
+      "id": "scope-050-crit-release-tests",
       "priority": "Crit",
       "domain": "infra",
       "feature": "quality",
@@ -34,7 +34,7 @@
       "done": false
     },
     {
-      "id": "050-crit-qa",
+      "id": "scope-050-crit-qa",
       "priority": "Crit",
       "domain": "infra",
       "feature": "quality",
@@ -42,7 +42,7 @@
       "done": false
     },
     {
-      "id": "050-high-home",
+      "id": "scope-050-high-home",
       "priority": "High",
       "domain": "ui",
       "feature": "home",
@@ -50,7 +50,7 @@
       "done": true
     },
     {
-      "id": "050-high-sym-v1",
+      "id": "scope-050-high-sym-v1",
       "priority": "High",
       "domain": "math",
       "feature": "symetrie",
@@ -58,7 +58,7 @@
       "done": true
     },
     {
-      "id": "050-high-math-difficulty",
+      "id": "scope-050-high-math-difficulty",
       "priority": "High",
       "domain": "math",
       "feature": "multiplications",
@@ -66,7 +66,7 @@
       "done": true
     },
     {
-      "id": "050-high-toast",
+      "id": "scope-050-high-toast",
       "priority": "High",
       "domain": "math",
       "feature": "motivation",
@@ -74,7 +74,7 @@
       "done": true
     },
     {
-      "id": "050-high-weather",
+      "id": "scope-050-high-weather",
       "priority": "High",
       "domain": "langues",
       "feature": "anglais",
@@ -82,7 +82,7 @@
       "done": false
     },
     {
-      "id": "050-high-admin-dashboard",
+      "id": "scope-050-high-admin-dashboard",
       "priority": "High",
       "domain": "admin",
       "feature": "dashboard",
@@ -90,7 +90,7 @@
       "done": false
     },
     {
-      "id": "050-high-admin-maintenance",
+      "id": "scope-050-high-admin-maintenance",
       "priority": "High",
       "domain": "admin",
       "feature": "maintenance",
@@ -98,7 +98,7 @@
       "done": false
     },
     {
-      "id": "050-med-refactor",
+      "id": "scope-050-med-refactor",
       "priority": "Med",
       "domain": "infra",
       "feature": "refactor",
@@ -106,7 +106,7 @@
       "done": true
     },
     {
-      "id": "050-med-docs",
+      "id": "scope-050-med-docs",
       "priority": "Med",
       "domain": "docs",
       "feature": "release",
@@ -114,7 +114,7 @@
       "done": false
     },
     {
-      "id": "050-low-polish",
+      "id": "scope-050-low-polish",
       "priority": "Low",
       "domain": "ui",
       "feature": "polish",
@@ -123,3 +123,4 @@
     }
   ]
 }
+
