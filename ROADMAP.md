@@ -21,7 +21,7 @@
 - [x] Supprimer les traces CMS legacy.
 - [x] Harmoniser les pages légales (Mentions, Confidentialité, CGU) et leurs dates.
 - [x] Conserver un mode 100% statique Netlify (pas de backend obligatoire pour 0.5.0).
-- [ ] Validation finale pré-release: `npm test`, `npm run test:e2e`, `npm run build`.
+- [x] Validation finale pré-release: `npm test`, `npm run test:e2e`, `npm run build`.
 - [ ] QA manuelle finale desktop + mobile.
 - [ ] Merge `feat/0.5.0-prep` -> `main` + déploy Netlify (fenêtre quota).
 
@@ -43,7 +43,7 @@
 - [x] Système de difficulté (Multiplications): UI de sélection difficulté (boutons segmentés).
 - [x] Multiplications: pavé numérique desktop/tablette.
 - [x] Vocabulaire Anglais: ajouter la liste `Weather` (EN/FR) et l'intégrer au parcours de révision.
-- [ ] Cloudflare R2 V1: lecture distante des listes JSON avec fallback local (sans backend).
+- [x] Cloudflare R2 V1: lecture distante des listes JSON avec fallback local (sans backend).
 - [x] Admin: ajouter la gestion des formes de symétrie (ajout/édition/suppression).
 - [x] Admin: ajouter une action de maintenance pour vider le `localStorage` (avec confirmation).
 - [x] Admin: afficher le scope/roadmap avec barre de progression.
@@ -66,6 +66,10 @@
   - `useSessionCountdown`
 - [x] Refactor layout légal:
   - `LegalPageLayout`
+- [x] QA pass v1:
+  - tests unitaires/composants/intégration/E2E renforcés
+  - seuils coverage Vitest activés
+  - règle ratchet only documentée (QA + release checklist)
 - [ ] Passage de cohérence doc final 0.5.0 (README + docs FR/EN + release notes).
 
 ---
@@ -118,7 +122,6 @@
 - `feature/*` -> merge vers `feat/0.5.0-prep`
 - `feat/0.5.0-prep` -> merge vers `main` quand release validée
 - `main` reste la branche stable/deployable
-
 
 
 

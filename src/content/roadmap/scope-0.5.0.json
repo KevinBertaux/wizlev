@@ -31,7 +31,7 @@
       "domain": "infra",
       "feature": "quality",
       "label": "Validation pré-release complète (test/e2e/build)",
-      "done": false
+      "done": true
     },
     {
       "id": "scope-050-crit-qa",
@@ -106,6 +106,14 @@
       "done": true
     },
     {
+      "id": "scope-050-med-qa-ratchet",
+      "priority": "Med",
+      "domain": "infra",
+      "feature": "quality",
+      "label": "QA pass v1: couverture renforcée + seuils Vitest + règle ratchet only",
+      "done": true
+    },
+    {
       "id": "scope-050-med-docs",
       "priority": "Med",
       "domain": "docs",
@@ -127,8 +135,7 @@
       "domain": "infra",
       "feature": "content-storage",
       "label": "Cloudflare R2 V1: lecture distante des listes JSON avec fallback local",
-      "done": false
+      "done": true
     }
   ]
 }
-
