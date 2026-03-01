@@ -13,6 +13,7 @@ Objectif: limiter a **1 deploy production par semaine** jusqu'au reset quota.
 - [ ] `npm install` OK
 - [ ] `npm test` OK
 - [ ] `npm run test:e2e` OK
+- [ ] `npm test -- --coverage` OK (seuils Vitest respectes)
 - [ ] `npm run build` OK
 - [ ] Verification routes publiques: `/`, `/math`, `/vocab`, `/legal/mentions-legales`, `/legal/confidentialite`
 - [ ] Verification acces zone interne via URL privee `/-/studio-ops`
@@ -26,6 +27,7 @@ Objectif: limiter a **1 deploy production par semaine** jusqu'au reset quota.
 - [ ] Aucun secret commite (`.env` local uniquement)
 - [ ] Mentions legales/confidentialite coherentes avec le comportement reel
 - [ ] Aucune regression critique ouverte
+- [ ] Règle ratchet only respectee (aucune baisse de couverture/seuils sans decision explicite)
 
 ## Check Netlify avant publication
 
@@ -46,4 +48,3 @@ Objectif: limiter a **1 deploy production par semaine** jusqu'au reset quota.
 - [ ] Tag Git cree (ex: `v0.5.0`)
 - [ ] `ROADMAP.md` mis a jour
 - [ ] Prochaine fenetre hebdo planifiee
-

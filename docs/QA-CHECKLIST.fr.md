@@ -16,6 +16,16 @@
 3. Tests:
    - Exécuter `npm test` sans échec
    - Exécuter `npm run test:e2e` sans échec
+4. Couverture:
+   - Exécuter `npm test -- --coverage`
+   - Seuils minimaux (Vitest):
+     - Branches >= 70%
+     - Functions >= 80%
+     - Statements >= 55%
+     - Lines >= 55%
+   - Règle ratchet only:
+     - Ne jamais baisser les seuils dans la config
+     - Ne jamais accepter une baisse de couverture globale sans justification explicite et ticket de suivi
 
 ## Math (`/math`)
 
