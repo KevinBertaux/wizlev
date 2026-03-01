@@ -204,4 +204,96 @@ describe('vocabLists remote hydration', () => {
     });
     expect(secondCallCount).toBe(firstCallCount);
   });
+
+  it('keeps known queue when manifest format is invalid', async () => {
+    vi.stubEnv('VITE_VOCAB_REMOTE_BASE_URL', 'https://example.test');
+    vi.stubEnv('VITE_VOCAB_REMOTE_LANG', 'en');
+
+    const fetchMock = vi.fn(async (url) => {
+      const asText = String(url);
+      if (asText.endsWith('/en/manifest.json')) {
+        return okJson({ bad: 'shape' });
+      }
+      if (asText.endsWith('/en/fruits.json')) {
+        return okJson({
+          name: '🍏 Fruits depuis queue connue',
+          label: '🍏 Fruits depuis queue connue',
+          description: 'manifest invalide mais queue locale active',
+          words: [{ english: 'Green apple', french: 'Pomme verte' }],
+        });
+      }
+      return { ok: false, json: async () => ({}) };
+    });
+
+    Object.defineProperty(globalThis, 'fetch', {
+      configurable: true,
+      value: fetchMock,
+    });
+
+    const { getVocabList, hydrateRemoteVocabLists } = await loadVocabModule();
+    const result = await hydrateRemoteVocabLists();
+
+    expect(result.enabled).toBe(true);
+    expect(getVocabList('fruits')?.name).toBe('🍏 Fruits depuis queue connue');
+    expect(getVocabList('bonusList')).toBeNull();
+  });
+
+  it('continues hydration when some remote files fail', async () => {
+    vi.stubEnv('VITE_VOCAB_REMOTE_BASE_URL', 'https://example.test');
+    vi.stubEnv('VITE_VOCAB_REMOTE_LANG', 'en');
+
+    const fetchMock = vi.fn(async (url) => {
+      const asText = String(url);
+      if (asText.endsWith('/en/manifest.json')) {
+        return okJson([]);
+      }
+      if (asText.endsWith('/en/fruits.json')) {
+        return okJson({
+          name: '🍓 Fruits distants robustes',
+          label: '🍓 Fruits distants robustes',
+          description: 'ok',
+          words: [{ english: 'Strawberry', french: 'Fraise' }],
+        });
+      }
+      if (asText.endsWith('/en/legumes.json')) {
+        throw new Error('network failure');
+      }
+      return { ok: false, json: async () => ({}) };
+    });
+
+    Object.defineProperty(globalThis, 'fetch', {
+      configurable: true,
+      value: fetchMock,
+    });
+
+    const { getVocabList, hydrateRemoteVocabLists } = await loadVocabModule();
+    const result = await hydrateRemoteVocabLists();
+
+    expect(result.enabled).toBe(true);
+    expect(result.loaded).toBeGreaterThanOrEqual(1);
+    expect(result.skipped).toBeGreaterThan(0);
+    expect(getVocabList('fruits')?.name).toBe('🍓 Fruits distants robustes');
+  });
+
+  it('handles fetch errors without crashing hydration', async () => {
+    vi.stubEnv('VITE_VOCAB_REMOTE_BASE_URL', 'https://example.test');
+    vi.stubEnv('VITE_VOCAB_REMOTE_LANG', 'en');
+
+    const fetchMock = vi.fn(async () => {
+      throw new Error('AbortError');
+    });
+
+    Object.defineProperty(globalThis, 'fetch', {
+      configurable: true,
+      value: fetchMock,
+    });
+
+    const { hydrateRemoteVocabLists } = await loadVocabModule();
+    const result = await hydrateRemoteVocabLists();
+
+    expect(result.enabled).toBe(true);
+    expect(result.loaded).toBe(0);
+    expect(result.updated).toBe(0);
+    expect(result.skipped).toBeGreaterThan(0);
+  });
 });

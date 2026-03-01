@@ -3,6 +3,7 @@ import {
   executeResetAction,
   getHistoryLimit,
   getMaintenanceHistory,
+  getStorageSnapshot,
   previewResetAction,
   rollbackResetAction,
   setHistoryLimit,
@@ -127,5 +128,41 @@ describe('storageMaintenance', () => {
 
     expect(previewWithoutSession.targets.some((entry) => entry.storage === 'session')).toBe(false);
     expect(previewWithSession.targets.some((entry) => entry.storage === 'session')).toBe(true);
+  });
+
+  it('returns found=false when rollback id does not exist', () => {
+    const rollback = rollbackResetAction('history-does-not-exist');
+    expect(rollback).toEqual({
+      restoredCount: 0,
+      found: false,
+    });
+  });
+
+  it('detects unknown manabuplay keys in snapshot', () => {
+    localStorage.setItem('manabuplay_custom_experiment_v1', 'enabled');
+
+    const snapshot = getStorageSnapshot();
+    const unknown = snapshot.find((entry) => entry.key === 'manabuplay_custom_experiment_v1');
+
+    expect(unknown).toBeDefined();
+    expect(unknown?.label).toContain('Clé non référencée');
+    expect(unknown?.exists).toBe(true);
+  });
+
+  it('supports targeted custom preview using selected key refs', () => {
+    localStorage.setItem('manabuplay_tts_rate', '1');
+    sessionStorage.setItem('manabuplay_admin_session_v1', '{"expiresAtMs":123}');
+
+    const preview = previewResetAction({
+      selectedKeys: [
+        'local:manabuplay_tts_rate',
+        'session:manabuplay_admin_session_v1',
+      ],
+      includeSession: false,
+    });
+
+    expect(preview.targets).toHaveLength(1);
+    expect(preview.targets[0].key).toBe('manabuplay_tts_rate');
+    expect(preview.targets[0].storage).toBe('local');
   });
 });

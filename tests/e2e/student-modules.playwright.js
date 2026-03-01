@@ -47,3 +47,44 @@ test('vocab: list selection loads flashcards and FR -> EN hides TTS until reveal
   await flashcard.click();
   await expect(page.locator('.tts-inline-btn')).toBeVisible();
 });
+
+test('symmetry: keyboard selection + verify + next-question flow', async ({ page }) => {
+  await page.goto('/math/symetrie');
+
+  const prompt = page.locator('.prompt-box p');
+  await expect(prompt).toBeVisible();
+  const firstPrompt = (await prompt.textContent())?.trim() || '';
+
+  await page.keyboard.press('1');
+  await page.keyboard.press('Enter');
+
+  const feedback = page.locator('.mp-feedback');
+  await expect(feedback).toBeVisible();
+
+  const feedbackText = (await feedback.textContent()) || '';
+  if (feedbackText.includes('Bonne réponse.')) {
+    await page.waitForTimeout(2200);
+  } else {
+    await page.keyboard.press('Enter');
+  }
+
+  await expect(prompt).not.toHaveText(firstPrompt);
+});
+
+test('legal pages smoke: footer links open expected legal headings', async ({ page }) => {
+  await page.goto('/');
+
+  await page.getByRole('link', { name: 'Mentions légales' }).click();
+  await expect(page).toHaveURL(/\/legal\/mentions-legales$/);
+  await expect(page.getByRole('heading', { level: 1, name: 'Mentions légales' })).toBeVisible();
+
+  await page.goto('/');
+  await page.getByRole('link', { name: 'Politique de confidentialité' }).click();
+  await expect(page).toHaveURL(/\/legal\/confidentialite$/);
+  await expect(page.getByRole('heading', { level: 1, name: 'Politique de confidentialité' })).toBeVisible();
+
+  await page.goto('/');
+  await page.getByRole('link', { name: 'CGU' }).click();
+  await expect(page).toHaveURL(/\/legal\/cgu$/);
+  await expect(page.getByRole('heading', { level: 1, name: /Conditions générales d'utilisation/ })).toBeVisible();
+});

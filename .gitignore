@@ -31,6 +31,7 @@ node_modules/
 # Playwright
 playwright-report/
 test-results/
+coverage/
 
 # Added by ggshield
 .cache_ggshield

@@ -47,6 +47,11 @@ describe('questionBag utils', () => {
     expect(picked).toBeNull();
     expect(items).toEqual([{ id: 'a' }, { id: 'b' }]);
   });
+
+  it('returns null when pulling from an empty list', () => {
+    expect(pullNextItem([], () => true, true)).toBeNull();
+    expect(pullNextItem(null, () => true, true)).toBeNull();
+  });
 });
 
 describe('createRefillBag', () => {
@@ -71,5 +76,27 @@ describe('createRefillBag', () => {
     });
 
     expect(bag.next()).toBe('fallback');
+  });
+
+  it('can be cleared to force immediate refill on next call', () => {
+    const refill = sequenceRandom([0, 0]);
+    const bag = createRefillBag({
+      refill: () => (refill() === 0 ? ['a', 'b'] : ['c']),
+    });
+
+    expect(bag.next()).toBe('a');
+    expect(bag.size).toBe(1);
+
+    bag.clear();
+    expect(bag.size).toBe(0);
+    expect(bag.next()).toBe('a');
+  });
+
+  it('returns null when both refill and fallback are empty', () => {
+    const bag = createRefillBag({
+      refill: () => [],
+    });
+
+    expect(bag.next()).toBeNull();
   });
 });
