@@ -54,7 +54,7 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
     <h2>8. Données personnelles</h2>
     <p>
       Le traitement des données est décrit dans la
-      <router-link to="/legal/confidentialite">Politique de confidentialité</router-link>.
+      <router-link :to="{ name: 'legal-privacy' }">Politique de confidentialité</router-link>.
     </p>
 
     <h2>9. Évolution des CGU</h2>

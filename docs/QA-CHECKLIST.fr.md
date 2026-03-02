@@ -9,7 +9,7 @@
 ## Smoke tests
 
 1. Navigation:
-   - Vérifier les routes `/`, `/math`, `/vocab`
+   - Vérifier les routes `/`, `/math`, `/math/multiplications`, `/math/symmetry`, `/languages`, `/languages/english`
    - Vérifier menu burger sur mobile
 2. Build:
    - Exécuter `npm run build` sans erreur
@@ -29,7 +29,7 @@
      - Ne jamais baisser les seuils dans la config
      - Ne jamais accepter une baisse de couverture globale sans justification explicite et ticket de suivi
 
-## Math (`/math`)
+## Math (`/math/multiplications`)
 
 1. Vérifier qu'aucune table n'est sélectionnée par défaut
 2. Changer de table et vérifier mise à jour immédiate de la question
@@ -49,7 +49,7 @@
 7. Vérifier meilleure série:
    - Persistante au rechargement (localStorage)
 
-## Vocab (`/vocab`)
+## Vocab (`/languages/english`)
 
 1. Vérifier qu'aucune liste n'est sélectionnée par défaut
 2. Dropdown listes:
@@ -87,7 +87,7 @@
    - Dropdown affiche `Titre (xx mots)`
    - Import JSON valide/invalide
    - Copie JSON / téléchargement JSON
-   - Sauvegarde locale visible dans `/vocab`
+   - Sauvegarde locale visible dans `/languages/english`
 
 ## Régression
 

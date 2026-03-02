@@ -25,12 +25,12 @@ test.describe('visual regression smoke', () => {
   });
 
   test('math visual baseline', async ({ page }) => {
-    await page.goto('/math');
+    await page.goto('/math/multiplications');
     await expect(page).toHaveScreenshot('math.png', { fullPage: true, maxDiffPixelRatio: 0.02 });
   });
 
   test('vocab visual baseline', async ({ page }) => {
-    await page.goto('/vocab');
+    await page.goto('/languages/english');
     await expect(page).toHaveScreenshot('vocab.png', { fullPage: true, maxDiffPixelRatio: 0.02 });
   });
 

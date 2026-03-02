@@ -37,7 +37,7 @@ test('full browser flow: /-/studio-ops to panel, then redirect after session exp
     window.sessionStorage.setItem(key, JSON.stringify({ expiresAtMs: Date.now() - 1 }));
   }, SESSION_KEY);
 
-  await page.goto('/math');
+  await page.goto('/math/multiplications');
   await page.goto('/-/studio-ops/panel');
   await expect(page).toHaveURL(/\/\-\/studio-ops$/);
 });

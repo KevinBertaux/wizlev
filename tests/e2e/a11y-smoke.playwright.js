@@ -16,12 +16,20 @@ test('a11y smoke: home', async ({ page }) => {
   await expectNoSeriousA11yViolations(page, '/');
 });
 
-test('a11y smoke: math', async ({ page }) => {
+test('a11y smoke: math multiplications', async ({ page }) => {
+  await expectNoSeriousA11yViolations(page, '/math/multiplications');
+});
+
+test('a11y smoke: math hub', async ({ page }) => {
   await expectNoSeriousA11yViolations(page, '/math');
 });
 
-test('a11y smoke: vocab', async ({ page }) => {
-  await expectNoSeriousA11yViolations(page, '/vocab');
+test('a11y smoke: english vocab', async ({ page }) => {
+  await expectNoSeriousA11yViolations(page, '/languages/english');
+});
+
+test('a11y smoke: languages hub', async ({ page }) => {
+  await expectNoSeriousA11yViolations(page, '/languages');
 });
 
 test('a11y smoke: studio ops login', async ({ page }) => {
