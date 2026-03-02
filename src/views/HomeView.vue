@@ -3,12 +3,12 @@
     <div class="page-block section-block">
       <h1>🧮 Mathématiques</h1>
       <div class="cards-grid two-cols">
-        <router-link class="home-card" to="/math">
+        <router-link class="home-card" :to="{ name: 'math-multiplications' }">
           <h2>✖️ Multiplications</h2>
           <p>Tables de 0 à 11, score, série et entraînement progressif.</p>
         </router-link>
 
-        <router-link class="home-card" to="/math/symetrie">
+        <router-link class="home-card" :to="{ name: 'math-symmetry' }">
           <h2>🪞 Symétrie</h2>
           <p>Module en préparation, accès déjà branché.</p>
         </router-link>
@@ -18,7 +18,7 @@
     <div class="page-block section-block">
       <h1>🗣️ Langues</h1>
       <div class="cards-grid one-col">
-        <router-link class="home-card" to="/vocab">
+        <router-link class="home-card" :to="{ name: 'languages-english' }">
           <h2>🇬🇧 Anglais</h2>
           <p>Apprends l'anglais avec des listes, des flashcards et la lecture des mots à voix haute.</p>
         </router-link>
@@ -93,6 +93,5 @@
   }
 }
 </style>
-
 
 

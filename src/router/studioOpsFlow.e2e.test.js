@@ -114,7 +114,7 @@ describe('studio-ops flow integration', () => {
       expect(router.currentRoute.value.name).toBe('studio-ops-panel');
 
       setSessionExpiration(Date.now() - 1);
-      await router.push('/vocab');
+      await router.push('/languages/english');
       await router.push('/-/studio-ops/panel');
       expect(router.currentRoute.value.name).toBe('studio-ops-login');
     },

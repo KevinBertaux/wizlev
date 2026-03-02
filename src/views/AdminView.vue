@@ -1217,7 +1217,7 @@ refreshDashboardMetrics();
             <p>
               Cette aide reste intégrée au dashboard pour éviter de sortir du panel pendant l’édition.
               Version anglaise:
-              <router-link to="/help/internal-panel">Internal panel documentation</router-link>.
+              <router-link :to="{ name: 'studio-ops-help', query: { lang: 'en' } }">Internal panel documentation</router-link>.
             </p>
 
             <h3 id="scope">Périmètre</h3>
@@ -2447,4 +2447,3 @@ pre {
   }
 }
 </style>
-

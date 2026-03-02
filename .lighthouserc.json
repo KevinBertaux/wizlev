@@ -6,8 +6,8 @@
       "startServerReadyTimeout": 30000,
       "url": [
         "http://127.0.0.1:4173/",
-        "http://127.0.0.1:4173/math",
-        "http://127.0.0.1:4173/vocab"
+        "http://127.0.0.1:4173/math/multiplications",
+        "http://127.0.0.1:4173/languages/english"
       ],
       "numberOfRuns": 1
     },

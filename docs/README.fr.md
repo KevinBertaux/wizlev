@@ -11,13 +11,13 @@ Application web éducative (SPA Vue 3 + Vite) pour aider les enfants à réviser
 
 ## Fonctionnalités actuelles
 
-### Math (`/math`)
+### Math (`/math/multiplications`)
 - Quiz de tables de multiplication (0-11 + mode toutes tables)
 - Score, total de réponses, série en cours et meilleure série (localStorage)
 - Validation clavier (`Entrée`) avec protection anti multi-validation
 - Aucune table sélectionnée par défaut
 
-### Vocabulaire anglais (`/vocab`)
+### Vocabulaire anglais (`/languages/english`)
 - Listes JSON externes avec titre, description et mots
 - Dropdown avec compteur dynamique de mots (`xx mots`)
 - Aucune liste sélectionnée par défaut
@@ -52,15 +52,17 @@ Application web éducative (SPA Vue 3 + Vite) pour aider les enfants à réviser
 ## Routes SPA
 
 - `/`: Accueil
-- `/math`: Module Math
-- `/vocab`: Module vocabulaire
+- `/math`: Hub Math
+- `/math/multiplications`: Module Multiplications
+- `/math/symmetry`: Module Symétrie
+- `/languages`: Hub Langues
+- `/languages/english`: Module vocabulaire anglais
 - `/-/studio-ops`: Zone interne (login)
 - `/-/studio-ops/panel`: Zone interne (panel)
-- `/aide/panel-interne`: Guide panel interne FR
-- `/help/internal-panel`: Internal panel guide EN
-- `/legal/mentions-legales`: Mentions légales
-- `/legal/cgu`: Conditions générales d'utilisation
-- `/legal/confidentialite`: Politique de confidentialité
+- `/-/studio-ops/help`: Guide panel interne (switch FR/EN)
+- `/legal/legal-notice`: Mentions légales
+- `/legal/terms-of-use`: Conditions générales d'utilisation
+- `/legal/privacy-policy`: Politique de confidentialité
 
 ## Documentation
 
@@ -70,6 +72,5 @@ Application web éducative (SPA Vue 3 + Vite) pour aider les enfants à réviser
 - Git cheat sheet: `docs/GIT-CHEATSHEET.fr.md`
 - Guide panel interne FR: `docs/PANEL-INTERNE.fr.md`
 - Guide panel interne EN: `docs/PANEL-INTERNE.en.md`
-
 
 

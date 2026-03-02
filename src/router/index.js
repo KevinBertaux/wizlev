@@ -1,66 +1,73 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { isAdminSessionValid } from '@/features/admin/auth';
+import { ROUTE_NAMES, ROUTE_PATHS } from './routes';
 
 const routes = [
   {
-    path: '/',
-    name: 'home',
+    path: ROUTE_PATHS.HOME,
+    name: ROUTE_NAMES.HOME,
     component: () => import('@/views/HomeView.vue'),
   },
   {
-    path: '/math',
-    name: 'math',
+    path: ROUTE_PATHS.MATH_HUB,
+    name: ROUTE_NAMES.MATH_HUB,
+    component: () => import('@/views/MathHubView.vue'),
+  },
+  {
+    path: ROUTE_PATHS.MATH_MULTIPLICATIONS,
+    name: ROUTE_NAMES.MATH_MULTIPLICATIONS,
     component: () => import('@/views/MathView.vue'),
   },
   {
-    path: '/math/symetrie',
-    name: 'math-symetrie',
+    path: ROUTE_PATHS.MATH_SYMMETRY,
+    name: ROUTE_NAMES.MATH_SYMMETRY,
     component: () => import('@/views/MathSymmetryView.vue'),
   },
   {
-    path: '/vocab',
-    name: 'vocab',
+    path: ROUTE_PATHS.LANGUAGES_HUB,
+    name: ROUTE_NAMES.LANGUAGES_HUB,
+    component: () => import('@/views/LanguagesHubView.vue'),
+  },
+  {
+    path: ROUTE_PATHS.LANGUAGES_ENGLISH,
+    name: ROUTE_NAMES.LANGUAGES_ENGLISH,
     component: () => import('@/views/VocabView.vue'),
   },
   {
-    path: '/aide/panel-interne',
-    name: 'internal-panel-help-fr',
-    component: () => import('@/views/InternalPanelHelpFrView.vue'),
+    path: ROUTE_PATHS.STUDIO_OPS_HELP,
+    name: ROUTE_NAMES.STUDIO_OPS_HELP,
+    component: () => import('@/views/StudioOpsHelpView.vue'),
+    meta: { requiresStudioOpsAuth: true },
   },
   {
-    path: '/help/internal-panel',
-    name: 'internal-panel-help-en',
-    component: () => import('@/views/InternalPanelHelpEnView.vue'),
-  },
-  {
-    path: '/-/studio-ops',
-    name: 'studio-ops-login',
+    path: ROUTE_PATHS.STUDIO_OPS_LOGIN,
+    name: ROUTE_NAMES.STUDIO_OPS_LOGIN,
     component: () => import('@/views/AdminAccessView.vue'),
   },
   {
-    path: '/-/studio-ops/panel',
-    name: 'studio-ops-panel',
+    path: ROUTE_PATHS.STUDIO_OPS_PANEL,
+    name: ROUTE_NAMES.STUDIO_OPS_PANEL,
     component: () => import('@/views/AdminView.vue'),
     meta: { requiresStudioOpsAuth: true },
   },
   {
-    path: '/legal/mentions-legales',
-    name: 'mentions-legales',
+    path: ROUTE_PATHS.LEGAL_NOTICE,
+    name: ROUTE_NAMES.LEGAL_NOTICE,
     component: () => import('@/views/LegalMentionsView.vue'),
   },
   {
-    path: '/legal/confidentialite',
-    name: 'confidentialite',
+    path: ROUTE_PATHS.LEGAL_PRIVACY,
+    name: ROUTE_NAMES.LEGAL_PRIVACY,
     component: () => import('@/views/LegalPrivacyView.vue'),
   },
   {
-    path: '/legal/cgu',
-    name: 'cgu',
+    path: ROUTE_PATHS.LEGAL_TERMS,
+    name: ROUTE_NAMES.LEGAL_TERMS,
     component: () => import('@/views/LegalTermsView.vue'),
   },
   {
     path: '/:pathMatch(.*)*',
-    redirect: '/',
+    redirect: ROUTE_PATHS.HOME,
   },
 ];
 
@@ -78,8 +85,7 @@ router.beforeEach((to) => {
     return true;
   }
 
-  return { name: 'studio-ops-login' };
+  return { name: ROUTE_NAMES.STUDIO_OPS_LOGIN };
 });
 
 export default router;
-

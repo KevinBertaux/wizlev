@@ -8,7 +8,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('math: selecting a table starts quiz and wrong answer does not auto-skip', async ({ page }) => {
-  await page.goto('/math');
+  await page.goto('/math/multiplications');
 
   await expect(page.getByText('Choisir une table pour commencer.')).toBeVisible();
 
@@ -31,7 +31,7 @@ test('math: selecting a table starts quiz and wrong answer does not auto-skip', 
 });
 
 test('vocab: list selection loads flashcards and FR -> EN hides TTS until reveal', async ({ page }) => {
-  await page.goto('/vocab');
+  await page.goto('/languages/english');
 
   await expect(page.getByText('Choisir une liste pour commencer.')).toBeVisible();
 
@@ -55,7 +55,7 @@ test('vocab: list selection loads flashcards and FR -> EN hides TTS until reveal
 });
 
 test('symmetry: keyboard selection + verify + next-question flow', async ({ page }) => {
-  await page.goto('/math/symetrie');
+  await page.goto('/math/symmetry');
 
   const prompt = page.locator('.prompt-box p');
   await expect(prompt).toBeVisible();
@@ -81,16 +81,16 @@ test('legal pages smoke: footer links open expected legal headings', async ({ pa
   await page.goto('/');
 
   await page.getByRole('link', { name: 'Mentions légales' }).click();
-  await expect(page).toHaveURL(/\/legal\/mentions-legales$/);
+  await expect(page).toHaveURL(/\/legal\/legal-notice$/);
   await expect(page.getByRole('heading', { level: 1, name: 'Mentions légales' })).toBeVisible();
 
   await page.goto('/');
   await page.getByRole('link', { name: 'Politique de confidentialité' }).click();
-  await expect(page).toHaveURL(/\/legal\/confidentialite$/);
+  await expect(page).toHaveURL(/\/legal\/privacy-policy$/);
   await expect(page.getByRole('heading', { level: 1, name: 'Politique de confidentialité' })).toBeVisible();
 
   await page.goto('/');
   await page.getByRole('link', { name: 'CGU' }).click();
-  await expect(page).toHaveURL(/\/legal\/cgu$/);
+  await expect(page).toHaveURL(/\/legal\/terms-of-use$/);
   await expect(page.getByRole('heading', { level: 1, name: /Conditions générales d'utilisation/ })).toBeVisible();
 });

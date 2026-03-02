@@ -2,8 +2,7 @@
 
 This document covers the lightweight technical usage of the ManabuPlay internal panel.
 
-In-app FR version: `/aide/panel-interne`
-In-app EN version: `/help/internal-panel`
+In-app route (FR/EN switch): `/-/studio-ops/help`
 
 ## Scope
 

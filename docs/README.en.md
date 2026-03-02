@@ -11,13 +11,13 @@ Educational web app (Vue 3 + Vite SPA) to help children practice math and vocabu
 
 ## Current features
 
-### Math (`/math`)
+### Math (`/math/multiplications`)
 - Multiplication tables quiz (0-11 + all tables mode)
 - Score, total answers, current streak, and best streak (localStorage)
 - Keyboard validation (`Enter`) with duplicate-submit prevention
 - No table selected by default
 
-### English vocabulary (`/vocab`)
+### English vocabulary (`/languages/english`)
 - External JSON lists with title, description, and words
 - Dropdown with dynamic word count (`xx words`)
 - No list selected by default
@@ -52,15 +52,17 @@ Educational web app (Vue 3 + Vite SPA) to help children practice math and vocabu
 ## SPA routes
 
 - `/`: Home
-- `/math`: Math module
-- `/vocab`: Vocabulary module
+- `/math`: Math hub
+- `/math/multiplications`: Multiplications module
+- `/math/symmetry`: Symmetry module
+- `/languages`: Languages hub
+- `/languages/english`: English vocabulary module
 - `/-/studio-ops`: Internal login
 - `/-/studio-ops/panel`: Internal panel
-- `/aide/panel-interne`: Internal panel guide (FR)
-- `/help/internal-panel`: Internal panel guide (EN)
-- `/legal/mentions-legales`: Legal notices
-- `/legal/cgu`: Terms of use
-- `/legal/confidentialite`: Privacy policy
+- `/-/studio-ops/help`: Internal panel guide (FR/EN switch)
+- `/legal/legal-notice`: Legal notices
+- `/legal/terms-of-use`: Terms of use
+- `/legal/privacy-policy`: Privacy policy
 
 ## Documentation
 
@@ -70,6 +72,5 @@ Educational web app (Vue 3 + Vite SPA) to help children practice math and vocabu
 - Git cheat sheet: `docs/GIT-CHEATSHEET.fr.md`
 - Internal panel guide FR: `docs/PANEL-INTERNE.fr.md`
 - Internal panel guide EN: `docs/PANEL-INTERNE.en.md`
-
 
 

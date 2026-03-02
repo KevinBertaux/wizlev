@@ -2,8 +2,7 @@
 
 Cette documentation couvre l'usage technique léger du panel interne de ManabuPlay.
 
-Version in-app: `/aide/panel-interne`
-Version EN in-app: `/help/internal-panel`
+Version in-app (switch FR/EN): `/-/studio-ops/help`
 
 ## Périmètre
 
