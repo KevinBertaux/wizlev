@@ -4,12 +4,12 @@ import { useRouter } from 'vue-router';
 import AdminStatusBanner from '@/components/AdminStatusBanner.vue';
 import { useSessionCountdown } from '@/composables/useSessionCountdown';
 import {
-  getVocabList,
-  resetVocabList,
-  saveVocabList,
-  vocabListOptions,
-} from '@/features/vocab/vocabLists';
-import { buildVocabPayload } from '@/features/vocab/adminPayload';
+  getEnglishList,
+  resetEnglishList,
+  saveEnglishList,
+  englishListOptions,
+} from '@/features/languages/englishLists';
+import { buildListPayload } from '@/features/languages/listPayload';
 import { clearAdminSession, getAdminSessionRemainingMs } from '@/features/admin/auth';
 import {
   ADMIN_SIDEBAR_COLLAPSED_KEY,
@@ -51,7 +51,7 @@ const sidebarGroups = Object.freeze([
     id: 'languages',
     icon: '🗣️',
     label: 'Langues',
-    items: [{ id: 'vocab', icon: '📚', label: 'Anglais' }],
+    items: [{ id: 'english', icon: '📚', label: 'Anglais' }],
   },
   {
     id: 'admin',
@@ -69,7 +69,7 @@ const sidebarGroups = Object.freeze([
 const sectionTitleMap = Object.freeze({
   overview: 'Dashboard admin',
   roadmap: 'Roadmap & Scopes',
-  vocab: 'Édition de listes de vocabulaire',
+  english: 'Édition de listes d’anglais',
   symmetry: 'Formes de symétrie',
   maintenance: 'Maintenance locale',
   'admin-help': 'Documentation du panel interne',
@@ -131,7 +131,7 @@ function createEmptyDraft() {
 }
 
 function createDraft(listKey) {
-  const list = getVocabList(listKey);
+  const list = getEnglishList(listKey);
   if (!list) {
     return createEmptyDraft();
   }
@@ -152,8 +152,8 @@ function createDraft(listKey) {
 const draft = ref(createDraft(selectedList.value));
 
 const adminListOptionsWithCount = computed(() =>
-  vocabListOptions.map((option) => {
-    const currentList = getVocabList(option.key);
+  englishListOptions.map((option) => {
+    const currentList = getEnglishList(option.key);
     return {
       ...option,
       wordCount: Array.isArray(currentList?.words) ? currentList.words.length : option.wordCount || 0,
@@ -274,7 +274,7 @@ function removeWord(index) {
 }
 
 function buildPayload() {
-  return buildVocabPayload(draft.value);
+  return buildListPayload(draft.value);
 }
 
 function saveCurrentList() {
@@ -289,7 +289,7 @@ function saveCurrentList() {
     return;
   }
 
-  const saved = saveVocabList(selectedList.value, result.payload);
+  const saved = saveEnglishList(selectedList.value, result.payload);
   if (!saved) {
     setStatus('error', 'Sauvegarde impossible sur cet appareil.');
     return;
@@ -298,7 +298,7 @@ function saveCurrentList() {
   draft.value = createDraft(selectedList.value);
   refreshDashboardMetrics();
   refreshMaintenanceData();
-  setStatus('success', 'Liste sauvegardée localement. Le module vocabulaire utilise maintenant cette version.');
+  setStatus('success', 'Liste sauvegardée localement. Le module anglais utilise maintenant cette version.');
 }
 
 function resetCurrentList() {
@@ -307,7 +307,7 @@ function resetCurrentList() {
     return;
   }
 
-  resetVocabList(selectedList.value);
+  resetEnglishList(selectedList.value);
   draft.value = createDraft(selectedList.value);
   refreshDashboardMetrics();
   refreshMaintenanceData();
@@ -361,7 +361,7 @@ function downloadJson() {
     return;
   }
 
-  const fileName = `vocab-${selectedList.value}.json`;
+  const fileName = `english-${selectedList.value}.json`;
   const blob = new Blob([JSON.stringify(result.payload, null, 2)], {
     type: 'application/json;charset=utf-8',
   });
@@ -582,7 +582,7 @@ const activeScopeProgressPercent = computed(() =>
 );
 
 const dashboardMetrics = ref({
-  vocabListCount: 0,
+  englishListCount: 0,
   englishWordCount: 0,
   symmetryShapeCount: 0,
   storageKeyCount: 0,
@@ -590,15 +590,15 @@ const dashboardMetrics = ref({
 
 function refreshDashboardMetrics() {
   let englishWordCount = 0;
-  for (const option of vocabListOptions) {
-    const list = getVocabList(option.key);
+  for (const option of englishListOptions) {
+    const list = getEnglishList(option.key);
     englishWordCount += Array.isArray(list?.words) ? list.words.length : 0;
   }
 
   const symmetryConfig = getActiveSymmetryShapesConfig();
   const snapshot = getStorageSnapshot();
   dashboardMetrics.value = {
-    vocabListCount: vocabListOptions.length,
+    englishListCount: englishListOptions.length,
     englishWordCount,
     symmetryShapeCount: Array.isArray(symmetryConfig?.shapes) ? symmetryConfig.shapes.length : 0,
     storageKeyCount: snapshot.filter((entry) => entry.exists).length,
@@ -964,7 +964,7 @@ refreshDashboardMetrics();
           <div class="stat-grid">
             <article class="admin-card">
               <h2>📚 Listes</h2>
-              <p class="stat-value">{{ dashboardMetrics.vocabListCount }}</p>
+              <p class="stat-value">{{ dashboardMetrics.englishListCount }}</p>
             </article>
             <article class="admin-card">
               <h2>🇬🇧 Mots anglais</h2>
@@ -1107,7 +1107,7 @@ refreshDashboardMetrics();
           </article>
         </section>
 
-        <section v-else-if="selectedSection === 'vocab'" class="admin-section">
+        <section v-else-if="selectedSection === 'english'" class="admin-section">
           <div class="admin-card">
             <label for="listSelect">Liste à modifier</label>
             <select id="listSelect" v-model="selectedList">
@@ -2447,3 +2447,4 @@ pre {
   }
 }
 </style>
+

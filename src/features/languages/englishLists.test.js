@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { getVocabList, resetVocabList, saveVocabList } from './vocabLists';
+import { getEnglishList, resetEnglishList, saveEnglishList } from './englishLists';
 
 class MemoryStorage {
   constructor() {
@@ -56,9 +56,9 @@ afterEach(() => {
   });
 });
 
-describe('vocabLists storage behavior', () => {
+describe('englishLists storage behavior', () => {
   it('returns base list when no override exists', () => {
-    const list = getVocabList('fruits');
+    const list = getEnglishList('fruits');
 
     expect(list).not.toBeNull();
     expect(list.name.length).toBeGreaterThan(0);
@@ -67,7 +67,7 @@ describe('vocabLists storage behavior', () => {
   });
 
   it('saves and returns sanitized payload', () => {
-    const saved = saveVocabList('fruits', {
+    const saved = saveEnglishList('fruits', {
       name: '  Fruits perso ',
       description: '  ma liste  ',
       words: [
@@ -78,7 +78,7 @@ describe('vocabLists storage behavior', () => {
 
     expect(saved).toBe(true);
 
-    const list = getVocabList('fruits');
+    const list = getEnglishList('fruits');
     expect(list).toEqual({
       name: 'Fruits perso',
       description: 'ma liste',
@@ -91,18 +91,41 @@ describe('vocabLists storage behavior', () => {
 
 
   it('falls back to base list when stored JSON is invalid', () => {
-    const baseline = getVocabList('fruits');
-    storage.setItem('manabuplay_vocab_list_fruits', '{broken-json');
+    const baseline = getEnglishList('fruits');
+    storage.setItem('manabuplay_english_list_fruits', '{broken-json');
 
-    const list = getVocabList('fruits');
+    const list = getEnglishList('fruits');
     expect(list).toEqual(baseline);
   });
 
+  it('reads legacy key and migrates it to the english key', () => {
+    storage.setItem(
+      'manabuplay_vocab_list_fruits',
+      JSON.stringify({
+        name: 'Legacy fruits',
+        description: 'legacy',
+        words: [{ english: 'Apple', french: 'Pomme' }],
+      })
+    );
+
+    const list = getEnglishList('fruits');
+
+    expect(list).toEqual({
+      name: 'Legacy fruits',
+      description: 'legacy',
+      words: [{ english: 'Apple', french: 'Pomme' }],
+    });
+    expect(storage.getItem('manabuplay_english_list_fruits')).not.toBeNull();
+    expect(storage.getItem('manabuplay_vocab_list_fruits')).toBeNull();
+  });
+
   it('resets current override', () => {
-    storage.setItem('manabuplay_vocab_list_fruits', JSON.stringify({ name: 'Current', words: [] }));
+    storage.setItem('manabuplay_english_list_fruits', JSON.stringify({ name: 'Current', words: [] }));
+    storage.setItem('manabuplay_vocab_list_fruits', JSON.stringify({ name: 'Legacy', words: [] }));
 
-    resetVocabList('fruits');
+    resetEnglishList('fruits');
 
+    expect(storage.getItem('manabuplay_english_list_fruits')).toBeNull();
     expect(storage.getItem('manabuplay_vocab_list_fruits')).toBeNull();
   });
 
@@ -112,7 +135,7 @@ describe('vocabLists storage behavior', () => {
       throw new Error('QuotaExceededError');
     };
 
-    const saved = saveVocabList('fruits', {
+    const saved = saveEnglishList('fruits', {
       name: 'Fruits',
       description: '',
       words: [{ english: 'Apple', french: 'Pomme' }],
@@ -122,9 +145,10 @@ describe('vocabLists storage behavior', () => {
   });
 
   it('returns null / false for unknown list keys', () => {
-    expect(getVocabList('unknown-key')).toBeNull();
-    expect(saveVocabList('unknown-key', { name: 'x', words: [] })).toBe(false);
+    expect(getEnglishList('unknown-key')).toBeNull();
+    expect(saveEnglishList('unknown-key', { name: 'x', words: [] })).toBe(false);
   });
 });
+
 
 

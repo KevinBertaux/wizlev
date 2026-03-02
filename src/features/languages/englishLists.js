@@ -1,30 +1,31 @@
-import identiteEcole from '@/content/vocab/en/identite-ecole.json';
-import salutationsPolitesse from '@/content/vocab/en/salutations-politesse.json';
-import etatsRessentis from '@/content/vocab/en/etats-ressentis.json';
-import tempsSemaine from '@/content/vocab/en/temps-semaine.json';
-import consignesClasse from '@/content/vocab/en/consignes-classe.json';
-import reglesClasse from '@/content/vocab/en/regles-classe.json';
-import materielScolaire from '@/content/vocab/en/materiel-scolaire.json';
-import activitesCapacites from '@/content/vocab/en/activites-capacites.json';
-import fetesSymboles from '@/content/vocab/en/fetes-symboles.json';
-import thanksgiving from '@/content/vocab/en/thanksgiving.json';
-import paysNationalites from '@/content/vocab/en/pays-nationalites.json';
-import prepositionsLieu from '@/content/vocab/en/prepositions-lieu.json';
-import villePersonnes from '@/content/vocab/en/ville-personnes.json';
-import maisonVetements from '@/content/vocab/en/maison-vetements.json';
-import animauxObjets from '@/content/vocab/en/animaux-objets.json';
-import alimentsBoissons from '@/content/vocab/en/aliments-boissons.json';
-import fruits from '@/content/vocab/en/fruits.json';
-import legumes from '@/content/vocab/en/legumes.json';
-import fruits2 from '@/content/vocab/en/fruits-2.json';
-import legumes2 from '@/content/vocab/en/legumes-2.json';
-import meteo from '@/content/vocab/en/meteo.json';
+import identiteEcole from '@/content/languages/en/identite-ecole.json';
+import salutationsPolitesse from '@/content/languages/en/salutations-politesse.json';
+import etatsRessentis from '@/content/languages/en/etats-ressentis.json';
+import tempsSemaine from '@/content/languages/en/temps-semaine.json';
+import consignesClasse from '@/content/languages/en/consignes-classe.json';
+import reglesClasse from '@/content/languages/en/regles-classe.json';
+import materielScolaire from '@/content/languages/en/materiel-scolaire.json';
+import activitesCapacites from '@/content/languages/en/activites-capacites.json';
+import fetesSymboles from '@/content/languages/en/fetes-symboles.json';
+import thanksgiving from '@/content/languages/en/thanksgiving.json';
+import paysNationalites from '@/content/languages/en/pays-nationalites.json';
+import prepositionsLieu from '@/content/languages/en/prepositions-lieu.json';
+import villePersonnes from '@/content/languages/en/ville-personnes.json';
+import maisonVetements from '@/content/languages/en/maison-vetements.json';
+import animauxObjets from '@/content/languages/en/animaux-objets.json';
+import alimentsBoissons from '@/content/languages/en/aliments-boissons.json';
+import fruits from '@/content/languages/en/fruits.json';
+import legumes from '@/content/languages/en/legumes.json';
+import fruits2 from '@/content/languages/en/fruits-2.json';
+import legumes2 from '@/content/languages/en/legumes-2.json';
+import meteo from '@/content/languages/en/meteo.json';
 
-const STORAGE_PREFIX = 'manabuplay_vocab_list_';
+const STORAGE_PREFIX = 'manabuplay_english_list_';
+const LEGACY_STORAGE_PREFIX = 'manabuplay_vocab_list_';
 const REMOTE_TIMEOUT_MS = 3500;
 const DEFAULT_REMOTE_LANG = 'en';
 
-const baseVocabLists = {
+const baseEnglishLists = {
   identiteEcole: {
     key: 'identiteEcole',
     label: identiteEcole.label || identiteEcole.name,
@@ -198,36 +199,45 @@ const listFileByKey = {
   meteo: 'meteo.json',
 };
 
-const runtimeVocabLists = { ...baseVocabLists };
+const runtimeEnglishLists = { ...baseEnglishLists };
 
-export const vocabLists = runtimeVocabLists;
-export const vocabListOptions = [];
+export const englishLists = runtimeEnglishLists;
+export const englishListOptions = [];
 
 let remoteHydrated = false;
 let remoteHydrationPromise = null;
 
-rebuildVocabListOptions();
+rebuildEnglishListOptions();
 
-function getRemoteBaseUrl() {
-  const env =
-    typeof import.meta !== 'undefined' && import.meta.env
-      ? import.meta.env.VITE_VOCAB_REMOTE_BASE_URL
-      : '';
-
-  if (!env || typeof env !== 'string') {
+function getEnvValue(keys) {
+  if (typeof import.meta === 'undefined' || !import.meta.env) {
     return '';
   }
 
-  return env.trim().replace(/\/$/, '');
+  for (const key of keys) {
+    const value = import.meta.env[key];
+    if (typeof value === 'string' && value.trim()) {
+      return value.trim();
+    }
+  }
+
+  return '';
+}
+
+function getRemoteBaseUrl() {
+  const env = getEnvValue(['VITE_LANGUAGES_REMOTE_BASE_URL', 'VITE_VOCAB_REMOTE_BASE_URL']);
+
+  if (!env) {
+    return '';
+  }
+
+  return env.replace(/\/$/, '');
 }
 
 function getRemoteLanguage() {
-  const env =
-    typeof import.meta !== 'undefined' && import.meta.env
-      ? import.meta.env.VITE_VOCAB_REMOTE_LANG
-      : '';
+  const env = getEnvValue(['VITE_LANGUAGES_REMOTE_LANG', 'VITE_VOCAB_REMOTE_LANG']);
 
-  const lang = typeof env === 'string' ? env.trim().toLowerCase() : '';
+  const lang = typeof env === 'string' ? env.toLowerCase() : '';
   return lang || DEFAULT_REMOTE_LANG;
 }
 
@@ -283,18 +293,22 @@ function sanitizeListPayload(payload, fallbackList) {
   };
 }
 
-function rebuildVocabListOptions() {
-  const options = Object.values(runtimeVocabLists).map((list) => ({
+function rebuildEnglishListOptions() {
+  const options = Object.values(runtimeEnglishLists).map((list) => ({
     key: list.key,
     label: list.label,
     wordCount: Array.isArray(list.words) ? list.words.length : 0,
   }));
 
-  vocabListOptions.splice(0, vocabListOptions.length, ...options);
+  englishListOptions.splice(0, englishListOptions.length, ...options);
 }
 
 function getStorageKey(listKey) {
   return `${STORAGE_PREFIX}${listKey}`;
+}
+
+function getLegacyStorageKey(listKey) {
+  return `${LEGACY_STORAGE_PREFIX}${listKey}`;
 }
 
 async function fetchJsonWithTimeout(url, timeoutMs = REMOTE_TIMEOUT_MS) {
@@ -356,7 +370,7 @@ async function resolveRemoteIndex(baseUrl) {
 }
 
 function upsertRuntimeList(listKey, payload) {
-  const fallback = runtimeVocabLists[listKey] || {
+  const fallback = runtimeEnglishLists[listKey] || {
     key: listKey,
     name: listKey,
     label: listKey,
@@ -370,19 +384,19 @@ function upsertRuntimeList(listKey, payload) {
     return false;
   }
 
-  runtimeVocabLists[listKey] = sanitized;
+  runtimeEnglishLists[listKey] = sanitized;
   return true;
 }
 
-export function listVocabOptions() {
-  return Object.values(runtimeVocabLists).map((list) => ({
+export function listEnglishOptions() {
+  return Object.values(runtimeEnglishLists).map((list) => ({
     key: list.key,
     label: list.label,
     wordCount: Array.isArray(list.words) ? list.words.length : 0,
   }));
 }
 
-export async function hydrateRemoteVocabLists() {
+export async function hydrateRemoteEnglishLists() {
   if (remoteHydrated) {
     return { enabled: !!getRemoteBaseUrl(), loaded: 0, updated: 0, skipped: 0 };
   }
@@ -423,7 +437,7 @@ export async function hydrateRemoteVocabLists() {
       }
     }
 
-    rebuildVocabListOptions();
+    rebuildEnglishListOptions();
     remoteHydrated = true;
 
     return {
@@ -441,8 +455,8 @@ export async function hydrateRemoteVocabLists() {
   }
 }
 
-export function getVocabList(listKey) {
-  const baseList = runtimeVocabLists[listKey];
+export function getEnglishList(listKey) {
+  const baseList = runtimeEnglishLists[listKey];
   if (!baseList) {
     return null;
   }
@@ -451,21 +465,39 @@ export function getVocabList(listKey) {
     return sanitizeListPayload(baseList, baseList);
   }
 
-  const raw = localStorage.getItem(getStorageKey(listKey));
+  const key = getStorageKey(listKey);
+  const legacyKey = getLegacyStorageKey(listKey);
+  let raw = localStorage.getItem(key);
+
+  if (!raw) {
+    raw = localStorage.getItem(legacyKey);
+  }
+
   if (!raw) {
     return sanitizeListPayload(baseList, baseList);
   }
 
   try {
     const parsed = JSON.parse(raw);
-    return sanitizeListPayload(parsed, baseList);
+    const sanitized = sanitizeListPayload(parsed, baseList);
+
+    if (!localStorage.getItem(key)) {
+      try {
+        localStorage.setItem(key, JSON.stringify(sanitized));
+        localStorage.removeItem(legacyKey);
+      } catch {
+        // Ignore migration write errors.
+      }
+    }
+
+    return sanitized;
   } catch {
     return sanitizeListPayload(baseList, baseList);
   }
 }
 
-export function saveVocabList(listKey, payload) {
-  const baseList = runtimeVocabLists[listKey];
+export function saveEnglishList(listKey, payload) {
+  const baseList = runtimeEnglishLists[listKey];
   if (!baseList || typeof window === 'undefined') {
     return false;
   }
@@ -473,18 +505,21 @@ export function saveVocabList(listKey, payload) {
   const sanitized = sanitizeListPayload(payload, baseList);
   try {
     localStorage.setItem(getStorageKey(listKey), JSON.stringify(sanitized));
+    localStorage.removeItem(getLegacyStorageKey(listKey));
     return true;
   } catch {
     return false;
   }
 }
 
-export function resetVocabList(listKey) {
+export function resetEnglishList(listKey) {
   if (typeof window === 'undefined') {
     return;
   }
   localStorage.removeItem(getStorageKey(listKey));
+  localStorage.removeItem(getLegacyStorageKey(listKey));
 }
+
 
 
 

@@ -1,4 +1,4 @@
-import { vocabListOptions } from '@/features/vocab/vocabLists';
+import { englishListOptions } from '@/features/languages/englishLists';
 import { SYMMETRY_SHAPES_STORAGE_KEY } from '@/features/math/symmetryShapeStore';
 
 const APP_PREFIX = 'manabuplay_';
@@ -27,19 +27,25 @@ const KNOWN_ENTRY_DEFS = [
   {
     key: 'manabuplay_tts_accent',
     label: 'Langues - accent TTS',
-    group: 'vocab',
+    group: 'languages',
     storage: 'local',
   },
   {
     key: 'manabuplay_tts_rate',
     label: 'Langues - vitesse TTS',
-    group: 'vocab',
+    group: 'languages',
+    storage: 'local',
+  },
+  {
+    key: 'manabuplay_english_card_direction',
+    label: 'Langues - sens des cartes',
+    group: 'languages',
     storage: 'local',
   },
   {
     key: 'manabuplay_vocab_card_direction',
-    label: 'Langues - sens des cartes',
-    group: 'vocab',
+    label: 'Langues - sens des cartes (legacy)',
+    group: 'languages',
     storage: 'local',
   },
   {
@@ -85,7 +91,7 @@ const KNOWN_ENTRY_DEFS = [
 const PRESET_DEFS = [
   { id: 'full', label: 'RAZ complète', groups: ['*'] },
   { id: 'math', label: 'RAZ Math', groups: ['math'] },
-  { id: 'vocab', label: 'RAZ Langues', groups: ['vocab'] },
+  { id: 'languages', label: 'RAZ Langues', groups: ['languages'] },
   { id: 'admin', label: 'RAZ Admin', groups: ['admin'] },
   { id: 'streaks', label: 'RAZ meilleures séries', groups: ['streaks'] },
 ];
@@ -114,17 +120,25 @@ function normalizeHistoryLimit(value) {
   return Math.max(HISTORY_LIMIT_MIN, Math.min(HISTORY_LIMIT_MAX, snapped));
 }
 
-function toVocabEntries() {
-  return vocabListOptions.map((list) => ({
-    key: `${APP_PREFIX}vocab_list_${list.key}`,
-    label: `Langues - liste vocab ${list.label}`,
-    group: 'vocab',
-    storage: 'local',
-  }));
+function toEnglishEntries() {
+  return englishListOptions.flatMap((list) => [
+    {
+      key: `${APP_PREFIX}english_list_${list.key}`,
+      label: `Langues - liste anglais ${list.label}`,
+      group: 'languages',
+      storage: 'local',
+    },
+    {
+      key: `${APP_PREFIX}vocab_list_${list.key}`,
+      label: `Langues - liste anglais ${list.label} (legacy)`,
+      group: 'languages',
+      storage: 'local',
+    },
+  ]);
 }
 
 function buildKnownEntries() {
-  return [...KNOWN_ENTRY_DEFS, ...toVocabEntries()];
+  return [...KNOWN_ENTRY_DEFS, ...toEnglishEntries()];
 }
 
 function dedupeEntries(entries) {
@@ -470,4 +484,5 @@ export {
   HISTORY_LIMIT_KEY as ADMIN_STORAGE_HISTORY_LIMIT_KEY,
   SIDEBAR_COLLAPSED_KEY as ADMIN_SIDEBAR_COLLAPSED_KEY,
 };
+
 

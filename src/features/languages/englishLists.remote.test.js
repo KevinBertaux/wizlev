@@ -57,8 +57,8 @@ afterEach(() => {
   });
 });
 
-async function loadVocabModule() {
-  return import('./vocabLists');
+async function loadEnglishModule() {
+  return import('./englishLists');
 }
 
 function okJson(payload) {
@@ -68,12 +68,15 @@ function okJson(payload) {
   };
 }
 
-describe('vocabLists remote hydration', () => {
+describe('englishLists remote hydration', () => {
   it('returns disabled when remote base URL is empty', async () => {
+    vi.stubEnv('VITE_LANGUAGES_REMOTE_BASE_URL', '');
     vi.stubEnv('VITE_VOCAB_REMOTE_BASE_URL', '');
+    vi.stubEnv('VITE_LANGUAGES_REMOTE_LANG', '');
+    vi.stubEnv('VITE_VOCAB_REMOTE_LANG', '');
 
-    const { hydrateRemoteVocabLists } = await loadVocabModule();
-    const result = await hydrateRemoteVocabLists();
+    const { hydrateRemoteEnglishLists } = await loadEnglishModule();
+    const result = await hydrateRemoteEnglishLists();
 
     expect(result).toEqual({
       enabled: false,
@@ -84,8 +87,8 @@ describe('vocabLists remote hydration', () => {
   });
 
   it('hydrates known list and appends unknown list from remote manifest', async () => {
-    vi.stubEnv('VITE_VOCAB_REMOTE_BASE_URL', 'https://example.test');
-    vi.stubEnv('VITE_VOCAB_REMOTE_LANG', 'en');
+    vi.stubEnv('VITE_LANGUAGES_REMOTE_BASE_URL', 'https://example.test');
+    vi.stubEnv('VITE_LANGUAGES_REMOTE_LANG', 'en');
 
     const fetchMock = vi.fn(async (url) => {
       const asText = String(url);
@@ -116,21 +119,21 @@ describe('vocabLists remote hydration', () => {
       value: fetchMock,
     });
 
-    const { getVocabList, hydrateRemoteVocabLists, listVocabOptions } = await loadVocabModule();
-    const result = await hydrateRemoteVocabLists();
+    const { getEnglishList, hydrateRemoteEnglishLists, listEnglishOptions } = await loadEnglishModule();
+    const result = await hydrateRemoteEnglishLists();
 
     expect(result.enabled).toBe(true);
     expect(result.loaded).toBeGreaterThanOrEqual(2);
     expect(result.updated).toBeGreaterThanOrEqual(2);
 
-    expect(getVocabList('fruits')?.name).toBe('🍉 Fruits distants');
-    expect(getVocabList('bonusList')?.name).toBe('🧪 Bonus');
-    expect(listVocabOptions().some((item) => item.key === 'bonusList')).toBe(true);
+    expect(getEnglishList('fruits')?.name).toBe('🍉 Fruits distants');
+    expect(getEnglishList('bonusList')?.name).toBe('🧪 Bonus');
+    expect(listEnglishOptions().some((item) => item.key === 'bonusList')).toBe(true);
   });
 
   it('ignores remote payload with empty words and keeps local fallback', async () => {
-    vi.stubEnv('VITE_VOCAB_REMOTE_BASE_URL', 'https://example.test');
-    vi.stubEnv('VITE_VOCAB_REMOTE_LANG', 'en');
+    vi.stubEnv('VITE_LANGUAGES_REMOTE_BASE_URL', 'https://example.test');
+    vi.stubEnv('VITE_LANGUAGES_REMOTE_LANG', 'en');
 
     const fetchMock = vi.fn(async (url) => {
       const asText = String(url);
@@ -153,19 +156,19 @@ describe('vocabLists remote hydration', () => {
       value: fetchMock,
     });
 
-    const { getVocabList, hydrateRemoteVocabLists } = await loadVocabModule();
-    const baseline = getVocabList('fruits');
+    const { getEnglishList, hydrateRemoteEnglishLists } = await loadEnglishModule();
+    const baseline = getEnglishList('fruits');
 
-    const result = await hydrateRemoteVocabLists();
-    const afterHydration = getVocabList('fruits');
+    const result = await hydrateRemoteEnglishLists();
+    const afterHydration = getEnglishList('fruits');
 
     expect(result.enabled).toBe(true);
     expect(afterHydration).toEqual(baseline);
   });
 
   it('hydrates only once and returns cached state on subsequent call', async () => {
-    vi.stubEnv('VITE_VOCAB_REMOTE_BASE_URL', 'https://example.test');
-    vi.stubEnv('VITE_VOCAB_REMOTE_LANG', 'en');
+    vi.stubEnv('VITE_LANGUAGES_REMOTE_BASE_URL', 'https://example.test');
+    vi.stubEnv('VITE_LANGUAGES_REMOTE_LANG', 'en');
 
     const fetchMock = vi.fn(async (url) => {
       const asText = String(url);
@@ -188,12 +191,12 @@ describe('vocabLists remote hydration', () => {
       value: fetchMock,
     });
 
-    const { hydrateRemoteVocabLists } = await loadVocabModule();
+    const { hydrateRemoteEnglishLists } = await loadEnglishModule();
 
-    await hydrateRemoteVocabLists();
+    await hydrateRemoteEnglishLists();
     const firstCallCount = fetchMock.mock.calls.length;
 
-    const secondResult = await hydrateRemoteVocabLists();
+    const secondResult = await hydrateRemoteEnglishLists();
     const secondCallCount = fetchMock.mock.calls.length;
 
     expect(secondResult).toEqual({
@@ -206,8 +209,8 @@ describe('vocabLists remote hydration', () => {
   });
 
   it('keeps known queue when manifest format is invalid', async () => {
-    vi.stubEnv('VITE_VOCAB_REMOTE_BASE_URL', 'https://example.test');
-    vi.stubEnv('VITE_VOCAB_REMOTE_LANG', 'en');
+    vi.stubEnv('VITE_LANGUAGES_REMOTE_BASE_URL', 'https://example.test');
+    vi.stubEnv('VITE_LANGUAGES_REMOTE_LANG', 'en');
 
     const fetchMock = vi.fn(async (url) => {
       const asText = String(url);
@@ -230,17 +233,17 @@ describe('vocabLists remote hydration', () => {
       value: fetchMock,
     });
 
-    const { getVocabList, hydrateRemoteVocabLists } = await loadVocabModule();
-    const result = await hydrateRemoteVocabLists();
+    const { getEnglishList, hydrateRemoteEnglishLists } = await loadEnglishModule();
+    const result = await hydrateRemoteEnglishLists();
 
     expect(result.enabled).toBe(true);
-    expect(getVocabList('fruits')?.name).toBe('🍏 Fruits depuis queue connue');
-    expect(getVocabList('bonusList')).toBeNull();
+    expect(getEnglishList('fruits')?.name).toBe('🍏 Fruits depuis queue connue');
+    expect(getEnglishList('bonusList')).toBeNull();
   });
 
   it('continues hydration when some remote files fail', async () => {
-    vi.stubEnv('VITE_VOCAB_REMOTE_BASE_URL', 'https://example.test');
-    vi.stubEnv('VITE_VOCAB_REMOTE_LANG', 'en');
+    vi.stubEnv('VITE_LANGUAGES_REMOTE_BASE_URL', 'https://example.test');
+    vi.stubEnv('VITE_LANGUAGES_REMOTE_LANG', 'en');
 
     const fetchMock = vi.fn(async (url) => {
       const asText = String(url);
@@ -266,18 +269,18 @@ describe('vocabLists remote hydration', () => {
       value: fetchMock,
     });
 
-    const { getVocabList, hydrateRemoteVocabLists } = await loadVocabModule();
-    const result = await hydrateRemoteVocabLists();
+    const { getEnglishList, hydrateRemoteEnglishLists } = await loadEnglishModule();
+    const result = await hydrateRemoteEnglishLists();
 
     expect(result.enabled).toBe(true);
     expect(result.loaded).toBeGreaterThanOrEqual(1);
     expect(result.skipped).toBeGreaterThan(0);
-    expect(getVocabList('fruits')?.name).toBe('🍓 Fruits distants robustes');
+    expect(getEnglishList('fruits')?.name).toBe('🍓 Fruits distants robustes');
   });
 
   it('handles fetch errors without crashing hydration', async () => {
-    vi.stubEnv('VITE_VOCAB_REMOTE_BASE_URL', 'https://example.test');
-    vi.stubEnv('VITE_VOCAB_REMOTE_LANG', 'en');
+    vi.stubEnv('VITE_LANGUAGES_REMOTE_BASE_URL', 'https://example.test');
+    vi.stubEnv('VITE_LANGUAGES_REMOTE_LANG', 'en');
 
     const fetchMock = vi.fn(async () => {
       throw new Error('AbortError');
@@ -288,8 +291,8 @@ describe('vocabLists remote hydration', () => {
       value: fetchMock,
     });
 
-    const { hydrateRemoteVocabLists } = await loadVocabModule();
-    const result = await hydrateRemoteVocabLists();
+    const { hydrateRemoteEnglishLists } = await loadEnglishModule();
+    const result = await hydrateRemoteEnglishLists();
 
     expect(result.enabled).toBe(true);
     expect(result.loaded).toBe(0);
@@ -297,3 +300,4 @@ describe('vocabLists remote hydration', () => {
     expect(result.skipped).toBeGreaterThan(0);
   });
 });
+

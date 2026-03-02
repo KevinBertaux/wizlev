@@ -63,7 +63,7 @@ Fichier: `src/styles/base.css`
 - `src/views/MathView.vue`
   - select: état focus renforcé
   - champ réponse: focus visible et cohérent
-- `src/views/VocabView.vue`
+- `src/views/EnglishView.vue`
   - selects: focus renforcé
   - flèches carrousel + bouton mélanger: gradient secondaire contrasté
   - carte retournée: texte foncé sur fond turquoise clair
@@ -92,4 +92,5 @@ Avant chaque release:
 2. Vérifier navigation clavier sur toutes les vues.
 3. Vérifier contraste des nouveaux composants ajoutés.
 4. Bloquer le merge si un état interactif est uniquement distingué par la couleur.
+
 

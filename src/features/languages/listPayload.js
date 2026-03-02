@@ -9,7 +9,7 @@ export function normalizeWords(words) {
   }));
 }
 
-export function buildVocabPayload(draft) {
+export function buildListPayload(draft) {
   const name = (draft?.name || '').trim();
   const description = (draft?.description || '').trim();
   const normalizedWords = normalizeWords(draft?.words || []);
@@ -42,3 +42,4 @@ export function buildVocabPayload(draft) {
     },
   };
 }
+

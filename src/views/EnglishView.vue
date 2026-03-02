@@ -2,11 +2,12 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import QuizEmptyState from '@/components/QuizEmptyState.vue';
 import QuizSelectField from '@/components/QuizSelectField.vue';
-import { getVocabList, hydrateRemoteVocabLists, listVocabOptions } from '@/features/vocab/vocabLists';
+import { getEnglishList, hydrateRemoteEnglishLists, listEnglishOptions } from '@/features/languages/englishLists';
 
 const ttsAccentStorageKey = 'manabuplay_tts_accent';
 const ttsRateStorageKey = 'manabuplay_tts_rate';
-const cardDirectionStorageKey = 'manabuplay_vocab_card_direction';
+const cardDirectionStorageKey = 'manabuplay_english_card_direction';
+const legacyCardDirectionStorageKey = 'manabuplay_vocab_card_direction';
 const ttsSupported =
   typeof window !== 'undefined' &&
   'speechSynthesis' in window &&
@@ -34,11 +35,11 @@ const touchStartX = ref(0);
 const touchStartY = ref(0);
 const suppressNextFlip = ref(false);
 
-const availableVocabOptions = ref(listVocabOptions());
-const activeList = computed(() => (selectedList.value ? getVocabList(selectedList.value) : null));
-const vocabListOptionsWithCount = computed(() =>
-  availableVocabOptions.value.map((list) => {
-    const currentList = getVocabList(list.key);
+const availableEnglishOptions = ref(listEnglishOptions());
+const activeList = computed(() => (selectedList.value ? getEnglishList(selectedList.value) : null));
+const englishListOptionsWithCount = computed(() =>
+  availableEnglishOptions.value.map((list) => {
+    const currentList = getEnglishList(list.key);
     return {
       ...list,
       wordCount: Array.isArray(currentList?.words) ? currentList.words.length : list.wordCount || 0,
@@ -46,7 +47,7 @@ const vocabListOptionsWithCount = computed(() =>
   })
 );
 const listSelectOptions = computed(() =>
-  vocabListOptionsWithCount.value.map((list) => ({
+  englishListOptionsWithCount.value.map((list) => ({
     value: list.key,
     label: `${list.label} (${list.wordCount} mots)`,
   }))
@@ -97,7 +98,7 @@ function loadList(listKey) {
     return;
   }
 
-  const list = getVocabList(listKey);
+  const list = getEnglishList(listKey);
   if (!list || !Array.isArray(list.words)) {
     words.value = [];
     currentIndex.value = 0;
@@ -341,14 +342,18 @@ onMounted(async () => {
       ttsRate.value = savedRate;
     }
 
-    const savedDirection = localStorage.getItem(cardDirectionStorageKey);
+    const savedDirection =
+      localStorage.getItem(cardDirectionStorageKey) ||
+      localStorage.getItem(legacyCardDirectionStorageKey);
     if (savedDirection === 'en-first' || savedDirection === 'fr-first') {
       cardDirection.value = savedDirection;
+      localStorage.setItem(cardDirectionStorageKey, savedDirection);
+      localStorage.removeItem(legacyCardDirectionStorageKey);
     }
   }
 
-  await hydrateRemoteVocabLists();
-  availableVocabOptions.value = listVocabOptions();
+  await hydrateRemoteEnglishLists();
+  availableEnglishOptions.value = listEnglishOptions();
 
   loadList(selectedList.value);
   window.addEventListener('keydown', handleKeyboardNav);
@@ -383,14 +388,14 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section class="page-block vocab-page">
+  <section class="page-block english-page">
     <h1>Vocabulaire anglais</h1>
 
     <div class="settings-box">
       <div class="setting-list">
         <QuizSelectField
           v-model="selectedList"
-          select-id="vocabListSelect"
+          select-id="englishListSelect"
           label="Choisir une liste :"
           placeholder="-- Sélectionner une liste --"
           :placeholder-disabled="true"
@@ -473,7 +478,7 @@ onUnmounted(() => {
 
       <div v-if="ttsStatus" class="tts-status" aria-live="polite">{{ ttsStatus }}</div>
 
-      <div class="vocab-controls">
+      <div class="english-controls">
         <button class="btn btn-secondary" type="button" @click="shuffleCards">🔀 Mélanger</button>
       </div>
     </template>
@@ -483,7 +488,7 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.vocab-page {
+.english-page {
   max-width: 760px;
   margin-inline: auto;
 }
@@ -719,7 +724,7 @@ onUnmounted(() => {
   color: #5d6c80;
 }
 
-.vocab-controls {
+.english-controls {
   display: flex;
   justify-content: center;
   margin-top: 8px;
@@ -788,6 +793,7 @@ onUnmounted(() => {
   }
 }
 </style>
+
 
 
 

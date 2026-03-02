@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildVocabPayload, normalizeWords } from './adminPayload';
+import { buildListPayload, normalizeWords } from './listPayload';
 
 describe('normalizeWords', () => {
   it('trims values and keeps keys', () => {
@@ -15,9 +15,9 @@ describe('normalizeWords', () => {
   });
 });
 
-describe('buildVocabPayload', () => {
+describe('buildListPayload', () => {
   it('fails when name is missing', () => {
-    const result = buildVocabPayload({
+    const result = buildListPayload({
       name: '   ',
       description: 'desc',
       words: [{ english: 'Apple', french: 'Pomme' }],
@@ -27,7 +27,7 @@ describe('buildVocabPayload', () => {
   });
 
   it('fails on partial words', () => {
-    const result = buildVocabPayload({
+    const result = buildListPayload({
       name: 'Fruits',
       description: '',
       words: [{ english: 'Apple', french: '' }],
@@ -37,7 +37,7 @@ describe('buildVocabPayload', () => {
   });
 
   it('returns valid payload with complete words only', () => {
-    const result = buildVocabPayload({
+    const result = buildListPayload({
       name: 'Fruits',
       description: 'Liste',
       words: [
@@ -54,3 +54,4 @@ describe('buildVocabPayload', () => {
     });
   });
 });
+
