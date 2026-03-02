@@ -31,7 +31,7 @@ const routes = [
   {
     path: ROUTE_PATHS.LANGUAGES_ENGLISH,
     name: ROUTE_NAMES.LANGUAGES_ENGLISH,
-    component: () => import('@/views/VocabView.vue'),
+    component: () => import('@/views/EnglishView.vue'),
   },
   {
     path: ROUTE_PATHS.STUDIO_OPS_HELP,
@@ -89,3 +89,4 @@ router.beforeEach((to) => {
 });
 
 export default router;
+
