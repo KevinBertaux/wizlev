@@ -32,12 +32,12 @@ const isBlocked = computed(() => blockedMs.value > 0);
 const blockedSeconds = computed(() => Math.ceil(blockedMs.value / 1000));
 
 function penaltySummary() {
-  return 'Pénalité encourue: blocage 30 minutes, puis 24 heures après un nouvel échec.';
+  return 'Pénalité encourue : blocage 30 minutes, puis 24 heures après un nouvel échec.';
 }
 
 function buildBlockedMessage(seconds, level) {
-  const penalty = level === 'hard' ? 'Pénalité en cours: blocage 24 heures.' : 'Pénalité en cours: blocage 30 minutes.';
-  return `Identifiants incorrects. Tentatives restantes: 0. ${penalty} Réessaie dans ${seconds}s.`;
+  const penalty = level === 'hard' ? 'Pénalité en cours : blocage 24 heures.' : 'Pénalité en cours : blocage 30 minutes.';
+  return `Identifiants incorrects. Tentatives restantes : 0. ${penalty} Réessaie dans ${seconds}s.`;
 }
 
 async function submitLogin() {
@@ -61,7 +61,7 @@ async function submitLogin() {
       if (info.isBlocked) {
         statusMessage.value = buildBlockedMessage(Math.ceil(info.blockedMs / 1000), info.blockLevel);
       } else {
-        statusMessage.value = `Identifiants incorrects. Tentatives restantes: ${info.remainingAttempts}. ${penaltySummary()}`;
+        statusMessage.value = `Identifiants incorrects. Tentatives restantes : ${info.remainingAttempts}. ${penaltySummary()}`;
       }
       return;
     }

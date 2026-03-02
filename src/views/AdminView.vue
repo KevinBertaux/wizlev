@@ -1124,7 +1124,7 @@ refreshDashboardMetrics();
               <input id="listDescription" v-model="draft.description" type="text" />
             </template>
 
-            <p v-else class="empty-state">Sélectionner une liste pour commencer l'édition.</p>
+            <p v-else class="empty-state">Choisir une liste pour commencer l'édition.</p>
           </div>
 
           <div v-if="selectedList" class="admin-card">
@@ -2447,4 +2447,3 @@ pre {
   }
 }
 </style>
-

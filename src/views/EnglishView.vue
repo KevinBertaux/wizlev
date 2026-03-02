@@ -397,7 +397,7 @@ onUnmounted(() => {
           v-model="selectedList"
           select-id="englishListSelect"
           label="Choisir une liste :"
-          placeholder="-- Sélectionner une liste --"
+          placeholder="-- Choisir une liste --"
           :placeholder-disabled="true"
           :options="listSelectOptions"
         />
@@ -479,7 +479,7 @@ onUnmounted(() => {
       <div v-if="ttsStatus" class="tts-status" aria-live="polite">{{ ttsStatus }}</div>
 
       <div class="english-controls">
-        <button class="btn btn-secondary" type="button" @click="shuffleCards">🔀 Mélanger</button>
+        <button class="mp-btn mp-btn-secondary" type="button" @click="shuffleCards">🔀 Mélanger</button>
       </div>
     </template>
 
@@ -730,38 +730,6 @@ onUnmounted(() => {
   margin-top: 8px;
 }
 
-.btn {
-  border: 1px solid transparent;
-  border-radius: 12px;
-  padding: 12px 20px;
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 2px 0 rgba(15, 23, 42, 0.14);
-  transition:
-    transform 0.12s ease,
-    box-shadow 0.18s ease,
-    filter 0.18s ease,
-    border-color 0.18s ease;
-}
-
-.btn-secondary {
-  background: var(--btn-secondary-grad);
-  color: var(--ink-inverse);
-}
-
-.btn:hover:not(:disabled),
-.btn:focus-visible:not(:disabled) {
-  transform: translateY(-1px);
-  filter: brightness(1.05) saturate(1.03);
-  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.2);
-}
-
-.btn:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: 0 2px 0 rgba(15, 23, 42, 0.16);
-}
-
 @media (max-width: 820px) {
   .settings-row {
     grid-template-columns: 1fr;
@@ -793,7 +761,6 @@ onUnmounted(() => {
   }
 }
 </style>
-
 
 
 

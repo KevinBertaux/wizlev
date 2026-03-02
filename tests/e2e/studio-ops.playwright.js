@@ -78,7 +78,7 @@ test('admin login accessibility: blocked state disables controls after max attem
   }
 
   await expect(statusMessage).toContainText('Identifiants incorrects.');
-  await expect(statusMessage).toContainText('Tentatives restantes: 0.');
+  await expect(statusMessage).toContainText('Tentatives restantes : 0.');
   await expect(statusMessage).toContainText(/Réessaie dans \d+s\./);
 
   await expect(usernameInput).toBeDisabled();

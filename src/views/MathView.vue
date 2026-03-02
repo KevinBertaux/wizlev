@@ -385,7 +385,7 @@ onUnmounted(() => {
       <MotivationToast :message="toastMessage" :tone="toastTone" />
     </div>
 
-    <QuizEmptyState v-if="selectedTables.length === 0" message="Choisir une table pour commencer." />
+    <QuizEmptyState v-if="selectedTables.length === 0" message="Choisir les tables pour commencer." />
 
     <QuizFeedbackBanner
       v-if="selectedTables.length > 0 && currentQuestion?.source === 'review'"

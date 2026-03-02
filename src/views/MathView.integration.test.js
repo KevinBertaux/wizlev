@@ -23,7 +23,7 @@ describe('MathView integration', () => {
       attachTo: document.body,
     });
 
-    expect(wrapper.text()).toContain('Choisir une table pour commencer.');
+    expect(wrapper.text()).toContain('Choisir les tables pour commencer.');
 
     const selector = wrapper.getComponent(QuizTableSelector);
     selector.vm.$emit('update:modelValue', [2]);
