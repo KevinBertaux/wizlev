@@ -345,6 +345,9 @@ a:focus-visible {
 .btn {
   border: 1px solid transparent;
   border-radius: 10px;
+  min-height: 40px;
+  padding: 10px 14px;
+  font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 2px 0 rgba(15, 23, 42, 0.14);

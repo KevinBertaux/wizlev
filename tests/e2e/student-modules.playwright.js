@@ -10,7 +10,7 @@ test.beforeEach(async ({ page }) => {
 test('math: selecting a table starts quiz and wrong answer does not auto-skip', async ({ page }) => {
   await page.goto('/math/multiplications');
 
-  await expect(page.getByText('Choisir une table pour commencer.')).toBeVisible();
+  await expect(page.getByText('Choisir les tables pour commencer.')).toBeVisible();
 
   await page.getByRole('button', { name: '2', exact: true }).click();
 

@@ -67,6 +67,6 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
     <p>Les présentes CGU sont soumises au droit français.</p>
 
     <h2>11. Contact</h2>
-    <p>Pour toute question relative à ces CGU: kevinbertaux+manabuplay [at] gmail [dot] com</p>
+    <p>Pour toute question relative à ces CGU : kevinbertaux+manabuplay [at] gmail [dot] com</p>
   </LegalPageLayout>
 </template>
