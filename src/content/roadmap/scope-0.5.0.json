@@ -138,11 +138,35 @@
       "done": false
     },
     {
+      "id": "scope-050-high-tailwind-v4",
+      "priority": "High",
+      "domain": "ui",
+      "feature": "stack-css",
+      "label": "Migration technique vers Tailwind CSS v4 (sans refonte visuelle)",
+      "done": true
+    },
+    {
       "id": "scope-050-high-r2-v1",
       "priority": "High",
       "domain": "infra",
       "feature": "content-storage",
       "label": "Cloudflare R2 V1: lecture distante des listes JSON avec fallback local",
+      "done": true
+    },
+    {
+      "id": "scope-050-high-english-tts-simplified",
+      "priority": "High",
+      "domain": "langues",
+      "feature": "anglais",
+      "label": "Anglais: TTS simplifie (en-US fixe, alternance 0.9/0.6 au clic, feedback visuel lecture)",
+      "done": true
+    },
+    {
+      "id": "scope-050-med-naming-cleanup-english",
+      "priority": "Med",
+      "domain": "docs",
+      "feature": "coherence",
+      "label": "Nettoyage naming vocab -> english (tests E2E, snapshots visuels, captures, libelles docs)",
       "done": true
     }
   ]
