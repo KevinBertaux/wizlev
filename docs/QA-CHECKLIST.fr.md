@@ -1,4 +1,4 @@
-# Checklist QA V1
+# Checklist QA V2
 
 ## Préparation
 
@@ -9,15 +9,27 @@
 ## Smoke tests
 
 1. Navigation:
-   - Vérifier les routes `/`, `/math`, `/vocab`
+   - Vérifier les routes `/`, `/math`, `/math/multiplications`, `/math/symmetry`, `/languages`, `/languages/english`
    - Vérifier menu burger sur mobile
 2. Build:
    - Exécuter `npm run build` sans erreur
 3. Tests:
    - Exécuter `npm test` sans échec
    - Exécuter `npm run test:e2e` sans échec
+   - Exécuter `npm run qa:release` pour la passe automatisée complète release (hors snapshots visuels)
+   - Lancer le workflow GitHub `QA Visual Regression` (mode `check`) pour les snapshots Playwright `desktop-chromium`
+4. Couverture:
+   - Exécuter `npm test -- --coverage`
+   - Seuils minimaux (Vitest):
+     - Branches >= 70%
+     - Functions >= 80%
+     - Statements >= 55%
+     - Lines >= 55%
+   - Règle ratchet only:
+     - Ne jamais baisser les seuils dans la config
+     - Ne jamais accepter une baisse de couverture globale sans justification explicite et ticket de suivi
 
-## Math (`/math`)
+## Math (`/math/multiplications`)
 
 1. Vérifier qu'aucune table n'est sélectionnée par défaut
 2. Changer de table et vérifier mise à jour immédiate de la question
@@ -37,7 +49,7 @@
 7. Vérifier meilleure série:
    - Persistante au rechargement (localStorage)
 
-## Vocab (`/vocab`)
+## Vocab (`/languages/english`)
 
 1. Vérifier qu'aucune liste n'est sélectionnée par défaut
 2. Dropdown listes:
@@ -75,7 +87,7 @@
    - Dropdown affiche `Titre (xx mots)`
    - Import JSON valide/invalide
    - Copie JSON / téléchargement JSON
-   - Sauvegarde locale visible dans `/vocab`
+   - Sauvegarde locale visible dans `/languages/english`
 
 ## Régression
 

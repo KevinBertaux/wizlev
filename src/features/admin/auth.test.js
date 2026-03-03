@@ -149,6 +149,12 @@ describe('verifyAdminCredentials', () => {
     await expect(verifyAdminCredentials('wrong-user', PASSWORD)).resolves.toBe(false);
     await expect(verifyAdminCredentials(DEFAULT_USERNAME, 'wrong-password')).resolves.toBe(false);
   });
+
+  it('rejects missing credentials without hashing', async () => {
+    await expect(verifyAdminCredentials('', PASSWORD)).resolves.toBe(false);
+    await expect(verifyAdminCredentials(DEFAULT_USERNAME, '')).resolves.toBe(false);
+    await expect(verifyAdminCredentials(null, null)).resolves.toBe(false);
+  });
 });
 
 describe('rate limit policy', () => {
@@ -183,6 +189,18 @@ describe('rate limit policy', () => {
     expect(info.blockLevel).toBe('none');
     expect(info.remainingAttempts).toBe(3);
   });
+
+  it('keeps blocked state when another failed attempt occurs during active block', () => {
+    registerFailedAttempt();
+    registerFailedAttempt();
+    const blocked = registerFailedAttempt();
+    expect(blocked.isBlocked).toBe(true);
+
+    const before = blocked.blockedMs;
+    const retryWhileBlocked = registerFailedAttempt();
+    expect(retryWhileBlocked.isBlocked).toBe(true);
+    expect(retryWhileBlocked.blockedMs).toBeLessThanOrEqual(before);
+  });
 });
 
 describe('session lifecycle', () => {
@@ -199,5 +217,11 @@ describe('session lifecycle', () => {
     expect(isAdminSessionValid()).toBe(true);
     clearAdminSession();
     expect(isAdminSessionValid()).toBe(false);
+  });
+
+  it('treats corrupted session payload as invalid', () => {
+    window.sessionStorage.setItem('manabuplay_admin_session_v1', '{broken');
+    expect(isAdminSessionValid()).toBe(false);
+    expect(getAdminSessionRemainingMs()).toBe(0);
   });
 });

@@ -1,0 +1,31 @@
+{
+  "name": "Symboles des nations britanniques",
+  "label": "🏴 Symboles des nations britanniques",
+  "description": "Emblèmes et symboles culturels.",
+  "words": [
+    {
+      "english": "A flag",
+      "french": "Un drapeau"
+    },
+    {
+      "english": "The thistle",
+      "french": "Le chardon"
+    },
+    {
+      "english": "The rose",
+      "french": "La rose"
+    },
+    {
+      "english": "The leek",
+      "french": "Le poireau"
+    },
+    {
+      "english": "The daffodil",
+      "french": "La jonquille"
+    },
+    {
+      "english": "The shamrock",
+      "french": "Le trèfle"
+    }
+  ]
+}

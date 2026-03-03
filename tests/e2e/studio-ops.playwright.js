@@ -20,7 +20,7 @@ test('full browser flow: /-/studio-ops to panel, then redirect after session exp
   await page.getByRole('button', { name: 'Se connecter' }).click();
 
   await expect(page).toHaveURL(/\/\-\/studio-ops\/panel$/);
-  await expect(page.getByRole('heading', { name: 'Édition de listes de vocabulaire' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Dashboard admin' })).toBeVisible();
 
   const hasValidSession = await page.evaluate((key) => {
     const raw = window.sessionStorage.getItem(key);
@@ -37,7 +37,7 @@ test('full browser flow: /-/studio-ops to panel, then redirect after session exp
     window.sessionStorage.setItem(key, JSON.stringify({ expiresAtMs: Date.now() - 1 }));
   }, SESSION_KEY);
 
-  await page.goto('/math');
+  await page.goto('/math/multiplications');
   await page.goto('/-/studio-ops/panel');
   await expect(page).toHaveURL(/\/\-\/studio-ops$/);
 });
@@ -69,7 +69,7 @@ test('admin login accessibility: blocked state disables controls after max attem
   const usernameInput = page.getByLabel("Nom d'utilisateur");
   const passwordInput = page.getByLabel('Mot de passe');
   const submitButton = page.getByRole('button', { name: 'Se connecter' });
-  const statusMessage = page.locator('.status-error');
+  const statusMessage = page.locator('.admin-status-error');
 
   for (let i = 0; i < 3; i += 1) {
     await usernameInput.fill('wrong-user');
@@ -77,7 +77,8 @@ test('admin login accessibility: blocked state disables controls after max attem
     await submitButton.click();
   }
 
-  await expect(statusMessage).toContainText('Tentatives restantes: 0.');
+  await expect(statusMessage).toContainText('Identifiants incorrects.');
+  await expect(statusMessage).toContainText('Tentatives restantes : 0.');
   await expect(statusMessage).toContainText(/Réessaie dans \d+s\./);
 
   await expect(usernameInput).toBeDisabled();

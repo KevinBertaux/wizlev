@@ -1,0 +1,154 @@
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { getEnglishList, resetEnglishList, saveEnglishList } from './englishLists';
+
+class MemoryStorage {
+  constructor() {
+    this.map = new Map();
+  }
+
+  getItem(key) {
+    return this.map.has(key) ? this.map.get(key) : null;
+  }
+
+  setItem(key, value) {
+    this.map.set(key, String(value));
+  }
+
+  removeItem(key) {
+    this.map.delete(key);
+  }
+
+  clear() {
+    this.map.clear();
+  }
+}
+
+let originalWindow;
+let originalLocalStorage;
+let storage;
+
+beforeEach(() => {
+  originalWindow = globalThis.window;
+  originalLocalStorage = globalThis.localStorage;
+
+  storage = new MemoryStorage();
+
+  Object.defineProperty(globalThis, 'window', {
+    configurable: true,
+    value: { localStorage: storage },
+  });
+
+  Object.defineProperty(globalThis, 'localStorage', {
+    configurable: true,
+    value: storage,
+  });
+});
+
+afterEach(() => {
+  Object.defineProperty(globalThis, 'window', {
+    configurable: true,
+    value: originalWindow,
+  });
+
+  Object.defineProperty(globalThis, 'localStorage', {
+    configurable: true,
+    value: originalLocalStorage,
+  });
+});
+
+describe('englishLists storage behavior', () => {
+  it('returns base list when no override exists', () => {
+    const list = getEnglishList('fruits');
+
+    expect(list).not.toBeNull();
+    expect(list.name.length).toBeGreaterThan(0);
+    expect(Array.isArray(list.words)).toBe(true);
+    expect(list.words.length).toBeGreaterThan(0);
+  });
+
+  it('saves and returns sanitized payload', () => {
+    const saved = saveEnglishList('fruits', {
+      name: '  Fruits perso ',
+      description: '  ma liste  ',
+      words: [
+        { english: ' Apple ', french: ' Pomme ' },
+        { english: 123, french: null },
+      ],
+    });
+
+    expect(saved).toBe(true);
+
+    const list = getEnglishList('fruits');
+    expect(list).toEqual({
+      name: 'Fruits perso',
+      description: 'ma liste',
+      words: [
+        { english: ' Apple ', french: ' Pomme ' },
+        { english: '', french: '' },
+      ],
+    });
+  });
+
+
+  it('falls back to base list when stored JSON is invalid', () => {
+    const baseline = getEnglishList('fruits');
+    storage.setItem('manabuplay_english_list_fruits', '{broken-json');
+
+    const list = getEnglishList('fruits');
+    expect(list).toEqual(baseline);
+  });
+
+  it('reads legacy key and migrates it to the english key', () => {
+    storage.setItem(
+      'manabuplay_vocab_list_fruits',
+      JSON.stringify({
+        name: 'Legacy fruits',
+        description: 'legacy',
+        words: [{ english: 'Apple', french: 'Pomme' }],
+      })
+    );
+
+    const list = getEnglishList('fruits');
+
+    expect(list).toEqual({
+      name: 'Legacy fruits',
+      description: 'legacy',
+      words: [{ english: 'Apple', french: 'Pomme' }],
+    });
+    expect(storage.getItem('manabuplay_english_list_fruits')).not.toBeNull();
+    expect(storage.getItem('manabuplay_vocab_list_fruits')).toBeNull();
+  });
+
+  it('resets current override', () => {
+    storage.setItem('manabuplay_english_list_fruits', JSON.stringify({ name: 'Current', words: [] }));
+    storage.setItem('manabuplay_vocab_list_fruits', JSON.stringify({ name: 'Legacy', words: [] }));
+
+    resetEnglishList('fruits');
+
+    expect(storage.getItem('manabuplay_english_list_fruits')).toBeNull();
+    expect(storage.getItem('manabuplay_vocab_list_fruits')).toBeNull();
+  });
+
+
+  it('returns false when localStorage.setItem throws on save', () => {
+    storage.setItem = () => {
+      throw new Error('QuotaExceededError');
+    };
+
+    const saved = saveEnglishList('fruits', {
+      name: 'Fruits',
+      description: '',
+      words: [{ english: 'Apple', french: 'Pomme' }],
+    });
+
+    expect(saved).toBe(false);
+  });
+
+  it('returns null / false for unknown list keys', () => {
+    expect(getEnglishList('unknown-key')).toBeNull();
+    expect(saveEnglishList('unknown-key', { name: 'x', words: [] })).toBe(false);
+  });
+});
+
+
+

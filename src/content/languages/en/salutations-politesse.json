@@ -1,0 +1,63 @@
+{
+  "name": "Salutations et politesse",
+  "label": "👋 Salutations et politesse",
+  "description": "Expressions du quotidien.",
+  "words": [
+    {
+      "english": "Hello / Hi",
+      "french": "Bonjour / Salut"
+    },
+    {
+      "english": "Good morning",
+      "french": "Bonjour (le matin)"
+    },
+    {
+      "english": "Good afternoon",
+      "french": "Bonjour (l'après-midi)"
+    },
+    {
+      "english": "Good evening",
+      "french": "Bonsoir"
+    },
+    {
+      "english": "Good night",
+      "french": "Bonne nuit"
+    },
+    {
+      "english": "How are you?",
+      "french": "Comment tu vas ?"
+    },
+    {
+      "english": "What about you?",
+      "french": "Et toi ?"
+    },
+    {
+      "english": "Thank you / Thanks",
+      "french": "Merci"
+    },
+    {
+      "english": "You're welcome",
+      "french": "De rien"
+    },
+    {
+      "english": "See you later",
+      "french": "À plus tard"
+    },
+    {
+      "english": "See you soon",
+      "french": "À bientôt"
+    },
+    {
+      "english": "See you on Monday",
+      "french": "À lundi"
+    },
+    {
+      "english": "Have a nice day",
+      "french": "Passe une bonne journée !"
+    },
+    {
+      "english": "Have a good weekend!",
+      "french": "Passe un bon week-end !"
+    }
+  ]
+}

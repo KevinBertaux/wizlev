@@ -6,18 +6,18 @@ Educational web app (Vue 3 + Vite SPA) to help children practice math and vocabu
 
 ## Version
 
-- Current version: `0.4.0`
-- Last update: `20 February 2026` (fr-FR date: 20 février 2026)
+- Current version: `0.5.0-prep`
+- Last update: `3 March 2026` (fr-FR date: 3 mars 2026)
 
 ## Current features
 
-### Math (`/math`)
-- Multiplication tables quiz (0-11 + all tables mode)
-- Score, total answers, current streak, and best streak (localStorage)
-- Keyboard validation (`Enter`) with duplicate-submit prevention
-- No table selected by default
+### Math (`/math/multiplications`, `/math/symmetry`)
+- Multiplications: multi-table selection (0-11), difficulty modes, score/streak/best streak
+- Multiplications: keyboard validation (`Enter`) + desktop/tablet numeric pad
+- Symmetry V1: visual MCQ (vertical + horizontal axes), score/streak/best streak
+- No implicit start: selection required before practice
 
-### English vocabulary (`/vocab`)
+### English vocabulary (`/languages/english`)
 - External JSON lists with title, description, and words
 - Dropdown with dynamic word count (`xx words`)
 - No list selected by default
@@ -32,6 +32,11 @@ Educational web app (Vue 3 + Vite SPA) to help children practice math and vocabu
 - JSON import / export / copy
 - Local `localStorage` save
 - Accessed through private URL `/-/studio-ops` (not visible in public menu)
+
+### Vocabulary data (R2 V1)
+- Optional remote Cloudflare R2 loading via environment variables
+- `index.json` list manifest + automatic local fallback on failure
+- Goal: update lists without redeploying the app
 
 ## Local setup
 
@@ -52,14 +57,17 @@ Educational web app (Vue 3 + Vite SPA) to help children practice math and vocabu
 ## SPA routes
 
 - `/`: Home
-- `/math`: Math module
-- `/vocab`: Vocabulary module
+- `/math`: Math hub
+- `/math/multiplications`: Multiplications module
+- `/math/symmetry`: Symmetry module
+- `/languages`: Languages hub
+- `/languages/english`: English vocabulary module
 - `/-/studio-ops`: Internal login
 - `/-/studio-ops/panel`: Internal panel
-- `/aide/panel-interne`: Internal panel guide (FR)
-- `/help/internal-panel`: Internal panel guide (EN)
-- `/legal/mentions-legales`: Legal notices
-- `/legal/confidentialite`: Privacy policy
+- `/-/studio-ops/help`: Internal panel guide (FR/EN switch)
+- `/legal/legal-notice`: Legal notices
+- `/legal/terms-of-use`: Terms of use
+- `/legal/privacy-policy`: Privacy policy
 
 ## Documentation
 
@@ -67,6 +75,5 @@ Educational web app (Vue 3 + Vite SPA) to help children practice math and vocabu
 - Release checklist: `docs/RELEASE-CHECKLIST.fr.md`
 - Secrets security: `docs/SECURITY-SECRETS.fr.md`
 - Git cheat sheet: `docs/GIT-CHEATSHEET.fr.md`
-- Internal panel guide FR: `docs/PANEL-INTERNE.fr.md`
-- Internal panel guide EN: `docs/PANEL-INTERNE.en.md`
-
+- Internal panel guide (in-app FR/EN): `/-/studio-ops/help`
+- Release notes 0.5.0-prep: `docs/RELEASE-NOTES.0.5.0-prep.fr.md`

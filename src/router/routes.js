@@ -1,0 +1,29 @@
+export const ROUTE_NAMES = Object.freeze({
+  HOME: 'home',
+  MATH_HUB: 'math-hub',
+  MATH_MULTIPLICATIONS: 'math-multiplications',
+  MATH_SYMMETRY: 'math-symmetry',
+  LANGUAGES_HUB: 'languages-hub',
+  LANGUAGES_ENGLISH: 'languages-english',
+  STUDIO_OPS_LOGIN: 'studio-ops-login',
+  STUDIO_OPS_PANEL: 'studio-ops-panel',
+  STUDIO_OPS_HELP: 'studio-ops-help',
+  LEGAL_NOTICE: 'legal-notice',
+  LEGAL_PRIVACY: 'legal-privacy',
+  LEGAL_TERMS: 'legal-terms',
+});
+
+export const ROUTE_PATHS = Object.freeze({
+  HOME: '/',
+  MATH_HUB: '/math',
+  MATH_MULTIPLICATIONS: '/math/multiplications',
+  MATH_SYMMETRY: '/math/symmetry',
+  LANGUAGES_HUB: '/languages',
+  LANGUAGES_ENGLISH: '/languages/english',
+  STUDIO_OPS_LOGIN: '/-/studio-ops',
+  STUDIO_OPS_PANEL: '/-/studio-ops/panel',
+  STUDIO_OPS_HELP: '/-/studio-ops/help',
+  LEGAL_NOTICE: '/legal/legal-notice',
+  LEGAL_PRIVACY: '/legal/privacy-policy',
+  LEGAL_TERMS: '/legal/terms-of-use',
+});

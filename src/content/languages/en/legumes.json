@@ -1,0 +1,51 @@
+{
+  "name": "Légumes",
+  "label": "🥕 Légumes",
+  "description": "Liste légumes (nouvelle).",
+  "words": [
+    {
+      "english": "A carrot",
+      "french": "Une carotte"
+    },
+    {
+      "english": "A potato",
+      "french": "Une pomme de terre"
+    },
+    {
+      "english": "Beans",
+      "french": "Des haricots"
+    },
+    {
+      "english": "Peas",
+      "french": "Des petits pois"
+    },
+    {
+      "english": "An artichoke",
+      "french": "Un artichaut"
+    },
+    {
+      "english": "A leek",
+      "french": "Un poireau"
+    },
+    {
+      "english": "A cabbage",
+      "french": "Un chou"
+    },
+    {
+      "english": "A cauliflower",
+      "french": "Un chou-fleur"
+    },
+    {
+      "english": "Spinach",
+      "french": "Épinard"
+    },
+    {
+      "english": "Turnip",
+      "french": "Navet"
+    },
+    {
+      "english": "Brussels sprouts",
+      "french": "Choux de Bruxelles"
+    }
+  ]
+}

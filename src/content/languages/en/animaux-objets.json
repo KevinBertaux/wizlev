@@ -1,0 +1,83 @@
+{
+  "name": "Animaux",
+  "label": "🐾 Animaux",
+  "description": "Animaux du quotidien et sauvages.",
+  "words": [
+    {
+      "english": "A parrot",
+      "french": "Un perroquet"
+    },
+    {
+      "english": "A bee",
+      "french": "Une abeille"
+    },
+    {
+      "english": "A lamb",
+      "french": "Un agneau"
+    },
+    {
+      "english": "A fox",
+      "french": "Un renard"
+    },
+    {
+      "english": "A bear",
+      "french": "Un ours"
+    },
+    {
+      "english": "A snake",
+      "french": "Un serpent"
+    },
+    {
+      "english": "An ox",
+      "french": "Un bœuf"
+    },
+    {
+      "english": "A dog",
+      "french": "Un chien"
+    },
+    {
+      "english": "A cat",
+      "french": "Un chat"
+    },
+    {
+      "english": "A mouse",
+      "french": "Une souris"
+    },
+    {
+      "english": "A lion",
+      "french": "Un lion"
+    },
+    {
+      "english": "A hyena",
+      "french": "Une hyène"
+    },
+    {
+      "english": "An elephant",
+      "french": "Un éléphant"
+    },
+    {
+      "english": "A giraffe",
+      "french": "Une girafe"
+    },
+    {
+      "english": "A leopard",
+      "french": "Un léopard"
+    },
+    {
+      "english": "An ostrich",
+      "french": "Une autruche"
+    },
+    {
+      "english": "A baboon",
+      "french": "Un babouin"
+    },
+    {
+      "english": "A buffalo",
+      "french": "Un buffle"
+    },
+    {
+      "english": "A flamingo",
+      "french": "Un flamant rose"
+    }
+  ]
+}
