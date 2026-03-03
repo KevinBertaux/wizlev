@@ -46,6 +46,7 @@
 - [x] Multiplications: pavé numérique desktop/tablette.
 - [x] Vocabulaire Anglais: ajouter la liste `Weather` (EN/FR) et l'intégrer au parcours de révision.
 - [x] Cloudflare R2 V1: lecture distante des listes JSON avec fallback local (sans backend).
+- [x] Migration technique vers Tailwind CSS v4 (sans refonte visuelle).
 - [x] Admin: ajouter la gestion des formes de symétrie (ajout/édition/suppression).
 - [x] Admin: ajouter une action de maintenance pour vider le `localStorage` (avec confirmation).
 - [x] Admin: afficher le scope/roadmap avec barre de progression.
@@ -92,7 +93,8 @@
 
 - [x] UI/UX: harmonisation hover/focus/contrastes sur l'ensemble du site.
 - [x] Navigation: menu plus clair et responsive.
-- [x] Vocabulaire: sens de carte EN->FR / FR->EN, vitesse TTS en 3 niveaux, options de prononciation.
+- [x] Anglais: TTS simplifié (en-US fixe, alternance 0.9/0.6 au clic, feedback visuel de lecture).
+- [x] Nettoyage de naming: `vocab` -> `english` dans les tests E2E, snapshots visuels, captures et libellés docs.
 - [x] Vocabulaire: listes JSON enrichies (titre + description + compteur de mots + emojis).
 - [x] Sécurité secrets: ggshield local + workflow GitGuardian CI.
 - [x] Nettoyage branches feature après merge (au fil de l'eau).
@@ -109,13 +111,13 @@
 ### Priorité moyenne
 
 - [ ] Base structure multi-langues complète (anglais + espagnol).
+- [ ] Préparer la catégorie de cours Arts plastiques (Dessin) dans l'architecture (sans module complet).
 - [ ] Historique local des meilleurs scores par module/profil.
 - [ ] UX admin V2 (édition par lots, recherche, filtres, validation avancée).
 - [ ] Panneau admin: afficher l'état HTTP des listes distantes (200, 3xx, 4xx, 5xx).
 - [ ] Retirer la compatibilité legacy `localStorage` (`manabuplay_vocab_*`) après la période tampon de migration 0.5.
 - [ ] Timer d'exercice configurable (par module/niveau).
 - [ ] Système global d'info-bulles (tooltips) cohérent sur tout le site.
-- [ ] Migration technique vers Tailwind CSS v4 (branche dédiée + validation non-régression).
 - [ ] Refonte globale CSS/UI/UX pour exploiter pleinement Tailwind v4 (tokens, composants, cohérence cross-modules).
 - [ ] Refacto globale des breakpoints responsive (harmonisation mobile/tablette/desktop, suppression des écarts CSS entre modules).
 - [ ] Version PWA (manifest + service worker + mode hors-ligne contrôlé).

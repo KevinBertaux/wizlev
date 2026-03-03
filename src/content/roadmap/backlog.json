@@ -26,11 +26,11 @@
       "done": false
     },
     {
-      "id": "backlog-tailwind-v4-migration",
+      "id": "backlog-course-arts-plastiques",
       "priority": "Med",
       "domain": "ui",
-      "feature": "stack-css",
-      "label": "Migration technique vers Tailwind CSS v4 (branche dédiée + validation non-régression)",
+      "feature": "cours",
+      "label": "Préparer la catégorie Arts plastiques (Dessin) pour les futurs modules",
       "done": false
     },
     {
