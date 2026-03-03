@@ -4,8 +4,6 @@ import QuizEmptyState from '@/components/QuizEmptyState.vue';
 import QuizSelectField from '@/components/QuizSelectField.vue';
 import { getEnglishList, hydrateRemoteEnglishLists, listEnglishOptions } from '@/features/languages/englishLists';
 
-const ttsAccentStorageKey = 'manabuplay_tts_accent';
-const ttsRateStorageKey = 'manabuplay_tts_rate';
 const cardDirectionStorageKey = 'manabuplay_english_card_direction';
 const legacyCardDirectionStorageKey = 'manabuplay_vocab_card_direction';
 const ttsSupported =
@@ -13,17 +11,15 @@ const ttsSupported =
   'speechSynthesis' in window &&
   'SpeechSynthesisUtterance' in window;
 
-const ttsRateValues = ['0.85', '1', '1.15'];
-const ttsRateLabels = ['0.85x', '1x', '1.15x'];
+const ttsPlaybackRates = [0.9, 0.6];
 
 const selectedList = ref('');
 const words = ref([]);
 const currentIndex = ref(0);
 const isFlipped = ref(false);
 
-const ttsAccent = ref('en-US');
-const ttsRate = ref('1');
 const cardDirection = ref('en-first');
+const ttsNextRateIndex = ref(0);
 const ttsVoices = ref([]);
 const isSpeaking = ref(false);
 const ttsStatus = ref('');
@@ -54,17 +50,6 @@ const listSelectOptions = computed(() =>
   }))
 );
 
-const ttsRateIndex = computed({
-  get() {
-    const idx = ttsRateValues.indexOf(ttsRate.value);
-    return idx >= 0 ? idx : 1;
-  },
-  set(indexValue) {
-    const clamped = Math.max(0, Math.min(2, Number(indexValue) || 0));
-    ttsRate.value = ttsRateValues[clamped];
-  },
-});
-const ttsRateLabel = computed(() => ttsRateLabels[ttsRateIndex.value]);
 const cardTransitionName = computed(() =>
   transitionDirection.value === 'previous' ? 'card-shared-prev' : 'card-shared-next'
 );
@@ -99,6 +84,7 @@ function loadList(listKey) {
     words.value = [];
     currentIndex.value = 0;
     isFlipped.value = false;
+    ttsNextRateIndex.value = 0;
     return;
   }
 
@@ -107,6 +93,7 @@ function loadList(listKey) {
     words.value = [];
     currentIndex.value = 0;
     isFlipped.value = false;
+    ttsNextRateIndex.value = 0;
     return;
   }
 
@@ -114,6 +101,7 @@ function loadList(listKey) {
   words.value = cloneWords(list.words);
   currentIndex.value = 0;
   isFlipped.value = false;
+  ttsNextRateIndex.value = 0;
 }
 
 function showCard(index) {
@@ -126,6 +114,7 @@ function showCard(index) {
   stopSpeech();
   currentIndex.value = index;
   isFlipped.value = false;
+  ttsNextRateIndex.value = 0;
 }
 
 function nextCard() {
@@ -162,6 +151,7 @@ function shuffleCards() {
   words.value = shuffled;
   currentIndex.value = 0;
   isFlipped.value = false;
+  ttsNextRateIndex.value = 0;
 }
 
 function flipCard() {
@@ -211,7 +201,7 @@ function findBestVoice() {
     return null;
   }
 
-  const wanted = ttsAccent.value.toLowerCase();
+  const wanted = 'en-us';
   let voice = ttsVoices.value.find((item) => item.lang && item.lang.toLowerCase() === wanted);
   if (voice) {
     return voice;
@@ -250,8 +240,9 @@ function toggleSpeakWord() {
   }
 
   const utterance = new SpeechSynthesisUtterance(currentWord.value.english);
-  utterance.lang = ttsAccent.value;
-  utterance.rate = Number(ttsRate.value) || 1;
+  utterance.lang = 'en-US';
+  const currentRate = ttsPlaybackRates[ttsNextRateIndex.value] || 1;
+  utterance.rate = currentRate;
 
   const preferredVoice = findBestVoice();
   if (preferredVoice) {
@@ -285,6 +276,7 @@ function toggleSpeakWord() {
   currentUtterance = utterance;
   speechSynthesis.cancel();
   speechSynthesis.speak(utterance);
+  ttsNextRateIndex.value = (ttsNextRateIndex.value + 1) % ttsPlaybackRates.length;
 }
 
 function handleKeyboardNav(event) {
@@ -308,24 +300,6 @@ watch(selectedList, (newList) => {
   loadList(newList);
 });
 
-watch(ttsAccent, (accent) => {
-  if (accent !== 'en-US' && accent !== 'en-GB') {
-    return;
-  }
-  if (typeof window !== 'undefined') {
-    localStorage.setItem(ttsAccentStorageKey, accent);
-  }
-});
-
-watch(ttsRate, (rate) => {
-  if (!ttsRateValues.includes(rate)) {
-    return;
-  }
-  if (typeof window !== 'undefined') {
-    localStorage.setItem(ttsRateStorageKey, rate);
-  }
-});
-
 watch(cardDirection, (direction) => {
   if (direction !== 'en-first' && direction !== 'fr-first') {
     return;
@@ -339,15 +313,7 @@ watch(cardDirection, (direction) => {
 
 onMounted(async () => {
   if (typeof window !== 'undefined') {
-    const savedAccent = localStorage.getItem(ttsAccentStorageKey);
-    if (savedAccent === 'en-US' || savedAccent === 'en-GB') {
-      ttsAccent.value = savedAccent;
-    }
-
-    const savedRate = localStorage.getItem(ttsRateStorageKey);
-    if (savedRate && ttsRateValues.includes(savedRate)) {
-      ttsRate.value = savedRate;
-    }
+    localStorage.removeItem('manabuplay_tts_accent');
 
     const savedDirection =
       localStorage.getItem(cardDirectionStorageKey) ||
@@ -411,19 +377,6 @@ onUnmounted(() => {
       </div>
 
       <div class="settings-row">
-        <div class="setting-field setting-accent">
-          <label for="ttsAccentSelect">Accent :</label>
-          <select id="ttsAccentSelect" v-model="ttsAccent">
-            <option value="en-US">🇺🇸 Américain</option>
-            <option value="en-GB">🇬🇧 Britannique</option>
-          </select>
-        </div>
-
-        <div class="setting-field setting-rate">
-          <label for="ttsRateSlider">Vitesse de lecture : {{ ttsRateLabel }}</label>
-          <input id="ttsRateSlider" v-model.number="ttsRateIndex" type="range" min="0" max="2" step="1" />
-        </div>
-
         <div class="setting-field setting-direction">
           <label for="cardDirectionSelect">Sens :</label>
           <select id="cardDirectionSelect" v-model="cardDirection">
@@ -458,14 +411,14 @@ onUnmounted(() => {
             <div class="flashcard-count">{{ cardNumber }}/{{ totalCards }}</div>
 
             <div v-if="canPlayTts" class="tts-inline-control">
-              <div class="tts-inline-label">Écouter</div>
               <button
                 class="tts-inline-btn"
+                :class="{ 'is-speaking': isSpeaking }"
                 type="button"
                 :aria-label="isSpeaking ? 'Arrêter la lecture' : 'Écouter le mot'"
                 @click.stop="toggleSpeakWord"
               >
-                {{ isSpeaking ? '⏹️' : '▶️' }}
+                <span class="tts-icon" aria-hidden="true">🔊</span>
               </button>
             </div>
 
@@ -513,8 +466,7 @@ onUnmounted(() => {
   font-weight: 700;
 }
 
-.setting-field select,
-.setting-field input[type='range'] {
+.setting-field select {
   width: 100%;
 }
 
@@ -525,8 +477,7 @@ onUnmounted(() => {
   background: white;
 }
 
-.setting-field select:focus-visible,
-.setting-field input[type='range']:focus-visible {
+.setting-field select:focus-visible {
   border-color: #1d4ed8;
   box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.16);
   outline: none;
@@ -538,7 +489,7 @@ onUnmounted(() => {
 
 .settings-row {
   display: grid;
-  grid-template-columns: minmax(170px, 220px) minmax(170px, 200px) minmax(180px, 1fr);
+  grid-template-columns: minmax(180px, 1fr);
   gap: 10px;
   align-items: start;
 }
@@ -669,8 +620,10 @@ onUnmounted(() => {
 .flashcard-hint {
   position: absolute;
   bottom: 12px;
-  left: 12px;
-  right: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - ((var(--rail-width) + 14px) * 2));
+  max-width: 100%;
   text-align: center;
   font-size: 0.9em;
   opacity: 0.72;
@@ -687,14 +640,8 @@ onUnmounted(() => {
   z-index: 2;
 }
 
-.tts-inline-label {
-  font-size: 0.82em;
-  font-weight: 700;
-  margin-bottom: 6px;
-  opacity: 0.88;
-}
-
 .tts-inline-btn {
+  position: relative;
   width: 46px;
   height: 46px;
   border-radius: 50%;
@@ -709,6 +656,29 @@ onUnmounted(() => {
     box-shadow 0.18s ease,
     background-color 0.18s ease,
     border-color 0.18s ease;
+}
+
+.tts-icon {
+  position: relative;
+  z-index: 2;
+}
+
+.tts-inline-btn.is-speaking {
+  border-color: #2e64d2;
+  background: #e9f1ff;
+  box-shadow:
+    0 8px 16px rgba(15, 23, 42, 0.18),
+    0 0 0 3px rgba(46, 100, 210, 0.22);
+  animation: tts-speaking-pulse 0.9s ease-in-out infinite alternate;
+}
+
+.tts-inline-btn.is-speaking::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  border: 2px solid rgba(46, 100, 210, 0.36);
+  animation: tts-speaking-ring 1.1s ease-out infinite;
 }
 
 .tts-inline-btn:hover,
@@ -732,6 +702,13 @@ onUnmounted(() => {
 .flashcard.flipped .tts-inline-btn {
   border-color: rgba(15, 95, 90, 0.35);
   color: #0f5f5a;
+}
+
+.flashcard.flipped .tts-inline-btn.is-speaking {
+  border-color: #0f5f5a;
+  box-shadow:
+    0 8px 16px rgba(15, 23, 42, 0.16),
+    0 0 0 3px rgba(15, 95, 90, 0.2);
 }
 
 .tts-status {
@@ -777,6 +754,41 @@ onUnmounted(() => {
   transform: translateX(22px);
 }
 
+@keyframes tts-speaking-pulse {
+  0% {
+    transform: translateY(-1px) scale(1);
+  }
+  100% {
+    transform: translateY(-1px) scale(1.04);
+  }
+}
+
+@keyframes tts-speaking-ring {
+  0% {
+    opacity: 0.6;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.18);
+  }
+}
+
+@media (max-width: 1024px) and (min-width: 821px) {
+  .flashcard {
+    --rail-width: 30px;
+  }
+
+  .carousel-rail {
+    background: rgba(50, 85, 116, 0.16);
+  }
+
+  .carousel-rail:hover,
+  .carousel-rail:focus-visible {
+    background: rgba(50, 85, 116, 0.3);
+  }
+}
+
 @media (max-width: 820px) {
   .settings-row {
     grid-template-columns: 1fr;
@@ -785,7 +797,7 @@ onUnmounted(() => {
   .flashcard {
     --rail-width: 28px;
     min-height: 230px;
-    padding: 36px calc(var(--rail-width) + 16px);
+    padding: 58px calc(var(--rail-width) + 12px) 20px;
   }
 
   .flashcard-word,
@@ -793,9 +805,27 @@ onUnmounted(() => {
     font-size: clamp(1.6em, 7.5vw, 2em);
   }
 
-  .tts-inline-control {
-    right: calc(var(--rail-width) + 6px);
+  .flashcard-hint {
+    font-size: clamp(0.74rem, 2.5vw, 0.84rem);
   }
+
+  .flashcard-count {
+    top: 14px;
+  }
+
+  .tts-inline-control {
+    top: 10px;
+    right: calc(var(--rail-width) + 6px);
+    transform: none;
+  }
+
+  .tts-inline-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 1.05rem;
+    border-width: 2px;
+  }
+
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -813,8 +843,10 @@ onUnmounted(() => {
     opacity: 1 !important;
     transform: none !important;
   }
+
+  .tts-inline-btn.is-speaking,
+  .tts-inline-btn.is-speaking::after {
+    animation: none !important;
+  }
 }
 </style>
-
-
-
