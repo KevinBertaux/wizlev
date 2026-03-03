@@ -421,7 +421,14 @@ onUnmounted(() => {
 
         <div class="setting-field setting-rate">
           <label for="ttsRateSlider">Vitesse de lecture : {{ ttsRateLabel }}</label>
-          <input id="ttsRateSlider" v-model.number="ttsRateIndex" type="range" min="0" max="2" step="1" />
+          <div class="tts-rate-control">
+            <input id="ttsRateSlider" v-model.number="ttsRateIndex" type="range" min="0" max="2" step="1" />
+            <div class="tts-rate-marks" aria-hidden="true">
+              <span :class="{ active: ttsRateIndex === 0 }">0.85x</span>
+              <span :class="{ active: ttsRateIndex === 1 }">1x</span>
+              <span :class="{ active: ttsRateIndex === 2 }">1.15x</span>
+            </div>
+          </div>
         </div>
 
         <div class="setting-field setting-direction">
@@ -516,6 +523,40 @@ onUnmounted(() => {
 .setting-field select,
 .setting-field input[type='range'] {
   width: 100%;
+}
+
+.setting-rate {
+  min-width: 0;
+}
+
+.tts-rate-control {
+  display: grid;
+  gap: 6px;
+}
+
+.tts-rate-control input[type='range'] {
+  accent-color: #2e64d2;
+}
+
+.tts-rate-marks {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  align-items: center;
+}
+
+.tts-rate-marks span {
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #5d6c80;
+  padding: 3px 6px;
+  border-radius: 8px;
+}
+
+.tts-rate-marks span.active {
+  color: #1e3d60;
+  background: rgba(46, 100, 210, 0.14);
 }
 
 .setting-field select {
@@ -834,6 +875,11 @@ onUnmounted(() => {
     font-size: 1.05rem;
     border-width: 2px;
   }
+
+  .tts-rate-marks span {
+    font-size: 0.76rem;
+    padding: 2px 4px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -853,5 +899,4 @@ onUnmounted(() => {
   }
 }
 </style>
-
 
