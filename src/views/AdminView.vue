@@ -72,7 +72,7 @@ const sectionTitleMap = Object.freeze({
   english: 'Édition de listes d’anglais',
   symmetry: 'Formes de symétrie',
   maintenance: 'Maintenance locale',
-  'admin-help': 'Documentation du panel interne',
+  'admin-help': 'Documentation du panneau interne',
 });
 
 function readSidebarCollapsed() {
@@ -1209,13 +1209,13 @@ refreshDashboardMetrics();
 
         <section v-else-if="selectedSection === 'admin-help'" class="admin-section">
           <article class="admin-card internal-help-card">
-            <h2>Documentation du panel interne</h2>
+            <h2>Documentation du panneau interne</h2>
             <p class="meta-line">
               Version: {{ APP_VERSION }} - Dernière modification: {{ LAST_UPDATE_FR }}.
             </p>
 
             <p>
-              Cette aide reste intégrée au dashboard pour éviter de sortir du panel pendant l’édition.
+              Cette aide reste intégrée au dashboard pour éviter de sortir du panneau pendant l’édition.
               Version anglaise:
               <router-link :to="{ name: 'studio-ops-help', query: { lang: 'en' } }">Internal panel documentation</router-link>.
             </p>
@@ -1237,7 +1237,7 @@ refreshDashboardMetrics();
 
             <h3 id="workflow">Workflow recommandé</h3>
             <ol>
-              <li>Se connecter au panel interne.</li>
+              <li>Se connecter au panneau interne.</li>
               <li>Choisir la liste à modifier.</li>
               <li>Éditer les mots (anglais/français), puis sauvegarder localement.</li>
               <li>Vérifier le rendu dans le module Langues.</li>

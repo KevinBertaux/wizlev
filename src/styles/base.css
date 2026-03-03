@@ -283,10 +283,22 @@ a:focus-visible {
   border-radius: 14px;
   padding: 16px;
   background: linear-gradient(150deg, #fbfdff 0%, #f2f8ff 100%);
+  box-shadow: 0 2px 6px rgba(36, 48, 65, 0.04);
+  transition:
+    transform 0.14s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease;
 }
 
 .card-link h2 {
   margin: 0 0 8px;
+}
+
+.card-link:hover,
+.card-link:focus-visible {
+  transform: translateY(-1px);
+  border-color: #b5cce2;
+  box-shadow: 0 8px 18px rgba(36, 48, 65, 0.1);
 }
 
 .feature-list {
@@ -342,10 +354,10 @@ a:focus-visible {
   flex-wrap: wrap;
 }
 
-.btn {
+.btn,
+.mp-btn {
   border: 1px solid transparent;
   border-radius: 10px;
-  min-height: 40px;
   padding: 10px 14px;
   font-size: 1rem;
   font-weight: 700;
@@ -358,18 +370,8 @@ a:focus-visible {
     border-color 0.18s ease;
 }
 
-.mp-btn {
-  border: 1px solid transparent;
-  border-radius: 10px;
-  padding: 10px 14px;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 2px 0 rgba(15, 23, 42, 0.14);
-  transition:
-    transform 0.12s ease,
-    box-shadow 0.18s ease,
-    filter 0.18s ease,
-    border-color 0.18s ease;
+.btn {
+  min-height: 40px;
 }
 
 .mp-btn-primary {

@@ -19,8 +19,8 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
     <h3>2.1 Données stockées localement sur votre appareil</h3>
     <ul>
       <li>Préférences d'accent de prononciation (module langues)</li>
-      <li>Listes de vocabulaire modifiées localement via l'espace interne (localStorage)</li>
-      <li>État de session d'accès à l'espace interne dans l'onglet en cours (sessionStorage)</li>
+      <li>Listes de vocabulaire modifiées localement via le panneau interne (localStorage)</li>
+      <li>État de session d'accès au panneau interne dans l'onglet en cours (sessionStorage)</li>
     </ul>
     <p>Ces données restent dans votre navigateur et ne sont pas transmises automatiquement à l'éditeur.</p>
 

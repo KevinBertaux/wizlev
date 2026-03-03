@@ -27,9 +27,9 @@ function setLang(lang) {
     </div>
 
     <template v-if="isFr">
-      <h1>Documentation du panel interne</h1>
+      <h1>Documentation du panneau interne</h1>
       <p class="updated">Version: 0.5.0-prep (lite, Netlify 100% front)</p>
-      <p>Cette page explique le fonctionnement du panel interne pour l'édition locale des listes de vocabulaire.</p>
+      <p>Cette page explique le fonctionnement du panneau interne pour l'édition locale des listes de vocabulaire.</p>
 
       <h2 id="scope">Périmètre</h2>
       <ul>
@@ -48,7 +48,7 @@ function setLang(lang) {
 
       <h2 id="workflow">Workflow recommandé</h2>
       <ol>
-        <li>Se connecter au panel interne.</li>
+        <li>Se connecter au panneau interne.</li>
         <li>Choisir la liste à modifier.</li>
         <li>Éditer les mots (anglais/français) puis sauvegarder localement.</li>
         <li>Vérifier le rendu dans le module Langues.</li>
@@ -59,7 +59,7 @@ function setLang(lang) {
       <ul>
         <li><strong>Copier JSON</strong>: utile pour audit rapide ou partage ponctuel.</li>
         <li><strong>Télécharger JSON</strong>: génère un fichier prêt à versionner.</li>
-        <li><strong>Importer JSON</strong>: recharge une liste existante dans le panel.</li>
+        <li><strong>Importer JSON</strong>: recharge une liste existante dans le panneau.</li>
         <li><strong>Réinitialiser</strong>: revient à la version par défaut du projet.</li>
       </ul>
 
