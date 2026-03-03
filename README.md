@@ -64,6 +64,7 @@ manabuplay/
 - Documentation FR détaillée: `docs/README.fr.md`
 - Documentation EN détaillée: `docs/README.en.md`
 - Checklist release hebdo: `docs/RELEASE-CHECKLIST.fr.md`
+- Checklist reprise Netlify (post-suspension quota): `docs/NETLIFY-RECOVERY-CHECKLIST.fr.md`
 - Checklist QA v2: `docs/QA-CHECKLIST.fr.md`
 - Sécurité secrets (ggshield): `docs/SECURITY-SECRETS.fr.md`
 - Git cheat sheet: `docs/GIT-CHEATSHEET.fr.md`

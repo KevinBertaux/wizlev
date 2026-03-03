@@ -7,6 +7,8 @@ Objectif: limiter a **1 deploy production par semaine** jusqu'au reset quota.
 - Pas de deploy production hors fenetre hebdomadaire validee.
 - Les merges `feature/*` se font vers `feat/0.5.0-prep`.
 - La branche `main` ne recoit que des merges de release valides.
+- Gate quota strict (NO-GO): si credits Netlify < `15.0`, deploy production interdit.
+- Gate quota strict (NO-GO): si site suspendu pour quota, deploy interdit jusqu'a date de reset.
 
 ## Pre-check local (obligatoire)
 
@@ -38,7 +40,10 @@ Objectif: limiter a **1 deploy production par semaine** jusqu'au reset quota.
 - [ ] Branche de publication confirmee (`main`)
 - [ ] Variables d'environnement production verifiees
 - [ ] Build preview valide (si budget deploy disponible)
-- [ ] Budget deploy encore suffisant
+- [ ] Quota Netlify releve juste avant deploy (capture/evidence)
+- [ ] Credits Netlify >= `15.0` (sinon NO-GO absolu)
+- [ ] Site Netlify non suspendu (sinon NO-GO absolu)
+- [ ] En cas de reprise post-suspension: suivre `docs/NETLIFY-RECOVERY-CHECKLIST.fr.md`
 
 ## Publication
 

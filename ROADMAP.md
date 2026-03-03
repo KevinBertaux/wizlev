@@ -13,6 +13,8 @@
 - Objectif: 1 déploy production max par semaine jusqu'au reset quota.
 - Les commits continuent sur branches feature sans déploy prod.
 - Validation finale uniquement après checklist release complète.
+- Gate strict: deploy interdit si credits Netlify < `15.0`.
+- Contexte courant: suspension Netlify active, aucun deploy avant le `9 mars 2026`.
 
 ## Scope 0.5.0
 
@@ -127,5 +129,4 @@
 - `feature/*` -> merge vers `feat/0.5.0-prep`
 - `feat/0.5.0-prep` -> merge vers `main` quand release validée
 - `main` reste la branche stable/deployable
-
 
