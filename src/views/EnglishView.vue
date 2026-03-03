@@ -4,7 +4,6 @@ import QuizEmptyState from '@/components/QuizEmptyState.vue';
 import QuizSelectField from '@/components/QuizSelectField.vue';
 import { getEnglishList, hydrateRemoteEnglishLists, listEnglishOptions } from '@/features/languages/englishLists';
 
-const ttsAccentStorageKey = 'manabuplay_tts_accent';
 const cardDirectionStorageKey = 'manabuplay_english_card_direction';
 const legacyCardDirectionStorageKey = 'manabuplay_vocab_card_direction';
 const ttsSupported =
@@ -19,7 +18,6 @@ const words = ref([]);
 const currentIndex = ref(0);
 const isFlipped = ref(false);
 
-const ttsAccent = ref('en-US');
 const cardDirection = ref('en-first');
 const ttsNextRateIndex = ref(0);
 const ttsVoices = ref([]);
@@ -203,7 +201,7 @@ function findBestVoice() {
     return null;
   }
 
-  const wanted = ttsAccent.value.toLowerCase();
+  const wanted = 'en-us';
   let voice = ttsVoices.value.find((item) => item.lang && item.lang.toLowerCase() === wanted);
   if (voice) {
     return voice;
@@ -242,7 +240,7 @@ function toggleSpeakWord() {
   }
 
   const utterance = new SpeechSynthesisUtterance(currentWord.value.english);
-  utterance.lang = ttsAccent.value;
+  utterance.lang = 'en-US';
   const currentRate = ttsPlaybackRates[ttsNextRateIndex.value] || 1;
   utterance.rate = currentRate;
 
@@ -302,15 +300,6 @@ watch(selectedList, (newList) => {
   loadList(newList);
 });
 
-watch(ttsAccent, (accent) => {
-  if (accent !== 'en-US' && accent !== 'en-GB') {
-    return;
-  }
-  if (typeof window !== 'undefined') {
-    localStorage.setItem(ttsAccentStorageKey, accent);
-  }
-});
-
 watch(cardDirection, (direction) => {
   if (direction !== 'en-first' && direction !== 'fr-first') {
     return;
@@ -324,10 +313,7 @@ watch(cardDirection, (direction) => {
 
 onMounted(async () => {
   if (typeof window !== 'undefined') {
-    const savedAccent = localStorage.getItem(ttsAccentStorageKey);
-    if (savedAccent === 'en-US' || savedAccent === 'en-GB') {
-      ttsAccent.value = savedAccent;
-    }
+    localStorage.removeItem('manabuplay_tts_accent');
 
     const savedDirection =
       localStorage.getItem(cardDirectionStorageKey) ||
@@ -391,14 +377,6 @@ onUnmounted(() => {
       </div>
 
       <div class="settings-row">
-        <div class="setting-field setting-accent">
-          <label for="ttsAccentSelect">Accent :</label>
-          <select id="ttsAccentSelect" v-model="ttsAccent">
-            <option value="en-US">🇺🇸 Américain</option>
-            <option value="en-GB">🇬🇧 Britannique</option>
-          </select>
-        </div>
-
         <div class="setting-field setting-direction">
           <label for="cardDirectionSelect">Sens :</label>
           <select id="cardDirectionSelect" v-model="cardDirection">
@@ -511,7 +489,7 @@ onUnmounted(() => {
 
 .settings-row {
   display: grid;
-  grid-template-columns: minmax(170px, 220px) minmax(180px, 1fr);
+  grid-template-columns: minmax(180px, 1fr);
   gap: 10px;
   align-items: start;
 }
