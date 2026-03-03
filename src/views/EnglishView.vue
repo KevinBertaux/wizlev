@@ -5,7 +5,6 @@ import QuizSelectField from '@/components/QuizSelectField.vue';
 import { getEnglishList, hydrateRemoteEnglishLists, listEnglishOptions } from '@/features/languages/englishLists';
 
 const ttsAccentStorageKey = 'manabuplay_tts_accent';
-const ttsRateStorageKey = 'manabuplay_tts_rate';
 const cardDirectionStorageKey = 'manabuplay_english_card_direction';
 const legacyCardDirectionStorageKey = 'manabuplay_vocab_card_direction';
 const ttsSupported =
@@ -13,8 +12,7 @@ const ttsSupported =
   'speechSynthesis' in window &&
   'SpeechSynthesisUtterance' in window;
 
-const ttsRateValues = ['0.85', '1', '1.15'];
-const ttsRateLabels = ['0.85x', '1x', '1.15x'];
+const ttsPlaybackRates = [0.9, 0.6];
 
 const selectedList = ref('');
 const words = ref([]);
@@ -22,8 +20,8 @@ const currentIndex = ref(0);
 const isFlipped = ref(false);
 
 const ttsAccent = ref('en-US');
-const ttsRate = ref('1');
 const cardDirection = ref('en-first');
+const ttsNextRateIndex = ref(0);
 const ttsVoices = ref([]);
 const isSpeaking = ref(false);
 const ttsStatus = ref('');
@@ -54,17 +52,6 @@ const listSelectOptions = computed(() =>
   }))
 );
 
-const ttsRateIndex = computed({
-  get() {
-    const idx = ttsRateValues.indexOf(ttsRate.value);
-    return idx >= 0 ? idx : 1;
-  },
-  set(indexValue) {
-    const clamped = Math.max(0, Math.min(2, Number(indexValue) || 0));
-    ttsRate.value = ttsRateValues[clamped];
-  },
-});
-const ttsRateLabel = computed(() => ttsRateLabels[ttsRateIndex.value]);
 const cardTransitionName = computed(() =>
   transitionDirection.value === 'previous' ? 'card-shared-prev' : 'card-shared-next'
 );
@@ -99,6 +86,7 @@ function loadList(listKey) {
     words.value = [];
     currentIndex.value = 0;
     isFlipped.value = false;
+    ttsNextRateIndex.value = 0;
     return;
   }
 
@@ -107,6 +95,7 @@ function loadList(listKey) {
     words.value = [];
     currentIndex.value = 0;
     isFlipped.value = false;
+    ttsNextRateIndex.value = 0;
     return;
   }
 
@@ -114,6 +103,7 @@ function loadList(listKey) {
   words.value = cloneWords(list.words);
   currentIndex.value = 0;
   isFlipped.value = false;
+  ttsNextRateIndex.value = 0;
 }
 
 function showCard(index) {
@@ -126,6 +116,7 @@ function showCard(index) {
   stopSpeech();
   currentIndex.value = index;
   isFlipped.value = false;
+  ttsNextRateIndex.value = 0;
 }
 
 function nextCard() {
@@ -162,6 +153,7 @@ function shuffleCards() {
   words.value = shuffled;
   currentIndex.value = 0;
   isFlipped.value = false;
+  ttsNextRateIndex.value = 0;
 }
 
 function flipCard() {
@@ -251,7 +243,8 @@ function toggleSpeakWord() {
 
   const utterance = new SpeechSynthesisUtterance(currentWord.value.english);
   utterance.lang = ttsAccent.value;
-  utterance.rate = Number(ttsRate.value) || 1;
+  const currentRate = ttsPlaybackRates[ttsNextRateIndex.value] || 1;
+  utterance.rate = currentRate;
 
   const preferredVoice = findBestVoice();
   if (preferredVoice) {
@@ -285,6 +278,7 @@ function toggleSpeakWord() {
   currentUtterance = utterance;
   speechSynthesis.cancel();
   speechSynthesis.speak(utterance);
+  ttsNextRateIndex.value = (ttsNextRateIndex.value + 1) % ttsPlaybackRates.length;
 }
 
 function handleKeyboardNav(event) {
@@ -317,15 +311,6 @@ watch(ttsAccent, (accent) => {
   }
 });
 
-watch(ttsRate, (rate) => {
-  if (!ttsRateValues.includes(rate)) {
-    return;
-  }
-  if (typeof window !== 'undefined') {
-    localStorage.setItem(ttsRateStorageKey, rate);
-  }
-});
-
 watch(cardDirection, (direction) => {
   if (direction !== 'en-first' && direction !== 'fr-first') {
     return;
@@ -342,11 +327,6 @@ onMounted(async () => {
     const savedAccent = localStorage.getItem(ttsAccentStorageKey);
     if (savedAccent === 'en-US' || savedAccent === 'en-GB') {
       ttsAccent.value = savedAccent;
-    }
-
-    const savedRate = localStorage.getItem(ttsRateStorageKey);
-    if (savedRate && ttsRateValues.includes(savedRate)) {
-      ttsRate.value = savedRate;
     }
 
     const savedDirection =
@@ -419,18 +399,6 @@ onUnmounted(() => {
           </select>
         </div>
 
-        <div class="setting-field setting-rate">
-          <label for="ttsRateSlider">Vitesse de lecture : {{ ttsRateLabel }}</label>
-          <div class="tts-rate-control">
-            <input id="ttsRateSlider" v-model.number="ttsRateIndex" type="range" min="0" max="2" step="1" />
-            <div class="tts-rate-marks" aria-hidden="true">
-              <span :class="{ active: ttsRateIndex === 0 }">0.85x</span>
-              <span :class="{ active: ttsRateIndex === 1 }">1x</span>
-              <span :class="{ active: ttsRateIndex === 2 }">1.15x</span>
-            </div>
-          </div>
-        </div>
-
         <div class="setting-field setting-direction">
           <label for="cardDirectionSelect">Sens :</label>
           <select id="cardDirectionSelect" v-model="cardDirection">
@@ -465,14 +433,14 @@ onUnmounted(() => {
             <div class="flashcard-count">{{ cardNumber }}/{{ totalCards }}</div>
 
             <div v-if="canPlayTts" class="tts-inline-control">
-              <div class="tts-inline-label">Écouter</div>
               <button
                 class="tts-inline-btn"
+                :class="{ 'is-speaking': isSpeaking }"
                 type="button"
                 :aria-label="isSpeaking ? 'Arrêter la lecture' : 'Écouter le mot'"
                 @click.stop="toggleSpeakWord"
               >
-                {{ isSpeaking ? '⏹️' : '▶️' }}
+                <span class="tts-icon" aria-hidden="true">🔊</span>
               </button>
             </div>
 
@@ -520,43 +488,8 @@ onUnmounted(() => {
   font-weight: 700;
 }
 
-.setting-field select,
-.setting-field input[type='range'] {
+.setting-field select {
   width: 100%;
-}
-
-.setting-rate {
-  min-width: 0;
-}
-
-.tts-rate-control {
-  display: grid;
-  gap: 6px;
-}
-
-.tts-rate-control input[type='range'] {
-  accent-color: #2e64d2;
-}
-
-.tts-rate-marks {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 6px;
-  align-items: center;
-}
-
-.tts-rate-marks span {
-  text-align: center;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #5d6c80;
-  padding: 3px 6px;
-  border-radius: 8px;
-}
-
-.tts-rate-marks span.active {
-  color: #1e3d60;
-  background: rgba(46, 100, 210, 0.14);
 }
 
 .setting-field select {
@@ -566,8 +499,7 @@ onUnmounted(() => {
   background: white;
 }
 
-.setting-field select:focus-visible,
-.setting-field input[type='range']:focus-visible {
+.setting-field select:focus-visible {
   border-color: #1d4ed8;
   box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.16);
   outline: none;
@@ -579,7 +511,7 @@ onUnmounted(() => {
 
 .settings-row {
   display: grid;
-  grid-template-columns: minmax(170px, 220px) minmax(170px, 200px) minmax(180px, 1fr);
+  grid-template-columns: minmax(170px, 220px) minmax(180px, 1fr);
   gap: 10px;
   align-items: start;
 }
@@ -730,14 +662,8 @@ onUnmounted(() => {
   z-index: 2;
 }
 
-.tts-inline-label {
-  font-size: 0.82em;
-  font-weight: 700;
-  margin-bottom: 6px;
-  opacity: 0.88;
-}
-
 .tts-inline-btn {
+  position: relative;
   width: 46px;
   height: 46px;
   border-radius: 50%;
@@ -752,6 +678,29 @@ onUnmounted(() => {
     box-shadow 0.18s ease,
     background-color 0.18s ease,
     border-color 0.18s ease;
+}
+
+.tts-icon {
+  position: relative;
+  z-index: 2;
+}
+
+.tts-inline-btn.is-speaking {
+  border-color: #2e64d2;
+  background: #e9f1ff;
+  box-shadow:
+    0 8px 16px rgba(15, 23, 42, 0.18),
+    0 0 0 3px rgba(46, 100, 210, 0.22);
+  animation: tts-speaking-pulse 0.9s ease-in-out infinite alternate;
+}
+
+.tts-inline-btn.is-speaking::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  border: 2px solid rgba(46, 100, 210, 0.36);
+  animation: tts-speaking-ring 1.1s ease-out infinite;
 }
 
 .tts-inline-btn:hover,
@@ -775,6 +724,13 @@ onUnmounted(() => {
 .flashcard.flipped .tts-inline-btn {
   border-color: rgba(15, 95, 90, 0.35);
   color: #0f5f5a;
+}
+
+.flashcard.flipped .tts-inline-btn.is-speaking {
+  border-color: #0f5f5a;
+  box-shadow:
+    0 8px 16px rgba(15, 23, 42, 0.16),
+    0 0 0 3px rgba(15, 95, 90, 0.2);
 }
 
 .tts-status {
@@ -818,6 +774,26 @@ onUnmounted(() => {
 .card-shared-prev-leave-to {
   opacity: 0;
   transform: translateX(22px);
+}
+
+@keyframes tts-speaking-pulse {
+  0% {
+    transform: translateY(-1px) scale(1);
+  }
+  100% {
+    transform: translateY(-1px) scale(1.04);
+  }
+}
+
+@keyframes tts-speaking-ring {
+  0% {
+    opacity: 0.6;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.18);
+  }
 }
 
 @media (max-width: 1024px) and (min-width: 821px) {
@@ -865,10 +841,6 @@ onUnmounted(() => {
     transform: none;
   }
 
-  .tts-inline-label {
-    display: none;
-  }
-
   .tts-inline-btn {
     width: 44px;
     height: 44px;
@@ -876,10 +848,6 @@ onUnmounted(() => {
     border-width: 2px;
   }
 
-  .tts-rate-marks span {
-    font-size: 0.76rem;
-    padding: 2px 4px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -897,6 +865,10 @@ onUnmounted(() => {
     opacity: 1 !important;
     transform: none !important;
   }
+
+  .tts-inline-btn.is-speaking,
+  .tts-inline-btn.is-speaking::after {
+    animation: none !important;
+  }
 }
 </style>
-
