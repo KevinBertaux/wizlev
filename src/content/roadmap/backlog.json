@@ -38,7 +38,7 @@
       "priority": "Med",
       "domain": "ui",
       "feature": "design-system",
-      "label": "Refonte globale CSS/UI/UX pour exploiter pleinement Tailwind v4 (tokens, composants, cohérence cross-modules)",
+      "label": "Refonte globale post-Tailwind v4: CSS/UI/UX + design system + harmonisation complète des breakpoints sur tous les modules",
       "done": false
     },
     {

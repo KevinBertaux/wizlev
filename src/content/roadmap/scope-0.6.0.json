@@ -42,6 +42,14 @@
       "done": false
     },
     {
+      "id": "scope-060-ui-foundation-post-v4",
+      "priority": "Med",
+      "domain": "ui",
+      "feature": "design-system",
+      "label": "Refonte globale post-Tailwind v4: CSS/UI/UX + design system + harmonisation complète des breakpoints (mobile/tablette/desktop)",
+      "done": false
+    },
+    {
       "id": "scope-060-r2-secure",
       "priority": "High",
       "domain": "infra",

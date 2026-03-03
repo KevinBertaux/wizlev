@@ -118,8 +118,7 @@
 - [ ] Retirer la compatibilité legacy `localStorage` (`manabuplay_vocab_*`) après la période tampon de migration 0.5.
 - [ ] Timer d'exercice configurable (par module/niveau).
 - [ ] Système global d'info-bulles (tooltips) cohérent sur tout le site.
-- [ ] Refonte globale CSS/UI/UX pour exploiter pleinement Tailwind v4 (tokens, composants, cohérence cross-modules).
-- [ ] Refacto globale des breakpoints responsive (harmonisation mobile/tablette/desktop, suppression des écarts CSS entre modules).
+- [ ] Refonte globale post-Tailwind v4: CSS/UI/UX + design system + harmonisation complète des breakpoints (mobile/tablette/desktop) sur tous les modules.
 - [ ] Version PWA (manifest + service worker + mode hors-ligne contrôlé).
 - [ ] Cloudflare R2 V2: accès sécurisé (URL signées/Worker) + contrôle d'intégrité.
 
