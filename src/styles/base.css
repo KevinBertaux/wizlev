@@ -1,6 +1,9 @@
 @import "tailwindcss";
 
 :root {
+  --font-ui: 'Lexend', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --font-heading: 'Nunito', 'Lexend', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
   --bg: #f3f7ff;
   --surface: #fbfdff;
   --text: #243041;
@@ -46,9 +49,23 @@
 
 body {
   margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: var(--font-ui);
   color: var(--text);
   background: linear-gradient(145deg, #eef4ff 0%, #f8fbff 100%);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading);
+}
+
+.btn,
+.mp-btn,
+.nav-trigger,
+.submenu-link {
+  font-family: var(--font-heading);
 }
 
 a {
