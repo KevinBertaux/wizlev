@@ -22,6 +22,22 @@
   --control-bg-hover: #d4ebff;
   --control-border: #5f9fc6;
   --control-text: #1e4d6d;
+
+  --tone-success-fg: #144b38;
+  --tone-success-bg: #dff7eb;
+  --tone-success-border: #98d8ba;
+
+  --tone-error-fg: #7a2a2a;
+  --tone-error-bg: #ffe7e7;
+  --tone-error-border: #efb0b0;
+
+  --tone-info-fg: #1f4263;
+  --tone-info-bg: #e7f2ff;
+  --tone-info-border: #b8cde9;
+
+  --tone-warning-fg: #563f13;
+  --tone-warning-bg: #fff3d5;
+  --tone-warning-border: #e8cc86;
 }
 
 * {
@@ -333,15 +349,27 @@ a:focus-visible {
 }
 
 .mp-feedback-success {
-  background: linear-gradient(135deg, #95e1d3, #a8e6cf);
-  color: var(--text);
-  border-color: #8ed8c8;
+  color: var(--tone-success-fg);
+  background: var(--tone-success-bg);
+  border-color: var(--tone-success-border);
 }
 
 .mp-feedback-error {
-  background: linear-gradient(135deg, #ffe7e7, #ffd8d8);
-  color: #7e2f2f;
-  border-color: #efb0b0;
+  color: var(--tone-error-fg);
+  background: var(--tone-error-bg);
+  border-color: var(--tone-error-border);
+}
+
+.mp-feedback-info {
+  color: var(--tone-info-fg);
+  background: var(--tone-info-bg);
+  border-color: var(--tone-info-border);
+}
+
+.mp-feedback-warning {
+  color: var(--tone-warning-fg);
+  background: var(--tone-warning-bg);
+  border-color: var(--tone-warning-border);
 }
 
 .mp-actions {

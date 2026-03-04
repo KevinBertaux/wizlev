@@ -35,4 +35,22 @@ describe('QuizFeedbackBanner', () => {
     expect(error.find('.mp-feedback-error').exists()).toBe(true);
     expect(error.find('.feedback-extra').text()).toContain('Bonne réponse: 12.');
   });
+
+  it('supports warning and info tones', () => {
+    const warning = mount(QuizFeedbackBanner, {
+      props: {
+        type: 'warning',
+        main: 'Attention.',
+      },
+    });
+    expect(warning.find('.mp-feedback-warning').exists()).toBe(true);
+
+    const info = mount(QuizFeedbackBanner, {
+      props: {
+        type: 'info',
+        main: 'Information.',
+      },
+    });
+    expect(info.find('.mp-feedback-info').exists()).toBe(true);
+  });
 });
