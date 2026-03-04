@@ -45,15 +45,15 @@ defineProps({
 }
 
 .motivation-toast-streak {
-  color: #133b2b;
-  background: linear-gradient(135deg, #ddf8eb, #c9f4df);
-  border-color: #9fd8bf;
+  color: var(--tone-success-fg);
+  background: var(--tone-success-bg);
+  border-color: var(--tone-success-border);
 }
 
 .motivation-toast-record {
-  color: #3b2b12;
-  background: linear-gradient(135deg, #fff3d4, #ffe9b0);
-  border-color: #f0d388;
+  color: var(--tone-warning-fg);
+  background: var(--tone-warning-bg);
+  border-color: var(--tone-warning-border);
 }
 
 .motivation-toast-slide-enter-active,

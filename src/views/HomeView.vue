@@ -1,8 +1,8 @@
 <template>
-  <section class="home-v1">
+  <section class="home-v1 grid gap-4">
     <div class="page-block section-block">
       <h1>🧮 Mathématiques</h1>
-      <div class="cards-grid two-cols">
+      <div class="cards-grid grid grid-cols-1 gap-[14px] lg:grid-cols-2">
         <router-link class="home-card" :to="{ name: 'math-multiplications' }">
           <h2>✖️ Multiplications</h2>
           <p>Tables de 0 à 11, score, série et entraînement progressif.</p>
@@ -17,7 +17,7 @@
 
     <div class="page-block section-block">
       <h1>🗣️ Langues</h1>
-      <div class="cards-grid one-col">
+      <div class="cards-grid grid grid-cols-1 gap-[14px]">
         <router-link class="home-card" :to="{ name: 'languages-english' }">
           <h2>🇬🇧 Anglais</h2>
           <p>Apprends l'anglais avec des listes, des flashcards et la lecture des mots à voix haute.</p>
@@ -28,26 +28,8 @@
 </template>
 
 <style scoped>
-.home-v1 {
-  display: grid;
-  gap: 16px;
-}
-
 .section-block h1 {
   margin: 0 0 14px;
-}
-
-.cards-grid {
-  display: grid;
-  gap: 14px;
-}
-
-.two-cols {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.one-col {
-  grid-template-columns: minmax(0, 1fr);
 }
 
 .home-card {
@@ -86,11 +68,4 @@
   transform: translateY(0);
   box-shadow: 0 2px 0 rgba(15, 23, 42, 0.12);
 }
-
-@media (max-width: 1023px) {
-  .two-cols {
-    grid-template-columns: 1fr;
-  }
-}
 </style>
-

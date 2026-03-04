@@ -16,6 +16,9 @@ const toneClass = computed(() => {
   if (props.tone === 'success') {
     return 'admin-status-success';
   }
+  if (props.tone === 'warning') {
+    return 'admin-status-warning';
+  }
   if (props.tone === 'error') {
     return 'admin-status-error';
   }
@@ -37,20 +40,26 @@ const toneClass = computed(() => {
 }
 
 .admin-status-success {
-  color: #175843;
-  background: #e3f6ee;
-  border-color: #9fd7c1;
+  color: var(--tone-success-fg);
+  background: var(--tone-success-bg);
+  border-color: var(--tone-success-border);
 }
 
 .admin-status-error {
-  color: #8e2b2b;
-  background: #ffe9e9;
-  border-color: #efb3b3;
+  color: var(--tone-error-fg);
+  background: var(--tone-error-bg);
+  border-color: var(--tone-error-border);
 }
 
 .admin-status-info {
-  color: #244161;
-  background: #e9f2ff;
-  border-color: #b8cde9;
+  color: var(--tone-info-fg);
+  background: var(--tone-info-bg);
+  border-color: var(--tone-info-border);
+}
+
+.admin-status-warning {
+  color: var(--tone-warning-fg);
+  background: var(--tone-warning-bg);
+  border-color: var(--tone-warning-border);
 }
 </style>
