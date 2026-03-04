@@ -963,7 +963,7 @@ refreshDashboardMetrics();
 
         <AdminStatusBanner :message="statusMessage" :tone="statusType || 'info'" />
 
-        <section v-if="selectedSection === 'overview'" class="grid gap-3 p-3 md:px-[14px] md:pt-[10px] md:pb-[14px]">
+        <section v-if="selectedSection === 'overview'" class="grid gap-3 p-3 md:px-4 md:pt-3 md:pb-4">
           <div class="stat-grid">
             <article class="admin-card">
               <h2>📚 Listes</h2>
@@ -984,7 +984,7 @@ refreshDashboardMetrics();
           </div>
         </section>
 
-        <section v-else-if="selectedSection === 'roadmap'" class="grid gap-3 p-3 md:px-[14px] md:pt-[10px] md:pb-[14px]">
+        <section v-else-if="selectedSection === 'roadmap'" class="grid gap-3 p-3 md:px-4 md:pt-3 md:pb-4">
           <article class="admin-card">
             <div class="scope-head">
               <h2>Roadmap & Scopes</h2>
@@ -1110,7 +1110,7 @@ refreshDashboardMetrics();
           </article>
         </section>
 
-        <section v-else-if="selectedSection === 'english'" class="grid gap-3 p-3 md:px-[14px] md:pt-[10px] md:pb-[14px]">
+        <section v-else-if="selectedSection === 'english'" class="grid gap-3 p-3 md:px-4 md:pt-3 md:pb-4">
           <div class="admin-card">
             <label for="listSelect">Liste à modifier</label>
             <select id="listSelect" v-model="selectedList">
@@ -1181,7 +1181,7 @@ refreshDashboardMetrics();
           </div>
         </section>
 
-        <section v-else-if="selectedSection === 'symmetry'" class="grid gap-3 p-3 md:px-[14px] md:pt-[10px] md:pb-[14px]">
+        <section v-else-if="selectedSection === 'symmetry'" class="grid gap-3 p-3 md:px-4 md:pt-3 md:pb-4">
           <div class="admin-card">
             <div class="scope-head">
               <h2>Formes de symétrie</h2>
@@ -1210,7 +1210,7 @@ refreshDashboardMetrics();
           </div>
         </section>
 
-        <section v-else-if="selectedSection === 'admin-help'" class="grid gap-3 p-3 md:px-[14px] md:pt-[10px] md:pb-[14px]">
+        <section v-else-if="selectedSection === 'admin-help'" class="grid gap-3 p-3 md:px-4 md:pt-3 md:pb-4">
           <article class="admin-card internal-help-card">
             <h2>Documentation du panneau interne</h2>
             <p class="meta-line">
@@ -1289,7 +1289,7 @@ refreshDashboardMetrics();
           </article>
         </section>
 
-        <section v-else class="grid gap-3 p-3 md:px-[14px] md:pt-[10px] md:pb-[14px]">
+        <section v-else class="grid gap-3 p-3 md:px-4 md:pt-3 md:pb-4">
           <div class="admin-card">
             <h2>Réinitialisation granulaire</h2>
             <div class="maintenance-grid">
@@ -2380,3 +2380,4 @@ pre {
   }
 }
 </style>
+

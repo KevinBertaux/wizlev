@@ -325,7 +325,7 @@ onUnmounted(() => {
     <div class="settings-box">
       <QuizTableSelector v-model="selectedTables" label="Choisir les tables :" />
 
-      <div class="settings-grid grid w-full gap-[10px] md:mx-auto">
+      <div class="settings-grid grid w-full gap-3 md:mx-auto">
         <QuizSegmentedControl
           v-model="difficultyId"
           label="Difficulté :"
@@ -413,7 +413,7 @@ onUnmounted(() => {
 
     <div
       v-if="selectedTables.length > 0 && currentQuestion && !sessionCompleted"
-      class="mb-[18px] grid grid-cols-1 gap-3 md:grid-cols-[minmax(0,1fr)_228px] md:items-stretch"
+      class="mb-4 grid grid-cols-1 gap-3 md:grid-cols-[minmax(0,1fr)_228px] md:items-stretch"
     >
       <div class="question-box">
         <div class="question">{{ currentQuestion.num1 }} × {{ currentQuestion.num2 }} = ?</div>

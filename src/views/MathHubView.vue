@@ -3,7 +3,7 @@
     <h1>🧮 Mathématiques</h1>
     <p class="intro">Choisis un module pour commencer.</p>
 
-    <div class="cards-grid grid grid-cols-1 gap-[14px] lg:grid-cols-2">
+    <div class="cards-grid grid grid-cols-1 gap-4 lg:grid-cols-2">
       <router-link class="home-card" :to="{ name: 'math-multiplications' }">
         <h2>✖️ Multiplications</h2>
         <p>Tables de 0 à 11, score, série et entraînement progressif.</p>

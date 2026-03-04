@@ -2,7 +2,7 @@
   <section class="home-v1 grid gap-4">
     <div class="page-block section-block">
       <h1>🧮 Mathématiques</h1>
-      <div class="cards-grid grid grid-cols-1 gap-[14px] lg:grid-cols-2">
+      <div class="cards-grid grid grid-cols-1 gap-4 lg:grid-cols-2">
         <router-link class="home-card" :to="{ name: 'math-multiplications' }">
           <h2>✖️ Multiplications</h2>
           <p>Tables de 0 à 11, score, série et entraînement progressif.</p>
@@ -17,7 +17,7 @@
 
     <div class="page-block section-block">
       <h1>🗣️ Langues</h1>
-      <div class="cards-grid grid grid-cols-1 gap-[14px]">
+      <div class="cards-grid grid grid-cols-1 gap-4">
         <router-link class="home-card" :to="{ name: 'languages-english' }">
           <h2>🇬🇧 Anglais</h2>
           <p>Apprends l'anglais avec des listes, des flashcards et la lecture des mots à voix haute.</p>
@@ -29,7 +29,7 @@
 
 <style scoped>
 .section-block h1 {
-  margin: 0 0 14px;
+  margin: 0 0 16px;
 }
 
 .home-card {

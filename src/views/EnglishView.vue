@@ -376,7 +376,7 @@ onUnmounted(() => {
         />
       </div>
 
-      <div class="grid grid-cols-1 items-start gap-[10px] md:grid-cols-[minmax(180px,_1fr)]">
+      <div class="grid grid-cols-1 items-start gap-3 md:grid-cols-[minmax(180px,_1fr)]">
         <div class="setting-field setting-direction">
           <label for="cardDirectionSelect">Sens :</label>
           <select id="cardDirectionSelect" v-model="cardDirection">
