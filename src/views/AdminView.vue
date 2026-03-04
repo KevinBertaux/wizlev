@@ -864,7 +864,7 @@ refreshDashboardMetrics();
             <button class="sidebar-toggle" type="button" @click="toggleSidebar">
               {{ sidebarCollapsed ? '⮞' : '⮜' }}
             </button>
-            <span v-if="!sidebarCollapsed" class="sidebar-title">Panel interne</span>
+            <span v-if="!sidebarCollapsed" class="sidebar-title">Panneau interne</span>
           </div>
           <button
             class="sidebar-home"
@@ -1251,7 +1251,7 @@ refreshDashboardMetrics();
             <ul>
               <li><strong>Copier JSON</strong>: audit rapide ou partage ponctuel.</li>
               <li><strong>Télécharger JSON</strong>: fichier prêt à versionner.</li>
-              <li><strong>Importer JSON</strong>: recharge une liste existante dans le panel.</li>
+              <li><strong>Importer JSON</strong>: recharge une liste existante dans le panneau.</li>
               <li><strong>Réinitialiser</strong>: revient à la version par défaut du projet.</li>
             </ul>
 
