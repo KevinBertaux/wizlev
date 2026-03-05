@@ -3,7 +3,7 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
 </script>
 
 <template>
-  <LegalPageLayout title="Politique de confidentialité" updated-at="22 février 2026">
+  <LegalPageLayout title="Politique de confidentialité" updated-at="5 mars 2026">
     <h2>1. Responsable du traitement</h2>
     <p>
       Le site <strong>ManabuPlay</strong> est exploité par un éditeur non professionnel. Contact vie privée :
@@ -18,7 +18,7 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
 
     <h3>2.1 Données stockées localement sur votre appareil</h3>
     <ul>
-      <li>Préférences d'accent de prononciation (module langues)</li>
+      <li>Préférences de sens des cartes (Anglais vers Français ou Français vers Anglais)</li>
       <li>Listes de vocabulaire modifiées localement via le panneau interne (localStorage)</li>
       <li>État de session d'accès au panneau interne dans l'onglet en cours (sessionStorage)</li>
     </ul>
@@ -43,8 +43,11 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
 
     <h2>4. Cookies et traceurs</h2>
     <p>
-      Le site n'utilise pas, à ce jour, de cookies non essentiels de mesure d'audience, de publicité ou de traçage
-      marketing.
+      Les règles détaillées relatives aux cookies et traceurs sont publiées dans la
+      <router-link :to="{ name: 'legal-cookies' }">Politique cookies</router-link>.
+    </p>
+    <p>
+      À ce jour, aucun script publicitaire n'est chargé avant consentement.
     </p>
 
     <h2>5. Destinataires des données</h2>

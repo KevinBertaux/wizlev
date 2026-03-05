@@ -68,6 +68,7 @@ Application web éducative (SPA Vue 3 + Vite) pour aider les enfants à réviser
 - `/legal/legal-notice`: Mentions légales
 - `/legal/terms-of-use`: Conditions générales d'utilisation
 - `/legal/privacy-policy`: Politique de confidentialité
+- `/legal/cookie-policy`: Politique cookies
 
 ## Documentation
 

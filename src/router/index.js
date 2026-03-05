@@ -66,6 +66,11 @@ const routes = [
     component: () => import('@/views/LegalTermsView.vue'),
   },
   {
+    path: ROUTE_PATHS.LEGAL_COOKIES,
+    name: ROUTE_NAMES.LEGAL_COOKIES,
+    component: () => import('@/views/LegalCookiesView.vue'),
+  },
+  {
     path: '/:pathMatch(.*)*',
     redirect: ROUTE_PATHS.HOME,
   },

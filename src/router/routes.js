@@ -11,6 +11,7 @@ export const ROUTE_NAMES = Object.freeze({
   LEGAL_NOTICE: 'legal-notice',
   LEGAL_PRIVACY: 'legal-privacy',
   LEGAL_TERMS: 'legal-terms',
+  LEGAL_COOKIES: 'legal-cookies',
 });
 
 export const ROUTE_PATHS = Object.freeze({
@@ -26,4 +27,5 @@ export const ROUTE_PATHS = Object.freeze({
   LEGAL_NOTICE: '/legal/legal-notice',
   LEGAL_PRIVACY: '/legal/privacy-policy',
   LEGAL_TERMS: '/legal/terms-of-use',
+  LEGAL_COOKIES: '/legal/cookie-policy',
 });
