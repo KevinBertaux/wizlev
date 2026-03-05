@@ -325,7 +325,7 @@ onUnmounted(() => {
     <div class="settings-box">
       <QuizTableSelector v-model="selectedTables" label="Choisir les tables :" />
 
-      <div class="settings-grid grid w-full gap-3 md:mx-auto">
+      <div class="settings-grid grid w-full gap-3 md:mx-auto md:max-w-[720px]">
         <QuizSegmentedControl
           v-model="difficultyId"
           label="Difficulté :"
@@ -340,37 +340,42 @@ onUnmounted(() => {
           :options="ORDER_OPTIONS"
         />
 
-        <label class="review-toggle">
-          <span class="settings-label review-toggle-label">Passer après erreur</span>
-          <button
-            type="button"
-            class="toggle-btn"
-            role="switch"
-            :aria-checked="passAfterWrong"
-            :class="{ 'is-on': passAfterWrong }"
-            @click="togglePassAfterWrong"
-          >
-            <span class="toggle-track">
-              <span class="toggle-thumb" />
-            </span>
-          </button>
-        </label>
+        <div class="error-options-group">
+          <p class="settings-label error-options-title">Gestion des erreurs :</p>
+          <div class="error-options-grid grid gap-3 md:grid-cols-2">
+            <label class="review-toggle">
+              <span class="settings-label review-toggle-label">Passer après erreur</span>
+              <button
+                type="button"
+                class="toggle-btn"
+                role="switch"
+                :aria-checked="passAfterWrong"
+                :class="{ 'is-on': passAfterWrong }"
+                @click="togglePassAfterWrong"
+              >
+                <span class="toggle-track">
+                  <span class="toggle-thumb" />
+                </span>
+              </button>
+            </label>
 
-        <label class="review-toggle">
-          <span class="settings-label review-toggle-label">Revoir mes erreurs</span>
-          <button
-            type="button"
-            class="toggle-btn"
-            role="switch"
-            :aria-checked="reviewErrorsEnabled"
-            :class="{ 'is-on': reviewErrorsEnabled }"
-            @click="toggleReviewErrors"
-          >
-            <span class="toggle-track">
-              <span class="toggle-thumb" />
-            </span>
-          </button>
-        </label>
+            <label class="review-toggle">
+              <span class="settings-label review-toggle-label">Revoir mes erreurs</span>
+              <button
+                type="button"
+                class="toggle-btn"
+                role="switch"
+                :aria-checked="reviewErrorsEnabled"
+                :class="{ 'is-on': reviewErrorsEnabled }"
+                @click="toggleReviewErrors"
+              >
+                <span class="toggle-track">
+                  <span class="toggle-thumb" />
+                </span>
+              </button>
+            </label>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -413,7 +418,7 @@ onUnmounted(() => {
 
     <div
       v-if="selectedTables.length > 0 && currentQuestion && !sessionCompleted"
-      class="mb-4 grid grid-cols-1 gap-3 md:grid-cols-[minmax(0,1fr)_228px] md:items-stretch"
+      class="mb-4 grid grid-cols-1 gap-3 md:mx-auto md:max-w-[720px] md:grid-cols-[minmax(0,1fr)_228px] md:items-stretch"
     >
       <div class="question-box">
         <div class="question">{{ currentQuestion.num1 }} × {{ currentQuestion.num2 }} = ?</div>
@@ -463,6 +468,15 @@ onUnmounted(() => {
 
 .settings-grid :deep(.segmented-field) {
   width: 100%;
+}
+
+.error-options-group {
+  display: grid;
+  gap: 8px;
+}
+
+.error-options-title {
+  margin: 0;
 }
 
 .review-toggle {

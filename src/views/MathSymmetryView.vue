@@ -310,7 +310,7 @@ onUnmounted(() => {
       </svg>
     </div>
 
-    <div class="mx-auto grid w-full grid-cols-1 gap-2 md:grid-cols-2">
+    <div class="mx-auto grid w-full max-w-[720px] grid-cols-1 gap-2 md:grid-cols-2">
       <button
         v-for="(option, idx) in currentQuestion.options"
         :key="option.id"
@@ -375,7 +375,8 @@ onUnmounted(() => {
 }
 
 .prompt-box {
-  margin-bottom: 8px;
+  max-width: 720px;
+  margin: 0 auto 8px;
   text-align: center;
 }
 

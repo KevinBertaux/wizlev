@@ -463,6 +463,8 @@ onUnmounted(() => {
 
 .flashcard-carousel {
   display: block;
+  max-width: 720px;
+  margin-inline: auto;
 }
 
 .flashcard {
