@@ -109,6 +109,7 @@ function closeNav() {
         <router-link :to="{ name: ROUTE_NAMES.LEGAL_NOTICE }">Mentions légales</router-link>
         <router-link :to="{ name: ROUTE_NAMES.LEGAL_TERMS }">CGU</router-link>
         <router-link :to="{ name: ROUTE_NAMES.LEGAL_PRIVACY }">Politique de confidentialité</router-link>
+        <router-link :to="{ name: ROUTE_NAMES.LEGAL_COOKIES }">Cookies</router-link>
       </div>
     </footer>
   </div>

@@ -68,6 +68,7 @@ Educational web app (Vue 3 + Vite SPA) to help children practice math and vocabu
 - `/legal/legal-notice`: Legal notices
 - `/legal/terms-of-use`: Terms of use
 - `/legal/privacy-policy`: Privacy policy
+- `/legal/cookie-policy`: Cookie policy
 
 ## Documentation
 

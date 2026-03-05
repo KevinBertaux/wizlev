@@ -3,7 +3,7 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
 </script>
 
 <template>
-  <LegalPageLayout title="Conditions générales d'utilisation (CGU)" updated-at="22 février 2026">
+  <LegalPageLayout title="Conditions générales d'utilisation (CGU)" updated-at="5 mars 2026">
     <h2>1. Objet</h2>
     <p>
       Les présentes conditions générales d'utilisation définissent les règles d'accès et d'usage du site
@@ -53,8 +53,10 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
 
     <h2>8. Données personnelles</h2>
     <p>
-      Le traitement des données est décrit dans la
-      <router-link :to="{ name: 'legal-privacy' }">Politique de confidentialité</router-link>.
+      Le traitement des données et des traceurs est décrit dans la
+      <router-link :to="{ name: 'legal-privacy' }">Politique de confidentialité</router-link>
+      et la
+      <router-link :to="{ name: 'legal-cookies' }">Politique cookies</router-link>.
     </p>
 
     <h2>9. Évolution des CGU</h2>

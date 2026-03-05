@@ -23,7 +23,7 @@ Objectif: limiter a **1 deploy production par semaine** jusqu'au reset quota.
 - [ ] `npm test -- --coverage` OK (seuils Vitest respectes)
 - [ ] `npm run build` OK
 - [ ] `npm run lighthouse:ci` OK (en local Windows: tolérance bug EPERM cleanup, CI Linux reste bloquante)
-- [ ] Verification routes publiques: `/`, `/math`, `/math/multiplications`, `/math/symmetry`, `/languages`, `/languages/english`, `/legal/legal-notice`, `/legal/privacy-policy`, `/legal/terms-of-use`
+- [ ] Verification routes publiques: `/`, `/math`, `/math/multiplications`, `/math/symmetry`, `/languages`, `/languages/english`, `/legal/legal-notice`, `/legal/privacy-policy`, `/legal/terms-of-use`, `/legal/cookie-policy`
 - [ ] Verification acces zone interne via URL privee `/-/studio-ops`
 - [ ] Verification menu public: aucun acces admin visible
 - [ ] Verification favicon/logo/header
