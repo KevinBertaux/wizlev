@@ -14,6 +14,7 @@ describe('cmpRuntime', () => {
       provider: 'none',
       enabled: false,
       managedConsent: false,
+      consentMode: 'none',
       revocationSupported: false,
     });
     expect(window.googlefc).toBeUndefined();
@@ -26,9 +27,10 @@ describe('cmpRuntime', () => {
       provider: 'google_privacy_messaging',
       enabled: true,
       managedConsent: true,
+      consentMode: 'advanced',
     });
     expect(Array.isArray(window.googlefc?.callbackQueue)).toBe(true);
-    expect(window.googlefc?.callbackQueue).toHaveLength(2);
+    expect(window.googlefc?.callbackQueue).toHaveLength(3);
     expect(getCmpRuntimeState()?.provider).toBe('google_privacy_messaging');
   });
 

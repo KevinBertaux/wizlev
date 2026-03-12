@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { applyConsentToScripts, clearConsentScripts } from '@/features/consent/scriptManager';
+import { GOOGLE_FC_CONSENT_MODE_STATUS } from '@/features/cmp/googleConsentMode';
 import { getAdsRuntimeState, initAdsRuntime, resetAdsRuntimeForTests, syncAdsConsent } from './adsRuntime';
 
 describe('adsRuntime', () => {
@@ -43,14 +44,14 @@ describe('adsRuntime', () => {
     expect(script?.src).toContain('client=ca-pub-1234567890');
   });
 
-  it('waits for CMP-managed consent mode before injecting AdSense', () => {
+  it('loads the AdSense bootstrap immediately in advanced CMP mode and updates runtime on consent callbacks', () => {
     const googlefc = {
       callbackQueue: [],
       getGoogleConsentModeValues: () => ({
-        ad_storage: 'CONSENT_MODE_GRANTED',
-        analytics_storage: 'CONSENT_MODE_DENIED',
-        ad_user_data: 'CONSENT_MODE_GRANTED',
-        ad_personalization: 'CONSENT_MODE_GRANTED',
+        adStoragePurposeConsentStatus: GOOGLE_FC_CONSENT_MODE_STATUS.GRANTED,
+        analyticsStoragePurposeConsentStatus: GOOGLE_FC_CONSENT_MODE_STATUS.DENIED,
+        adUserDataPurposeConsentStatus: GOOGLE_FC_CONSENT_MODE_STATUS.GRANTED,
+        adPersonalizationPurposeConsentStatus: GOOGLE_FC_CONSENT_MODE_STATUS.GRANTED,
       }),
     };
     window.googlefc = googlefc;
@@ -61,17 +62,24 @@ describe('adsRuntime', () => {
       managedConsent: true,
     });
 
-    expect(document.querySelector('script[data-consent-category="ads"]')).toBeNull();
+    const script = document.querySelector('script[data-consent-category="ads"]');
+    expect(script).not.toBeNull();
+    expect(script?.src).toContain('pagead2.googlesyndication.com/pagead/js/adsbygoogle.js');
+    expect(script?.crossOrigin).toBe('anonymous');
     expect(googlefc.callbackQueue).toHaveLength(1);
 
     googlefc.callbackQueue[0].CONSENT_MODE_DATA_READY();
 
-    const script = document.querySelector('script[data-consent-category="ads"]');
-    expect(script?.src).toContain('pagead2.googlesyndication.com/pagead/js/adsbygoogle.js');
     expect(getAdsRuntimeState()).toMatchObject({
       source: 'cmp',
       adsAllowed: true,
       analyticsAllowed: false,
+      consentStatuses: {
+        ad_storage: GOOGLE_FC_CONSENT_MODE_STATUS.GRANTED,
+        ad_user_data: GOOGLE_FC_CONSENT_MODE_STATUS.GRANTED,
+        ad_personalization: GOOGLE_FC_CONSENT_MODE_STATUS.GRANTED,
+        analytics_storage: GOOGLE_FC_CONSENT_MODE_STATUS.DENIED,
+      },
     });
   });
 
@@ -100,6 +108,7 @@ describe('adsRuntime', () => {
       adsAllowed: false,
       analyticsAllowed: true,
       consent: snapshot.googleConsent,
+      source: 'local',
     });
   });
 });

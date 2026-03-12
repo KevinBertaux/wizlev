@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import {
+  GOOGLE_FC_CONSENT_MODE_STATUS,
   buildManagedCmpConsentSnapshot,
   canServeAdsFromGooglefcConsentMode,
   mapGooglefcConsentModeValuesToGtag,
+  normalizeGooglefcConsentModeValues,
 } from './googleConsentMode';
 
 describe('googleConsentMode', () => {
@@ -15,13 +17,29 @@ describe('googleConsentMode', () => {
     });
   });
 
+  it('normalizes Googlefc consent mode enums from the official numeric fields', () => {
+    expect(
+      normalizeGooglefcConsentModeValues({
+        adStoragePurposeConsentStatus: GOOGLE_FC_CONSENT_MODE_STATUS.GRANTED,
+        adUserDataPurposeConsentStatus: GOOGLE_FC_CONSENT_MODE_STATUS.DENIED,
+        adPersonalizationPurposeConsentStatus: GOOGLE_FC_CONSENT_MODE_STATUS.NOT_APPLICABLE,
+        analyticsStoragePurposeConsentStatus: GOOGLE_FC_CONSENT_MODE_STATUS.NOT_CONFIGURED,
+      })
+    ).toEqual({
+      ad_storage: GOOGLE_FC_CONSENT_MODE_STATUS.GRANTED,
+      ad_user_data: GOOGLE_FC_CONSENT_MODE_STATUS.DENIED,
+      ad_personalization: GOOGLE_FC_CONSENT_MODE_STATUS.NOT_APPLICABLE,
+      analytics_storage: GOOGLE_FC_CONSENT_MODE_STATUS.NOT_CONFIGURED,
+    });
+  });
+
   it('treats not applicable and not configured as granted for Google consent mode', () => {
     expect(
       mapGooglefcConsentModeValuesToGtag({
-        ad_storage: 'CONSENT_MODE_NOT_APPLICABLE',
-        analytics_storage: 'CONSENT_MODE_NOT_CONFIGURED',
-        ad_user_data: 'CONSENT_MODE_GRANTED',
-        ad_personalization: 'CONSENT_MODE_GRANTED',
+        adStoragePurposeConsentStatus: GOOGLE_FC_CONSENT_MODE_STATUS.NOT_APPLICABLE,
+        analyticsStoragePurposeConsentStatus: GOOGLE_FC_CONSENT_MODE_STATUS.NOT_CONFIGURED,
+        adUserDataPurposeConsentStatus: GOOGLE_FC_CONSENT_MODE_STATUS.GRANTED,
+        adPersonalizationPurposeConsentStatus: GOOGLE_FC_CONSENT_MODE_STATUS.GRANTED,
       })
     ).toEqual({
       ad_storage: 'granted',
@@ -34,17 +52,17 @@ describe('googleConsentMode', () => {
   it('allows ad loading only when ad-related signals are granted', () => {
     expect(
       canServeAdsFromGooglefcConsentMode({
-        ad_storage: 'CONSENT_MODE_GRANTED',
-        ad_user_data: 'CONSENT_MODE_GRANTED',
-        ad_personalization: 'CONSENT_MODE_GRANTED',
+        adStoragePurposeConsentStatus: GOOGLE_FC_CONSENT_MODE_STATUS.GRANTED,
+        adUserDataPurposeConsentStatus: GOOGLE_FC_CONSENT_MODE_STATUS.GRANTED,
+        adPersonalizationPurposeConsentStatus: GOOGLE_FC_CONSENT_MODE_STATUS.GRANTED,
       })
     ).toBe(true);
 
     expect(
       canServeAdsFromGooglefcConsentMode({
-        ad_storage: 'CONSENT_MODE_GRANTED',
-        ad_user_data: 'CONSENT_MODE_DENIED',
-        ad_personalization: 'CONSENT_MODE_GRANTED',
+        adStoragePurposeConsentStatus: GOOGLE_FC_CONSENT_MODE_STATUS.GRANTED,
+        adUserDataPurposeConsentStatus: GOOGLE_FC_CONSENT_MODE_STATUS.DENIED,
+        adPersonalizationPurposeConsentStatus: GOOGLE_FC_CONSENT_MODE_STATUS.GRANTED,
       })
     ).toBe(false);
   });
@@ -52,17 +70,23 @@ describe('googleConsentMode', () => {
   it('builds a CMP-managed consent snapshot', () => {
     expect(
       buildManagedCmpConsentSnapshot({
-        ad_storage: 'CONSENT_MODE_GRANTED',
-        analytics_storage: 'CONSENT_MODE_DENIED',
-        ad_user_data: 'CONSENT_MODE_GRANTED',
-        ad_personalization: 'CONSENT_MODE_GRANTED',
+        adStoragePurposeConsentStatus: GOOGLE_FC_CONSENT_MODE_STATUS.GRANTED,
+        analyticsStoragePurposeConsentStatus: GOOGLE_FC_CONSENT_MODE_STATUS.DENIED,
+        adUserDataPurposeConsentStatus: GOOGLE_FC_CONSENT_MODE_STATUS.GRANTED,
+        adPersonalizationPurposeConsentStatus: GOOGLE_FC_CONSENT_MODE_STATUS.GRANTED,
       })
     ).toEqual({
       rawValues: {
-        ad_storage: 'CONSENT_MODE_GRANTED',
-        analytics_storage: 'CONSENT_MODE_DENIED',
-        ad_user_data: 'CONSENT_MODE_GRANTED',
-        ad_personalization: 'CONSENT_MODE_GRANTED',
+        adStoragePurposeConsentStatus: GOOGLE_FC_CONSENT_MODE_STATUS.GRANTED,
+        adUserDataPurposeConsentStatus: GOOGLE_FC_CONSENT_MODE_STATUS.GRANTED,
+        adPersonalizationPurposeConsentStatus: GOOGLE_FC_CONSENT_MODE_STATUS.GRANTED,
+        analyticsStoragePurposeConsentStatus: GOOGLE_FC_CONSENT_MODE_STATUS.DENIED,
+      },
+      purposeStatuses: {
+        ad_storage: GOOGLE_FC_CONSENT_MODE_STATUS.GRANTED,
+        ad_user_data: GOOGLE_FC_CONSENT_MODE_STATUS.GRANTED,
+        ad_personalization: GOOGLE_FC_CONSENT_MODE_STATUS.GRANTED,
+        analytics_storage: GOOGLE_FC_CONSENT_MODE_STATUS.DENIED,
       },
       googleConsent: {
         ad_storage: 'granted',

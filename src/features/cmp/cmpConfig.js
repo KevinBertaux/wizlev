@@ -14,12 +14,14 @@ export function resolveCmpProviderConfig(options = {}) {
         id: CMP_PROVIDERS.GOOGLE_PRIVACY_MESSAGING,
         enabled: true,
         managedConsent: true,
+        consentMode: 'advanced',
       };
     default:
       return {
         id: CMP_PROVIDERS.NONE,
         enabled: false,
         managedConsent: false,
+        consentMode: 'none',
       };
   }
 }

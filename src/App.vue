@@ -26,7 +26,9 @@ const showStudyAds = computed(
   () => route.path === "/" || route.path.startsWith("/math") || route.path.startsWith("/languages")
 );
 const shouldEnableCmpRuntime = computed(() => !isStudioOpsRoute.value);
-const shouldEnableStudyAdsRuntime = computed(() => shouldEnableCmpRuntime.value && showStudyAds.value);
+const shouldEnableAdsRuntime = computed(
+  () => shouldEnableCmpRuntime.value && (showStudyAds.value || cmpManagedConsentEnabled.value)
+);
 
 watch(
   () => route.fullPath,
@@ -50,11 +52,11 @@ watch(
 );
 
 watch(
-  () => shouldEnableStudyAdsRuntime.value,
+  () => shouldEnableAdsRuntime.value,
   (enabled) => {
     if (enabled) {
       initAdsRuntime({ managedConsent: cmpManagedConsentEnabled.value });
-      if (!cmpManagedConsentEnabled.value) {
+      if (!cmpManagedConsentEnabled.value && showStudyAds.value) {
         syncAdsConsent(consentStore.selections);
       }
     }
@@ -65,7 +67,7 @@ watch(
 watch(
   () => consentStore.selections,
   (selections) => {
-    if (shouldEnableStudyAdsRuntime.value && !cmpManagedConsentEnabled.value) {
+    if (showStudyAds.value && !cmpManagedConsentEnabled.value) {
       syncAdsConsent(selections);
     }
   },

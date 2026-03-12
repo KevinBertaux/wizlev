@@ -204,4 +204,30 @@ describe('App consent gating', () => {
     expect(wrapper.findComponent({ name: 'ConsentBanner' }).exists()).toBe(false);
     expect(wrapper.findComponent({ name: 'ConsentPreferencesPanel' }).exists()).toBe(false);
   });
+
+  it('initializes the managed ads runtime on a public legal route when CMP managed consent is enabled', () => {
+    route.path = '/legal/cookie-policy';
+    route.fullPath = '/legal/cookie-policy';
+    isCmpManagedConsentEnabledMock.mockReturnValue(true);
+
+    const wrapper = shallowMount(App, {
+      global: {
+        stubs: {
+          RouterLink: RouterLinkStub,
+          RouterView: true,
+          ConsentBanner: true,
+          ConsentPreferencesPanel: true,
+          StudyAdsShell: { name: 'StudyAdsShell', template: '<div data-test="study-ads-shell"><slot /></div>' },
+        },
+      },
+    });
+
+    expect(initCmpRuntimeMock).toHaveBeenCalledTimes(1);
+    expect(initMock).not.toHaveBeenCalled();
+    expect(initAdsRuntimeMock).toHaveBeenCalledWith({ managedConsent: true });
+    expect(syncAdsConsentMock).not.toHaveBeenCalled();
+    expect(wrapper.find('[data-test="study-ads-shell"]').exists()).toBe(false);
+    expect(wrapper.findComponent({ name: 'ConsentBanner' }).exists()).toBe(false);
+    expect(wrapper.findComponent({ name: 'ConsentPreferencesPanel' }).exists()).toBe(false);
+  });
 });

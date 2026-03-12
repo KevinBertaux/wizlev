@@ -22,6 +22,7 @@ function buildAdsScriptDescriptor(providerConfig) {
     src: providerConfig.script.src,
     async: providerConfig.script.async ?? true,
     defer: providerConfig.script.defer ?? false,
+    crossOrigin: providerConfig.script.crossOrigin || null,
     parentSelector: providerConfig.script.parentSelector || 'head',
   };
 }
@@ -37,6 +38,9 @@ function injectManagedScript(descriptor) {
   scriptEl.async = descriptor.async ?? true;
   scriptEl.defer = descriptor.defer ?? false;
   scriptEl.dataset.consentCategory = descriptor.category;
+  if (descriptor.crossOrigin) {
+    scriptEl.crossOrigin = descriptor.crossOrigin;
+  }
   if (descriptor.src) {
     scriptEl.src = descriptor.src;
   } else {
@@ -61,6 +65,7 @@ function syncAdsConsentFromCmp(googlefc = isBrowser() ? window.googlefc : undefi
   const runtimeState = writeRuntimeState({
     consent: snapshot.googleConsent,
     rawConsent: snapshot.rawValues,
+    consentStatuses: snapshot.purposeStatuses,
     adsAllowed: snapshot.adsAllowed,
     analyticsAllowed: snapshot.analyticsAllowed,
     source: 'cmp',
@@ -77,20 +82,14 @@ function syncAdsConsentFromCmp(googlefc = isBrowser() ? window.googlefc : undefi
   };
 }
 
-function registerManagedConsentSubscription(descriptor, googlefc = isBrowser() ? window.googlefc : undefined) {
+function registerManagedConsentSubscription(googlefc = isBrowser() ? window.googlefc : undefined) {
   if (!isBrowser() || !googlefc || !Array.isArray(googlefc.callbackQueue) || managedConsentModeSubscribed) {
     return;
   }
 
   googlefc.callbackQueue.push({
     CONSENT_MODE_DATA_READY: () => {
-      const snapshot = syncAdsConsentFromCmp(window.googlefc, window.gtag);
-
-      if (snapshot.adsAllowed) {
-        injectManagedScript(descriptor);
-      } else {
-        removeManagedScript();
-      }
+      syncAdsConsentFromCmp(window.googlefc, window.gtag);
     },
   });
   managedConsentModeSubscribed = true;
@@ -125,7 +124,21 @@ export function initAdsRuntime(options = {}) {
   }
 
   if (descriptor && managedConsent) {
-    registerManagedConsentSubscription(descriptor);
+    injectManagedScript(descriptor);
+    registerManagedConsentSubscription();
+    const initialSnapshot = buildManagedCmpConsentSnapshot();
+    writeRuntimeState({
+      consent: initialSnapshot.googleConsent,
+      rawConsent: initialSnapshot.rawValues,
+      consentStatuses: initialSnapshot.purposeStatuses,
+      adsAllowed: initialSnapshot.adsAllowed,
+      analyticsAllowed: initialSnapshot.analyticsAllowed,
+      source: 'cmp',
+      updatedAt: new Date().toISOString(),
+    });
+    if (typeof window.googlefc?.getGoogleConsentModeValues === 'function') {
+      syncAdsConsentFromCmp(window.googlefc, window.gtag);
+    }
   } else if (descriptor) {
     registerConsentScript(descriptor);
   }
@@ -146,6 +159,7 @@ export function syncAdsConsent(selections = {}, gtag = isBrowser() ? window.gtag
     consent: snapshot.googleConsent,
     adsAllowed: snapshot.adsAllowed,
     analyticsAllowed: snapshot.analyticsAllowed,
+    source: 'local',
     updatedAt: new Date().toISOString(),
   });
 

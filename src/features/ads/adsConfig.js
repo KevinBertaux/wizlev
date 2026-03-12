@@ -50,6 +50,7 @@ export function resolveAdsProviderConfig({
         src: `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${normalizedClient}`,
         async: true,
         defer: false,
+        crossOrigin: "anonymous",
         parentSelector: "head",
       },
     };

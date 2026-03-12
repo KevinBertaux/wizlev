@@ -1,9 +1,11 @@
 import { resolveCmpProviderConfig } from './cmpConfig';
+import { buildManagedCmpConsentSnapshot } from './googleConsentMode';
 
 export const CMP_RUNTIME_KEY = '__manabuCmpRuntime';
 
 let initializedProviderId = null;
 let consentApiCallbackRegistered = false;
+let consentDataCallbackRegistered = false;
 let consentModeCallbackRegistered = false;
 
 function isBrowser() {
@@ -46,15 +48,29 @@ function registerGooglefcCallbacks(win) {
     consentApiCallbackRegistered = true;
   }
 
+  if (!consentDataCallbackRegistered) {
+    googlefc.callbackQueue.push({
+      CONSENT_DATA_READY: () => {
+        writeRuntimeState({
+          consentDataReady: true,
+          updatedAt: new Date().toISOString(),
+        });
+      },
+    });
+    consentDataCallbackRegistered = true;
+  }
+
   if (!consentModeCallbackRegistered) {
     googlefc.callbackQueue.push({
       CONSENT_MODE_DATA_READY: () => {
+        const consentModeValues =
+          typeof win.googlefc?.getGoogleConsentModeValues === 'function'
+            ? buildManagedCmpConsentSnapshot(win.googlefc.getGoogleConsentModeValues())
+            : null;
+
         writeRuntimeState({
           consentModeReady: true,
-          consentModeValues:
-            typeof win.googlefc?.getGoogleConsentModeValues === 'function'
-              ? win.googlefc.getGoogleConsentModeValues()
-              : null,
+          consentModeValues,
           updatedAt: new Date().toISOString(),
         });
       },
@@ -71,6 +87,7 @@ export function initCmpRuntime(options = {}) {
       provider: providerConfig.id,
       enabled: providerConfig.enabled,
       managedConsent: providerConfig.managedConsent,
+      consentMode: providerConfig.consentMode,
       revocationSupported: false,
     };
   }
@@ -80,6 +97,7 @@ export function initCmpRuntime(options = {}) {
       provider: providerConfig.id,
       enabled: providerConfig.enabled,
       managedConsent: providerConfig.managedConsent,
+      consentMode: providerConfig.consentMode,
       revocationSupported: typeof window.googlefc?.showRevocationMessage === 'function',
     });
   }
@@ -95,6 +113,7 @@ export function initCmpRuntime(options = {}) {
     provider: providerConfig.id,
     enabled: providerConfig.enabled,
     managedConsent: providerConfig.managedConsent,
+    consentMode: providerConfig.consentMode,
     revocationSupported: typeof window.googlefc?.showRevocationMessage === 'function',
   });
 }
@@ -146,6 +165,7 @@ export function getCmpRuntimeState() {
 export function resetCmpRuntimeForTests() {
   initializedProviderId = null;
   consentApiCallbackRegistered = false;
+  consentDataCallbackRegistered = false;
   consentModeCallbackRegistered = false;
   if (isBrowser()) {
     delete window[CMP_RUNTIME_KEY];
