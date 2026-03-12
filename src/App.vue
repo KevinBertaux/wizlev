@@ -6,6 +6,7 @@ import ConsentBanner from "@/components/ConsentBanner.vue";
 import ConsentPreferencesPanel from "@/components/ConsentPreferencesPanel.vue";
 import StudyAdsShell from "@/components/StudyAdsShell.vue";
 import { initAdsRuntime, syncAdsConsent } from "@/features/ads/adsRuntime";
+import { hasVisibleAdSlots } from "@/features/ads/adsSlots";
 import { isCmpManagedConsentEnabled } from "@/features/cmp/cmpConfig";
 import { initCmpRuntime } from "@/features/cmp/cmpRuntime";
 import { useConsentStore } from "@/features/consent/useConsentStore";
@@ -22,12 +23,13 @@ const isAdminPanelRoute = computed(() => route.path.startsWith("/-/studio-ops/pa
 const isStudioOpsRoute = computed(() => route.path.startsWith("/-/studio-ops"));
 const cmpManagedConsentEnabled = computed(() => isCmpManagedConsentEnabled());
 const showConsentUi = computed(() => !isStudioOpsRoute.value && !cmpManagedConsentEnabled.value);
-const showStudyAds = computed(
+const isStudyRoute = computed(
   () => route.path === "/" || route.path.startsWith("/math") || route.path.startsWith("/languages")
 );
+const showStudyAdsShell = computed(() => isStudyRoute.value && hasVisibleAdSlots());
 const shouldEnableCmpRuntime = computed(() => !isStudioOpsRoute.value);
 const shouldEnableAdsRuntime = computed(
-  () => shouldEnableCmpRuntime.value && (showStudyAds.value || cmpManagedConsentEnabled.value)
+  () => shouldEnableCmpRuntime.value && (isStudyRoute.value || cmpManagedConsentEnabled.value)
 );
 
 watch(
@@ -56,7 +58,7 @@ watch(
   (enabled) => {
     if (enabled) {
       initAdsRuntime({ managedConsent: cmpManagedConsentEnabled.value });
-      if (!cmpManagedConsentEnabled.value && showStudyAds.value) {
+      if (!cmpManagedConsentEnabled.value && isStudyRoute.value) {
         syncAdsConsent(consentStore.selections);
       }
     }
@@ -67,7 +69,7 @@ watch(
 watch(
   () => consentStore.selections,
   (selections) => {
-    if (showStudyAds.value && !cmpManagedConsentEnabled.value) {
+    if (isStudyRoute.value && !cmpManagedConsentEnabled.value) {
       syncAdsConsent(selections);
     }
   },
@@ -181,7 +183,7 @@ function closeNav() {
       </nav>
     </header>
 
-    <StudyAdsShell v-if="showStudyAds">
+    <StudyAdsShell v-if="showStudyAdsShell">
       <main class="page-container">
         <router-view />
       </main>
@@ -193,7 +195,7 @@ function closeNav() {
     <ConsentBanner v-if="showConsentUi" />
     <ConsentPreferencesPanel v-if="showConsentUi" />
 
-    <footer class="site-footer" :class="{ 'site-footer--study-ads': showStudyAds }">
+    <footer class="site-footer" :class="{ 'site-footer--study-ads': showStudyAdsShell }">
       <div class="footer-links">
         <router-link :to="{ name: ROUTE_NAMES.LEGAL_NOTICE }">Mentions légales</router-link>
         <router-link :to="{ name: ROUTE_NAMES.LEGAL_TERMS }">CGU</router-link>

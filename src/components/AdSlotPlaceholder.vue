@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from "vue";
-import { getAdSlotById } from "@/features/ads/adsSlots";
+import { getAdSlotById, isAdSlotVisible } from "@/features/ads/adsSlots";
 
 const props = defineProps({
   slotId: {
@@ -55,21 +55,7 @@ const slotSizeLabel = computed(() => {
   return "728 x 90";
 });
 
-const shouldShowPlaceholder = computed(() => {
-  if (!slot.value) {
-    return false;
-  }
-
-  if (slot.value.enabled) {
-    return true;
-  }
-
-  return (
-    import.meta.env.DEV ||
-    import.meta.env.MODE === "test" ||
-    import.meta.env.VITE_ADS_UI_PLACEHOLDERS === "true"
-  );
-});
+const shouldShowPlaceholder = computed(() => isAdSlotVisible(slot.value));
 </script>
 
 <template>
