@@ -1,11 +1,18 @@
 <script setup>
 import LegalPageLayout from '@/components/LegalPageLayout.vue';
+import { isCmpManagedConsentEnabled } from '@/features/cmp/cmpConfig';
 import { openCmpPrivacyOptions } from '@/features/cmp/cmpRuntime';
 import { useConsentStore } from '@/features/consent/useConsentStore';
 
 const consentStore = useConsentStore();
+const cmpManagedConsentEnabled = isCmpManagedConsentEnabled();
 
 function openConsentManager() {
+  if (cmpManagedConsentEnabled) {
+    openCmpPrivacyOptions();
+    return;
+  }
+
   if (!openCmpPrivacyOptions()) {
     consentStore.openPanel();
   }

@@ -6,6 +6,7 @@ import ConsentBanner from "@/components/ConsentBanner.vue";
 import ConsentPreferencesPanel from "@/components/ConsentPreferencesPanel.vue";
 import StudyAdsShell from "@/components/StudyAdsShell.vue";
 import { initAdsRuntime, syncAdsConsent } from "@/features/ads/adsRuntime";
+import { isCmpManagedConsentEnabled } from "@/features/cmp/cmpConfig";
 import { initCmpRuntime } from "@/features/cmp/cmpRuntime";
 import { useConsentStore } from "@/features/consent/useConsentStore";
 
@@ -19,11 +20,13 @@ const isLangRoute = computed(() => route.path.startsWith("/languages"));
 const isLegalRoute = computed(() => route.path.startsWith("/legal"));
 const isAdminPanelRoute = computed(() => route.path.startsWith("/-/studio-ops/panel"));
 const isStudioOpsRoute = computed(() => route.path.startsWith("/-/studio-ops"));
-const showConsentUi = computed(() => !isStudioOpsRoute.value);
+const cmpManagedConsentEnabled = computed(() => isCmpManagedConsentEnabled());
+const showConsentUi = computed(() => !isStudioOpsRoute.value && !cmpManagedConsentEnabled.value);
 const showStudyAds = computed(
   () => route.path === "/" || route.path.startsWith("/math") || route.path.startsWith("/languages")
 );
-const shouldEnableStudyAdsRuntime = computed(() => showConsentUi.value && showStudyAds.value);
+const shouldEnableCmpRuntime = computed(() => !isStudioOpsRoute.value);
+const shouldEnableStudyAdsRuntime = computed(() => shouldEnableCmpRuntime.value && showStudyAds.value);
 
 watch(
   () => route.fullPath,
@@ -34,11 +37,13 @@ watch(
 );
 
 watch(
-  () => showConsentUi.value,
-  (showConsent) => {
-    if (showConsent) {
+  () => shouldEnableCmpRuntime.value,
+  (shouldEnableCmp) => {
+    if (shouldEnableCmp) {
       initCmpRuntime();
-      consentStore.init();
+      if (!cmpManagedConsentEnabled.value) {
+        consentStore.init();
+      }
     }
   },
   { immediate: true }
@@ -48,8 +53,10 @@ watch(
   () => shouldEnableStudyAdsRuntime.value,
   (enabled) => {
     if (enabled) {
-      initAdsRuntime();
-      syncAdsConsent(consentStore.selections);
+      initAdsRuntime({ managedConsent: cmpManagedConsentEnabled.value });
+      if (!cmpManagedConsentEnabled.value) {
+        syncAdsConsent(consentStore.selections);
+      }
     }
   },
   { immediate: true }
@@ -58,7 +65,7 @@ watch(
 watch(
   () => consentStore.selections,
   (selections) => {
-    if (shouldEnableStudyAdsRuntime.value) {
+    if (shouldEnableStudyAdsRuntime.value && !cmpManagedConsentEnabled.value) {
       syncAdsConsent(selections);
     }
   },

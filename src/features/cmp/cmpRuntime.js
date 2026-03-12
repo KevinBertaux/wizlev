@@ -3,6 +3,8 @@ import { resolveCmpProviderConfig } from './cmpConfig';
 export const CMP_RUNTIME_KEY = '__manabuCmpRuntime';
 
 let initializedProviderId = null;
+let consentApiCallbackRegistered = false;
+let consentModeCallbackRegistered = false;
 
 function isBrowser() {
   return typeof window !== 'undefined';
@@ -28,6 +30,39 @@ function ensureGooglefcBootstrap(win) {
   return win.googlefc;
 }
 
+function registerGooglefcCallbacks(win) {
+  const googlefc = ensureGooglefcBootstrap(win);
+
+  if (!consentApiCallbackRegistered) {
+    googlefc.callbackQueue.push({
+      CONSENT_API_READY: () => {
+        writeRuntimeState({
+          consentApiReady: true,
+          revocationSupported: typeof win.googlefc?.showRevocationMessage === 'function',
+          updatedAt: new Date().toISOString(),
+        });
+      },
+    });
+    consentApiCallbackRegistered = true;
+  }
+
+  if (!consentModeCallbackRegistered) {
+    googlefc.callbackQueue.push({
+      CONSENT_MODE_DATA_READY: () => {
+        writeRuntimeState({
+          consentModeReady: true,
+          consentModeValues:
+            typeof win.googlefc?.getGoogleConsentModeValues === 'function'
+              ? win.googlefc.getGoogleConsentModeValues()
+              : null,
+          updatedAt: new Date().toISOString(),
+        });
+      },
+    });
+    consentModeCallbackRegistered = true;
+  }
+}
+
 export function initCmpRuntime(options = {}) {
   const providerConfig = resolveCmpProviderConfig(options);
 
@@ -51,6 +86,7 @@ export function initCmpRuntime(options = {}) {
 
   if (providerConfig.id === 'google_privacy_messaging') {
     ensureGooglefcBootstrap(window);
+    registerGooglefcCallbacks(window);
   }
 
   initializedProviderId = providerConfig.id;
@@ -77,6 +113,25 @@ export function openCmpPrivacyOptions() {
     return true;
   }
 
+  if (Array.isArray(window.googlefc?.callbackQueue)) {
+    window.googlefc.callbackQueue.push({
+      CONSENT_API_READY: () => {
+        if (typeof window.googlefc?.showRevocationMessage === 'function') {
+          window.googlefc.showRevocationMessage();
+          writeRuntimeState({
+            revocationSupported: true,
+            lastPrivacyManagerOpenAt: new Date().toISOString(),
+          });
+        }
+      },
+    });
+    writeRuntimeState({
+      revocationRequested: true,
+      updatedAt: new Date().toISOString(),
+    });
+    return true;
+  }
+
   return false;
 }
 
@@ -90,6 +145,8 @@ export function getCmpRuntimeState() {
 
 export function resetCmpRuntimeForTests() {
   initializedProviderId = null;
+  consentApiCallbackRegistered = false;
+  consentModeCallbackRegistered = false;
   if (isBrowser()) {
     delete window[CMP_RUNTIME_KEY];
     delete window.googlefc;

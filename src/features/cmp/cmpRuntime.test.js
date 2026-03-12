@@ -28,6 +28,7 @@ describe('cmpRuntime', () => {
       managedConsent: true,
     });
     expect(Array.isArray(window.googlefc?.callbackQueue)).toBe(true);
+    expect(window.googlefc?.callbackQueue).toHaveLength(2);
     expect(getCmpRuntimeState()?.provider).toBe('google_privacy_messaging');
   });
 
@@ -44,5 +45,15 @@ describe('cmpRuntime', () => {
 
   it('returns false when no CMP privacy manager is available', () => {
     expect(openCmpPrivacyOptions()).toBe(false);
+  });
+
+  it('queues a revocation request when Googlefc exists but the API is not ready yet', () => {
+    window.googlefc = {
+      callbackQueue: [],
+    };
+
+    expect(openCmpPrivacyOptions()).toBe(true);
+    expect(window.googlefc.callbackQueue).toHaveLength(1);
+    expect(getCmpRuntimeState()?.revocationRequested).toBe(true);
   });
 });

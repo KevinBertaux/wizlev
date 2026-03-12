@@ -43,6 +43,38 @@ describe('adsRuntime', () => {
     expect(script?.src).toContain('client=ca-pub-1234567890');
   });
 
+  it('waits for CMP-managed consent mode before injecting AdSense', () => {
+    const googlefc = {
+      callbackQueue: [],
+      getGoogleConsentModeValues: () => ({
+        ad_storage: 'CONSENT_MODE_GRANTED',
+        analytics_storage: 'CONSENT_MODE_DENIED',
+        ad_user_data: 'CONSENT_MODE_GRANTED',
+        ad_personalization: 'CONSENT_MODE_GRANTED',
+      }),
+    };
+    window.googlefc = googlefc;
+
+    initAdsRuntime({
+      provider: 'adsense',
+      adsenseClient: 'ca-pub-1234567890',
+      managedConsent: true,
+    });
+
+    expect(document.querySelector('script[data-consent-category="ads"]')).toBeNull();
+    expect(googlefc.callbackQueue).toHaveLength(1);
+
+    googlefc.callbackQueue[0].CONSENT_MODE_DATA_READY();
+
+    const script = document.querySelector('script[data-consent-category="ads"]');
+    expect(script?.src).toContain('pagead2.googlesyndication.com/pagead/js/adsbygoogle.js');
+    expect(getAdsRuntimeState()).toMatchObject({
+      source: 'cmp',
+      adsAllowed: true,
+      analyticsAllowed: false,
+    });
+  });
+
   it('syncs Google Consent Mode compatible state and updates gtag when available', () => {
     const gtag = vi.fn();
 

@@ -9,12 +9,14 @@ const route = reactive({
   fullPath: '/',
 });
 
-const { initMock, initCmpRuntimeMock, initAdsRuntimeMock, syncAdsConsentMock } = vi.hoisted(() => ({
+const { initMock, initCmpRuntimeMock, initAdsRuntimeMock, isCmpManagedConsentEnabledMock, syncAdsConsentMock } =
+  vi.hoisted(() => ({
   initMock: vi.fn(),
   initCmpRuntimeMock: vi.fn(),
   initAdsRuntimeMock: vi.fn(),
+  isCmpManagedConsentEnabledMock: vi.fn(() => false),
   syncAdsConsentMock: vi.fn(),
-}));
+  }));
 
 const selections = reactive({
   necessary: true,
@@ -46,6 +48,10 @@ vi.mock('@/features/cmp/cmpRuntime', () => ({
   initCmpRuntime: initCmpRuntimeMock,
 }));
 
+vi.mock('@/features/cmp/cmpConfig', () => ({
+  isCmpManagedConsentEnabled: () => isCmpManagedConsentEnabledMock(),
+}));
+
 describe('App consent gating', () => {
   beforeEach(() => {
     route.path = '/';
@@ -53,6 +59,8 @@ describe('App consent gating', () => {
     initMock.mockClear();
     initCmpRuntimeMock.mockClear();
     initAdsRuntimeMock.mockClear();
+    isCmpManagedConsentEnabledMock.mockReset();
+    isCmpManagedConsentEnabledMock.mockReturnValue(false);
     syncAdsConsentMock.mockClear();
     selections.necessary = true;
     selections.analytics = false;
@@ -74,7 +82,7 @@ describe('App consent gating', () => {
 
     expect(initMock).toHaveBeenCalledTimes(1);
     expect(initCmpRuntimeMock).toHaveBeenCalledTimes(1);
-    expect(initAdsRuntimeMock).toHaveBeenCalledTimes(1);
+    expect(initAdsRuntimeMock).toHaveBeenCalledWith({ managedConsent: false });
     expect(syncAdsConsentMock).toHaveBeenCalledWith(selections);
     expect(wrapper.find('[data-test="study-ads-shell"]').exists()).toBe(true);
     expect(wrapper.text()).toContain('Informations');
@@ -168,9 +176,32 @@ describe('App consent gating', () => {
 
     expect(initMock).not.toHaveBeenCalled();
     expect(initCmpRuntimeMock).not.toHaveBeenCalled();
-    expect(initAdsRuntimeMock).toHaveBeenCalled();
+    expect(initAdsRuntimeMock).toHaveBeenCalledWith({ managedConsent: false });
     expect(syncAdsConsentMock).toHaveBeenCalledWith(selections);
     expect(wrapper.find('[data-test="study-ads-shell"]').exists()).toBe(true);
     expect(wrapper.find('footer').classes()).toContain('site-footer--study-ads');
+  });
+
+  it('hides the local consent UI and skips local consent store init when CMP managed consent is enabled', () => {
+    isCmpManagedConsentEnabledMock.mockReturnValue(true);
+
+    const wrapper = shallowMount(App, {
+      global: {
+        stubs: {
+          RouterLink: RouterLinkStub,
+          RouterView: true,
+          ConsentBanner: true,
+          ConsentPreferencesPanel: true,
+          StudyAdsShell: { name: 'StudyAdsShell', template: '<div data-test="study-ads-shell"><slot /></div>' },
+        },
+      },
+    });
+
+    expect(initCmpRuntimeMock).toHaveBeenCalledTimes(1);
+    expect(initMock).not.toHaveBeenCalled();
+    expect(initAdsRuntimeMock).toHaveBeenCalledWith({ managedConsent: true });
+    expect(syncAdsConsentMock).not.toHaveBeenCalled();
+    expect(wrapper.findComponent({ name: 'ConsentBanner' }).exists()).toBe(false);
+    expect(wrapper.findComponent({ name: 'ConsentPreferencesPanel' }).exists()).toBe(false);
   });
 });
