@@ -70,7 +70,7 @@ function okJson(payload) {
 
 describe('symmetryShapeStore remote hydration', () => {
   it('returns disabled when remote base URL is empty', async () => {
-    vi.stubEnv('VITE_MATH_REMOTE_BASE_URL', '');
+    vi.stubEnv('VITE_SYMMETRY_REMOTE_BASE_URL', '');
 
     const { hydrateRemoteSymmetryShapesConfig } = await loadSymmetryModule();
     const result = await hydrateRemoteSymmetryShapesConfig();
@@ -84,13 +84,36 @@ describe('symmetryShapeStore remote hydration', () => {
   });
 
   it('hydrates remote symmetry shapes config from R2-style URL', async () => {
-    vi.stubEnv('VITE_MATH_REMOTE_BASE_URL', 'https://example.test');
-    vi.stubEnv('VITE_MATH_REMOTE_FOLDER', 'math');
-    vi.stubEnv('VITE_MATH_REMOTE_CONFIG_FILE', 'symmetry-shapes.v1.json');
+    vi.stubEnv('VITE_SYMMETRY_REMOTE_BASE_URL', 'https://example.test');
+    vi.stubEnv('VITE_SYMMETRY_REMOTE_FOLDER', 'math/symmetry');
+    vi.stubEnv('VITE_SYMMETRY_REMOTE_CONFIG_KEY', 'symmetryShapesV1');
+    vi.stubEnv('VITE_SYMMETRY_REMOTE_CONFIG_FILE', 'symmetry-shapes.v1.json');
 
     const fetchMock = vi.fn(async (url) => {
       const asText = String(url);
-      if (asText.endsWith('/math/symmetry-shapes.v1.json')) {
+      if (asText.endsWith('/math/symmetry/manifest.json')) {
+        return okJson({
+          configs: [{ key: 'symmetryShapesV1', file: 'symmetry-remote.json' }],
+        });
+      }
+      if (asText.endsWith('/math/symmetry/symmetry-remote.json')) {
+        return okJson({
+          version: 'v1',
+          gridSize: 5,
+          axes: ['vertical'],
+          shapes: [
+            {
+              id: 'remote-shape-01',
+              points: [
+                { x: 0, y: 0 },
+                { x: 1, y: 1 },
+                { x: 0, y: 2 },
+              ],
+            },
+          ],
+        });
+      }
+      if (asText.endsWith('/math/symmetry/symmetry-shapes.v1.json')) {
         return okJson({
           version: 'v1',
           gridSize: 5,
@@ -128,10 +151,14 @@ describe('symmetryShapeStore remote hydration', () => {
     expect(config.axes).toEqual(['vertical']);
     expect(config.shapes).toHaveLength(1);
     expect(config.shapes[0].id).toBe('remote-shape-01');
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://example.test/math/symmetry/manifest.json',
+      expect.any(Object)
+    );
   });
 
   it('falls back to local shapes when remote payload does not provide usable ones', async () => {
-    vi.stubEnv('VITE_MATH_REMOTE_BASE_URL', 'https://example.test');
+    vi.stubEnv('VITE_SYMMETRY_REMOTE_BASE_URL', 'https://example.test');
 
     const fetchMock = vi.fn(async () =>
       okJson({
@@ -163,7 +190,7 @@ describe('symmetryShapeStore remote hydration', () => {
   });
 
   it('hydrates only once and keeps local override on top of remote base', async () => {
-    vi.stubEnv('VITE_MATH_REMOTE_BASE_URL', 'https://example.test');
+    vi.stubEnv('VITE_SYMMETRY_REMOTE_BASE_URL', 'https://example.test');
 
     const fetchMock = vi.fn(async () =>
       okJson({
@@ -226,7 +253,7 @@ describe('symmetryShapeStore remote hydration', () => {
       updated: 0,
       skipped: 0,
     });
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
 
     const active = getActiveSymmetryShapesConfig();
     expect(active.axes).toEqual(['horizontal']);

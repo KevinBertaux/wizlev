@@ -3,6 +3,7 @@ import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { createSymmetryQuestionBag, evaluateSymmetryAnswer } from '@/features/math/symmetryEngine';
 import { hydrateRemoteSymmetryShapesConfig } from '@/features/math/symmetryShapeStore';
 import MotivationToast from '@/components/MotivationToast.vue';
+import RemoteContentLoading from '@/components/RemoteContentLoading.vue';
 import QuizActions from '@/components/QuizActions.vue';
 import QuizFeedbackBanner from '@/components/QuizFeedbackBanner.vue';
 import QuizScoreBar from '@/components/QuizScoreBar.vue';
@@ -259,7 +260,11 @@ onUnmounted(() => {
   <section class="page-block quiz-module symmetry-page">
     <h1>Math - Symétrie</h1>
 
-    <p v-if="!isReady || !currentQuestion" class="hint">Chargement des formes…</p>
+    <RemoteContentLoading
+      v-if="!isReady || !currentQuestion"
+      title="Préparation de la session"
+      message="Chargement des formes de symétrie…"
+    />
 
     <template v-else>
     <QuizScoreBar

@@ -1,0 +1,9 @@
+{
+  "version": "2026-03-13.1",
+  "configs": [
+    {
+      "key": "symmetryShapesV1",
+      "file": "symmetry-shapes.v1.json"
+    }
+  ]
+}

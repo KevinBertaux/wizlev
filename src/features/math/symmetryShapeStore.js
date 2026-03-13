@@ -6,8 +6,10 @@ const DEFAULT_GRID_SIZE = 5;
 const DEFAULT_AXES = ['vertical', 'horizontal'];
 const VALID_AXES = new Set(DEFAULT_AXES);
 const REMOTE_TIMEOUT_MS = 3500;
-const DEFAULT_REMOTE_FOLDER = 'math';
+const DEFAULT_REMOTE_FOLDER = 'math/symmetry';
 const DEFAULT_REMOTE_FILE = 'symmetry-shapes.v1.json';
+const DEFAULT_REMOTE_MANIFEST_FILE = 'manifest.json';
+const DEFAULT_REMOTE_CONFIG_KEY = 'symmetryShapesV1';
 
 let runtimeBaseShapesConfig = sanitizeWithFallback(baseShapesConfig, baseShapesConfig);
 let remoteHydrated = false;
@@ -163,16 +165,20 @@ function getEnvValue(key, fallback = '') {
 }
 
 function getRemoteBaseUrl() {
-  const env = getEnvValue('VITE_MATH_REMOTE_BASE_URL', '');
+  const env = getEnvValue('VITE_SYMMETRY_REMOTE_BASE_URL', '');
   return env ? env.replace(/\/$/, '') : '';
 }
 
 function getRemoteFolder() {
-  return getEnvValue('VITE_MATH_REMOTE_FOLDER', DEFAULT_REMOTE_FOLDER).replace(/^\/+|\/+$/g, '');
+  return getEnvValue('VITE_SYMMETRY_REMOTE_FOLDER', DEFAULT_REMOTE_FOLDER).replace(/^\/+|\/+$/g, '');
 }
 
 function getRemoteConfigFile() {
-  return getEnvValue('VITE_MATH_REMOTE_CONFIG_FILE', DEFAULT_REMOTE_FILE).replace(/^\/+/, '');
+  return getEnvValue('VITE_SYMMETRY_REMOTE_CONFIG_FILE', DEFAULT_REMOTE_FILE).replace(/^\/+/, '');
+}
+
+function getRemoteConfigKey() {
+  return getEnvValue('VITE_SYMMETRY_REMOTE_CONFIG_KEY', DEFAULT_REMOTE_CONFIG_KEY);
 }
 
 async function fetchJsonWithTimeout(url, timeoutMs = REMOTE_TIMEOUT_MS) {
@@ -198,6 +204,43 @@ async function fetchJsonWithTimeout(url, timeoutMs = REMOTE_TIMEOUT_MS) {
   }
 }
 
+function normalizeRemoteManifestEntry(entry) {
+  if (!entry || typeof entry !== 'object') {
+    return null;
+  }
+
+  const key = typeof entry.key === 'string' ? entry.key.trim() : '';
+  const file = typeof entry.file === 'string' ? entry.file.trim() : '';
+  if (!key || !file) {
+    return null;
+  }
+
+  return { key, file };
+}
+
+function extractRemoteManifestEntries(payload) {
+  if (!payload || typeof payload !== 'object') {
+    return [];
+  }
+
+  const list = Array.isArray(payload)
+    ? payload
+    : Array.isArray(payload.configs)
+      ? payload.configs
+      : [];
+
+  return list.map(normalizeRemoteManifestEntry).filter(Boolean);
+}
+
+async function resolveRemoteConfigFile(baseUrl, remoteFolder, fallbackFile) {
+  const manifestUrl = `${baseUrl}/${remoteFolder}/${DEFAULT_REMOTE_MANIFEST_FILE}`;
+  const manifestPayload = await fetchJsonWithTimeout(manifestUrl);
+  const manifestEntries = extractRemoteManifestEntries(manifestPayload);
+  const configKey = getRemoteConfigKey();
+  const manifestEntry = manifestEntries.find((entry) => entry.key === configKey);
+  return manifestEntry?.file || fallbackFile;
+}
+
 export async function hydrateRemoteSymmetryShapesConfig() {
   if (remoteHydrated) {
     return { enabled: !!getRemoteBaseUrl(), loaded: 0, updated: 0, skipped: 0 };
@@ -215,7 +258,7 @@ export async function hydrateRemoteSymmetryShapesConfig() {
     }
 
     const remoteFolder = getRemoteFolder();
-    const remoteFile = getRemoteConfigFile();
+    const remoteFile = await resolveRemoteConfigFile(baseUrl, remoteFolder, getRemoteConfigFile());
     const remoteUrl = `${baseUrl}/${remoteFolder}/${remoteFile}`;
     const payload = await fetchJsonWithTimeout(remoteUrl);
 
