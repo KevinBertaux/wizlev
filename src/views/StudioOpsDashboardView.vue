@@ -29,6 +29,7 @@ import {
   resetSymmetryShapesOverride,
   saveSymmetryShapesOverride,
 } from '@/features/math/symmetryShapeStore';
+import { fetchBuildInfo } from '@/features/admin/buildInfoStore';
 import { getRoadmapEntries, ROADMAP_PRIORITY_ORDER } from '@/features/admin/roadmapStore';
 
 const router = useRouter();
@@ -39,6 +40,13 @@ const englishInputRefs = ref([]);
 const APP_VERSION = '0.5.0';
 const LAST_UPDATE_FR = '13 mars 2026';
 const RESET_CONFIRM_TEXT = 'SUPPRIMER';
+const buildInfo = ref(null);
+
+const buildVersionLabel = computed(() => buildInfo.value?.appVersion || APP_VERSION);
+const buildShaLabel = computed(() => buildInfo.value?.gitShortSha || 'indisponible');
+const buildBranchLabel = computed(() => buildInfo.value?.gitBranch || 'indisponible');
+const buildContextLabel = computed(() => buildInfo.value?.deployContext || 'local');
+const buildDateLabel = computed(() => formatDateTimeFr(buildInfo.value?.buildDate));
 
 const sidebarGroups = Object.freeze([
   {
@@ -823,6 +831,9 @@ function rollbackHistory(item) {
 }
 
 function formatDateTimeFr(isoString) {
+  if (!isoString) {
+    return 'indisponible';
+  }
   const date = new Date(isoString);
   if (Number.isNaN(date.getTime())) {
     return isoString;
@@ -841,6 +852,11 @@ function formatDateFr(isoString) {
   return date.toLocaleDateString('fr-FR');
 }
 
+async function loadBuildInfo() {
+  buildInfo.value = await fetchBuildInfo();
+}
+
+loadBuildInfo();
 refreshSymmetryDraft();
 refreshMaintenanceData();
 refreshDashboardMetrics();
@@ -982,6 +998,23 @@ refreshDashboardMetrics();
               <p class="stat-value">{{ dashboardMetrics.storageKeyCount }}</p>
             </article>
           </div>
+
+          <article class="admin-card">
+            <h2>Build déployé</h2>
+            <p class="meta-line">Version : {{ buildVersionLabel }}</p>
+            <p class="meta-line">Commit : <code>{{ buildShaLabel }}</code></p>
+            <p class="meta-line">Branche : <code>{{ buildBranchLabel }}</code></p>
+            <p class="meta-line">Contexte : {{ buildContextLabel }}</p>
+            <p class="meta-line">Construit le : {{ buildDateLabel }}</p>
+            <p v-if="buildInfo?.deployUrl" class="meta-line">
+              URL de déploiement :
+              <a :href="buildInfo.deployUrl" target="_blank" rel="noreferrer">{{ buildInfo.deployUrl }}</a>
+            </p>
+            <p class="meta-line">
+              Fichier public :
+              <a href="/build-info.json" target="_blank" rel="noreferrer">/build-info.json</a>
+            </p>
+          </article>
         </section>
 
         <section v-else-if="selectedSection === 'roadmap'" class="grid gap-3 p-3 md:px-4 md:pt-3 md:pb-4">
@@ -1320,4 +1353,3 @@ refreshDashboardMetrics();
 </template>
 
 <style scoped src="../styles/admin-dashboard.css"></style>
-
