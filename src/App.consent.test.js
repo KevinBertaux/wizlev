@@ -5,9 +5,16 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import App from './App.vue';
 
 const route = reactive({
+  name: 'home',
   path: '/',
   fullPath: '/',
 });
+
+function setRoute(name, path) {
+  route.name = name;
+  route.path = path;
+  route.fullPath = path;
+}
 
 const { initMock, initCmpRuntimeMock, initAdsRuntimeMock, isCmpManagedConsentEnabledMock, syncAdsConsentMock } =
   vi.hoisted(() => ({
@@ -54,8 +61,7 @@ vi.mock('@/features/cmp/cmpConfig', () => ({
 
 describe('App consent gating', () => {
   beforeEach(() => {
-    route.path = '/';
-    route.fullPath = '/';
+    setRoute('home', '/');
     initMock.mockClear();
     initCmpRuntimeMock.mockClear();
     initAdsRuntimeMock.mockClear();
@@ -92,8 +98,7 @@ describe('App consent gating', () => {
   });
 
   it('hides consent UI and does not initialize consent on studio ops routes', () => {
-    route.path = '/-/studio-ops/panel';
-    route.fullPath = '/-/studio-ops/panel';
+    setRoute('studio-ops-panel', '/-/studio-ops/panel');
 
     const wrapper = shallowMount(App, {
       global: {
@@ -117,8 +122,7 @@ describe('App consent gating', () => {
   });
 
   it('initializes consent without ads when navigating from studio ops to a legal route', async () => {
-    route.path = '/-/studio-ops/panel';
-    route.fullPath = '/-/studio-ops/panel';
+    setRoute('studio-ops-panel', '/-/studio-ops/panel');
 
     const wrapper = shallowMount(App, {
       global: {
@@ -136,8 +140,7 @@ describe('App consent gating', () => {
     initCmpRuntimeMock.mockClear();
     initAdsRuntimeMock.mockClear();
     syncAdsConsentMock.mockClear();
-    route.path = '/legal/cookie-policy';
-    route.fullPath = '/legal/cookie-policy';
+    setRoute('legal-cookies', '/legal/cookie-policy');
     await nextTick();
 
     expect(initMock).toHaveBeenCalled();
@@ -151,8 +154,7 @@ describe('App consent gating', () => {
   });
 
   it('initializes ads runtime when navigating from legal to a study route', async () => {
-    route.path = '/legal/cookie-policy';
-    route.fullPath = '/legal/cookie-policy';
+    setRoute('legal-cookies', '/legal/cookie-policy');
 
     const wrapper = shallowMount(App, {
       global: {
@@ -170,8 +172,7 @@ describe('App consent gating', () => {
     initCmpRuntimeMock.mockClear();
     initAdsRuntimeMock.mockClear();
     syncAdsConsentMock.mockClear();
-    route.path = '/math';
-    route.fullPath = '/math';
+    setRoute('math-hub', '/math');
     await nextTick();
 
     expect(initMock).not.toHaveBeenCalled();
@@ -206,8 +207,7 @@ describe('App consent gating', () => {
   });
 
   it('initializes the managed ads runtime on a public legal route when CMP managed consent is enabled', () => {
-    route.path = '/legal/cookie-policy';
-    route.fullPath = '/legal/cookie-policy';
+    setRoute('legal-cookies', '/legal/cookie-policy');
     isCmpManagedConsentEnabledMock.mockReturnValue(true);
 
     const wrapper = shallowMount(App, {

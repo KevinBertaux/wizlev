@@ -12,12 +12,24 @@ export function shouldShowAdPlaceholders({
   return Boolean(isDev || mode === 'test' || forcePlaceholders);
 }
 
-export function isAdSlotVisible(slot, options = {}) {
+export function isAdSlotAllowedForRoute(slot, routeName) {
   if (!slot) {
     return false;
   }
 
-  if (slot.enabled) {
+  if (!Array.isArray(slot.routeNames) || slot.routeNames.length === 0) {
+    return true;
+  }
+
+  return slot.routeNames.includes(routeName);
+}
+
+export function isAdSlotVisible(slot, { routeName, providerEnabled = true, ...options } = {}) {
+  if (!slot || !isAdSlotAllowedForRoute(slot, routeName)) {
+    return false;
+  }
+
+  if (slot.enabled && providerEnabled) {
     return true;
   }
 
@@ -34,9 +46,9 @@ export function getEnabledAdSlots() {
 }
 
 export function getAdSlotsByRoute(routeName) {
-  return getAdSlots().filter((slot) => slot.routeName === routeName);
+  return getAdSlots().filter((slot) => isAdSlotAllowedForRoute(slot, routeName));
 }
 
-export function hasVisibleAdSlots(options = {}) {
-  return getAdSlots().some((slot) => isAdSlotVisible(slot, options));
+export function hasVisibleAdSlotsForRoute(routeName, options = {}) {
+  return getAdSlotsByRoute(routeName).some((slot) => isAdSlotVisible(slot, { routeName, ...options }));
 }

@@ -6,7 +6,8 @@ import ConsentBanner from "@/components/ConsentBanner.vue";
 import ConsentPreferencesPanel from "@/components/ConsentPreferencesPanel.vue";
 import StudyAdsShell from "@/components/StudyAdsShell.vue";
 import { initAdsRuntime, syncAdsConsent } from "@/features/ads/adsRuntime";
-import { hasVisibleAdSlots } from "@/features/ads/adsSlots";
+import { resolveAdsProviderConfig } from "@/features/ads/adsConfig";
+import { hasVisibleAdSlotsForRoute } from "@/features/ads/adsSlots";
 import { isCmpManagedConsentEnabled } from "@/features/cmp/cmpConfig";
 import { initCmpRuntime } from "@/features/cmp/cmpRuntime";
 import { useConsentStore } from "@/features/consent/useConsentStore";
@@ -23,10 +24,14 @@ const isAdminPanelRoute = computed(() => route.path.startsWith("/-/studio-ops/pa
 const isStudioOpsRoute = computed(() => route.path.startsWith("/-/studio-ops"));
 const cmpManagedConsentEnabled = computed(() => isCmpManagedConsentEnabled());
 const showConsentUi = computed(() => !isStudioOpsRoute.value && !cmpManagedConsentEnabled.value);
+const adsProviderEnabled = computed(() => resolveAdsProviderConfig().enabled);
 const isStudyRoute = computed(
   () => route.path === "/" || route.path.startsWith("/math") || route.path.startsWith("/languages")
 );
-const showStudyAdsShell = computed(() => isStudyRoute.value && hasVisibleAdSlots());
+const currentRouteName = computed(() => String(route.name || ""));
+const showStudyAdsShell = computed(
+  () => isStudyRoute.value && hasVisibleAdSlotsForRoute(currentRouteName.value, { providerEnabled: adsProviderEnabled.value })
+);
 const shouldEnableCmpRuntime = computed(() => !isStudioOpsRoute.value);
 const shouldEnableAdsRuntime = computed(
   () => shouldEnableCmpRuntime.value && (isStudyRoute.value || cmpManagedConsentEnabled.value)
