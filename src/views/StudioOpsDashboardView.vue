@@ -36,7 +36,7 @@ const selectedList = ref('');
 const statusType = ref('');
 const statusMessage = ref('');
 const englishInputRefs = ref([]);
-const APP_VERSION = '0.5.0-prep';
+const APP_VERSION = '0.5.0';
 const LAST_UPDATE_FR = '13 mars 2026';
 const RESET_CONFIRM_TEXT = 'SUPPRIMER';
 
@@ -1320,5 +1320,4 @@ refreshDashboardMetrics();
 </template>
 
 <style scoped src="../styles/admin-dashboard.css"></style>
-
 

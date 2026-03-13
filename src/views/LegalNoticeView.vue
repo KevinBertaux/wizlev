@@ -6,7 +6,7 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
   <LegalPageLayout title="Mentions légales" updated-at="13 mars 2026">
     <h2>Version du service</h2>
     <p>
-      Version en cours : <strong>0.5.0-prep</strong><br />
+      Version en cours : <strong>0.5.0</strong><br />
       Dernière révision éditoriale : 13 mars 2026
     </p>
 
