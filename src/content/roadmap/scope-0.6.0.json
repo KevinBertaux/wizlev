@@ -42,11 +42,35 @@
       "done": false
     },
     {
+      "id": "scope-060-ui-foundation-post-v4",
+      "priority": "Med",
+      "domain": "ui",
+      "feature": "design-system",
+      "label": "Refonte globale post-Tailwind v4: CSS/UI/UX + design system + harmonisation complète des breakpoints (mobile/tablette/desktop)",
+      "done": false
+    },
+    {
       "id": "scope-060-r2-secure",
       "priority": "High",
       "domain": "infra",
       "feature": "content-storage",
       "label": "Cloudflare R2 V2: acces securise (URL signees/Worker) + controle d integrite",
+      "done": false
+    },
+    {
+      "id": "scope-060-course-arts-plastiques",
+      "priority": "Med",
+      "domain": "ui",
+      "feature": "cours",
+      "label": "Ajouter la catégorie de cours Arts plastiques (Dessin) dans l'architecture et l'accueil",
+      "done": false
+    },
+    {
+      "id": "scope-060-drop-legacy-vocab-keys",
+      "priority": "Med",
+      "domain": "tech",
+      "feature": "nettoyage-legacy",
+      "label": "Retirer la compatibilité legacy localStorage manabuplay_vocab_* (fin de migration 0.5)",
       "done": false
     }
   ]

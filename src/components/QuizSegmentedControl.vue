@@ -28,7 +28,12 @@ function onSelect(value) {
 <template>
   <div class="segmented-field">
     <p v-if="label" class="segmented-label">{{ label }}</p>
-    <div class="segmented-control" role="radiogroup" :aria-label="ariaLabel || label">
+    <div
+      class="segmented-control"
+      role="radiogroup"
+      :aria-label="ariaLabel || label"
+      :style="{ gridTemplateColumns: `repeat(${Math.max(1, options.length)}, minmax(0, 1fr))` }"
+    >
       <button
         v-for="option in options"
         :key="option.value"
@@ -56,7 +61,7 @@ function onSelect(value) {
 }
 
 .segmented-control {
-  display: flex;
+  display: grid;
   border: 1px solid #9bb9d3;
   border-radius: 12px;
   overflow: hidden;
@@ -72,6 +77,7 @@ function onSelect(value) {
   padding: 10px 10px;
   min-height: 44px;
   width: 100%;
+  min-width: 0;
   cursor: pointer;
   transition: background-color 0.18s ease, color 0.18s ease;
 }

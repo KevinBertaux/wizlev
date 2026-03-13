@@ -1,55 +1,75 @@
-# Checklist Release Hebdo (quota Netlify contraint)
+# Checklist Release - ManabuPlay
 
-Objectif: limiter a **1 deploy production par semaine** jusqu'au reset quota.
+Document opérationnel de sortie. Il sert à décider si une branche produit peut passer vers `main`, puis être déployée.
 
-## Regles
+## Périmètre
 
-- Pas de deploy production hors fenetre hebdomadaire validee.
-- Les merges `feature/*` se font vers `feat/0.5.0-prep`.
-- La branche `main` ne recoit que des merges de release valides.
+- branche produit cible : `feat/0.5.0-prep`
+- branche de publication : `main`
+- la ligne monétisation (`epic/ads-cmp`) suit son propre cycle et ne bloque pas la release produit
 
-## Pre-check local (obligatoire)
+## 1. Go / No-Go release
+
+### Produit
+
+- [ ] version cible confirmée
+- [ ] périmètre de release figé
+- [ ] aucune régression critique ouverte
+- [ ] notes de version prêtes
+
+### Technique
 
 - [ ] `npm install` OK
+- [ ] `npm run check:breakpoints` OK
+- [ ] `npm run check:spacing` OK
 - [ ] `npm test` OK
 - [ ] `npm run test:e2e` OK
-- [ ] Matrix E2E OK (`desktop-chromium`, `desktop-firefox`, `desktop-webkit`, `mobile-chrome`, `mobile-safari`)
-- [ ] Tests accessibilite automatiques (axe-core) OK
-- [ ] Workflow GitHub `QA Visual Regression` (mode `check`) vert sur la branche de release
-- [ ] `npm test -- --coverage` OK (seuils Vitest respectes)
+- [ ] `npm test -- --coverage` OK
 - [ ] `npm run build` OK
-- [ ] `npm run lighthouse:ci` OK (en local Windows: tolérance bug EPERM cleanup, CI Linux reste bloquante)
-- [ ] Verification routes publiques: `/`, `/math`, `/math/multiplications`, `/math/symmetry`, `/languages`, `/languages/english`, `/legal/legal-notice`, `/legal/privacy-policy`, `/legal/terms-of-use`
-- [ ] Verification acces zone interne via URL privee `/-/studio-ops`
-- [ ] Verification menu public: aucun acces admin visible
-- [ ] Verification favicon/logo/header
 
-## Go/No-Go contenu
+### CI
 
-- [ ] Version cible confirmee (ex: `0.5.0`)
-- [ ] Notes de version courtes preparees
-- [ ] Aucun secret commite (`.env` local uniquement)
-- [ ] Mentions legales/confidentialite coherentes avec le comportement reel
-- [ ] Aucune regression critique ouverte
-- [ ] Règle ratchet only respectee (aucune baisse de couverture/seuils sans decision explicite)
+- [ ] workflow release vert sur la branche cible
+- [ ] matrix E2E verte
+- [ ] QA Visual Regression vérifiée si le lot la concerne
+- [ ] aucun écart de seuil coverage non validé
 
-## Check Netlify avant publication
+### Conformité documentaire
 
-- [ ] Branche de publication confirmee (`main`)
-- [ ] Variables d'environnement production verifiees
-- [ ] Build preview valide (si budget deploy disponible)
-- [ ] Budget deploy encore suffisant
+- [ ] `README.md` cohérent avec l’état réel du projet
+- [ ] hubs `docs/README.fr.md` et `docs/README.en.md` cohérents
+- [ ] `ROADMAP.md` cohérent avec les sources JSON
+- [ ] pages légales cohérentes avec le comportement réel
 
-## Publication
+## 2. Pré-checks de publication
 
-- [ ] Merge `feat/0.5.0-prep` -> `main`
-- [ ] Push final sur `main`
-- [ ] Deploy Netlify lance et termine avec succes
-- [ ] Verification post-deploy sur URL publique
+- [ ] branche de publication confirmée : `main`
+- [ ] quota Netlify vérifié juste avant le déploiement
+- [ ] crédit disponible >= `15.0`
+- [ ] site Netlify non suspendu
+- [ ] variables d’environnement de production vérifiées
 
-## Post-release
+Si un de ces points est faux : **NO-GO déploiement**.
 
-- [ ] Tag Git cree (ex: `v0.5.0`)
-- [ ] `ROADMAP.md` mis a jour
-- [ ] Prochaine fenetre hebdo planifiee
-- [ ] QA manuelle ciblee confirmee sur vrais appareils (iPhone/Android + TTS)
+## 3. Publication
+
+- [ ] merge `feat/0.5.0-prep` -> `main`
+- [ ] push final sur `main`
+- [ ] déploiement Netlify lancé
+- [ ] déploiement Netlify terminé avec succès
+
+## 4. Vérifications post-déploiement
+
+- [ ] accueil accessible
+- [ ] hubs Math et Langues accessibles
+- [ ] modules publics critiques accessibles et fonctionnels
+- [ ] pages légales accessibles
+- [ ] favicon / logo / assets critiques OK
+- [ ] `ads.txt` accessible si présent dans la release
+- [ ] meta site-level attendue présente si concernée
+
+## 5. Post-release
+
+- [ ] tag Git créé
+- [ ] notes de version archivées / validées
+- [ ] prochaine branche produit planifiée si besoin

@@ -1,38 +1,39 @@
 <script setup>
-import { computed, ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
-import { ROUTE_NAMES } from '@/router/routes';
+import { computed, ref, watch } from "vue";
+import { useRoute } from "vue-router";
+import { ROUTE_NAMES } from "@/router/routes";
 
 const navOpen = ref(false);
-const openGroup = ref('');
+const openGroup = ref("");
 const route = useRoute();
 
-const isMathRoute = computed(() => route.path.startsWith('/math'));
-const isLangRoute = computed(() => route.path.startsWith('/languages'));
-const isAdminPanelRoute = computed(() => route.path.startsWith('/-/studio-ops/panel'));
+const isMathRoute = computed(() => route.path.startsWith("/math"));
+const isLangRoute = computed(() => route.path.startsWith("/languages"));
+const isLegalRoute = computed(() => route.path.startsWith("/legal"));
+const isAdminPanelRoute = computed(() => route.path.startsWith("/-/studio-ops/panel"));
 
 watch(
   () => route.fullPath,
   () => {
     navOpen.value = false;
-    openGroup.value = '';
+    openGroup.value = "";
   }
 );
 
 function toggleMenu() {
   navOpen.value = !navOpen.value;
   if (!navOpen.value) {
-    openGroup.value = '';
+    openGroup.value = "";
   }
 }
 
 function toggleGroup(groupName) {
-  openGroup.value = openGroup.value === groupName ? '' : groupName;
+  openGroup.value = openGroup.value === groupName ? "" : groupName;
 }
 
 function closeNav() {
   navOpen.value = false;
-  openGroup.value = '';
+  openGroup.value = "";
 }
 </script>
 
@@ -51,7 +52,7 @@ function closeNav() {
         aria-label="Ouvrir le menu"
         @click="toggleMenu"
       >
-        ☰
+        &#9776;
       </button>
 
       <nav id="main-nav" class="main-nav" :class="{ open: navOpen }">
@@ -66,15 +67,15 @@ function closeNav() {
             Math
           </button>
           <div class="submenu">
-            <router-link class="submenu-link" :to="{ name: ROUTE_NAMES.MATH_HUB }" @click="closeNav"
-              >Mathématiques</router-link
-            >
-            <router-link class="submenu-link" :to="{ name: ROUTE_NAMES.MATH_MULTIPLICATIONS }" @click="closeNav"
-              >Multiplications</router-link
-            >
-            <router-link class="submenu-link" :to="{ name: ROUTE_NAMES.MATH_SYMMETRY }" @click="closeNav"
-              >Symétrie</router-link
-            >
+            <router-link class="submenu-link" :to="{ name: ROUTE_NAMES.MATH_HUB }" @click="closeNav">
+              Mathématiques
+            </router-link>
+            <router-link class="submenu-link" :to="{ name: ROUTE_NAMES.MATH_MULTIPLICATIONS }" @click="closeNav">
+              Multiplications
+            </router-link>
+            <router-link class="submenu-link" :to="{ name: ROUTE_NAMES.MATH_SYMMETRY }" @click="closeNav">
+              Symétrie
+            </router-link>
           </div>
         </div>
 
@@ -89,12 +90,38 @@ function closeNav() {
             Langues
           </button>
           <div class="submenu">
-            <router-link class="submenu-link" :to="{ name: ROUTE_NAMES.LANGUAGES_HUB }" @click="closeNav"
-              >Langues</router-link
-            >
-            <router-link class="submenu-link" :to="{ name: ROUTE_NAMES.LANGUAGES_ENGLISH }" @click="closeNav"
-              >Anglais</router-link
-            >
+            <router-link class="submenu-link" :to="{ name: ROUTE_NAMES.LANGUAGES_HUB }" @click="closeNav">
+              Langues
+            </router-link>
+            <router-link class="submenu-link" :to="{ name: ROUTE_NAMES.LANGUAGES_ENGLISH }" @click="closeNav">
+              Anglais
+            </router-link>
+          </div>
+        </div>
+
+        <div class="nav-group nav-group--legal" :class="{ open: openGroup === 'info' }">
+          <button
+            class="nav-trigger"
+            type="button"
+            :class="{ active: isLegalRoute }"
+            :aria-expanded="openGroup === 'info' ? 'true' : 'false'"
+            @click="toggleGroup('info')"
+          >
+            Informations
+          </button>
+          <div class="submenu">
+            <router-link class="submenu-link" :to="{ name: ROUTE_NAMES.LEGAL_NOTICE }" @click="closeNav">
+              Mentions légales
+            </router-link>
+            <router-link class="submenu-link" :to="{ name: ROUTE_NAMES.LEGAL_TERMS }" @click="closeNav">
+              CGU
+            </router-link>
+            <router-link class="submenu-link" :to="{ name: ROUTE_NAMES.LEGAL_PRIVACY }" @click="closeNav">
+              Politique de confidentialité
+            </router-link>
+            <router-link class="submenu-link" :to="{ name: ROUTE_NAMES.LEGAL_COOKIES }" @click="closeNav">
+              Cookies
+            </router-link>
           </div>
         </div>
       </nav>
@@ -109,6 +136,7 @@ function closeNav() {
         <router-link :to="{ name: ROUTE_NAMES.LEGAL_NOTICE }">Mentions légales</router-link>
         <router-link :to="{ name: ROUTE_NAMES.LEGAL_TERMS }">CGU</router-link>
         <router-link :to="{ name: ROUTE_NAMES.LEGAL_PRIVACY }">Politique de confidentialité</router-link>
+        <router-link :to="{ name: ROUTE_NAMES.LEGAL_COOKIES }">Cookies</router-link>
       </div>
     </footer>
   </div>

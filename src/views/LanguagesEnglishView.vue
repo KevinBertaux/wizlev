@@ -4,8 +4,6 @@ import QuizEmptyState from '@/components/QuizEmptyState.vue';
 import QuizSelectField from '@/components/QuizSelectField.vue';
 import { getEnglishList, hydrateRemoteEnglishLists, listEnglishOptions } from '@/features/languages/englishLists';
 
-const ttsAccentStorageKey = 'manabuplay_tts_accent';
-const ttsRateStorageKey = 'manabuplay_tts_rate';
 const cardDirectionStorageKey = 'manabuplay_english_card_direction';
 const legacyCardDirectionStorageKey = 'manabuplay_vocab_card_direction';
 const ttsSupported =
@@ -13,20 +11,19 @@ const ttsSupported =
   'speechSynthesis' in window &&
   'SpeechSynthesisUtterance' in window;
 
-const ttsRateValues = ['0.85', '1', '1.15'];
-const ttsRateLabels = ['0.85x', '1x', '1.15x'];
+const ttsPlaybackRates = [0.9, 0.6];
 
 const selectedList = ref('');
 const words = ref([]);
 const currentIndex = ref(0);
 const isFlipped = ref(false);
 
-const ttsAccent = ref('en-US');
-const ttsRate = ref('1');
 const cardDirection = ref('en-first');
+const ttsNextRateIndex = ref(0);
 const ttsVoices = ref([]);
 const isSpeaking = ref(false);
 const ttsStatus = ref('');
+const transitionDirection = ref('next');
 
 let currentUtterance = null;
 let voicesChangedHandler = null;
@@ -53,17 +50,9 @@ const listSelectOptions = computed(() =>
   }))
 );
 
-const ttsRateIndex = computed({
-  get() {
-    const idx = ttsRateValues.indexOf(ttsRate.value);
-    return idx >= 0 ? idx : 1;
-  },
-  set(indexValue) {
-    const clamped = Math.max(0, Math.min(2, Number(indexValue) || 0));
-    ttsRate.value = ttsRateValues[clamped];
-  },
-});
-const ttsRateLabel = computed(() => ttsRateLabels[ttsRateIndex.value]);
+const cardTransitionName = computed(() =>
+  transitionDirection.value === 'previous' ? 'card-shared-prev' : 'card-shared-next'
+);
 
 const currentWord = computed(() => words.value[currentIndex.value] || null);
 const cardNumber = computed(() => (words.value.length ? currentIndex.value + 1 : 0));
@@ -95,6 +84,7 @@ function loadList(listKey) {
     words.value = [];
     currentIndex.value = 0;
     isFlipped.value = false;
+    ttsNextRateIndex.value = 0;
     return;
   }
 
@@ -103,6 +93,7 @@ function loadList(listKey) {
     words.value = [];
     currentIndex.value = 0;
     isFlipped.value = false;
+    ttsNextRateIndex.value = 0;
     return;
   }
 
@@ -110,6 +101,7 @@ function loadList(listKey) {
   words.value = cloneWords(list.words);
   currentIndex.value = 0;
   isFlipped.value = false;
+  ttsNextRateIndex.value = 0;
 }
 
 function showCard(index) {
@@ -122,12 +114,14 @@ function showCard(index) {
   stopSpeech();
   currentIndex.value = index;
   isFlipped.value = false;
+  ttsNextRateIndex.value = 0;
 }
 
 function nextCard() {
   if (!words.value.length) {
     return;
   }
+  transitionDirection.value = 'next';
   const nextIndex = (currentIndex.value + 1) % words.value.length;
   showCard(nextIndex);
 }
@@ -136,6 +130,7 @@ function previousCard() {
   if (!words.value.length) {
     return;
   }
+  transitionDirection.value = 'previous';
   const previousIndex = (currentIndex.value - 1 + words.value.length) % words.value.length;
   showCard(previousIndex);
 }
@@ -146,6 +141,7 @@ function shuffleCards() {
   }
 
   stopSpeech();
+  transitionDirection.value = 'next';
   const shuffled = cloneWords(words.value);
   for (let i = shuffled.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -155,6 +151,7 @@ function shuffleCards() {
   words.value = shuffled;
   currentIndex.value = 0;
   isFlipped.value = false;
+  ttsNextRateIndex.value = 0;
 }
 
 function flipCard() {
@@ -204,7 +201,7 @@ function findBestVoice() {
     return null;
   }
 
-  const wanted = ttsAccent.value.toLowerCase();
+  const wanted = 'en-us';
   let voice = ttsVoices.value.find((item) => item.lang && item.lang.toLowerCase() === wanted);
   if (voice) {
     return voice;
@@ -243,8 +240,9 @@ function toggleSpeakWord() {
   }
 
   const utterance = new SpeechSynthesisUtterance(currentWord.value.english);
-  utterance.lang = ttsAccent.value;
-  utterance.rate = Number(ttsRate.value) || 1;
+  utterance.lang = 'en-US';
+  const currentRate = ttsPlaybackRates[ttsNextRateIndex.value] || 1;
+  utterance.rate = currentRate;
 
   const preferredVoice = findBestVoice();
   if (preferredVoice) {
@@ -278,6 +276,7 @@ function toggleSpeakWord() {
   currentUtterance = utterance;
   speechSynthesis.cancel();
   speechSynthesis.speak(utterance);
+  ttsNextRateIndex.value = (ttsNextRateIndex.value + 1) % ttsPlaybackRates.length;
 }
 
 function handleKeyboardNav(event) {
@@ -301,24 +300,6 @@ watch(selectedList, (newList) => {
   loadList(newList);
 });
 
-watch(ttsAccent, (accent) => {
-  if (accent !== 'en-US' && accent !== 'en-GB') {
-    return;
-  }
-  if (typeof window !== 'undefined') {
-    localStorage.setItem(ttsAccentStorageKey, accent);
-  }
-});
-
-watch(ttsRate, (rate) => {
-  if (!ttsRateValues.includes(rate)) {
-    return;
-  }
-  if (typeof window !== 'undefined') {
-    localStorage.setItem(ttsRateStorageKey, rate);
-  }
-});
-
 watch(cardDirection, (direction) => {
   if (direction !== 'en-first' && direction !== 'fr-first') {
     return;
@@ -332,15 +313,7 @@ watch(cardDirection, (direction) => {
 
 onMounted(async () => {
   if (typeof window !== 'undefined') {
-    const savedAccent = localStorage.getItem(ttsAccentStorageKey);
-    if (savedAccent === 'en-US' || savedAccent === 'en-GB') {
-      ttsAccent.value = savedAccent;
-    }
-
-    const savedRate = localStorage.getItem(ttsRateStorageKey);
-    if (savedRate && ttsRateValues.includes(savedRate)) {
-      ttsRate.value = savedRate;
-    }
+    localStorage.removeItem('manabuplay_tts_accent');
 
     const savedDirection =
       localStorage.getItem(cardDirectionStorageKey) ||
@@ -388,11 +361,11 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section class="page-block english-page">
+  <section class="page-block quiz-module">
     <h1>Vocabulaire anglais</h1>
 
     <div class="settings-box">
-      <div class="setting-list">
+      <div class="mb-3">
         <QuizSelectField
           v-model="selectedList"
           select-id="englishListSelect"
@@ -403,20 +376,7 @@ onUnmounted(() => {
         />
       </div>
 
-      <div class="settings-row">
-        <div class="setting-field setting-accent">
-          <label for="ttsAccentSelect">Accent :</label>
-          <select id="ttsAccentSelect" v-model="ttsAccent">
-            <option value="en-US">🇺🇸 Américain</option>
-            <option value="en-GB">🇬🇧 Britannique</option>
-          </select>
-        </div>
-
-        <div class="setting-field setting-rate">
-          <label for="ttsRateSlider">Vitesse de lecture : {{ ttsRateLabel }}</label>
-          <input id="ttsRateSlider" v-model.number="ttsRateIndex" type="range" min="0" max="2" step="1" />
-        </div>
-
+      <div class="grid grid-cols-1 items-start gap-3 md:grid-cols-[minmax(180px,_1fr)]">
         <div class="setting-field setting-direction">
           <label for="cardDirectionSelect">Sens :</label>
           <select id="cardDirectionSelect" v-model="cardDirection">
@@ -431,54 +391,52 @@ onUnmounted(() => {
 
     <template v-if="selectedList">
       <div class="flashcard-carousel">
-        <button
-          class="carousel-arrow"
-          type="button"
-          aria-label="Carte précédente"
-          @click="previousCard"
-        >
-          ❮
-        </button>
-
-        <div
-          class="flashcard"
-          :class="{ flipped: isFlipped }"
-          @click="flipCard"
-          @touchstart.passive="onTouchStart"
-          @touchend.passive="onTouchEnd"
-        >
-          <div class="flashcard-count">{{ cardNumber }}/{{ totalCards }}</div>
-
-          <div v-if="canPlayTts" class="tts-inline-control">
-            <div class="tts-inline-label">Écouter</div>
-            <button
-              class="tts-inline-btn"
-              type="button"
-              :aria-label="isSpeaking ? 'Arrêter la lecture' : 'Écouter le mot'"
-              @click.stop="toggleSpeakWord"
-            >
-              {{ isSpeaking ? '⏹️' : '▶️' }}
+        <Transition :name="cardTransitionName" mode="out-in">
+          <div
+            :key="`${selectedList}-${currentIndex}`"
+            class="flashcard"
+            :class="{ flipped: isFlipped }"
+            @click="flipCard"
+            @touchstart.passive="onTouchStart"
+            @touchend.passive="onTouchEnd"
+          >
+            <button class="carousel-rail carousel-rail-left" type="button" aria-label="Carte précédente" @click.stop="previousCard">
+              <span aria-hidden="true">❮</span>
             </button>
-          </div>
 
-          <div class="flashcard-content">
-            <div class="flashcard-word">{{ frontText }}</div>
-            <div class="flashcard-translation" :style="{ display: isFlipped ? 'block' : 'none' }">
-              {{ backText }}
+            <button class="carousel-rail carousel-rail-right" type="button" aria-label="Carte suivante" @click.stop="nextCard">
+              <span aria-hidden="true">❯</span>
+            </button>
+
+            <div class="flashcard-count">{{ cardNumber }}/{{ totalCards }}</div>
+
+            <div v-if="canPlayTts" class="tts-inline-control">
+              <button
+                class="tts-inline-btn"
+                :class="{ 'is-speaking': isSpeaking }"
+                type="button"
+                :aria-label="isSpeaking ? 'Arrêter la lecture' : 'Écouter le mot'"
+                @click.stop="toggleSpeakWord"
+              >
+                <span class="tts-icon" aria-hidden="true">🔊</span>
+              </button>
             </div>
+
+            <div class="flashcard-content">
+              <div class="flashcard-word">{{ frontText }}</div>
+              <div class="flashcard-translation" :style="{ display: isFlipped ? 'block' : 'none' }">
+                {{ backText }}
+              </div>
+            </div>
+
+            <div v-if="!isFlipped && currentWord" class="flashcard-hint">Cliquer pour révéler la traduction</div>
           </div>
-
-          <div v-if="!isFlipped && currentWord" class="flashcard-hint">Cliquer pour révéler la traduction</div>
-        </div>
-
-        <button class="carousel-arrow" type="button" aria-label="Carte suivante" @click="nextCard">
-          ❯
-        </button>
+        </Transition>
       </div>
 
       <div v-if="ttsStatus" class="tts-status" aria-live="polite">{{ ttsStatus }}</div>
 
-      <div class="english-controls">
+      <div class="mt-2 flex justify-center">
         <button class="mp-btn mp-btn-secondary" type="button" @click="shuffleCards">🔀 Mélanger</button>
       </div>
     </template>
@@ -488,54 +446,8 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.english-page {
-  max-width: 760px;
-  margin-inline: auto;
-}
-
 .settings-box {
   background: rgba(255, 230, 109, 0.2);
-  padding: 18px;
-  border-radius: 14px;
-  margin-bottom: 18px;
-}
-
-.setting-field label {
-  display: flex;
-  align-items: flex-end;
-  margin: 0 0 8px;
-  min-height: 2.4em;
-  font-weight: 700;
-}
-
-.setting-field select,
-.setting-field input[type='range'] {
-  width: 100%;
-}
-
-.setting-field select {
-  padding: 10px;
-  border-radius: 10px;
-  border: 1px solid #9ab0c8;
-  background: white;
-}
-
-.setting-field select:focus-visible,
-.setting-field input[type='range']:focus-visible {
-  border-color: #1d4ed8;
-  box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.16);
-  outline: none;
-}
-
-.setting-list {
-  margin-bottom: 12px;
-}
-
-.settings-row {
-  display: grid;
-  grid-template-columns: minmax(170px, 220px) minmax(170px, 200px) minmax(180px, 1fr);
-  gap: 10px;
-  align-items: start;
 }
 
 .list-description {
@@ -550,56 +462,71 @@ onUnmounted(() => {
 }
 
 .flashcard-carousel {
-  display: grid;
-  grid-template-columns: 52px 1fr 52px;
-  align-items: center;
-  gap: 10px;
-}
-
-.carousel-arrow {
-  width: 52px;
-  height: 52px;
-  border: 1px solid transparent;
-  border-radius: 50%;
-  background: var(--btn-secondary-grad);
-  color: var(--ink-inverse);
-  font-size: 1.3em;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 0 rgba(15, 23, 42, 0.14);
-  transition:
-    transform 0.12s ease,
-    box-shadow 0.18s ease,
-    filter 0.18s ease,
-    border-color 0.18s ease;
-}
-
-.carousel-arrow:hover,
-.carousel-arrow:focus-visible {
-  transform: translateY(-1px);
-  filter: brightness(1.05) saturate(1.03);
-  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.2);
-}
-
-.carousel-arrow:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 0 rgba(15, 23, 42, 0.16);
+  display: block;
+  max-width: 720px;
+  margin-inline: auto;
 }
 
 .flashcard {
+  --rail-width: 32px;
   position: relative;
   background: #fbfdff;
   border-radius: 18px;
   min-height: 260px;
-  padding: 42px 22px;
+  padding: 42px calc(var(--rail-width) + 28px);
   cursor: pointer;
   box-shadow: 0 10px 30px rgba(36, 48, 65, 0.13);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+}
+
+.carousel-rail {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: var(--rail-width);
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #325574;
+  background: rgba(50, 85, 116, 0.1);
+  cursor: pointer;
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.carousel-rail-left {
+  left: 0;
+  border-right: 1px solid rgba(50, 85, 116, 0.16);
+}
+
+.carousel-rail-right {
+  right: 0;
+  border-left: 1px solid rgba(50, 85, 116, 0.16);
+}
+
+.carousel-rail span {
+  font-size: 1.1rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.carousel-rail:hover,
+.carousel-rail:focus-visible {
+  background: rgba(50, 85, 116, 0.24);
+  color: #1b3d5c;
+  box-shadow: inset 0 0 0 2px rgba(50, 85, 116, 0.26);
+}
+
+.carousel-rail:active {
+  background: rgba(50, 85, 116, 0.3);
 }
 
 .flashcard-count {
@@ -611,7 +538,7 @@ onUnmounted(() => {
   font-size: 1.02rem;
   color: #25374d;
   letter-spacing: 0.02em;
-  text-shadow: 0 1px 1px rgba(247, 249, 252, 0.65);
+  text-shadow: 0 2px 2px rgba(247, 249, 252, 0.65);
 }
 
 .flashcard.flipped {
@@ -651,8 +578,10 @@ onUnmounted(() => {
 .flashcard-hint {
   position: absolute;
   bottom: 12px;
-  left: 12px;
-  right: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - ((var(--rail-width) + 14px) * 2));
+  max-width: 100%;
   text-align: center;
   font-size: 0.9em;
   opacity: 0.72;
@@ -661,7 +590,7 @@ onUnmounted(() => {
 .tts-inline-control {
   position: absolute;
   top: 50%;
-  right: 14px;
+  right: calc(var(--rail-width) + 10px);
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
@@ -669,14 +598,8 @@ onUnmounted(() => {
   z-index: 2;
 }
 
-.tts-inline-label {
-  font-size: 0.82em;
-  font-weight: 700;
-  margin-bottom: 6px;
-  opacity: 0.88;
-}
-
 .tts-inline-btn {
+  position: relative;
   width: 46px;
   height: 46px;
   border-radius: 50%;
@@ -693,9 +616,32 @@ onUnmounted(() => {
     border-color 0.18s ease;
 }
 
+.tts-icon {
+  position: relative;
+  z-index: 2;
+}
+
+.tts-inline-btn.is-speaking {
+  border-color: #2e64d2;
+  background: #e9f1ff;
+  box-shadow:
+    0 8px 16px rgba(15, 23, 42, 0.18),
+    0 0 0 4px rgba(46, 100, 210, 0.22);
+  animation: tts-speaking-pulse 0.9s ease-in-out infinite alternate;
+}
+
+.tts-inline-btn.is-speaking::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid rgba(46, 100, 210, 0.36);
+  animation: tts-speaking-ring 1.1s ease-out infinite;
+}
+
 .tts-inline-btn:hover,
 .tts-inline-btn:focus-visible {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   border-color: #2f4e6f;
   background: #f2f7ff;
   box-shadow: 0 8px 16px rgba(15, 23, 42, 0.18);
@@ -708,12 +654,19 @@ onUnmounted(() => {
 
 .flashcard.flipped .flashcard-count {
   color: #0f5f5a;
-  text-shadow: 0 1px 1px rgba(247, 249, 252, 0.6);
+  text-shadow: 0 2px 2px rgba(247, 249, 252, 0.6);
 }
 
 .flashcard.flipped .tts-inline-btn {
   border-color: rgba(15, 95, 90, 0.35);
   color: #0f5f5a;
+}
+
+.flashcard.flipped .tts-inline-btn.is-speaking {
+  border-color: #0f5f5a;
+  box-shadow:
+    0 8px 16px rgba(15, 23, 42, 0.16),
+    0 0 0 4px rgba(15, 95, 90, 0.2);
 }
 
 .tts-status {
@@ -724,31 +677,75 @@ onUnmounted(() => {
   color: #5d6c80;
 }
 
-.english-controls {
-  display: flex;
-  justify-content: center;
-  margin-top: 8px;
+.card-shared-next-enter-active,
+.card-shared-next-leave-active,
+.card-shared-prev-enter-active,
+.card-shared-prev-leave-active {
+  transition:
+    transform 0.18s ease,
+    opacity 0.18s ease;
 }
 
-@media (max-width: 820px) {
-  .settings-row {
-    grid-template-columns: 1fr;
-  }
+.card-shared-next-enter-from {
+  opacity: 0;
+  transform: translateX(22px);
+}
 
-  .flashcard-carousel {
-    grid-template-columns: 44px 1fr 44px;
-    gap: 6px;
-  }
+.card-shared-next-leave-to {
+  opacity: 0;
+  transform: translateX(-22px);
+}
 
-  .carousel-arrow {
-    width: 44px;
-    height: 44px;
-    font-size: 1.1em;
-  }
+.card-shared-prev-enter-from {
+  opacity: 0;
+  transform: translateX(-22px);
+}
 
+.card-shared-prev-leave-to {
+  opacity: 0;
+  transform: translateX(22px);
+}
+
+@keyframes tts-speaking-pulse {
+  0% {
+    transform: translateY(-2px) scale(1);
+  }
+  100% {
+    transform: translateY(-2px) scale(1.04);
+  }
+}
+
+@keyframes tts-speaking-ring {
+  0% {
+    opacity: 0.6;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.18);
+  }
+}
+
+@media (max-width: 1023px) and (min-width: 768px) {
   .flashcard {
+    --rail-width: 30px;
+  }
+
+  .carousel-rail {
+    background: rgba(50, 85, 116, 0.16);
+  }
+
+  .carousel-rail:hover,
+  .carousel-rail:focus-visible {
+    background: rgba(50, 85, 116, 0.3);
+  }
+}
+
+@media (max-width: 767px) {
+  .flashcard {
+    --rail-width: 28px;
     min-height: 230px;
-    padding: 36px 16px;
+    padding: 58px calc(var(--rail-width) + 12px) 20px;
   }
 
   .flashcard-word,
@@ -756,13 +753,48 @@ onUnmounted(() => {
     font-size: clamp(1.6em, 7.5vw, 2em);
   }
 
+  .flashcard-hint {
+    font-size: clamp(0.74rem, 2.5vw, 0.84rem);
+  }
+
+  .flashcard-count {
+    top: 14px;
+  }
+
   .tts-inline-control {
-    right: 8px;
+    top: 10px;
+    right: calc(var(--rail-width) + 6px);
+    transform: none;
+  }
+
+  .tts-inline-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 1.05rem;
+    border-width: 2px;
+  }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-shared-next-enter-active,
+  .card-shared-next-leave-active,
+  .card-shared-prev-enter-active,
+  .card-shared-prev-leave-active {
+    transition: none !important;
+  }
+
+  .card-shared-next-enter-from,
+  .card-shared-next-leave-to,
+  .card-shared-prev-enter-from,
+  .card-shared-prev-leave-to {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .tts-inline-btn.is-speaking,
+  .tts-inline-btn.is-speaking::after {
+    animation: none !important;
   }
 }
 </style>
-
-
-
-
-

@@ -46,7 +46,7 @@
       "priority": "High",
       "domain": "ui",
       "feature": "home",
-      "label": "Refonte Accueil V1 par sections matières",
+      "label": "Refonte accueil V1 par sections matières",
       "done": true
     },
     {
@@ -78,7 +78,7 @@
       "priority": "High",
       "domain": "langues",
       "feature": "anglais",
-      "label": "Ajouter la liste anglaise Meteo (EN/FR)",
+      "label": "Ajouter la liste anglaise Météo (EN/FR)",
       "done": true
     },
     {
@@ -98,11 +98,19 @@
       "done": true
     },
     {
+      "id": "scope-050-high-admin-front-only-hardening",
+      "priority": "High",
+      "domain": "admin",
+      "feature": "security",
+      "label": "Durcir l’admin front-only (docs publiques nettoyées, placeholders de configuration, limites explicites)",
+      "done": false
+    },
+    {
       "id": "scope-050-med-refactor",
       "priority": "Med",
       "domain": "infra",
       "feature": "refactor",
-      "label": "Refactor composants partagés (quiz/admin/légal)",
+      "label": "Refactor composants partages (quiz/admin/legal)",
       "done": true
     },
     {
@@ -110,7 +118,7 @@
       "priority": "Med",
       "domain": "infra",
       "feature": "quality",
-      "label": "QA pass v1: couverture renforcée + seuils Vitest + règle ratchet only",
+      "label": "QA pass v1 : couverture renforcée + seuils Vitest + règle ratchet only",
       "done": true
     },
     {
@@ -118,7 +126,7 @@
       "priority": "Med",
       "domain": "infra",
       "feature": "quality",
-      "label": "QA pass v2: CI qualité + matrix E2E + a11y + snapshots visuels + Lighthouse CI",
+      "label": "QA pass v2 : CI qualité + matrix E2E + a11y + snapshots visuels + Lighthouse CI",
       "done": true
     },
     {
@@ -126,7 +134,15 @@
       "priority": "Med",
       "domain": "docs",
       "feature": "release",
-      "label": "Passage de cohérence doc final 0.5.0",
+      "label": "Modernisation documentaire 0.5.0 (README, hubs, checklists, références)",
+      "done": false
+    },
+    {
+      "id": "scope-050-med-typography-pass",
+      "priority": "Med",
+      "domain": "docs",
+      "feature": "typography",
+      "label": "Passe typographique propre (accents, apostrophes, ponctuation, cohérence éditoriale)",
       "done": false
     },
     {
@@ -138,12 +154,37 @@
       "done": false
     },
     {
+      "id": "scope-050-high-tailwind-v4",
+      "priority": "High",
+      "domain": "ui",
+      "feature": "stack-css",
+      "label": "Migration technique vers Tailwind CSS v4 (sans refonte visuelle)",
+      "done": true
+    },
+    {
       "id": "scope-050-high-r2-v1",
       "priority": "High",
       "domain": "infra",
       "feature": "content-storage",
       "label": "Cloudflare R2 V1: lecture distante des listes JSON avec fallback local",
       "done": true
+    },
+    {
+      "id": "scope-050-high-english-tts-simplified",
+      "priority": "High",
+      "domain": "langues",
+      "feature": "anglais",
+      "label": "Anglais : TTS simplifié (en-US fixe, alternance 0.9/0.6 au clic, feedback visuel lecture)",
+      "done": true
+    },
+    {
+      "id": "scope-050-med-naming-cleanup-english",
+      "priority": "Med",
+      "domain": "docs",
+      "feature": "coherence",
+      "label": "Nettoyage naming vocab -> english (tests E2E, snapshots visuels, captures, libellés docs)",
+      "done": true
     }
   ]
 }
+

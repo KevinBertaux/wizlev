@@ -319,13 +319,13 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section class="page-block math-page">
+  <section class="page-block quiz-module">
     <h1>Math - Tables de multiplication</h1>
 
     <div class="settings-box">
       <QuizTableSelector v-model="selectedTables" label="Choisir les tables :" />
 
-      <div class="settings-row">
+      <div class="settings-grid grid w-full gap-3 md:mx-auto md:max-w-[720px]">
         <QuizSegmentedControl
           v-model="difficultyId"
           label="Difficulté :"
@@ -340,37 +340,42 @@ onUnmounted(() => {
           :options="ORDER_OPTIONS"
         />
 
-        <label class="review-toggle">
-          <span class="settings-label review-toggle-label">Passer après erreur</span>
-          <button
-            type="button"
-            class="toggle-btn"
-            role="switch"
-            :aria-checked="passAfterWrong"
-            :class="{ 'is-on': passAfterWrong }"
-            @click="togglePassAfterWrong"
-          >
-            <span class="toggle-track">
-              <span class="toggle-thumb" />
-            </span>
-          </button>
-        </label>
+        <div class="error-options-group">
+          <p class="settings-label error-options-title">Gestion des erreurs :</p>
+          <div class="error-options-grid grid gap-3 md:grid-cols-2">
+            <label class="review-toggle">
+              <span class="settings-label review-toggle-label">Passer après erreur</span>
+              <button
+                type="button"
+                class="toggle-btn"
+                role="switch"
+                :aria-checked="passAfterWrong"
+                :class="{ 'is-on': passAfterWrong }"
+                @click="togglePassAfterWrong"
+              >
+                <span class="toggle-track">
+                  <span class="toggle-thumb" />
+                </span>
+              </button>
+            </label>
 
-        <label class="review-toggle">
-          <span class="settings-label review-toggle-label">Revoir mes erreurs</span>
-          <button
-            type="button"
-            class="toggle-btn"
-            role="switch"
-            :aria-checked="reviewErrorsEnabled"
-            :class="{ 'is-on': reviewErrorsEnabled }"
-            @click="toggleReviewErrors"
-          >
-            <span class="toggle-track">
-              <span class="toggle-thumb" />
-            </span>
-          </button>
-        </label>
+            <label class="review-toggle">
+              <span class="settings-label review-toggle-label">Revoir mes erreurs</span>
+              <button
+                type="button"
+                class="toggle-btn"
+                role="switch"
+                :aria-checked="reviewErrorsEnabled"
+                :class="{ 'is-on': reviewErrorsEnabled }"
+                @click="toggleReviewErrors"
+              >
+                <span class="toggle-track">
+                  <span class="toggle-thumb" />
+                </span>
+              </button>
+            </label>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -411,7 +416,10 @@ onUnmounted(() => {
       </button>
     </div>
 
-    <div v-if="selectedTables.length > 0 && currentQuestion && !sessionCompleted" class="question-layout">
+    <div
+      v-if="selectedTables.length > 0 && currentQuestion && !sessionCompleted"
+      class="mb-4 grid grid-cols-1 gap-3 md:mx-auto md:max-w-[720px] md:grid-cols-[minmax(0,1fr)_228px] md:items-stretch"
+    >
       <div class="question-box">
         <div class="question">{{ currentQuestion.num1 }} × {{ currentQuestion.num2 }} = ?</div>
         <input
@@ -427,7 +435,7 @@ onUnmounted(() => {
       </div>
 
       <QuizNumericPad
-        class="question-pad"
+        class="hidden md:block"
         :answer-locked="hasChecked"
         @digit="appendDigit"
         @backspace="backspaceAnswer"
@@ -445,16 +453,8 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.math-page {
-  max-width: 760px;
-  margin-inline: auto;
-}
-
 .settings-box {
   background: rgba(255, 230, 109, 0.14);
-  padding: 18px;
-  border-radius: 14px;
-  margin-bottom: 18px;
 }
 
 .settings-box :deep(.table-selector) {
@@ -466,15 +466,17 @@ onUnmounted(() => {
   font-weight: 700;
 }
 
-.settings-row {
-  display: grid;
-  gap: 10px;
-  width: min(360px, 100%);
-  margin-inline: auto;
+.settings-grid :deep(.segmented-field) {
+  width: 100%;
 }
 
-.settings-row :deep(.segmented-field) {
-  width: 100%;
+.error-options-group {
+  display: grid;
+  gap: 8px;
+}
+
+.error-options-title {
+  margin: 0;
 }
 
 .review-toggle {
@@ -514,7 +516,7 @@ onUnmounted(() => {
   background: #d7e1ea;
   display: inline-flex;
   align-items: center;
-  padding: 3px;
+  padding: 4px;
   transition: background-color 0.18s ease, border-color 0.18s ease;
 }
 
@@ -523,7 +525,7 @@ onUnmounted(() => {
   height: 22px;
   border-radius: 50%;
   background: #fbfdff;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.18);
   transform: translateX(0);
   transition: transform 0.18s ease;
 }
@@ -537,12 +539,6 @@ onUnmounted(() => {
   transform: translateX(22px);
 }
 
-.motivation-toast-anchor {
-  position: relative;
-  height: 0;
-  margin: 0;
-}
-
 .question-box {
   background: linear-gradient(140deg, #f6fbff, #eaf5ff);
   border: 1px solid #bfd8ec;
@@ -551,18 +547,6 @@ onUnmounted(() => {
   text-align: center;
   margin-bottom: 0;
   box-shadow: 0 10px 24px rgba(36, 48, 65, 0.08);
-}
-
-.question-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 228px;
-  align-items: stretch;
-  gap: 12px;
-  margin-bottom: 18px;
-}
-
-.question-pad {
-  justify-self: stretch;
 }
 
 .session-complete {
@@ -616,7 +600,7 @@ onUnmounted(() => {
   box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.16);
 }
 
-@media (max-width: 820px) {
+@media (max-width: 1023px) {
   .question {
     font-size: 2em;
   }
@@ -627,17 +611,4 @@ onUnmounted(() => {
   }
 }
 
-@media (max-width: 560px) {
-  .question-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .question-pad {
-    display: none;
-  }
-
-  .settings-row {
-    width: 100%;
-  }
-}
 </style>

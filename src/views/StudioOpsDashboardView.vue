@@ -37,7 +37,7 @@ const statusType = ref('');
 const statusMessage = ref('');
 const englishInputRefs = ref([]);
 const APP_VERSION = '0.5.0-prep';
-const LAST_UPDATE_FR = '23 février 2026';
+const LAST_UPDATE_FR = '13 mars 2026';
 const RESET_CONFIRM_TEXT = 'SUPPRIMER';
 
 const sidebarGroups = Object.freeze([
@@ -72,7 +72,7 @@ const sectionTitleMap = Object.freeze({
   english: 'Édition de listes d’anglais',
   symmetry: 'Formes de symétrie',
   maintenance: 'Maintenance locale',
-  'admin-help': 'Documentation du panneau interne',
+  'admin-help': 'Manuel du panneau interne',
 });
 
 function readSidebarCollapsed() {
@@ -847,8 +847,11 @@ refreshDashboardMetrics();
 </script>
 
 <template>
-  <section class="admin-page">
-    <div class="admin-dashboard" :class="{ 'is-collapsed': sidebarCollapsed, 'is-mobile-sidebar-open': mobileSidebarOpen }">
+  <section class="w-full min-h-0 lg:min-h-[calc(100dvh-146px)]">
+    <div
+      class="admin-dashboard relative grid overflow-hidden border border-[#d4deea] bg-[#f2f6fb] lg:min-h-[calc(100dvh-146px)]"
+      :class="{ 'is-collapsed': sidebarCollapsed, 'is-mobile-sidebar-open': mobileSidebarOpen }"
+    >
       <button
         class="admin-sidebar-backdrop"
         type="button"
@@ -861,7 +864,7 @@ refreshDashboardMetrics();
             <button class="sidebar-toggle" type="button" @click="toggleSidebar">
               {{ sidebarCollapsed ? '⮞' : '⮜' }}
             </button>
-            <span v-if="!sidebarCollapsed" class="sidebar-title">Panel interne</span>
+            <span v-if="!sidebarCollapsed" class="sidebar-title">Panneau interne</span>
           </div>
           <button
             class="sidebar-home"
@@ -941,14 +944,14 @@ refreshDashboardMetrics();
         </nav>
       </aside>
 
-      <div class="admin-main">
-        <header class="admin-header">
-          <div class="admin-header-main">
-            <h1>{{ activeSectionTitle }}</h1>
+      <div class="flex min-w-0 flex-col bg-white">
+        <header class="relative z-[5] flex flex-wrap items-start justify-between gap-3 border-b border-[#e0e8f1] bg-white px-3 pt-2.5 pb-2.5 md:px-4 md:pt-3 md:pb-2.5 lg:sticky lg:top-0">
+          <div class="min-w-0">
+            <h1 class="m-0 text-[1.4rem] leading-[1.2] text-[#132f4c]">{{ activeSectionTitle }}</h1>
             <p class="meta-line">Version {{ APP_VERSION }} - Dernière modification : {{ LAST_UPDATE_FR }}</p>
           </div>
           <button
-            class="mobile-sidebar-trigger"
+            class="mobile-sidebar-trigger inline-flex items-center justify-center lg:hidden"
             type="button"
             aria-controls="adminSidebarPanel"
             :aria-expanded="mobileSidebarOpen ? 'true' : 'false'"
@@ -960,7 +963,7 @@ refreshDashboardMetrics();
 
         <AdminStatusBanner :message="statusMessage" :tone="statusType || 'info'" />
 
-        <section v-if="selectedSection === 'overview'" class="admin-section">
+        <section v-if="selectedSection === 'overview'" class="grid gap-3 p-3 md:px-4 md:pt-3 md:pb-4">
           <div class="stat-grid">
             <article class="admin-card">
               <h2>📚 Listes</h2>
@@ -981,7 +984,7 @@ refreshDashboardMetrics();
           </div>
         </section>
 
-        <section v-else-if="selectedSection === 'roadmap'" class="admin-section">
+        <section v-else-if="selectedSection === 'roadmap'" class="grid gap-3 p-3 md:px-4 md:pt-3 md:pb-4">
           <article class="admin-card">
             <div class="scope-head">
               <h2>Roadmap & Scopes</h2>
@@ -1107,7 +1110,7 @@ refreshDashboardMetrics();
           </article>
         </section>
 
-        <section v-else-if="selectedSection === 'english'" class="admin-section">
+        <section v-else-if="selectedSection === 'english'" class="grid gap-3 p-3 md:px-4 md:pt-3 md:pb-4">
           <div class="admin-card">
             <label for="listSelect">Liste à modifier</label>
             <select id="listSelect" v-model="selectedList">
@@ -1178,7 +1181,7 @@ refreshDashboardMetrics();
           </div>
         </section>
 
-        <section v-else-if="selectedSection === 'symmetry'" class="admin-section">
+        <section v-else-if="selectedSection === 'symmetry'" class="grid gap-3 p-3 md:px-4 md:pt-3 md:pb-4">
           <div class="admin-card">
             <div class="scope-head">
               <h2>Formes de symétrie</h2>
@@ -1207,86 +1210,46 @@ refreshDashboardMetrics();
           </div>
         </section>
 
-        <section v-else-if="selectedSection === 'admin-help'" class="admin-section">
+        <section v-else-if="selectedSection === 'admin-help'" class="grid gap-3 p-3 md:px-4 md:pt-3 md:pb-4">
           <article class="admin-card internal-help-card">
-            <h2>Documentation du panneau interne</h2>
+            <h2>Manuel du panneau interne</h2>
             <p class="meta-line">
-              Version: {{ APP_VERSION }} - Dernière modification: {{ LAST_UPDATE_FR }}.
+              Version : {{ APP_VERSION }} - Révision du manuel : {{ LAST_UPDATE_FR }}.
             </p>
 
             <p>
-              Cette aide reste intégrée au dashboard pour éviter de sortir du panneau pendant l’édition.
-              Version anglaise:
-              <router-link :to="{ name: 'studio-ops-help', query: { lang: 'en' } }">Internal panel documentation</router-link>.
+              Cette section sert de pense-bête rapide. Le manuel détaillé reste disponible sur la page dédiée, en
+              français et en anglais.
             </p>
 
-            <h3 id="scope">Périmètre</h3>
+            <div class="actions">
+              <router-link class="btn btn-secondary" :to="{ name: 'studio-ops-help', query: { lang: 'fr' } }">
+                Ouvrir le manuel FR
+              </router-link>
+              <router-link class="btn btn-secondary" :to="{ name: 'studio-ops-help', query: { lang: 'en' } }">
+                Open EN manual
+              </router-link>
+            </div>
+
+            <h3>Rappels utiles</h3>
             <ul>
-              <li>Édition locale dans le navigateur (stockage <a href="#glossary-localstorage">localStorage</a>).</li>
-              <li>Aucun backend requis pour cette version.</li>
-              <li>Export JSON pour versionner les données dans le repo Git.</li>
+              <li>Le panneau sert à éditer localement, vérifier, puis exporter les données prêtes à versionner.</li>
+              <li>Les sections roadmap et maintenance restent les bons points d'entrée pour le pilotage et le nettoyage local.</li>
+              <li>Les données du panneau restent liées à l'appareil et au navigateur en cours.</li>
+              <li>La protection actuelle reste front-only : utile, mais pas équivalente à une sécurité serveur.</li>
             </ul>
 
-            <h3 id="security">Accès et sécurité</h3>
+            <h3>Quand utiliser quelle section</h3>
             <ul>
-              <li>Connexion par identifiant + mot de passe (vérification par hash côté client).</li>
-              <li>Blocage niveau 1: 3 essais invalides puis 30 minutes.</li>
-              <li>Blocage niveau 2: un nouvel essai invalide après niveau 1 déclenche 24 heures de blocage.</li>
-              <li>Session temporaire: expiration automatique par timeout.</li>
+              <li><strong>Vue d'ensemble</strong> : indicateurs rapides et état global.</li>
+              <li><strong>Roadmap &amp; Scopes</strong> : pilotage produit et priorités.</li>
+              <li><strong>Maintenance locale</strong> : réinitialisation et rollback local.</li>
+              <li><strong>Manuel</strong> : procédure d'usage et limites connues.</li>
             </ul>
-
-            <h3 id="workflow">Workflow recommandé</h3>
-            <ol>
-              <li>Se connecter au panneau interne.</li>
-              <li>Choisir la liste à modifier.</li>
-              <li>Éditer les mots (anglais/français), puis sauvegarder localement.</li>
-              <li>Vérifier le rendu dans le module Langues.</li>
-              <li>Exporter le JSON, puis commit/push dans le repo.</li>
-            </ol>
-
-            <h3 id="json-ops">Opérations JSON</h3>
-            <ul>
-              <li><strong>Copier JSON</strong>: audit rapide ou partage ponctuel.</li>
-              <li><strong>Télécharger JSON</strong>: fichier prêt à versionner.</li>
-              <li><strong>Importer JSON</strong>: recharge une liste existante dans le panel.</li>
-              <li><strong>Réinitialiser</strong>: revient à la version par défaut du projet.</li>
-            </ul>
-
-            <h3 id="limits">Limites connues</h3>
-            <ul>
-              <li>Protection front-only: ce n’est pas une sécurité serveur forte.</li>
-              <li>Les données locales sont liées à l’appareil/navigateur en cours.</li>
-              <li>Effacement navigateur peut supprimer les modifications locales.</li>
-            </ul>
-
-            <h3 id="troubleshooting">Dépannage</h3>
-            <ul>
-              <li>Accès bloqué: attendre la fin du compte à rebours affiché.</li>
-              <li>Session expirée: se reconnecter.</li>
-              <li>Doute sur les données: réinitialiser puis réimporter un JSON de référence.</li>
-            </ul>
-
-            <h3 id="glossary">Glossaire</h3>
-            <dl>
-              <dt id="glossary-localstorage">localStorage</dt>
-              <dd>Stockage persistant dans le navigateur, propre à un domaine.</dd>
-
-              <dt id="glossary-hash">Hash (SHA-256)</dt>
-              <dd>Empreinte irréversible pour vérifier un mot de passe sans le stocker en clair.</dd>
-
-              <dt id="glossary-timeout">Timeout de session</dt>
-              <dd>Durée limite d’une session connectée avant déconnexion automatique.</dd>
-
-              <dt id="glossary-front-only">Front-only security</dt>
-              <dd>Protection implémentée uniquement côté navigateur, sans contrôle serveur.</dd>
-
-              <dt id="glossary-json">JSON</dt>
-              <dd>Format texte structuré pour stocker et échanger des données.</dd>
-            </dl>
           </article>
         </section>
 
-        <section v-else class="admin-section">
+        <section v-else class="grid gap-3 p-3 md:px-4 md:pt-3 md:pb-4">
           <div class="admin-card">
             <h2>Réinitialisation granulaire</h2>
             <div class="maintenance-grid">
@@ -1356,1094 +1319,6 @@ refreshDashboardMetrics();
   </section>
 </template>
 
-<style scoped>
-.admin-page {
-  width: 100%;
-  min-height: calc(100dvh - 146px);
-}
+<style scoped src="../styles/admin-dashboard.css"></style>
 
-.admin-dashboard {
-  position: relative;
-  display: grid;
-  grid-template-columns: 272px minmax(0, 1fr);
-  gap: 0;
-  align-items: stretch;
-  min-height: calc(100dvh - 146px);
-  border: 1px solid #d4deea;
-  border-radius: 4px;
-  background: #f2f6fb;
-  overflow: hidden;
-}
 
-.admin-dashboard.is-collapsed {
-  grid-template-columns: 84px minmax(0, 1fr);
-}
-
-.admin-sidebar-backdrop {
-  display: none;
-}
-
-.admin-sidebar {
-  border-right: 1px solid #d7e1ec;
-  padding: 8px 6px;
-  background: #f3f7fb;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  min-height: 0;
-  overflow: hidden;
-}
-
-.sidebar-head {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: 6px;
-  padding: 0 4px 6px;
-  border-bottom: 1px solid #dde7f1;
-}
-
-.sidebar-head-main {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-width: 0;
-}
-
-.sidebar-title {
-  font-size: 0.91rem;
-  font-weight: 800;
-  color: #1d3752;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.sidebar-toggle {
-  border: 1px solid #b5c6d8;
-  border-radius: 4px;
-  background: #ffffff;
-  color: #1f4368;
-  min-height: 36px;
-  min-width: 38px;
-  font-weight: 800;
-  cursor: pointer;
-  transition:
-    background-color 0.18s ease,
-    border-color 0.18s ease,
-    color 0.18s ease;
-}
-
-.sidebar-home {
-  border: 1px solid #b5c6d8;
-  border-radius: 4px;
-  background: #ffffff;
-  color: #1f4368;
-  min-height: 36px;
-  min-width: 38px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition:
-    background-color 0.18s ease,
-    border-color 0.18s ease,
-    color 0.18s ease;
-}
-
-.sidebar-toggle:hover,
-.sidebar-toggle:focus-visible,
-.sidebar-home:hover,
-.sidebar-home:focus-visible {
-  background: #dcecff;
-  border-color: #6a9fcf;
-  color: #112f49;
-}
-
-.sidebar-home.is-active {
-  border-color: #67a5d6;
-  background: #d9ecff;
-  color: #123a5d;
-}
-
-.sidebar-nav {
-  display: grid;
-  gap: 4px;
-  min-height: 0;
-  overflow-y: auto;
-  padding-right: 2px;
-}
-
-.sidebar-search {
-  position: relative;
-}
-
-.sidebar-search-icon {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-}
-
-.sidebar-search input {
-  width: 100%;
-  border: 1px solid #b5c6d8;
-  border-radius: 4px;
-  height: 36px;
-  padding: 8px 12px 8px 30px;
-  background: #ffffff;
-}
-
-.sidebar-search.has-query input {
-  padding-right: 34px;
-}
-
-.sidebar-search input:focus-visible {
-  border-color: #2475b8;
-  box-shadow: 0 0 0 2px rgba(36, 117, 184, 0.18);
-  outline: none;
-}
-
-.sidebar-search input[type='search']::-webkit-search-cancel-button,
-.sidebar-search input[type='search']::-webkit-search-decoration {
-  -webkit-appearance: none;
-  appearance: none;
-}
-
-.sidebar-search-clear {
-  position: absolute;
-  right: 6px;
-  top: 50%;
-  transform: translateY(-50%);
-  border: 1px solid #c7d4e2;
-  border-radius: 4px;
-  background: #ffffff;
-  width: 24px;
-  height: 24px;
-  line-height: 1;
-  color: #245175;
-  cursor: pointer;
-}
-
-.sidebar-search-clear:hover,
-.sidebar-search-clear:focus-visible {
-  background: #e7f0fb;
-}
-
-.sidebar-empty {
-  margin: 4px 0 0;
-  color: #4b5f79;
-  font-size: 0.92rem;
-  font-weight: 600;
-}
-
-.sidebar-group {
-  display: grid;
-  gap: 4px;
-}
-
-.sidebar-group-toggle {
-  border: 1px solid #cfdce9;
-  border-radius: 4px;
-  height: 36px;
-  background: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 0 9px;
-  font-weight: 700;
-  color: #1b3856;
-  cursor: pointer;
-  overflow: hidden;
-  transition:
-    background-color 0.18s ease,
-    border-color 0.18s ease,
-    color 0.18s ease;
-}
-
-.sidebar-group-toggle:hover,
-.sidebar-group-toggle:focus-visible {
-  background: #dcecff;
-  border-color: #6b9ecf;
-  color: #112f49;
-}
-
-.sidebar-group-toggle.is-open {
-  border-color: #91b3d4;
-  background: #e7f2ff;
-}
-
-.sidebar-group-left {
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.sidebar-group-label {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.sidebar-icon,
-.sidebar-child-icon {
-  width: 18px;
-  display: inline-flex;
-  justify-content: center;
-}
-
-.sidebar-chevron {
-  font-size: 0.85rem;
-  transition: transform 0.2s ease;
-}
-
-.sidebar-chevron.is-open {
-  transform: rotate(90deg);
-}
-
-.sidebar-children {
-  border-left: 2px solid #d3e2f0;
-  margin-left: 8px;
-  padding-left: 6px;
-  display: grid;
-  gap: 4px;
-}
-
-.sidebar-accordion-enter-active,
-.sidebar-accordion-leave-active {
-  overflow: hidden;
-  transition:
-    max-height 0.22s ease,
-    opacity 0.18s ease,
-    transform 0.18s ease;
-}
-
-.sidebar-accordion-enter-from,
-.sidebar-accordion-leave-to {
-  max-height: 0;
-  opacity: 0;
-  transform: translateY(-2px);
-}
-
-.sidebar-accordion-enter-to,
-.sidebar-accordion-leave-from {
-  max-height: 240px;
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.sidebar-child-link {
-  border: 1px solid #d1deea;
-  border-radius: 4px;
-  height: 34px;
-  background: #ffffff;
-  display: grid;
-  grid-template-columns: 18px 1fr;
-  align-items: center;
-  gap: 6px;
-  padding: 0 9px;
-  text-align: left;
-  color: #1a3753;
-  font-weight: 700;
-  cursor: pointer;
-  min-width: 0;
-  text-decoration: none;
-  transition:
-    background-color 0.18s ease,
-    border-color 0.18s ease,
-    color 0.18s ease;
-}
-
-.sidebar-child-link:hover,
-.sidebar-child-link:focus-visible {
-  background: #dcecff;
-  border-color: #6f9fcd;
-  color: #112f49;
-}
-
-.sidebar-child-label {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.sidebar-child-link.is-active {
-  border-color: #67a5d6;
-  background: #d9ecff;
-  color: #133a5d;
-}
-
-.admin-dashboard.is-collapsed .sidebar-group-toggle {
-  justify-content: center;
-  padding: 0;
-}
-
-.admin-dashboard.is-collapsed .sidebar-head {
-  grid-template-columns: 1fr;
-}
-
-.admin-dashboard.is-collapsed .sidebar-head-main {
-  justify-content: center;
-}
-
-.admin-dashboard.is-collapsed .sidebar-toggle,
-.admin-dashboard.is-collapsed .sidebar-home {
-  width: 100%;
-}
-
-.admin-dashboard.is-collapsed .sidebar-group-left {
-  justify-content: center;
-}
-
-.sidebar-logout {
-  width: 100%;
-  margin-top: 2px;
-}
-
-.admin-dashboard.is-collapsed .sidebar-children {
-  display: none;
-}
-
-.admin-main {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  background: #ffffff;
-}
-
-.admin-header {
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  padding: 12px 16px 10px;
-  border-bottom: 1px solid #e0e8f1;
-  background: #ffffff;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.admin-header-main {
-  min-width: 0;
-}
-
-.admin-header h1 {
-  margin: 0;
-  font-size: 1.4rem;
-  line-height: 1.2;
-  color: #132f4c;
-}
-
-.mobile-sidebar-trigger {
-  display: none;
-  border: 1px solid #9cb7d1;
-  border-radius: 4px;
-  min-height: 36px;
-  padding: 6px 10px;
-  background: #ffffff;
-  color: #1c4368;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.mobile-sidebar-trigger:hover,
-.mobile-sidebar-trigger:focus-visible {
-  background: #dcecff;
-  border-color: #679bcb;
-}
-
-.admin-section {
-  display: grid;
-  gap: 12px;
-  padding: 10px 14px 14px;
-}
-
-.admin-card {
-  border: 1px solid #d9e2ee;
-  border-radius: 4px;
-  padding: 10px;
-  background: #ffffff;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
-}
-
-.admin-card h2,
-.admin-card h3 {
-  margin: 0;
-}
-
-.internal-help-card {
-  line-height: 1.55;
-}
-
-.internal-help-card h2 {
-  margin: 0 0 8px;
-}
-
-.internal-help-card h3 {
-  margin: 18px 0 8px;
-  font-size: 1.02rem;
-}
-
-.internal-help-card p,
-.internal-help-card li,
-.internal-help-card dd {
-  margin: 0;
-}
-
-.internal-help-card ul,
-.internal-help-card ol {
-  margin: 8px 0 0;
-  padding-left: 22px;
-  display: grid;
-  gap: 6px;
-}
-
-.internal-help-card dl {
-  margin: 8px 0 0;
-}
-
-.internal-help-card dt {
-  margin-top: 10px;
-  font-weight: 700;
-}
-
-.internal-help-card dd {
-  margin-left: 0;
-}
-
-.compact-card {
-  margin-top: 10px;
-  background: #f8fbff;
-  border-style: dashed;
-}
-
-.admin-card label {
-  display: block;
-  margin-top: 8px;
-  margin-bottom: 6px;
-  font-weight: 700;
-}
-
-.admin-card input,
-.admin-card select {
-  width: 100%;
-  border: 1px solid #b5c6d8;
-  border-radius: 4px;
-  padding: 8px 9px;
-  min-height: 36px;
-  background: #ffffff;
-  color: #20354a;
-}
-
-.admin-card input:focus-visible,
-.admin-card select:focus-visible {
-  border-color: #2475b8;
-  box-shadow: 0 0 0 2px rgba(36, 117, 184, 0.18);
-  outline: none;
-}
-
-.empty-state {
-  margin: 10px 0 0;
-  color: #4b5f79;
-  font-weight: 600;
-}
-
-.stat-grid {
-  display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-}
-
-.stat-value {
-  margin: 8px 0 0;
-  font-size: 1.65rem;
-  font-weight: 800;
-  color: #133a5d;
-}
-
-.scope-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
-}
-
-.scope-chip {
-  border: 1px solid #c4d6e8;
-  border-radius: 4px;
-  padding: 4px 10px;
-  font-size: 0.88rem;
-  font-weight: 700;
-  color: #264b6e;
-  background: #f5f9fe;
-}
-
-.scope-chip.active {
-  border-color: #63b089;
-  background: #e5f7ec;
-}
-
-.progress-track {
-  height: 9px;
-  border-radius: 4px;
-  border: 1px solid #cddbea;
-  overflow: hidden;
-  background: #edf3fa;
-  margin-bottom: 8px;
-}
-
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(135deg, #2fbb8c, #0f9f95);
-}
-
-.scope-summary-pill {
-  border: 1px solid #bcd2e7;
-  border-radius: 4px;
-  background: #f2f8ff;
-  color: #1e4367;
-  padding: 6px 10px;
-  font-size: 0.86rem;
-  font-weight: 800;
-}
-
-.scope-progress-block {
-  border: 1px solid #d8e6f3;
-  border-radius: 4px;
-  background: #f7fbff;
-  padding: 7px 8px;
-}
-
-.roadmap-toolbar {
-  display: grid;
-  grid-template-columns: minmax(240px, 1fr) auto;
-  gap: 8px;
-  align-items: end;
-  margin-bottom: 8px;
-}
-
-.roadmap-meta {
-  display: grid;
-  gap: 4px;
-  color: #4b5f79;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.roadmap-filters {
-  margin-top: 8px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  gap: 8px;
-}
-
-.roadmap-sorts {
-  margin-top: 10px;
-}
-
-.roadmap-sorts h3 {
-  margin: 0 0 8px;
-  font-size: 0.95rem;
-  color: #2d4d69;
-}
-
-.roadmap-sort-stack {
-  display: grid;
-  gap: 8px;
-}
-
-.roadmap-sort-row {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 8px;
-}
-
-.roadmap-sort-label {
-  font-weight: 700;
-  color: #2c4a66;
-  min-width: 40px;
-}
-
-.roadmap-sort-pill-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.roadmap-sort-pill {
-  border: 1px solid #c4d8eb;
-  border-radius: 4px;
-  background: #ffffff;
-  color: #204261;
-  padding: 4px 9px;
-  font-size: 0.82rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition:
-    background-color 0.18s ease,
-    border-color 0.18s ease,
-    color 0.18s ease;
-}
-
-.roadmap-sort-pill:hover,
-.roadmap-sort-pill:focus-visible {
-  background: #edf4fc;
-  border-color: #93b3d1;
-  color: #163956;
-}
-
-.roadmap-sort-pill.is-active {
-  border-color: #73a9d8;
-  background: #d9ebff;
-  color: #12395d;
-}
-
-.roadmap-sort-dir-btn {
-  border: 1px solid #bfd4e8;
-  border-radius: 4px;
-  background: #ffffff;
-  width: 40px;
-  height: 32px;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-}
-
-.roadmap-sort-dir-btn:hover,
-.roadmap-sort-dir-btn:focus-visible {
-  background: #edf4fc;
-}
-
-.roadmap-sort-dir-icon {
-  width: 16px;
-  height: 16px;
-  fill: #2d5d87;
-  transition: transform 0.2s ease;
-}
-
-.roadmap-sort-dir-icon.is-desc {
-  transform: rotate(180deg);
-}
-
-.roadmap-table-wrap {
-  margin-top: 10px;
-  overflow-x: auto;
-  max-width: 100%;
-  border: 1px solid #d5e1ec;
-  border-radius: 4px;
-}
-
-.roadmap-table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-  min-width: 0;
-}
-
-.roadmap-table th,
-.roadmap-table td {
-  padding: 8px 9px;
-  border-bottom: 1px solid #e5edf5;
-  text-align: left;
-  vertical-align: top;
-}
-
-.roadmap-table thead th {
-  position: sticky;
-  top: 0;
-  background: #f0f6fc;
-  z-index: 1;
-  color: #1f3953;
-}
-
-.roadmap-table tbody tr:nth-child(even) {
-  background: #fbfdff;
-}
-
-.roadmap-table th:nth-child(1),
-.roadmap-table td:nth-child(1) {
-  width: 92px;
-}
-
-.roadmap-table th:nth-child(2),
-.roadmap-table td:nth-child(2) {
-  width: 62px;
-  text-align: center;
-}
-
-.roadmap-table th:nth-child(3),
-.roadmap-table td:nth-child(3) {
-  width: 120px;
-}
-
-.roadmap-table th:nth-child(4),
-.roadmap-table td:nth-child(4) {
-  width: 140px;
-}
-
-.roadmap-table td:nth-child(5) {
-  white-space: normal;
-  overflow-wrap: anywhere;
-}
-
-.priority-chip {
-  display: inline-block;
-  border-radius: 4px;
-  padding: 2px 8px;
-  font-size: 0.82rem;
-  font-weight: 800;
-}
-
-.priority-chip.p-crit {
-  background: #ffe8e8;
-  color: #9a1d1d;
-}
-
-.priority-chip.p-high {
-  background: #fff0da;
-  color: #8b5a12;
-}
-
-.priority-chip.p-med {
-  background: #e8f0ff;
-  color: #234d93;
-}
-
-.priority-chip.p-low {
-  background: #e6f7ec;
-  color: #226a45;
-}
-
-.table-header {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.table-header h2 {
-  margin: 0;
-}
-
-.words-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr auto;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.words-grid-head {
-  font-weight: 700;
-  color: #4b5f79;
-}
-
-.sym-grid {
-  display: grid;
-  grid-template-columns: 180px 1fr auto;
-  gap: 10px;
-  margin-top: 10px;
-  align-items: center;
-}
-
-.maintenance-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 12px;
-}
-
-.maintenance-switch {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  border: 1px solid #9bb9d3;
-  border-radius: 4px;
-  padding: 10px;
-  background: #f3faff;
-}
-
-.maintenance-switch input {
-  width: auto;
-}
-
-.custom-select-box {
-  margin-top: 12px;
-  display: grid;
-  gap: 8px;
-}
-
-.storage-item {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 6px 10px;
-  align-items: start;
-  border: 1px solid #d7e4f0;
-  border-radius: 4px;
-  padding: 8px;
-  background: #ffffff;
-}
-
-.storage-item input[type='checkbox'] {
-  width: auto;
-  margin-top: 2px;
-}
-
-.storage-item small {
-  grid-column: 2;
-  color: #4b5f79;
-}
-
-.preview-list {
-  margin: 8px 0 0;
-  padding-left: 18px;
-  display: grid;
-  gap: 6px;
-}
-
-.confirm-box {
-  margin-top: 12px;
-  border: 1px solid #efb0b0;
-  border-radius: 4px;
-  padding: 12px;
-  background: #fff8f8;
-}
-
-.confirm-check {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  gap: 8px;
-}
-
-.confirm-check input {
-  width: auto;
-}
-
-.history-list {
-  display: grid;
-  gap: 10px;
-}
-
-.history-item {
-  border: 1px solid #d4e1ee;
-  border-radius: 4px;
-  padding: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.history-item p {
-  margin: 4px 0 0;
-}
-
-.add-row-sticky {
-  position: sticky;
-  bottom: 12px;
-  margin-top: 12px;
-  background: transparent;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.btn {
-  border: 1px solid transparent;
-  border-radius: 4px;
-  min-height: 34px;
-  padding: 7px 10px;
-  font-weight: 700;
-  cursor: pointer;
-  transition:
-    background-color 0.18s ease,
-    border-color 0.18s ease,
-    filter 0.18s ease;
-}
-
-.btn-primary {
-  background: #0b7aa0;
-  border-color: #086283;
-  color: #f7fbff;
-}
-
-.btn-secondary {
-  background: #6350ea;
-  border-color: #4e3ed2;
-  color: #f7fbff;
-}
-
-.btn-danger {
-  background: #b54519;
-  border-color: #903513;
-  color: #f7fbff;
-}
-
-.btn:hover:not(:disabled),
-.btn:focus-visible:not(:disabled) {
-  filter: brightness(1.1);
-}
-
-.btn:active:not(:disabled) {
-  filter: brightness(0.98);
-}
-
-.btn:disabled {
-  opacity: 0.62;
-  cursor: not-allowed;
-}
-
-.btn:focus-visible {
-  outline: 2px solid #0f7dc9;
-  outline-offset: 2px;
-}
-
-.import-label {
-  margin-top: 14px;
-}
-
-pre {
-  margin: 0;
-  overflow-x: auto;
-  background: #1e2633;
-  color: #d9e1ed;
-  border-radius: 4px;
-  padding: 12px;
-}
-
-:deep(.admin-status) {
-  margin: 10px 16px 0;
-  border-radius: 4px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .sidebar-chevron,
-  .sidebar-accordion-enter-active,
-  .sidebar-accordion-leave-active {
-    transition: none !important;
-  }
-}
-
-@media (max-width: 860px) {
-  .admin-page {
-    min-height: auto;
-  }
-
-  .admin-dashboard,
-  .admin-dashboard.is-collapsed {
-    grid-template-columns: 1fr;
-    min-height: auto;
-  }
-
-  .admin-sidebar {
-    position: fixed;
-    top: 56px;
-    left: 0;
-    bottom: 0;
-    width: min(320px, 88vw);
-    z-index: 70;
-    border-right: 1px solid #d7e1ec;
-    box-shadow: 0 18px 32px rgba(15, 23, 42, 0.22);
-    transform: translateX(-102%);
-    transition: transform 0.22s ease;
-    max-height: none;
-    pointer-events: none;
-  }
-
-  .admin-dashboard.is-mobile-sidebar-open .admin-sidebar {
-    transform: translateX(0);
-    pointer-events: auto;
-  }
-
-  .admin-sidebar-backdrop {
-    position: fixed;
-    inset: 0;
-    z-index: 60;
-    border: 0;
-    background: rgba(12, 25, 42, 0.34);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease;
-  }
-
-  .admin-dashboard.is-mobile-sidebar-open .admin-sidebar-backdrop {
-    display: block;
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  .mobile-sidebar-trigger {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .sidebar-logout {
-    margin-bottom: 8px;
-  }
-
-  .sidebar-nav {
-    grid-template-columns: 1fr;
-    padding-right: 0;
-  }
-
-  .admin-sidebar {
-    padding-top: 12px;
-  }
-
-  .admin-header {
-    position: static;
-    padding: 10px 12px;
-  }
-
-  .admin-section {
-    padding: 12px;
-  }
-
-  .words-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .words-grid-head {
-    display: none;
-  }
-
-  .roadmap-toolbar {
-    grid-template-columns: 1fr;
-  }
-
-  .roadmap-meta {
-    white-space: normal;
-  }
-
-  .roadmap-sort-row {
-    grid-template-columns: 1fr;
-    align-items: start;
-  }
-
-  .roadmap-sort-label {
-    min-width: 0;
-  }
-
-  .sym-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .table-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-</style>

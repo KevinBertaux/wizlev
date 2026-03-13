@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { describe, expect, it, vi } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
-import MathView from './MathView.vue';
+import MathMultiplicationsView from './MathMultiplicationsView.vue';
 import QuizTableSelector from '@/components/QuizTableSelector.vue';
 
 function parseQuestion(text) {
@@ -15,11 +15,11 @@ function parseQuestion(text) {
   };
 }
 
-describe('MathView integration', () => {
+describe('MathMultiplicationsView integration', () => {
   it('starts from empty state, validates a correct answer, then auto-loads next question', async () => {
     vi.useFakeTimers();
 
-    const wrapper = mount(MathView, {
+    const wrapper = mount(MathMultiplicationsView, {
       attachTo: document.body,
     });
 

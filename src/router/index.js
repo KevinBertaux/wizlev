@@ -16,7 +16,7 @@ const routes = [
   {
     path: ROUTE_PATHS.MATH_MULTIPLICATIONS,
     name: ROUTE_NAMES.MATH_MULTIPLICATIONS,
-    component: () => import('@/views/MathView.vue'),
+    component: () => import('@/views/MathMultiplicationsView.vue'),
   },
   {
     path: ROUTE_PATHS.MATH_SYMMETRY,
@@ -31,7 +31,7 @@ const routes = [
   {
     path: ROUTE_PATHS.LANGUAGES_ENGLISH,
     name: ROUTE_NAMES.LANGUAGES_ENGLISH,
-    component: () => import('@/views/EnglishView.vue'),
+    component: () => import('@/views/LanguagesEnglishView.vue'),
   },
   {
     path: ROUTE_PATHS.STUDIO_OPS_HELP,
@@ -42,18 +42,18 @@ const routes = [
   {
     path: ROUTE_PATHS.STUDIO_OPS_LOGIN,
     name: ROUTE_NAMES.STUDIO_OPS_LOGIN,
-    component: () => import('@/views/AdminAccessView.vue'),
+    component: () => import('@/views/StudioOpsLoginView.vue'),
   },
   {
     path: ROUTE_PATHS.STUDIO_OPS_PANEL,
     name: ROUTE_NAMES.STUDIO_OPS_PANEL,
-    component: () => import('@/views/AdminView.vue'),
+    component: () => import('@/views/StudioOpsDashboardView.vue'),
     meta: { requiresStudioOpsAuth: true },
   },
   {
     path: ROUTE_PATHS.LEGAL_NOTICE,
     name: ROUTE_NAMES.LEGAL_NOTICE,
-    component: () => import('@/views/LegalMentionsView.vue'),
+    component: () => import('@/views/LegalNoticeView.vue'),
   },
   {
     path: ROUTE_PATHS.LEGAL_PRIVACY,
@@ -64,6 +64,11 @@ const routes = [
     path: ROUTE_PATHS.LEGAL_TERMS,
     name: ROUTE_NAMES.LEGAL_TERMS,
     component: () => import('@/views/LegalTermsView.vue'),
+  },
+  {
+    path: ROUTE_PATHS.LEGAL_COOKIES,
+    name: ROUTE_NAMES.LEGAL_COOKIES,
+    component: () => import('@/views/LegalCookiesView.vue'),
   },
   {
     path: '/:pathMatch(.*)*',
@@ -89,4 +94,3 @@ router.beforeEach((to) => {
 });
 
 export default router;
-

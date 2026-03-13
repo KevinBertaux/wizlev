@@ -250,7 +250,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section class="page-block symmetry-page">
+  <section class="page-block quiz-module symmetry-page">
     <h1>Math - Symétrie</h1>
 
     <QuizScoreBar
@@ -268,7 +268,11 @@ onUnmounted(() => {
 
     <div class="prompt-box">
       <p>{{ currentQuestion.prompt }}</p>
-      <svg viewBox="0 0 120 120" class="shape-preview" aria-label="Figure de référence">
+      <svg
+        viewBox="0 0 120 120"
+        class="shape-preview h-[120px] w-[120px] md:h-[150px] md:w-[150px]"
+        aria-label="Figure de référence"
+      >
         <line
           v-for="(line, index) in renderGridLines(currentQuestion.gridSize)"
           :key="`grid-${index}`"
@@ -306,7 +310,7 @@ onUnmounted(() => {
       </svg>
     </div>
 
-    <div class="options-grid">
+    <div class="mx-auto grid w-full max-w-[720px] grid-cols-1 gap-2 md:grid-cols-2">
       <button
         v-for="(option, idx) in currentQuestion.options"
         :key="option.id"
@@ -316,7 +320,11 @@ onUnmounted(() => {
         @click="selectOption(option.id)"
       >
         <span class="option-label">{{ optionLabels[idx] }}</span>
-        <svg viewBox="0 0 120 120" class="option-preview" :aria-label="`Option ${optionLabels[idx]}`">
+        <svg
+          viewBox="0 0 120 120"
+          class="option-preview h-[120px] w-[120px] md:h-[150px] md:w-[150px]"
+          :aria-label="`Option ${optionLabels[idx]}`"
+        >
           <line
             v-for="(line, index) in renderGridLines(currentQuestion.gridSize)"
             :key="`option-grid-${idx}-${index}`"
@@ -362,17 +370,13 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.symmetry-page {
-  max-width: 820px;
-  margin-inline: auto;
-}
-
 .symmetry-page :deep(.mp-actions) {
   margin-top: 18px;
 }
 
 .prompt-box {
-  margin-bottom: 8px;
+  max-width: 720px;
+  margin: 0 auto 8px;
   text-align: center;
 }
 
@@ -383,20 +387,10 @@ onUnmounted(() => {
 
 .shape-preview {
   display: block;
-  width: 150px;
-  height: 150px;
   margin-inline: auto;
   border-radius: 12px;
   border: 1px solid #c6d5e8;
   background: #fbfdff;
-}
-
-.options-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-  max-width: 620px;
-  margin-inline: auto;
 }
 
 .option-btn {
@@ -419,7 +413,7 @@ onUnmounted(() => {
 .option-btn:hover {
   background: #ebf4ff;
   border-color: #55789e;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   box-shadow: 0 8px 16px rgba(15, 23, 42, 0.18);
 }
 
@@ -442,11 +436,6 @@ onUnmounted(() => {
   background: #e6f9f7;
   border: 1px solid #bfece7;
   text-align: center;
-}
-
-.option-preview {
-  width: 150px;
-  height: 150px;
 }
 
 .option-btn.is-selected {
@@ -492,21 +481,4 @@ onUnmounted(() => {
   font-size: 0.88rem;
 }
 
-.motivation-toast-anchor {
-  position: relative;
-  height: 0;
-  margin: 0;
-}
-
-@media (max-width: 700px) {
-  .options-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .shape-preview,
-  .option-preview {
-    width: 120px;
-    height: 120px;
-  }
-}
 </style>

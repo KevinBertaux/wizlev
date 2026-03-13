@@ -16,9 +16,18 @@ const props = defineProps({
   },
 });
 
-const feedbackClass = computed(() =>
-  props.type === 'correct' ? 'mp-feedback-success' : 'mp-feedback-error'
-);
+const feedbackClass = computed(() => {
+  if (props.type === 'correct' || props.type === 'success') {
+    return 'mp-feedback-success';
+  }
+  if (props.type === 'warning') {
+    return 'mp-feedback-warning';
+  }
+  if (props.type === 'info') {
+    return 'mp-feedback-info';
+  }
+  return 'mp-feedback-error';
+});
 </script>
 
 <template>
