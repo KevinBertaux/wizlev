@@ -14,7 +14,7 @@
       "priority": "Crit",
       "domain": "legal",
       "feature": "pages",
-      "label": "Harmoniser les pages légales et les dates",
+      "label": "Harmoniser les pages legales et les dates",
       "done": true
     },
     {
@@ -30,7 +30,7 @@
       "priority": "Crit",
       "domain": "infra",
       "feature": "quality",
-      "label": "Validation pré-release complète (test/e2e/build)",
+      "label": "Validation pre-release complete (test/e2e/build)",
       "done": true
     },
     {
@@ -38,7 +38,7 @@
       "priority": "Crit",
       "domain": "infra",
       "feature": "quality",
-      "label": "QA manuelle ciblée (vrais appareils mobile + validation TTS)",
+      "label": "QA manuelle ciblee (vrais appareils mobile + validation TTS)",
       "done": false
     },
     {
@@ -46,7 +46,7 @@
       "priority": "High",
       "domain": "ui",
       "feature": "home",
-      "label": "Refonte Accueil V1 par sections matières",
+      "label": "Refonte accueil V1 par sections matieres",
       "done": true
     },
     {
@@ -54,7 +54,7 @@
       "priority": "High",
       "domain": "math",
       "feature": "symetrie",
-      "label": "Symétrie V1 QCM (axes vertical + horizontal)",
+      "label": "Symetrie V1 QCM (axes vertical + horizontal)",
       "done": true
     },
     {
@@ -62,7 +62,7 @@
       "priority": "High",
       "domain": "math",
       "feature": "multiplications",
-      "label": "Difficultés multiplications + pavé numérique",
+      "label": "Difficultes multiplications + pave numerique",
       "done": true
     },
     {
@@ -70,7 +70,7 @@
       "priority": "High",
       "domain": "math",
       "feature": "motivation",
-      "label": "Système de motivation (toast + jalons)",
+      "label": "Systeme de motivation (toast + jalons)",
       "done": true
     },
     {
@@ -98,11 +98,19 @@
       "done": true
     },
     {
+      "id": "scope-050-high-admin-front-only-hardening",
+      "priority": "High",
+      "domain": "admin",
+      "feature": "security",
+      "label": "Durcir l admin front-only (docs publiques nettoyees, placeholders de configuration, limites explicites)",
+      "done": false
+    },
+    {
       "id": "scope-050-med-refactor",
       "priority": "Med",
       "domain": "infra",
       "feature": "refactor",
-      "label": "Refactor composants partagés (quiz/admin/légal)",
+      "label": "Refactor composants partages (quiz/admin/legal)",
       "done": true
     },
     {
@@ -110,7 +118,7 @@
       "priority": "Med",
       "domain": "infra",
       "feature": "quality",
-      "label": "QA pass v1: couverture renforcée + seuils Vitest + règle ratchet only",
+      "label": "QA pass v1: couverture renforcee + seuils Vitest + regle ratchet only",
       "done": true
     },
     {
@@ -118,7 +126,7 @@
       "priority": "Med",
       "domain": "infra",
       "feature": "quality",
-      "label": "QA pass v2: CI qualité + matrix E2E + a11y + snapshots visuels + Lighthouse CI",
+      "label": "QA pass v2: CI qualite + matrix E2E + a11y + snapshots visuels + Lighthouse CI",
       "done": true
     },
     {
@@ -126,7 +134,7 @@
       "priority": "Med",
       "domain": "docs",
       "feature": "release",
-      "label": "Passage de cohérence doc final 0.5.0",
+      "label": "Modernisation documentaire 0.5.0 (README, hubs, checklists, references)",
       "done": false
     },
     {
@@ -134,7 +142,7 @@
       "priority": "Low",
       "domain": "ui",
       "feature": "polish",
-      "label": "Polissage visuel léger",
+      "label": "Polissage visuel leger",
       "done": false
     },
     {

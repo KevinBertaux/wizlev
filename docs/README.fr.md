@@ -1,80 +1,103 @@
-# ManabuPlay
+# Documentation FR - ManabuPlay
 
-Application web éducative (SPA Vue 3 + Vite) pour aider les enfants à réviser les mathématiques et le vocabulaire.
+Hub de documentation en français. Ce document détaille où trouver l'information utile sans re-dupliquer les sources de vérité métier.
 
-[English version](README.en.md)
+[English documentation](README.en.md)
 
-## Version
+## Statut
 
-- Version en cours: `0.5.0-prep`
-- Dernière modification: `3 mars 2026` (fr-FR)
+- Version produit en cours : `0.5.0-prep`
+- Branche produit active : `feat/0.5.0-prep`
+- Ligne monétisation séparée : `epic/ads-cmp`
 
-## Fonctionnalités actuelles
+## Carte de la documentation
 
-### Math (`/math/multiplications`, `/math/symmetry`)
-- Multiplications: sélection multi-tables (0-11), modes de difficulté, score/série/meilleure série
-- Multiplications: validation clavier (`Entrée`) + pavé numérique desktop/tablette
-- Symétrie V1: QCM visuel (axes vertical + horizontal), score/série/meilleure série
-- Aucun démarrage implicite: sélection requise avant exercice
+### Vitrine et navigation générale
 
-### Vocabulaire anglais (`/languages/english`)
-- Listes JSON externes avec titre, description et mots
-- Dropdown avec compteur dynamique de mots (`xx mots`)
-- Aucune liste sélectionnée par défaut
-- Flashcards: navigation flèches, clavier et swipe mobile
-- TTS anglais: en-US avec alternance normale/lente au clic
-- Sens de carte: Anglais -> Français ou Français -> Anglais
-- Bouton TTS masqué en mode FR -> EN avant révélation
+- Présentation rapide du projet : `README.md`
+- Synthèse de pilotage : `ROADMAP.md`
+- Notes de version en cours : `docs/RELEASE-NOTES.0.5.0-prep.fr.md`
 
-### Zone interne V1 (accès restreint)
-- Édition locale des listes (nom, description, mots)
-- Dropdown admin avec compteur dynamique de mots
-- Import JSON / export JSON / copie JSON
-- Sauvegarde locale en `localStorage`
-- Accès via URL interne `/-/studio-ops` (non exposée dans le menu public)
+### Exploitation / qualité
 
-### Données vocabulaire (R2 V1)
-- Chargement distant Cloudflare R2 activable via variables d'environnement
-- `index.json` (manifest des listes) + fallback local automatique si indisponible
-- Objectif: pouvoir mettre à jour des listes sans déploiement applicatif
+- Checklist release : `docs/RELEASE-CHECKLIST.fr.md`
+- Checklist QA : `docs/QA-CHECKLIST.fr.md`
+- Procédure incident quota Netlify : `docs/NETLIFY-RECOVERY-CHECKLIST.fr.md`
 
-## Installation locale
+### Référentiels techniques
 
-### Prérequis
-- Node.js LTS (v24+ recommandé)
-- npm
+- Règles UI : `docs/UI-RULES.fr.md`
+- Sécurité / secrets : `docs/SECURITY-SECRETS.fr.md`
+- R2 / cache : `docs/R2-CACHE-CONTROL.fr.md`
+- Git cheat sheet : `docs/GIT-CHEATSHEET.fr.md`
+- Réflexion monétisation : `docs/MONETISATION-PUBLICITE.fr.md`
 
-### Démarrage
-1. `npm install`
-2. `npm run dev`
-3. Ouvrir l'URL affichée (ex: `http://localhost:5173`)
+### Sources publiques dans le site
 
-### Qualité
-- Tests unitaires/intégration: `npm test`
-- Tests E2E navigateur: `npm run test:e2e`
-- Build production: `npm run build`
+- Mentions légales : `/legal/legal-notice`
+- Conditions générales d'utilisation : `/legal/terms-of-use`
+- Politique de confidentialité : `/legal/privacy-policy`
+- Politique cookies : `/legal/cookie-policy`
 
-## Routes SPA
+### Sources internes dans le site
 
-- `/`: Accueil
-- `/math`: Hub Math
-- `/math/multiplications`: Module Multiplications
-- `/math/symmetry`: Module Symétrie
-- `/languages`: Hub Langues
-- `/languages/english`: Module vocabulaire anglais
-- `/-/studio-ops`: Zone interne (login)
-- `/-/studio-ops/panel`: Zone interne (panneau)
-- `/-/studio-ops/help`: Guide panneau interne (switch FR/EN)
-- `/legal/legal-notice`: Mentions légales
-- `/legal/terms-of-use`: Conditions générales d'utilisation
-- `/legal/privacy-policy`: Politique de confidentialité
-- `/legal/cookie-policy`: Politique cookies
+- Guide du panneau interne : `/-/studio-ops/help`
+- Tableau de bord interne : `/-/studio-ops/panel`
 
-## Documentation
+## Sources de vérité
 
-- Checklist QA: `docs/QA-CHECKLIST.fr.md`
-- Checklist release: `docs/RELEASE-CHECKLIST.fr.md`
-- Sécurité secrets: `docs/SECURITY-SECRETS.fr.md`
-- Git cheat sheet: `docs/GIT-CHEATSHEET.fr.md`
-- Guide panneau interne (in-app FR/EN): `/-/studio-ops/help`
-- Notes de version 0.5.0-prep: `docs/RELEASE-NOTES.0.5.0-prep.fr.md`
+### Pilotage produit
+
+- Source de vérité détaillée :
+  - `src/content/roadmap/*.json`
+- Consommation :
+  - panneau d'administration
+- Rôle de `ROADMAP.md` :
+  - synthèse courte, pas duplication intégrale
+
+### Contenus admin
+
+- `src/content/admin/*`
+- Réservé aux contenus strictement liés au panneau interne
+- Règle retenue :
+  - si le contenu a du sens hors admin, il reste dans son domaine métier
+  - si le contenu n'existe que pour le pilotage interne, il va dans `admin`
+
+### Juridique public
+
+- Source de vérité : pages du site `/legal/*`
+- Les fichiers Markdown ne doivent pas contredire ces pages
+
+## Modules actuellement actifs
+
+- `Mathématiques`
+  - hub : `/math`
+  - modules : `multiplications`, `symmetry`
+- `Langues`
+  - hub : `/languages`
+  - module : `english`
+- `Panneau interne`
+  - accès : `/-/studio-ops`
+
+## Démarrage local
+
+```bash
+npm install
+npm run dev
+```
+
+Contrôles principaux :
+
+```bash
+npm test
+npm run test:e2e
+npm run build
+```
+
+## Convention documentaire
+
+- `README.md` : vitrine courte GitHub
+- `docs/README.fr.md` / `docs/README.en.md` : hubs détaillés
+- `ROADMAP.md` : synthèse de pilotage
+- `src/content/roadmap/*.json` : source de vérité produit
+- `src/content/admin/*` : source de vérité admin interne

@@ -1,62 +1,75 @@
-# Checklist Release Hebdo (quota Netlify contraint)
+# Checklist Release - ManabuPlay
 
-Objectif: limiter a **1 deploy production par semaine** jusqu'au reset quota.
+Document operationnel de sortie. Il sert a decider si une branche produit peut passer vers `main`, puis etre deployee.
 
-## Regles
+## Perimetre
 
-- Pas de deploy production hors fenetre hebdomadaire validee.
-- Les merges `feature/*` se font vers `feat/0.5.0-prep`.
-- La branche `main` ne recoit que des merges de release valides.
-- Gate quota strict (NO-GO): si credits Netlify < `15.0`, deploy production interdit.
-- Gate quota strict (NO-GO): si site suspendu pour quota, deploy interdit jusqu'a date de reset.
+- branche produit cible : `feat/0.5.0-prep`
+- branche de publication : `main`
+- la ligne monetisation (`epic/ads-cmp`) suit son propre cycle et ne bloque pas la release produit
 
-## Pre-check local (obligatoire)
+## 1. Go / No-Go release
+
+### Produit
+
+- [ ] version cible confirmee
+- [ ] perimetre de release fige
+- [ ] aucune regression critique ouverte
+- [ ] notes de version pretes
+
+### Technique
 
 - [ ] `npm install` OK
 - [ ] `npm run check:breakpoints` OK
 - [ ] `npm run check:spacing` OK
 - [ ] `npm test` OK
 - [ ] `npm run test:e2e` OK
-- [ ] Matrix E2E OK (`desktop-chromium`, `desktop-firefox`, `desktop-webkit`, `mobile-chrome`, `mobile-safari`)
-- [ ] Tests accessibilite automatiques (axe-core) OK
-- [ ] Workflow GitHub `QA Visual Regression` (mode `check`) vert sur la branche de release
-- [ ] `npm test -- --coverage` OK (seuils Vitest respectes)
+- [ ] `npm test -- --coverage` OK
 - [ ] `npm run build` OK
-- [ ] `npm run lighthouse:ci` OK (en local Windows: tolérance bug EPERM cleanup, CI Linux reste bloquante)
-- [ ] Verification routes publiques: `/`, `/math`, `/math/multiplications`, `/math/symmetry`, `/languages`, `/languages/english`, `/legal/legal-notice`, `/legal/privacy-policy`, `/legal/terms-of-use`, `/legal/cookie-policy`
-- [ ] Verification acces zone interne via URL privee `/-/studio-ops`
-- [ ] Verification menu public: aucun acces admin visible
-- [ ] Verification favicon/logo/header
 
-## Go/No-Go contenu
+### CI
 
-- [ ] Version cible confirmee (ex: `0.5.0`)
-- [ ] Notes de version courtes preparees
-- [ ] Aucun secret commite (`.env` local uniquement)
-- [ ] Mentions legales/confidentialite coherentes avec le comportement reel
-- [ ] Aucune regression critique ouverte
-- [ ] Règle ratchet only respectee (aucune baisse de couverture/seuils sans decision explicite)
+- [ ] workflow release vert sur la branche cible
+- [ ] matrix E2E verte
+- [ ] QA Visual Regression verifiee si le lot la concerne
+- [ ] aucun ecart de seuil coverage non valide
 
-## Check Netlify avant publication
+### Conformite documentaire
 
-- [ ] Branche de publication confirmee (`main`)
-- [ ] Variables d'environnement production verifiees
-- [ ] Build preview valide (si budget deploy disponible)
-- [ ] Quota Netlify releve juste avant deploy (capture/evidence)
-- [ ] Credits Netlify >= `15.0` (sinon NO-GO absolu)
-- [ ] Site Netlify non suspendu (sinon NO-GO absolu)
-- [ ] En cas de reprise post-suspension: suivre `docs/NETLIFY-RECOVERY-CHECKLIST.fr.md`
+- [ ] `README.md` coherent avec l etat reel du projet
+- [ ] hubs `docs/README.fr.md` et `docs/README.en.md` coherents
+- [ ] `ROADMAP.md` coherent avec les sources JSON
+- [ ] pages legales coherentes avec le comportement reel
 
-## Publication
+## 2. Pre-checks de publication
 
-- [ ] Merge `feat/0.5.0-prep` -> `main`
-- [ ] Push final sur `main`
-- [ ] Deploy Netlify lance et termine avec succes
-- [ ] Verification post-deploy sur URL publique
+- [ ] branche de publication confirmee : `main`
+- [ ] quota Netlify verifie juste avant le deploiement
+- [ ] credit disponible >= `15.0`
+- [ ] site Netlify non suspendu
+- [ ] variables d environnement de production verifiees
 
-## Post-release
+Si un de ces points est faux : **NO-GO deploiement**.
 
-- [ ] Tag Git cree (ex: `v0.5.0`)
-- [ ] `ROADMAP.md` mis a jour
-- [ ] Prochaine fenetre hebdo planifiee
-- [ ] QA manuelle ciblee confirmee sur vrais appareils (iPhone/Android + TTS)
+## 3. Publication
+
+- [ ] merge `feat/0.5.0-prep` -> `main`
+- [ ] push final sur `main`
+- [ ] deploiement Netlify lance
+- [ ] deploiement Netlify termine avec succes
+
+## 4. Verifications post-deploiement
+
+- [ ] accueil accessible
+- [ ] hubs Math et Langues accessibles
+- [ ] modules publics critiques accessibles et fonctionnels
+- [ ] pages legales accessibles
+- [ ] favicon / logo / assets critiques OK
+- [ ] `ads.txt` accessible si present dans la release
+- [ ] meta site-level attendue presente si concernee
+
+## 5. Post-release
+
+- [ ] tag Git cree
+- [ ] notes de version archivees / validees
+- [ ] prochaine branche produit planifiee si besoin

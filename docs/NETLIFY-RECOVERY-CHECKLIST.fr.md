@@ -1,49 +1,30 @@
-# Netlify - Checklist de reprise apres suspension quota
+# Netlify - Procedure de reprise apres incident quota
 
-Objectif: remettre `https://manabuplay.netlify.app` en ligne de facon fiable apres suspension quota, avec gate strict GO/NO-GO.
+Annexe incident. Ce document ne remplace pas la checklist release.
 
-## 1) Pre-check quota (GO/NO-GO absolu)
+## Objectif
 
-- [ ] Date de reset quota atteinte (cible: `9 mars 2026`).
-- [ ] Site Netlify non marque "suspended".
-- [ ] Credits disponibles >= `15.0`.
-- [ ] Une capture du dashboard Netlify (quota + statut) est conservee.
+Reprendre un deploiement propre apres suspension ou tension forte sur le quota Netlify.
 
-Regle:
-- Si un point est faux -> **NO-GO** (aucun deploy).
+## Go / No-Go incident
 
-## 2) Verification post-reactivation (prod)
+- [ ] date de reset atteinte si le site a ete suspendu
+- [ ] site Netlify non marque comme suspendu
+- [ ] credits disponibles >= `15.0`
+- [ ] preuve du quota et du statut relevee avant decision
 
-### 2.1 Disponibilite HTTP
+Si un point est faux : **NO-GO**.
 
-- [ ] `GET /` renvoie `200`.
-- [ ] `GET /brand-logo.png` renvoie `200`.
-- [ ] Les assets JS/CSS references dans le HTML renvoient `200`.
-- [ ] Aucun `404` ou `499` repete sur les assets critiques.
+## Controles minimaux apres reprise
 
-### 2.2 Parcours applicatifs
+- [ ] page d accueil repond en `200`
+- [ ] assets critiques repondent en `200`
+- [ ] modules publics critiques chargent sans erreur majeure
+- [ ] pages legales accessibles
+- [ ] assets statiques critiques presents (`logo`, favicon, `ads.txt` si concerne)
 
-- [ ] Accueil: chargement complet et navigation menu OK.
-- [ ] Math multiplications: selection table, verification reponse, score OK.
-- [ ] Math symetrie: selection option, verification, question suivante OK.
-- [ ] Anglais: chargement liste, flip carte, navigation, TTS au clic OK.
-- [ ] Pages legales: Mentions / Confidentialite / CGU accessibles.
+## Decision
 
-### 2.3 Zone interne
-
-- [ ] `/-/studio-ops` accessible.
-- [ ] Auth ok avec identifiants valides.
-- [ ] `/-/studio-ops/panel` et `/-/studio-ops/help` accessibles apres login.
-
-## 3) Validation finale
-
-- [ ] Build deploye confirme dans Netlify (log "published").
-- [ ] Verification finale manuelle completee sans regression critique.
-- [ ] Horodatage de validation note (date/heure locale).
-- [ ] Decision finale enregistree: `GO PROD` ou `NO-GO`.
-
-## 4) Post-incident (obligatoire)
-
-- [ ] Renseigner la cause (quota insuffisant) dans la release checklist.
-- [ ] Reconfirmer la regle stricte: aucun deploy si credits < `15.0`.
-- [ ] Planifier le prochain deploy avec budget explicite.
+- [ ] decision finale tracee : `GO PROD` ou `NO-GO`
+- [ ] cause de l incident notee dans le suivi de release
+- [ ] prochain deploiement planifie avec budget explicite
