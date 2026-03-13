@@ -41,8 +41,8 @@ Hub de documentation en français. Ce document détaille où trouver l’informa
 
 ### Sources internes dans le site
 
-- Guide du panneau interne : `/-/studio-ops/help`
-- Tableau de bord interne : `/-/studio-ops/panel`
+- Guide du panneau interne : intégré au panneau
+- Tableau de bord interne : accès réservé, non référencé publiquement
 
 ## Sources de vérité
 
@@ -77,7 +77,7 @@ Hub de documentation en français. Ce document détaille où trouver l’informa
   - hub : `/languages`
   - module : `english`
 - `Panneau interne`
-  - accès : `/-/studio-ops`
+  - documentation et accès réservés à l'usage interne
 
 ## Démarrage local
 

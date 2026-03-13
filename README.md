@@ -54,7 +54,7 @@ npm run build
   - `src/content/admin/*`
 - Informations légales publiques :
   - pages du site `/legal/*`
-- Manuel d’usage du panneau interne :
-  - `/-/studio-ops/help`
+- Manuel d'usage du panneau interne :
+  - intégré au panneau lui-même, non référencé publiquement
 
-`ROADMAP.md` reste une synthèse courte de pilotage. Il ne doit pas re-dupliquer l’intégralité des scopes JSON.
+`ROADMAP.md` reste une synthèse courte de pilotage. Il ne doit pas re-dupliquer l'intégralité des scopes JSON.

@@ -41,8 +41,8 @@ English documentation hub. This file points to the right sources instead of dupl
 
 ### Internal in-app sources
 
-- Internal panel help: `/-/studio-ops/help`
-- Internal dashboard: `/-/studio-ops/panel`
+- Internal panel help: embedded in the panel itself
+- Internal dashboard: restricted access, not documented publicly
 
 ## Sources of truth
 
@@ -77,7 +77,7 @@ English documentation hub. This file points to the right sources instead of dupl
   - hub: `/languages`
   - module: `english`
 - `Internal panel`
-  - entry point: `/-/studio-ops`
+  - documentation and access reserved for internal use
 
 ## Local run
 
