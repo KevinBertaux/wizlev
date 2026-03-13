@@ -1,18 +1,10 @@
 // @vitest-environment jsdom
 import { mount } from '@vue/test-utils';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import LegalCookiesView from './LegalCookiesView.vue';
 
-const openPanelMock = vi.fn();
-
-vi.mock('@/features/consent/useConsentStore', () => ({
-  useConsentStore: () => ({
-    openPanel: openPanelMock,
-  }),
-}));
-
 describe('LegalCookiesView', () => {
-  it('opens the consent manager from the dedicated button', async () => {
+  it('documents the cookie policy without exposing an interactive manager in the product line', () => {
     const wrapper = mount(LegalCookiesView, {
       global: {
         stubs: {
@@ -23,10 +15,8 @@ describe('LegalCookiesView', () => {
       },
     });
 
-    expect(wrapper.text()).toContain('Gérer mes cookies');
-
-    await wrapper.get('button').trigger('click');
-
-    expect(openPanelMock).toHaveBeenCalledTimes(1);
+    expect(wrapper.text()).toContain('Gestion des choix');
+    expect(wrapper.text()).toContain("ne propose pas encore de gestionnaire interactif public");
+    expect(wrapper.find('button').exists()).toBe(false);
   });
 });

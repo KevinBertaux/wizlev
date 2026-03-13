@@ -2,27 +2,15 @@
 import { computed, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { ROUTE_NAMES } from "@/router/routes";
-import ConsentBanner from "@/components/ConsentBanner.vue";
-import ConsentPreferencesPanel from "@/components/ConsentPreferencesPanel.vue";
-import StudyAdsShell from "@/components/StudyAdsShell.vue";
-import { initAdsRuntime, syncAdsConsent } from "@/features/ads/adsRuntime";
-import { useConsentStore } from "@/features/consent/useConsentStore";
 
 const navOpen = ref(false);
 const openGroup = ref("");
 const route = useRoute();
-const consentStore = useConsentStore();
 
 const isMathRoute = computed(() => route.path.startsWith("/math"));
 const isLangRoute = computed(() => route.path.startsWith("/languages"));
 const isLegalRoute = computed(() => route.path.startsWith("/legal"));
 const isAdminPanelRoute = computed(() => route.path.startsWith("/-/studio-ops/panel"));
-const isStudioOpsRoute = computed(() => route.path.startsWith("/-/studio-ops"));
-const showConsentUi = computed(() => !isStudioOpsRoute.value);
-const showStudyAds = computed(
-  () => route.path === "/" || route.path.startsWith("/math") || route.path.startsWith("/languages")
-);
-const shouldEnableStudyAdsRuntime = computed(() => showConsentUi.value && showStudyAds.value);
 
 watch(
   () => route.fullPath,
@@ -30,37 +18,6 @@ watch(
     navOpen.value = false;
     openGroup.value = "";
   }
-);
-
-watch(
-  () => showConsentUi.value,
-  (showConsent) => {
-    if (showConsent) {
-      consentStore.init();
-    }
-  },
-  { immediate: true }
-);
-
-watch(
-  () => shouldEnableStudyAdsRuntime.value,
-  (enabled) => {
-    if (enabled) {
-      initAdsRuntime();
-      syncAdsConsent(consentStore.selections);
-    }
-  },
-  { immediate: true }
-);
-
-watch(
-  () => consentStore.selections,
-  (selections) => {
-    if (shouldEnableStudyAdsRuntime.value) {
-      syncAdsConsent(selections);
-    }
-  },
-  { deep: true }
 );
 
 function toggleMenu() {
@@ -95,7 +52,7 @@ function closeNav() {
         aria-label="Ouvrir le menu"
         @click="toggleMenu"
       >
-        ☰
+        &#9776;
       </button>
 
       <nav id="main-nav" class="main-nav" :class="{ open: navOpen }">
@@ -170,19 +127,11 @@ function closeNav() {
       </nav>
     </header>
 
-    <StudyAdsShell v-if="showStudyAds">
-      <main class="page-container">
-        <router-view />
-      </main>
-    </StudyAdsShell>
-    <main v-else class="page-container" :class="{ 'admin-shell-container': isAdminPanelRoute }">
+    <main class="page-container" :class="{ 'admin-shell-container': isAdminPanelRoute }">
       <router-view />
     </main>
 
-    <ConsentBanner v-if="showConsentUi" />
-    <ConsentPreferencesPanel v-if="showConsentUi" />
-
-    <footer class="site-footer" :class="{ 'site-footer--study-ads': showStudyAds }">
+    <footer class="site-footer">
       <div class="footer-links">
         <router-link :to="{ name: ROUTE_NAMES.LEGAL_NOTICE }">Mentions légales</router-link>
         <router-link :to="{ name: ROUTE_NAMES.LEGAL_TERMS }">CGU</router-link>
