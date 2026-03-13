@@ -37,7 +37,7 @@ const statusType = ref('');
 const statusMessage = ref('');
 const englishInputRefs = ref([]);
 const APP_VERSION = '0.5.0-prep';
-const LAST_UPDATE_FR = '23 février 2026';
+const LAST_UPDATE_FR = '13 mars 2026';
 const RESET_CONFIRM_TEXT = 'SUPPRIMER';
 
 const sidebarGroups = Object.freeze([
@@ -72,7 +72,7 @@ const sectionTitleMap = Object.freeze({
   english: 'Édition de listes d’anglais',
   symmetry: 'Formes de symétrie',
   maintenance: 'Maintenance locale',
-  'admin-help': 'Documentation du panneau interne',
+  'admin-help': 'Manuel du panneau interne',
 });
 
 function readSidebarCollapsed() {
@@ -1212,80 +1212,40 @@ refreshDashboardMetrics();
 
         <section v-else-if="selectedSection === 'admin-help'" class="grid gap-3 p-3 md:px-4 md:pt-3 md:pb-4">
           <article class="admin-card internal-help-card">
-            <h2>Documentation du panneau interne</h2>
+            <h2>Manuel du panneau interne</h2>
             <p class="meta-line">
-              Version: {{ APP_VERSION }} - Dernière modification: {{ LAST_UPDATE_FR }}.
+              Version : {{ APP_VERSION }} - Révision du manuel : {{ LAST_UPDATE_FR }}.
             </p>
 
             <p>
-              Cette aide reste intégrée au dashboard pour éviter de sortir du panneau pendant l’édition.
-              Version anglaise:
-              <router-link :to="{ name: 'studio-ops-help', query: { lang: 'en' } }">Internal panel documentation</router-link>.
+              Cette section sert de pense-bête rapide. Le manuel détaillé reste disponible sur la page dédiée, en
+              français et en anglais.
             </p>
 
-            <h3 id="scope">Périmètre</h3>
+            <div class="actions">
+              <router-link class="btn btn-secondary" :to="{ name: 'studio-ops-help', query: { lang: 'fr' } }">
+                Ouvrir le manuel FR
+              </router-link>
+              <router-link class="btn btn-secondary" :to="{ name: 'studio-ops-help', query: { lang: 'en' } }">
+                Open EN manual
+              </router-link>
+            </div>
+
+            <h3>Rappels utiles</h3>
             <ul>
-              <li>Édition locale dans le navigateur (stockage <a href="#glossary-localstorage">localStorage</a>).</li>
-              <li>Aucun backend requis pour cette version.</li>
-              <li>Export JSON pour versionner les données dans le repo Git.</li>
+              <li>Le panneau sert à éditer localement, vérifier, puis exporter les données prêtes à versionner.</li>
+              <li>Les sections roadmap et maintenance restent les bons points d'entrée pour le pilotage et le nettoyage local.</li>
+              <li>Les données du panneau restent liées à l'appareil et au navigateur en cours.</li>
+              <li>La protection actuelle reste front-only : utile, mais pas équivalente à une sécurité serveur.</li>
             </ul>
 
-            <h3 id="security">Accès et sécurité</h3>
+            <h3>Quand utiliser quelle section</h3>
             <ul>
-              <li>Connexion par identifiant + mot de passe (vérification par hash côté client).</li>
-              <li>Blocage niveau 1: 3 essais invalides puis 30 minutes.</li>
-              <li>Blocage niveau 2: un nouvel essai invalide après niveau 1 déclenche 24 heures de blocage.</li>
-              <li>Session temporaire: expiration automatique par timeout.</li>
+              <li><strong>Vue d'ensemble</strong> : indicateurs rapides et état global.</li>
+              <li><strong>Roadmap &amp; Scopes</strong> : pilotage produit et priorités.</li>
+              <li><strong>Maintenance locale</strong> : réinitialisation et rollback local.</li>
+              <li><strong>Manuel</strong> : procédure d'usage et limites connues.</li>
             </ul>
-
-            <h3 id="workflow">Workflow recommandé</h3>
-            <ol>
-              <li>Se connecter au panneau interne.</li>
-              <li>Choisir la liste à modifier.</li>
-              <li>Éditer les mots (anglais/français), puis sauvegarder localement.</li>
-              <li>Vérifier le rendu dans le module Langues.</li>
-              <li>Exporter le JSON, puis commit/push dans le repo.</li>
-            </ol>
-
-            <h3 id="json-ops">Opérations JSON</h3>
-            <ul>
-              <li><strong>Copier JSON</strong>: audit rapide ou partage ponctuel.</li>
-              <li><strong>Télécharger JSON</strong>: fichier prêt à versionner.</li>
-              <li><strong>Importer JSON</strong>: recharge une liste existante dans le panneau.</li>
-              <li><strong>Réinitialiser</strong>: revient à la version par défaut du projet.</li>
-            </ul>
-
-            <h3 id="limits">Limites connues</h3>
-            <ul>
-              <li>Protection front-only: ce n’est pas une sécurité serveur forte.</li>
-              <li>Les données locales sont liées à l’appareil/navigateur en cours.</li>
-              <li>Effacement navigateur peut supprimer les modifications locales.</li>
-            </ul>
-
-            <h3 id="troubleshooting">Dépannage</h3>
-            <ul>
-              <li>Accès bloqué: attendre la fin du compte à rebours affiché.</li>
-              <li>Session expirée: se reconnecter.</li>
-              <li>Doute sur les données: réinitialiser puis réimporter un JSON de référence.</li>
-            </ul>
-
-            <h3 id="glossary">Glossaire</h3>
-            <dl>
-              <dt id="glossary-localstorage">localStorage</dt>
-              <dd>Stockage persistant dans le navigateur, propre à un domaine.</dd>
-
-              <dt id="glossary-hash">Hash (SHA-256)</dt>
-              <dd>Empreinte irréversible pour vérifier un mot de passe sans le stocker en clair.</dd>
-
-              <dt id="glossary-timeout">Timeout de session</dt>
-              <dd>Durée limite d’une session connectée avant déconnexion automatique.</dd>
-
-              <dt id="glossary-front-only">Front-only security</dt>
-              <dd>Protection implémentée uniquement côté navigateur, sans contrôle serveur.</dd>
-
-              <dt id="glossary-json">JSON</dt>
-              <dd>Format texte structuré pour stocker et échanger des données.</dd>
-            </dl>
           </article>
         </section>
 
@@ -1360,4 +1320,5 @@ refreshDashboardMetrics();
 </template>
 
 <style scoped src="../styles/admin-dashboard.css"></style>
+
 
