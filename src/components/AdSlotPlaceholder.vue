@@ -1,6 +1,6 @@
 <script setup>
-import { computed } from "vue";
-import { getAdSlotById, isAdSlotVisible } from "@/features/ads/adsSlots";
+import { computed } from 'vue';
+import { getAdSlotById, isAdSlotVisible } from '@/features/ads/adsSlots';
 
 const props = defineProps({
   slotId: {
@@ -17,42 +17,42 @@ const slot = computed(() => getAdSlotById(props.slotId));
 
 const slotFormatClass = computed(() => {
   if (!slot.value) {
-    return "";
+    return '';
   }
 
-  if (slot.value.format === "vertical-rail") {
-    return "ad-slot-placeholder--vertical";
+  if (slot.value.format === 'vertical-rail') {
+    return 'ad-slot-placeholder--vertical';
   }
 
-  if (slot.value.format === "top-banner") {
-    return "ad-slot-placeholder--top";
+  if (slot.value.format === 'top-banner') {
+    return 'ad-slot-placeholder--top';
   }
 
-  if (slot.value.format === "mobile-banner") {
-    return "ad-slot-placeholder--mobile";
+  if (slot.value.format === 'mobile-banner') {
+    return 'ad-slot-placeholder--mobile';
   }
 
-  return "ad-slot-placeholder--horizontal";
+  return 'ad-slot-placeholder--horizontal';
 });
 
 const slotSizeLabel = computed(() => {
   if (!slot.value) {
-    return "";
+    return '';
   }
 
-  if (slot.value.format === "vertical-rail") {
-    return "160 x 600";
+  if (slot.value.format === 'vertical-rail') {
+    return '160 x 600';
   }
 
-  if (slot.value.format === "top-banner") {
-    return "970 x 90";
+  if (slot.value.format === 'top-banner') {
+    return '728 x 90';
   }
 
-  if (slot.value.format === "mobile-banner") {
-    return "728 x 90 · 320 x 50";
+  if (slot.value.format === 'mobile-banner') {
+    return '320 x 50';
   }
 
-  return "728 x 90";
+  return '728 x 90';
 });
 
 const shouldShowPlaceholder = computed(() => isAdSlotVisible(slot.value));
@@ -91,11 +91,11 @@ const shouldShowPlaceholder = computed(() => isAdSlotVisible(slot.value));
 }
 
 .ad-slot-placeholder--top {
-  max-width: 1040px;
+  max-width: 760px;
 }
 
 .ad-slot-placeholder--mobile {
-  max-width: 728px;
+  max-width: 320px;
 }
 
 .ad-slot-placeholder__meta {
@@ -153,8 +153,8 @@ const shouldShowPlaceholder = computed(() => isAdSlotVisible(slot.value));
 }
 
 .ad-slot-placeholder--mobile .ad-slot-placeholder__frame {
-  min-height: 76px;
-  padding: 12px 16px;
+  min-height: 58px;
+  padding: 10px 12px;
 }
 
 .ad-slot-placeholder__title {
@@ -187,10 +187,6 @@ const shouldShowPlaceholder = computed(() => isAdSlotVisible(slot.value));
     margin-top: 12px;
   }
 
-  .ad-slot-placeholder--mobile {
-    max-width: 360px;
-  }
-
   .ad-slot-placeholder__meta {
     margin-bottom: 6px;
     font-size: 0.75rem;
@@ -199,11 +195,6 @@ const shouldShowPlaceholder = computed(() => isAdSlotVisible(slot.value));
   .ad-slot-placeholder__frame {
     min-height: 84px;
     padding: 14px;
-  }
-
-  .ad-slot-placeholder--mobile .ad-slot-placeholder__frame {
-    min-height: 58px;
-    padding: 10px 12px;
   }
 }
 </style>

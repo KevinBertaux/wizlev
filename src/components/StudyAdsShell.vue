@@ -1,43 +1,27 @@
 <script setup>
-import AdSlotPlaceholder from "@/components/AdSlotPlaceholder.vue";
+import AdSlotLive from '@/components/AdSlotLive.vue';
 </script>
 
 <template>
   <div class="study-ads-shell">
     <div class="study-ads-shell__top">
-      <AdSlotPlaceholder
-        slot-id="study-top-banner"
-        hint="Zone réservée visible seulement en local ou en test avant activation."
-      />
+      <AdSlotLive slot-id="study-top-banner" />
     </div>
 
     <div class="study-ads-shell__row">
-      <aside class="study-ads-shell__rail study-ads-shell__rail--left" aria-hidden="true">
-        <AdSlotPlaceholder
-          slot-id="study-rail-left"
-          hint="Rail réservé pour un partenaire, sans script actif pour le moment."
-        />
-      </aside>
-
       <div class="study-ads-shell__content">
         <slot />
       </div>
 
       <aside class="study-ads-shell__rail study-ads-shell__rail--right" aria-hidden="true">
-        <AdSlotPlaceholder
-          slot-id="study-rail-right"
-          hint="Rail réservé pour un partenaire, sans script actif pour le moment."
-        />
+        <AdSlotLive slot-id="study-rail-right" />
       </aside>
     </div>
 
     <div class="study-ads-shell__bottom-spacer" aria-hidden="true"></div>
 
     <div class="study-ads-shell__bottom">
-      <AdSlotPlaceholder
-        slot-id="study-bottom-banner"
-        hint="Bandeau réservé, non actif tant que la monétisation n'est pas branchée."
-      />
+      <AdSlotLive slot-id="study-bottom-banner" />
     </div>
   </div>
 </template>
@@ -77,28 +61,6 @@ import AdSlotPlaceholder from "@/components/AdSlotPlaceholder.vue";
     z-index: 8;
     margin-bottom: 16px;
   }
-
-  .study-ads-shell__bottom-spacer {
-    display: block;
-    height: 124px;
-  }
-
-  .study-ads-shell__bottom {
-    display: flex;
-    justify-content: center;
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 18;
-    padding: 0 16px 16px;
-    pointer-events: none;
-  }
-
-  .study-ads-shell__bottom > * {
-    width: 100%;
-    pointer-events: auto;
-  }
 }
 
 @media (min-width: 1280px) {
@@ -108,7 +70,7 @@ import AdSlotPlaceholder from "@/components/AdSlotPlaceholder.vue";
   }
 
   .study-ads-shell__row {
-    grid-template-columns: 160px minmax(0, 1fr) 160px;
+    grid-template-columns: minmax(0, 1fr) 160px;
     gap: 24px;
     align-items: start;
   }
