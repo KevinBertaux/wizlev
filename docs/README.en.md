@@ -1,80 +1,103 @@
-# ManabuPlay
+# English Documentation - ManabuPlay
 
-Educational web app (Vue 3 + Vite SPA) to help children practice math and vocabulary.
+English documentation hub. This file points to the right sources instead of duplicating the whole product scope.
 
-[Version française](README.fr.md)
+[Documentation française](README.fr.md)
 
-## Version
+## Status
 
-- Current version: `0.5.0-prep`
-- Last update: `3 March 2026` (fr-FR date: 3 mars 2026)
+- Current product version: `0.5.0-prep`
+- Active product branch: `feat/0.5.0-prep`
+- Separate monetization line: `epic/ads-cmp`
 
-## Current features
+## Documentation map
 
-### Math (`/math/multiplications`, `/math/symmetry`)
-- Multiplications: multi-table selection (0-11), difficulty modes, score/streak/best streak
-- Multiplications: keyboard validation (`Enter`) + desktop/tablet numeric pad
-- Symmetry V1: visual MCQ (vertical + horizontal axes), score/streak/best streak
-- No implicit start: selection required before practice
+### Public-facing project docs
 
-### English vocabulary (`/languages/english`)
-- External JSON lists with title, description, and words
-- Dropdown with dynamic word count (`xx words`)
-- No list selected by default
-- Flashcards: arrows, keyboard, and mobile swipe navigation
-- English TTS: en-US with click-based normal/slow alternation
-- Card direction: English -> French or French -> English
-- TTS button hidden in FR -> EN mode until translation is revealed
+- Short GitHub overview: `README.md`
+- Short planning summary: `ROADMAP.md`
+- Current release notes: `docs/RELEASE-NOTES.0.5.0-prep.fr.md`
 
-### Internal panel V1 (restricted access)
-- Local edit of list name/description/words
-- Admin dropdown with dynamic word count
-- JSON import / export / copy
-- Local `localStorage` save
-- Accessed through private URL `/-/studio-ops` (not visible in public menu)
+### Operations and quality
 
-### Vocabulary data (R2 V1)
-- Optional remote Cloudflare R2 loading via environment variables
-- `index.json` list manifest + automatic local fallback on failure
-- Goal: update lists without redeploying the app
-
-## Local setup
-
-### Prerequisites
-- Node.js LTS (v24+ recommended)
-- npm
-
-### Run
-1. `npm install`
-2. `npm run dev`
-3. Open printed URL (example: `http://localhost:5173`)
-
-### Quality checks
-- Unit/integration tests: `npm test`
-- Browser E2E tests: `npm run test:e2e`
-- Production build: `npm run build`
-
-## SPA routes
-
-- `/`: Home
-- `/math`: Math hub
-- `/math/multiplications`: Multiplications module
-- `/math/symmetry`: Symmetry module
-- `/languages`: Languages hub
-- `/languages/english`: English vocabulary module
-- `/-/studio-ops`: Internal login
-- `/-/studio-ops/panel`: Internal panel
-- `/-/studio-ops/help`: Internal panel guide (FR/EN switch)
-- `/legal/legal-notice`: Legal notices
-- `/legal/terms-of-use`: Terms of use
-- `/legal/privacy-policy`: Privacy policy
-- `/legal/cookie-policy`: Cookie policy
-
-## Documentation
-
-- QA checklist: `docs/QA-CHECKLIST.fr.md`
 - Release checklist: `docs/RELEASE-CHECKLIST.fr.md`
-- Secrets security: `docs/SECURITY-SECRETS.fr.md`
+- QA checklist: `docs/QA-CHECKLIST.fr.md`
+- Netlify quota incident procedure: `docs/NETLIFY-RECOVERY-CHECKLIST.fr.md`
+
+### Technical references
+
+- UI rules: `docs/UI-RULES.fr.md`
+- Secrets / security: `docs/SECURITY-SECRETS.fr.md`
+- R2 / cache control: `docs/R2-CACHE-CONTROL.fr.md`
 - Git cheat sheet: `docs/GIT-CHEATSHEET.fr.md`
-- Internal panel guide (in-app FR/EN): `/-/studio-ops/help`
-- Release notes 0.5.0-prep: `docs/RELEASE-NOTES.0.5.0-prep.fr.md`
+- Monetization notes: `docs/MONETISATION-PUBLICITE.fr.md`
+
+### Public in-app sources
+
+- Legal notice: `/legal/legal-notice`
+- Terms of use: `/legal/terms-of-use`
+- Privacy policy: `/legal/privacy-policy`
+- Cookie policy: `/legal/cookie-policy`
+
+### Internal in-app sources
+
+- Internal panel help: embedded in the panel itself
+- Internal dashboard: restricted access, not documented publicly
+
+## Sources of truth
+
+### Product planning
+
+- Detailed source of truth:
+  - `src/content/roadmap/*.json`
+- Consumer:
+  - admin dashboard
+- `ROADMAP.md` role:
+  - short synthesis only, not full duplication
+
+### Admin-only content
+
+- `src/content/admin/*`
+- Reserved for content that only exists for the internal panel
+- Rule kept for the project:
+  - if content makes sense outside admin, it stays in its business domain
+  - if content exists only for internal operations, it belongs in `admin`
+
+### Public legal content
+
+- Source of truth: `/legal/*` site pages
+- Markdown files must stay aligned with these public pages
+
+## Active modules
+
+- `Mathematics`
+  - hub: `/math`
+  - modules: `multiplications`, `symmetry`
+- `Languages`
+  - hub: `/languages`
+  - module: `english`
+- `Internal panel`
+  - documentation and access reserved for internal use
+
+## Local run
+
+```bash
+npm install
+npm run dev
+```
+
+Main checks:
+
+```bash
+npm test
+npm run test:e2e
+npm run build
+```
+
+## Documentation convention
+
+- `README.md`: short GitHub storefront
+- `docs/README.fr.md` / `docs/README.en.md`: detailed hubs
+- `ROADMAP.md`: short planning synthesis
+- `src/content/roadmap/*.json`: product source of truth
+- `src/content/admin/*`: internal admin source of truth

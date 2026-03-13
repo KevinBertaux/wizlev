@@ -10,35 +10,34 @@ function openConsentManager() {
 </script>
 
 <template>
-  <LegalPageLayout title="Politique cookies" updated-at="5 mars 2026">
+  <LegalPageLayout title="Politique cookies" updated-at="13 mars 2026">
     <h2>1. Objet</h2>
     <p>
-      Cette page explique l'usage des cookies et technologies similaires sur <strong>ManabuPlay</strong>, ainsi que
-      vos choix.
+      Cette page explique l'usage des cookies, stockages locaux et technologies similaires sur <strong>ManabuPlay</strong>,
+      ainsi que les choix mis à disposition de l'utilisateur.
     </p>
 
-    <h2>2. Cookies strictement nécessaires</h2>
+    <h2>2. Stockages strictement nécessaires</h2>
     <p>
-      Le site peut utiliser des stockages techniques nécessaires au fonctionnement (par exemple préférences locales
-      dans le navigateur pour les modules d'apprentissage et accès au panneau interne).
+      Le site utilise des stockages techniques nécessaires à son fonctionnement ou à la mémorisation de préférences
+      locales, par exemple pour les réglages d'interface, certaines progressions pédagogiques ou l'accès au panneau
+      interne sur l'appareil en cours.
     </p>
     <p>
-      Ces éléments techniques sont utilisés pour fournir le service demandé et ne sont pas activés à des fins
-      publicitaires.
+      Ces éléments techniques servent au bon fonctionnement du service et ne sont pas activés à des fins publicitaires.
     </p>
 
-    <h2>3. Cookies non essentiels (mesure d'audience, publicité)</h2>
+    <h2>3. Cookies non essentiels et publicité</h2>
     <p>
-      À ce jour, aucun script publicitaire n'est chargé avant consentement. En cas d'activation future de modules de
-      publicité ou mesure d'audience non exemptée, un bandeau de consentement sera affiché au préalable.
-    </p>
-    <p>
-      Sans consentement, ces traceurs non essentiels resteront désactivés.
+      Dans la version produit actuelle, aucun script publicitaire n'est chargé avant consentement. Si des modules de
+      monétisation ou de mesure non exemptée sont activés publiquement, un gestionnaire de consentement adapté prendra
+      le relais avant tout chargement non essentiel.
     </p>
 
     <h2 id="manage-cookies">4. Gérer mes cookies</h2>
     <p>
-      Le lien “Cookies” du pied de page redirige vers cette page. Utilisez ce bouton pour ouvrir directement le panneau.
+      Le lien « Cookies » du pied de page redirige vers cette page. Utilisez ce bouton pour ouvrir directement le
+      gestionnaire disponible dans la version courante du site.
     </p>
     <p>
       <button type="button" class="mp-btn mp-btn-secondary" @click="openConsentManager">Gérer mes cookies</button>
@@ -46,13 +45,11 @@ function openConsentManager() {
 
     <h2>5. Durée de conservation des choix</h2>
     <p>
-      Lors de l'activation du module de consentement, les choix cookies seront conservés pour une durée limitée,
-      puis redemandés selon les exigences applicables.
+      Les choix liés aux cookies et traceurs sont conservés pour une durée limitée, puis redemandés selon les exigences
+      applicables et l'évolution du mécanisme de consentement en production.
     </p>
 
     <h2>6. Contact</h2>
-    <p>
-      Pour toute question sur les cookies et traceurs: kevinbertaux+manabuplay [at] gmail [dot] com
-    </p>
+    <p>Pour toute question relative aux cookies et traceurs : kevinbertaux+manabuplay [at] gmail [dot] com</p>
   </LegalPageLayout>
 </template>

@@ -3,11 +3,11 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
 </script>
 
 <template>
-  <LegalPageLayout title="Mentions légales" updated-at="5 mars 2026">
-    <h2>Version de l'application</h2>
+  <LegalPageLayout title="Mentions légales" updated-at="13 mars 2026">
+    <h2>Version du service</h2>
     <p>
       Version en cours : <strong>0.5.0-prep</strong><br />
-      Dernière modification : 5 mars 2026
+      Dernière révision éditoriale : 13 mars 2026
     </p>
 
     <h2>Éditeur du site</h2>
@@ -24,32 +24,36 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
     <p>Directeur de la publication : éditeur non professionnel du site ManabuPlay.</p>
 
     <h2>Contact</h2>
-    <p>Pour toute question (légale, contenu, données personnelles) : kevinbertaux+manabuplay [at] gmail [dot] com</p>
+    <p>Pour toute question légale, éditoriale ou relative aux données personnelles : kevinbertaux+manabuplay [at] gmail [dot] com</p>
 
     <h2>Hébergement</h2>
     <p>
-      Hébergeur (au 5 mars 2026) : <strong>Netlify, Inc.</strong><br />
+      Hébergeur au 13 mars 2026 : <strong>Netlify, Inc.</strong><br />
       512 2nd Street, Suite 200, San Francisco, CA 94107, USA<br />
       Site : <a href="https://www.netlify.com" target="_blank" rel="noreferrer">netlify.com</a>
     </p>
 
     <h2>Propriété intellectuelle</h2>
     <p>
-      Sauf mention contraire, les contenus du site (textes, structure, éléments graphiques, code) sont protégés par
-      les règles de propriété intellectuelle applicables. Toute reproduction, représentation, adaptation ou diffusion
-      non autorisée, totale ou partielle, peut engager la responsabilité de son auteur.
+      Sauf mention contraire, les contenus du site (textes, structure, éléments graphiques, code, ressources
+      pédagogiques) restent protégés par les règles de propriété intellectuelle applicables. Toute reproduction,
+      représentation, adaptation ou diffusion non autorisée, totale ou partielle, peut engager la responsabilité de
+      son auteur.
     </p>
 
     <h2>Responsabilité</h2>
     <p>
-      L'éditeur s'efforce de fournir des informations exactes et à jour, sans garantir l'absence d'erreurs,
-      d'omissions ou d'indisponibilités. Le site peut être modifié ou suspendu à tout moment, sans préavis.
+      L'éditeur s'efforce de fournir un service utile et à jour, sans garantir l'absence d'erreurs, d'omissions ou
+      d'indisponibilités. Le site peut être modifié, interrompu ou suspendu à tout moment, sans préavis.
     </p>
 
-    <h2>Public mineur</h2>
-    <p>Le site est destiné à un usage éducatif, y compris par des mineurs. Les responsables légaux sont invités à accompagner l'usage du site.</p>
+    <h2>Public concerné</h2>
+    <p>
+      ManabuPlay est un service éducatif destiné à la révision scolaire, y compris par des mineurs. Les responsables
+      légaux sont invités à accompagner l'usage du site lorsque cela est pertinent.
+    </p>
 
     <h2>Droit applicable</h2>
-    <p>Les présentes mentions sont régies par le droit français.</p>
+    <p>Les présentes mentions légales sont régies par le droit français.</p>
   </LegalPageLayout>
 </template>
