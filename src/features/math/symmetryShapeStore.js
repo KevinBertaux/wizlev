@@ -12,6 +12,7 @@ const REMOTE_TIMEOUT_MS = 3500;
 const DEFAULT_REMOTE_FOLDER = 'math/symmetry';
 const DEFAULT_REMOTE_MANIFEST_FILE = 'manifest.json';
 const DEFAULT_REMOTE_CONFIG_FILE = 'shapes-3-points.json';
+const VALID_REVIEW_STATUS = new Set(['pending', 'accepted', 'review', 'rejected']);
 
 const LOCAL_GROUP_PAYLOADS = {
   threePoints: shapesThreePoints,
@@ -95,6 +96,13 @@ function sanitizeManifest(payload, fallback = null) {
     gridSize: normalizeGridSize(payload?.gridSize, fallbackGridSize),
     axes: normalizeAxes(payload?.axes, fallbackAxes),
     updatedAt: normalizeUpdatedAt(payload?.updatedAt, fallbackUpdatedAt),
+    validatedAt: normalizeUpdatedAt(payload?.validatedAt, normalizeUpdatedAt(fallback?.validatedAt, '')),
+    validatorVersion:
+      typeof payload?.validatorVersion === 'string' && payload.validatorVersion.trim()
+        ? payload.validatorVersion.trim()
+        : typeof fallback?.validatorVersion === 'string' && fallback.validatorVersion.trim()
+          ? fallback.validatorVersion.trim()
+          : '',
     groups: groups.length > 0 ? groups : fallbackGroups,
   };
 }
@@ -143,6 +151,7 @@ function normalizeShapes(shapes, gridSize, expectedPoints = null, fallbackShapes
     normalized.push({
       id: idCandidate,
       points,
+      ...(VALID_REVIEW_STATUS.has(rawShape?.reviewStatus) ? { reviewStatus: rawShape.reviewStatus } : {}),
     });
   }
 
@@ -184,6 +193,8 @@ function buildConfigFromManifest(manifest, payloads, fallback = null) {
     gridSize: manifest.gridSize,
     axes: manifest.axes,
     updatedAt: manifest.updatedAt,
+    validatedAt: manifest.validatedAt,
+    validatorVersion: manifest.validatorVersion,
     shapes,
   };
 }
@@ -218,6 +229,13 @@ function sanitizeWithFallback(input, fallback) {
     gridSize,
     axes,
     updatedAt: normalizeUpdatedAt(input?.updatedAt, normalizeUpdatedAt(fallback?.updatedAt, '')),
+    validatedAt: normalizeUpdatedAt(input?.validatedAt, normalizeUpdatedAt(fallback?.validatedAt, '')),
+    validatorVersion:
+      typeof input?.validatorVersion === 'string' && input.validatorVersion.trim()
+        ? input.validatorVersion.trim()
+        : typeof fallback?.validatorVersion === 'string' && fallback.validatorVersion.trim()
+          ? fallback.validatorVersion.trim()
+          : '',
     shapes: shapes.length > 0 ? shapes : fallbackShapes,
   };
 }

@@ -46,6 +46,13 @@ function resolveDefaultReviewStatus(autoStatus) {
   return AUTO_DRIVEN_REVIEW_STATUS.has(autoStatus) ? autoStatus : SYMMETRY_REVIEW_STATUS.PENDING;
 }
 
+function resolveInitialReviewStatus(autoStatus, sourceReviewStatus) {
+  if (VALID_REVIEW_STATUS.has(sourceReviewStatus)) {
+    return sourceReviewStatus;
+  }
+  return resolveDefaultReviewStatus(autoStatus);
+}
+
 export function createEmptySymmetryReviewSession() {
   return {
     entries: {},
@@ -116,18 +123,19 @@ export function createSymmetryReviewSession(results, storageOverride) {
   return session;
 }
 
-export function getSymmetryReviewEntryState(session, id, autoStatus) {
+export function getSymmetryReviewEntryState(session, id, autoStatus, sourceReviewStatus = '') {
   const entry = session?.entries?.[id];
+  const initialReviewStatus = resolveInitialReviewStatus(autoStatus, sourceReviewStatus);
   if (!entry) {
     return {
-      reviewStatus: resolveDefaultReviewStatus(autoStatus),
+      reviewStatus: initialReviewStatus,
       deleted: false,
-      manualOverrideActive: false,
+      manualOverrideActive: initialReviewStatus !== resolveDefaultReviewStatus(autoStatus),
     };
   }
 
   const normalized = normalizeReviewEntry(entry);
-  const defaultReviewStatus = resolveDefaultReviewStatus(autoStatus);
+  const defaultReviewStatus = initialReviewStatus;
 
   return {
     ...normalized,
@@ -135,13 +143,13 @@ export function getSymmetryReviewEntryState(session, id, autoStatus) {
   };
 }
 
-export function setSymmetryReviewStatus(session, id, reviewStatus, autoStatus) {
+export function setSymmetryReviewStatus(session, id, reviewStatus, autoStatus, sourceReviewStatus = '') {
   if (typeof id !== 'string' || !id || !VALID_REVIEW_STATUS.has(reviewStatus)) {
     return session;
   }
 
-  const currentState = getSymmetryReviewEntryState(session, id, autoStatus);
-  const defaultReviewStatus = resolveDefaultReviewStatus(autoStatus);
+  const currentState = getSymmetryReviewEntryState(session, id, autoStatus, sourceReviewStatus);
+  const defaultReviewStatus = resolveInitialReviewStatus(autoStatus, sourceReviewStatus);
   const nextState = {
     ...currentState,
     reviewStatus,
@@ -164,13 +172,13 @@ export function setSymmetryReviewStatus(session, id, reviewStatus, autoStatus) {
   };
 }
 
-export function toggleSymmetryReviewDeleted(session, id, autoStatus) {
+export function toggleSymmetryReviewDeleted(session, id, autoStatus, sourceReviewStatus = '') {
   if (typeof id !== 'string' || !id) {
     return session;
   }
 
-  const currentState = getSymmetryReviewEntryState(session, id, autoStatus);
-  const defaultReviewStatus = resolveDefaultReviewStatus(autoStatus);
+  const currentState = getSymmetryReviewEntryState(session, id, autoStatus, sourceReviewStatus);
+  const defaultReviewStatus = resolveInitialReviewStatus(autoStatus, sourceReviewStatus);
   const nextState = {
     ...currentState,
     deleted: !currentState.deleted,
@@ -201,7 +209,7 @@ export function applySymmetryReviewSession(results, session) {
   const items = Array.isArray(results) ? results : [];
 
   return items.map((entry) => {
-    const state = getSymmetryReviewEntryState(session, entry.id, entry.status);
+    const state = getSymmetryReviewEntryState(session, entry.id, entry.status, entry.sourceReviewStatus);
     return {
       ...entry,
       autoStatus: entry.status,

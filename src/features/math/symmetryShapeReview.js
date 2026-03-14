@@ -80,6 +80,10 @@ function countDirectionChanges(points) {
   return changes;
 }
 
+function shouldWarnLowDirectionChanges(points, directionChanges) {
+  return points.length >= 4 && directionChanges <= 1;
+}
+
 export function scoreSymmetryShape(points) {
   const bounds = computeBounds(points);
   const axisPoints = countAxisPoints(points);
@@ -138,6 +142,7 @@ export function evaluateSymmetryShape(shape, options = {}) {
   }
 
   const axisPoints = countAxisPoints(points);
+  const directionChanges = countDirectionChanges(points);
   if (points.length <= 4 && axisPoints > 2) {
     hardFailures.push('trop_de_points_sur_axe');
   }
@@ -156,7 +161,7 @@ export function evaluateSymmetryShape(shape, options = {}) {
 
   if (axisPoints >= 2) warnings.push('axe_charge');
   if (bounds.width === 0 || bounds.height === 0) warnings.push('silhouette_peu_variee');
-  if (countDirectionChanges(points) <= 1) warnings.push('peu_de_changements_de_direction');
+  if (shouldWarnLowDirectionChanges(points, directionChanges)) warnings.push('peu_de_changements_de_direction');
   if (score >= 80) notes.push('bon_potentiel_pedagogique');
   if (score >= 60 && score < 80) notes.push('forme_correcte');
 
@@ -175,6 +180,7 @@ export function evaluateSymmetryShape(shape, options = {}) {
     id: shape?.id ?? null,
     pointCount: points.length,
     points,
+    sourceReviewStatus: typeof shape?.reviewStatus === 'string' ? shape.reviewStatus : '',
     signature: exactSignature,
     normalizedSignature,
     score,

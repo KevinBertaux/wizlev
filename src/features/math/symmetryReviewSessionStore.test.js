@@ -95,6 +95,19 @@ describe('symmetryReviewSessionStore', () => {
     ]);
   });
 
+  it('uses source review status when no local session override exists', () => {
+    const applied = applySymmetryReviewSession(
+      [{ id: 'shape-5-01', status: 'review', sourceReviewStatus: 'accepted', pointCount: 5 }],
+      createSymmetryReviewSession([], createMemoryStorage())
+    );
+
+    expect(applied[0]).toMatchObject({
+      reviewStatus: 'accepted',
+      autoStatus: 'review',
+      manualOverrideActive: true,
+    });
+  });
+
   it('summarizes counts by final review status and deletion', () => {
     const summary = summarizeSymmetryReviewEntries([
       { reviewStatus: 'pending', deleted: false },

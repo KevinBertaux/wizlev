@@ -970,6 +970,58 @@ pre {
   align-items: end;
 }
 
+.sym-review-validation {
+  margin-top: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border: 1px solid #d5e1ec;
+  border-radius: 10px;
+  background: #f7fbff;
+}
+
+.sym-review-validation.is-ok {
+  border-color: #b7dcc0;
+  background: #f3fbf4;
+}
+
+.sym-review-validation.is-warn {
+  border-color: #ead39a;
+  background: #fff8eb;
+}
+
+.sym-review-validation.is-info {
+  border-color: #c5d6e8;
+  background: #f4f8fc;
+}
+
+.sym-review-validation__title,
+.sym-review-validation__message {
+  margin: 0;
+}
+
+.sym-review-validation__title {
+  color: #183651;
+  font-size: 0.94rem;
+  font-weight: 800;
+}
+
+.sym-review-validation__message {
+  margin-top: 4px;
+  color: #45627d;
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.sym-review-validation__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
 .sym-review-filter-block {
   display: grid;
   gap: 8px;
@@ -1374,6 +1426,15 @@ pre {
 
   .roadmap-toolbar {
     grid-template-columns: 1fr;
+  }
+
+  .sym-review-validation {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .sym-review-validation__actions {
+    justify-content: stretch;
   }
 
   .roadmap-meta {

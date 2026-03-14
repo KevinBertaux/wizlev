@@ -86,4 +86,18 @@ describe('symmetry shape validator helpers', () => {
     expect(second.warnings).toContain('doublon_normalise');
     expect(second.status).toBe('review');
   });
+
+  it('does not penalize three-point shapes only for low direction changes', () => {
+    const result = evaluateSymmetryShape({
+      id: 'shape-3-ok',
+      points: [
+        { x: 0, y: 0 },
+        { x: 1, y: 1 },
+        { x: 0, y: 4 },
+      ],
+    });
+
+    expect(result.warnings).not.toContain('peu_de_changements_de_direction');
+    expect(result.status).toBe('accepted');
+  });
 });

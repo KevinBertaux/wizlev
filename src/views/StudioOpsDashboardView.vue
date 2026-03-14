@@ -33,6 +33,7 @@ import {
 import { fetchBuildInfo } from '@/features/admin/buildInfoStore';
 import { getRoadmapEntries, ROADMAP_PRIORITY_ORDER } from '@/features/admin/roadmapStore';
 import { buildSymmetryShapeReviewReport } from '@/features/math/symmetryShapeReview';
+import { buildSymmetryExportPayload, buildSymmetryExportZipBlob } from '@/features/math/symmetryReviewExport';
 import {
   applySymmetryReviewSession,
   createSymmetryReviewSession,
@@ -639,6 +640,8 @@ const symmetryReviewReport = ref({
 });
 const symmetryReviewGridSize = ref(5);
 const symmetryReviewUpdatedAt = ref('');
+const symmetryReviewValidatedAt = ref('');
+const symmetryReviewValidatorVersion = ref('');
 const symmetryReviewSession = ref(createSymmetryReviewSession([]));
 const symmetryStatusFilters = ref([
   SYMMETRY_REVIEW_STATUS.PENDING,
@@ -739,6 +742,8 @@ function refreshSymmetryReviewData() {
   symmetryReviewSession.value = createSymmetryReviewSession(report.results);
   symmetryReviewGridSize.value = config.gridSize;
   symmetryReviewUpdatedAt.value = config.updatedAt || '';
+  symmetryReviewValidatedAt.value = config.validatedAt || '';
+  symmetryReviewValidatorVersion.value = config.validatorVersion || report.validatorVersion || '';
   symmetryOverrideActive.value = hasSymmetryShapesOverride();
 }
 
@@ -763,6 +768,84 @@ const symmetryVisibleEntries = computed(() => {
 });
 
 const symmetryReviewDirty = computed(() => hasSymmetryReviewSessionChanges(symmetryReviewSession.value));
+const symmetryRejectedEntries = computed(() =>
+  symmetryReviewEntries.value.filter((entry) => entry.reviewStatus === SYMMETRY_REVIEW_STATUS.REJECTED && !entry.deleted)
+);
+const symmetryRejectedPrompt = computed(() => {
+  if (symmetryRejectedEntries.value.length === 0) {
+    return '';
+  }
+
+  const shapesBlock = symmetryRejectedEntries.value
+    .map((entry) => {
+      const issues = [...entry.hardFailures, ...entry.warnings];
+      const issueLabel = issues.length > 0 ? issues.join(', ') : 'aucun signal listé';
+      const points = entry.points.map((point) => `(${point.x},${point.y})`).join(' ');
+
+      return [
+        `- id: ${entry.id}`,
+        `  fichier: ${entry.file}`,
+        `  score: ${entry.score}/100`,
+        `  pré-tri: ${entry.autoStatus}`,
+        `  décision: ${entry.reviewStatus}`,
+        `  signaux: ${issueLabel}`,
+        `  points: ${points}`,
+      ].join('\n');
+    })
+    .join('\n');
+
+  return [
+    'Modifie directement les formes rejetées de la banque de symétrie.',
+    'Travaille sur les JSON source sous `src/content/math/symmetry/`, ajuste les points des formes listées ci-dessous, puis relance la validation et les tests ciblés.',
+    'Conserve les IDs si possible, améliore la lisibilité pédagogique, évite les formes dégénérées, et garde la grille 5x5 actuelle.',
+    '',
+    'Formes rejetées :',
+    shapesBlock,
+    '',
+    'À la fin :',
+    '1. relance `npm run validate:symmetry-shapes`',
+    '2. relance les tests symétrie ciblés',
+    '3. résume les modifications forme par forme',
+  ].join('\n');
+});
+const symmetryExportPayload = computed(() =>
+  buildSymmetryExportPayload({
+    entries: symmetryReviewEntries.value,
+    gridSize: symmetryReviewGridSize.value,
+    axes: ['vertical', 'horizontal'],
+    currentUpdatedAt: symmetryReviewUpdatedAt.value,
+    currentValidatedAt: symmetryReviewValidatedAt.value,
+    currentValidatorVersion: symmetryReviewValidatorVersion.value || symmetryReviewReport.value.validatorVersion,
+  })
+);
+const symmetryCanExport = computed(
+  () => symmetryReviewDirty.value && symmetryExportPayload.value.files.some((file) => file.shapes.length > 0)
+);
+const symmetryValidationState = computed(() => {
+  if (symmetryReviewDirty.value) {
+    return {
+      toneClass: 'is-warn',
+      label: 'Session locale modifiée',
+      message:
+        "L'export est prêt. Relancer `npm run validate:symmetry-shapes` reste recommandé si tu as modifié les règles du validateur ou la banque source hors panneau.",
+    };
+  }
+
+  if (!symmetryReviewValidatedAt.value) {
+    return {
+      toneClass: 'is-info',
+      label: 'Validation non tracée',
+      message:
+        "La banque active n'indique pas encore de validation exportée. Le pré-tri courant reste calculé dans le panneau.",
+    };
+  }
+
+  return {
+    toneClass: 'is-ok',
+    label: 'Validation tracée',
+    message: `Dernière validation : ${formatDateTimeFr(symmetryReviewValidatedAt.value)} · validateur ${symmetryReviewValidatorVersion.value || symmetryReviewReport.value.validatorVersion || 'indisponible'}`,
+  };
+});
 const symmetryFilterSummary = computed(() => {
   const summary = summarizeSymmetryReviewEntries(symmetryReviewEntries.value);
   return {
@@ -809,13 +892,58 @@ function updateSymmetryReviewStatus(id, reviewStatus) {
     symmetryReviewSession.value,
     id,
     nextStatus || SYMMETRY_REVIEW_STATUS.PENDING,
-    entry?.autoStatus
+    entry?.autoStatus,
+    entry?.sourceReviewStatus
   );
 }
 
 function toggleSymmetryEntryDeleted(id) {
   const entry = symmetryReviewEntries.value.find((item) => item.id === id);
-  symmetryReviewSession.value = toggleSymmetryReviewDeleted(symmetryReviewSession.value, id, entry?.autoStatus);
+  symmetryReviewSession.value = toggleSymmetryReviewDeleted(
+    symmetryReviewSession.value,
+    id,
+    entry?.autoStatus,
+    entry?.sourceReviewStatus
+  );
+}
+
+async function exportSymmetryReviewZip() {
+  if (!symmetryCanExport.value) {
+    setStatus('error', "Aucun changement local exportable pour la banque de symétrie.");
+    return;
+  }
+
+  try {
+    const blob = await buildSymmetryExportZipBlob(symmetryExportPayload.value);
+    const fileName = `manabuplay-content-symmetry-${symmetryExportPayload.value.nextUpdatedAt}.zip`;
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName;
+    link.click();
+    URL.revokeObjectURL(link.href);
+    setStatus('success', `ZIP ${fileName} téléchargé.`);
+  } catch {
+    setStatus('error', "Export ZIP impossible pour la banque de symétrie.");
+  }
+}
+
+async function copySymmetryRejectedPrompt() {
+  if (!symmetryRejectedPrompt.value) {
+    setStatus('error', 'Aucune forme rejetée disponible pour générer un prompt.');
+    return;
+  }
+
+  if (!navigator.clipboard?.writeText) {
+    setStatus('error', 'Copie non supportée par ce navigateur.');
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(symmetryRejectedPrompt.value);
+    setStatus('success', 'Prompt des formes rejetées copié.');
+  } catch {
+    setStatus('error', 'Copie du prompt impossible.');
+  }
 }
 
 const presetOptions = Object.freeze([...getPresetDefinitions(), { id: 'custom', label: 'RAZ ciblée' }]);
@@ -1349,6 +1477,22 @@ initAdminData();
                 <span class="sym-review-pill">
                   Source : {{ symmetryReviewUpdatedAt || 'version locale embarquée' }}
                 </span>
+                <span class="sym-review-pill">Export : {{ symmetryExportPayload.nextUpdatedAt }}</span>
+              </div>
+
+              <div class="sym-review-validation" :class="symmetryValidationState.toneClass">
+                <div>
+                  <p class="sym-review-validation__title">{{ symmetryValidationState.label }}</p>
+                  <p class="sym-review-validation__message">{{ symmetryValidationState.message }}</p>
+                </div>
+                <div class="sym-review-validation__actions">
+                  <button class="btn btn-secondary" type="button" :disabled="!symmetryRejectedPrompt" @click="copySymmetryRejectedPrompt">
+                    Copier le prompt rejetés
+                  </button>
+                  <button class="btn btn-primary" type="button" :disabled="!symmetryCanExport" @click="exportSymmetryReviewZip">
+                    Exporter le ZIP R2
+                  </button>
+                </div>
               </div>
 
               <div class="sym-review-toolbar">
