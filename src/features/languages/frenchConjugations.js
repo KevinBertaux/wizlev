@@ -77,6 +77,14 @@ export function listFrenchVerbOptions() {
   }));
 }
 
+export function listFrenchVerbSummaries() {
+  return moduleData.verbs.map((verb) => ({
+    key: verb.key,
+    infinitive: verb.infinitive,
+    label: verb.label,
+  }));
+}
+
 export function getFrenchVerb(verbKey) {
   return verbsByKey.get(verbKey) || null;
 }

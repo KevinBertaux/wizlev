@@ -36,7 +36,12 @@ const routes = [
   {
     path: ROUTE_PATHS.LANGUAGES_FRENCH,
     name: ROUTE_NAMES.LANGUAGES_FRENCH,
-    component: () => import('@/views/LanguagesFrenchView.vue'),
+    component: () => import('@/views/LanguagesFrenchHubView.vue'),
+  },
+  {
+    path: ROUTE_PATHS.LANGUAGES_FRENCH_TABLE,
+    name: ROUTE_NAMES.LANGUAGES_FRENCH_TABLE,
+    component: () => import('@/views/LanguagesFrenchTableView.vue'),
   },
   {
     path: ROUTE_PATHS.STUDIO_OPS_HELP,

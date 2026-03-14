@@ -25,7 +25,7 @@
 
         <router-link class="home-card" :to="{ name: 'languages-french' }">
           <h2>🇫🇷 Français</h2>
-          <p>Conjugue cinq verbes essentiels au présent avec flashcards et saisie guidée.</p>
+          <p>Révise la conjugaison française par verbe, avec fiche de référence et parcours progressif.</p>
         </router-link>
       </div>
     </div>
