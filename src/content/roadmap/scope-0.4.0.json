@@ -14,6 +14,7 @@
       "priority": "High",
       "domain": "admin",
       "feature": "auth",
+      "dependsOn": ["scope-040-static-netlify"],
       "label": "Protection admin légère front-only (session, limite essais, verrouillage)",
       "done": true
     },
@@ -22,6 +23,7 @@
       "priority": "High",
       "domain": "legal",
       "feature": "pages",
+      "dependsOn": ["scope-040-static-netlify"],
       "label": "Mentions légales et politique de confidentialité publiables",
       "done": true
     },
@@ -30,9 +32,9 @@
       "priority": "Med",
       "domain": "infra",
       "feature": "quality",
+      "dependsOn": ["scope-040-static-netlify"],
       "label": "Pipeline local de tests/build opérationnel",
       "done": true
     }
   ]
 }
-

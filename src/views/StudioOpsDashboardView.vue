@@ -576,6 +576,15 @@ function compareBySortKey(a, b, key, dir) {
   return dir === 'desc' ? -result : result;
 }
 
+function roadmapDependencyStatusLabel(status) {
+  if (status === 'blocked') return 'Bloqué';
+  if (status === 'ready') return 'Prêt';
+  if (status === 'missing') return 'Dépendance manquante';
+  if (status === 'invalid') return 'Dépendance invalide';
+  if (status === 'cyclic') return 'Cycle';
+  return '';
+}
+
 const sortedRoadmapItems = computed(() => {
   const list = [...filteredRoadmapItems.value];
   list.sort((a, b) => {
@@ -1351,6 +1360,7 @@ initAdminData();
                     <th>État</th>
                     <th>Catégorie</th>
                     <th>Sous-catégorie</th>
+                    <th>Dépendances</th>
                     <th>Description</th>
                   </tr>
                 </thead>
@@ -1362,10 +1372,31 @@ initAdminData();
                     <td>{{ item.done ? '✅' : '⌛' }}</td>
                     <td>{{ item.domain }}</td>
                     <td>{{ item.feature }}</td>
-                    <td>{{ item.label }}</td>
+                    <td>
+                      <div v-if="item.dependencyStatus !== 'none'" class="roadmap-item-meta">
+                        <span class="dependency-chip" :class="`d-${item.dependencyStatus}`">
+                          {{ roadmapDependencyStatusLabel(item.dependencyStatus) }}
+                        </span>
+                        <div v-if="item.dependencyRefs.length > 0" class="dependency-ref-list">
+                          <span v-for="dependency in item.dependencyRefs" :key="`${item.id}-${dependency.id}`">
+                            <span
+                              class="dependency-ref"
+                              :class="{ 'is-missing': dependency.missing }"
+                              :title="`${dependency.label} (${dependency.location}) - ${dependency.locationLabel}`"
+                            >
+                              {{ dependency.id }}
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+                      <span v-else class="meta-line">-</span>
+                    </td>
+                    <td>
+                      <div class="roadmap-item-label">{{ item.label }}</div>
+                    </td>
                   </tr>
                   <tr v-if="sortedRoadmapItems.length === 0">
-                    <td colspan="5" class="meta-line">Aucun item pour ces filtres.</td>
+                    <td colspan="6" class="meta-line">Aucun item pour ces filtres.</td>
                   </tr>
                 </tbody>
               </table>

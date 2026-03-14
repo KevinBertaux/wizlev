@@ -46,6 +46,7 @@
       "priority": "High",
       "domain": "ui",
       "feature": "home",
+      "dependsOn": ["scope-050-crit-static"],
       "label": "Refonte accueil V1 par sections matières",
       "done": true
     },
@@ -54,6 +55,7 @@
       "priority": "High",
       "domain": "math",
       "feature": "symetrie",
+      "dependsOn": ["scope-050-crit-static"],
       "label": "Symétrie V1 QCM (axes vertical + horizontal)",
       "done": true
     },
@@ -86,6 +88,7 @@
       "priority": "High",
       "domain": "admin",
       "feature": "dashboard",
+      "dependsOn": ["scope-040-admin-lite-guard"],
       "label": "Dashboard admin avec sidebar repliable + navigation interne",
       "done": true
     },
@@ -94,6 +97,7 @@
       "priority": "High",
       "domain": "admin",
       "feature": "maintenance",
+      "dependsOn": ["scope-050-high-admin-dashboard"],
       "label": "Maintenance locale (RAZ granulaire + rollback)",
       "done": true
     },
@@ -150,6 +154,7 @@
       "priority": "High",
       "domain": "infra",
       "feature": "content-storage",
+      "dependsOn": ["scope-050-crit-static"],
       "label": "Cloudflare R2 V1: lecture distante des listes JSON avec fallback local",
       "done": true
     },
@@ -158,6 +163,7 @@
       "priority": "High",
       "domain": "langues",
       "feature": "anglais",
+      "dependsOn": ["scope-020-tts-v1"],
       "label": "Anglais : TTS simplifié (en-US fixe, alternance 0.9/0.6 au clic, feedback visuel lecture)",
       "done": true
     },
@@ -166,6 +172,7 @@
       "priority": "Med",
       "domain": "docs",
       "feature": "coherence",
+      "dependsOn": ["scope-050-high-english-tts-simplified"],
       "label": "Nettoyage naming vocab -> english (tests E2E, snapshots visuels, captures, libellés docs)",
       "done": true
     }

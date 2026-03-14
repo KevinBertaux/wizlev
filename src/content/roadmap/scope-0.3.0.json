@@ -14,6 +14,7 @@
       "priority": "High",
       "domain": "infra",
       "feature": "routing",
+      "dependsOn": ["scope-030-vue-vite-migration"],
       "label": "Mise en place du routage des vues principales",
       "done": true
     },
@@ -22,6 +23,7 @@
       "priority": "High",
       "domain": "langues",
       "feature": "anglais",
+      "dependsOn": ["scope-030-vue-vite-migration", "scope-010-vocab-base"],
       "label": "Externalisation des listes vocabulaire en JSON",
       "done": true
     },
@@ -30,9 +32,9 @@
       "priority": "Med",
       "domain": "infra",
       "feature": "cleanup",
+      "dependsOn": ["scope-030-vue-vite-migration"],
       "label": "Archivage technique de l'ancien runtime",
       "done": true
     }
   ]
 }
-

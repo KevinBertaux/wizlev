@@ -2,11 +2,21 @@
   "version": "backlog",
   "items": [
     {
-      "id": "backlog-sym-45",
+      "id": "backlog-sym-v3",
       "priority": "High",
       "domain": "math",
       "feature": "symetrie",
+      "label": "Symétrie V3: sac 96 variantes (axe + ouvert/fermé + côté d'origine cohérent)",
+      "dependsOn": ["scope-060-sym-render-contract"],
+      "done": false
+    },
+    {
+      "id": "backlog-sym-45",
+      "priority": "Med",
+      "domain": "math",
+      "feature": "symetrie",
       "label": "Symétrie 45° gauche/droite",
+      "dependsOn": ["backlog-sym-v3"],
       "done": false
     },
     {
@@ -22,6 +32,7 @@
       "priority": "Med",
       "domain": "admin",
       "feature": "dashboard",
+      "dependsOn": ["scope-060-roadmap-dependencies"],
       "label": "UX admin V2 (édition par lots, filtres avancés)",
       "done": false
     },
@@ -30,7 +41,8 @@
       "priority": "Med",
       "domain": "ui",
       "feature": "cours",
-      "label": "Préparer la catégorie Arts plastiques (Dessin) pour les futurs modules",
+      "dependsOn": ["scope-060-course-arts-plastiques"],
+      "label": "Préparer les futurs modules Arts plastiques (Dessin) après intégration de la catégorie",
       "done": false
     },
     {
@@ -38,6 +50,7 @@
       "priority": "Med",
       "domain": "ui",
       "feature": "design-system",
+      "dependsOn": ["backlog-brand-book"],
       "label": "Refonte globale post-Tailwind v4: CSS/UI/UX + design system + harmonisation complète des breakpoints sur tous les modules",
       "done": false
     },
@@ -70,15 +83,8 @@
       "priority": "Med",
       "domain": "admin",
       "feature": "monitoring",
+      "dependsOn": ["scope-050-high-r2-v1"],
       "label": "Afficher dans le panneau admin l etat HTTP des listes distantes (200, 3xx, 4xx, 5xx)",
-      "done": false
-    },
-    {
-      "id": "backlog-drop-legacy-vocab-keys",
-      "priority": "Med",
-      "domain": "tech",
-      "feature": "nettoyage-legacy",
-      "label": "Retirer la compatibilité legacy localStorage manabuplay_vocab_* après la période tampon de migration 0.5",
       "done": false
     }
   ]
