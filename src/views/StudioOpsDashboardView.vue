@@ -33,6 +33,16 @@ import {
 import { fetchBuildInfo } from '@/features/admin/buildInfoStore';
 import { getRoadmapEntries, ROADMAP_PRIORITY_ORDER } from '@/features/admin/roadmapStore';
 import { buildSymmetryShapeReviewReport } from '@/features/math/symmetryShapeReview';
+import {
+  applySymmetryReviewSession,
+  createSymmetryReviewSession,
+  hasSymmetryReviewSessionChanges,
+  setSymmetryReviewStatus,
+  summarizeSymmetryReviewEntries,
+  SYMMETRY_REVIEW_STATUS,
+  toggleSymmetryReviewDeleted,
+  writeSymmetryReviewSession,
+} from '@/features/math/symmetryReviewSessionStore';
 
 const router = useRouter();
 const selectedList = ref('');
@@ -629,14 +639,21 @@ const symmetryReviewReport = ref({
 });
 const symmetryReviewGridSize = ref(5);
 const symmetryReviewUpdatedAt = ref('');
-const symmetryStatusFilters = ref(['accepted', 'review', 'rejected']);
+const symmetryReviewSession = ref(createSymmetryReviewSession([]));
+const symmetryStatusFilters = ref([
+  SYMMETRY_REVIEW_STATUS.PENDING,
+  SYMMETRY_REVIEW_STATUS.ACCEPTED,
+  SYMMETRY_REVIEW_STATUS.REVIEW,
+  SYMMETRY_REVIEW_STATUS.REJECTED,
+]);
 const symmetryPointFilters = ref([3, 4, 5]);
 const symmetryPageSize = ref(20);
 const symmetryCurrentPage = ref(1);
 const symmetryStatusOptions = Object.freeze([
-  { id: 'accepted', label: 'Acceptées' },
-  { id: 'review', label: 'À revoir' },
-  { id: 'rejected', label: 'Rejetées' },
+  { id: SYMMETRY_REVIEW_STATUS.PENDING, label: 'En attente' },
+  { id: SYMMETRY_REVIEW_STATUS.ACCEPTED, label: 'Acceptées' },
+  { id: SYMMETRY_REVIEW_STATUS.REVIEW, label: 'À revoir' },
+  { id: SYMMETRY_REVIEW_STATUS.REJECTED, label: 'Rejetées' },
 ]);
 const symmetryPointOptions = Object.freeze([
   { id: 3, label: '3 points' },
@@ -719,15 +736,20 @@ function refreshSymmetryReviewData() {
   });
 
   symmetryReviewReport.value = report;
+  symmetryReviewSession.value = createSymmetryReviewSession(report.results);
   symmetryReviewGridSize.value = config.gridSize;
   symmetryReviewUpdatedAt.value = config.updatedAt || '';
   symmetryOverrideActive.value = hasSymmetryShapesOverride();
 }
 
+const symmetryReviewEntries = computed(() =>
+  applySymmetryReviewSession(symmetryReviewReport.value.results, symmetryReviewSession.value)
+);
+
 const symmetryFilteredEntries = computed(() =>
-  symmetryReviewReport.value.results.filter(
+  symmetryReviewEntries.value.filter(
     (entry) =>
-      symmetryStatusFilters.value.includes(entry.status) && symmetryPointFilters.value.includes(entry.pointCount)
+      symmetryStatusFilters.value.includes(entry.reviewStatus) && symmetryPointFilters.value.includes(entry.pointCount)
   )
 );
 
@@ -737,19 +759,30 @@ const symmetryTotalPages = computed(() =>
 
 const symmetryVisibleEntries = computed(() => {
   const start = (symmetryCurrentPage.value - 1) * symmetryPageSize.value;
-  return symmetryFilteredEntries.value.slice(start, start + symmetryPageSize.value).map((entry) => ({
-    ...entry,
-    autoStatus: entry.status,
-  }));
+  return symmetryFilteredEntries.value.slice(start, start + symmetryPageSize.value);
 });
 
-const symmetryFilterSummary = computed(() => ({
-  total: symmetryReviewReport.value.summary.total,
-  visible: symmetryFilteredEntries.value.length,
-  accepted: symmetryReviewReport.value.summary.accepted,
-  review: symmetryReviewReport.value.summary.review,
-  rejected: symmetryReviewReport.value.summary.rejected,
-}));
+const symmetryReviewDirty = computed(() => hasSymmetryReviewSessionChanges(symmetryReviewSession.value));
+const symmetryFilterSummary = computed(() => {
+  const summary = summarizeSymmetryReviewEntries(symmetryReviewEntries.value);
+  return {
+    total: summary.total,
+    visible: symmetryFilteredEntries.value.length,
+    pending: summary.pending,
+    accepted: summary.accepted,
+    review: summary.review,
+    rejected: summary.rejected,
+    deleted: summary.deleted,
+  };
+});
+
+watch(
+  symmetryReviewSession,
+  (session) => {
+    writeSymmetryReviewSession(session);
+  },
+  { deep: true }
+);
 
 watch([symmetryStatusFilters, symmetryPointFilters, symmetryPageSize], () => {
   resetSymmetryReviewPagination();
@@ -766,7 +799,23 @@ function goToSymmetryPage(page) {
 }
 
 function pluralizeFr(count, singular, plural = `${singular}s`) {
-  return count > 1 ? plural : singular;
+  return count === 1 ? singular : plural;
+}
+
+function updateSymmetryReviewStatus(id, reviewStatus) {
+  const entry = symmetryReviewEntries.value.find((item) => item.id === id);
+  const nextStatus = entry?.reviewStatus === reviewStatus ? entry?.autoStatus : reviewStatus;
+  symmetryReviewSession.value = setSymmetryReviewStatus(
+    symmetryReviewSession.value,
+    id,
+    nextStatus || SYMMETRY_REVIEW_STATUS.PENDING,
+    entry?.autoStatus
+  );
+}
+
+function toggleSymmetryEntryDeleted(id) {
+  const entry = symmetryReviewEntries.value.find((item) => item.id === id);
+  symmetryReviewSession.value = toggleSymmetryReviewDeleted(symmetryReviewSession.value, id, entry?.autoStatus);
 }
 
 const presetOptions = Object.freeze([...getPresetDefinitions(), { id: 'custom', label: 'RAZ ciblée' }]);
@@ -1291,9 +1340,12 @@ initAdminData();
               </div>
 
               <div class="sym-review-summary">
+                <span class="sym-review-pill">En attente : {{ symmetryFilterSummary.pending }}</span>
                 <span class="sym-review-pill is-accepted">Acceptées : {{ symmetryFilterSummary.accepted }}</span>
                 <span class="sym-review-pill is-review">À revoir : {{ symmetryFilterSummary.review }}</span>
                 <span class="sym-review-pill is-rejected">Rejetées : {{ symmetryFilterSummary.rejected }}</span>
+                <span class="sym-review-pill">Supprimées : {{ symmetryFilterSummary.deleted }}</span>
+                <span v-if="symmetryReviewDirty" class="sym-review-pill is-dirty">Session locale modifiée</span>
                 <span class="sym-review-pill">
                   Source : {{ symmetryReviewUpdatedAt || 'version locale embarquée' }}
                 </span>
@@ -1301,7 +1353,7 @@ initAdminData();
 
               <div class="sym-review-toolbar">
                 <div class="sym-review-filter-block">
-                  <span class="sym-review-filter-label">Tri auto</span>
+                  <span class="sym-review-filter-label">Décision</span>
                   <div class="sym-review-filter-list">
                     <button
                       v-for="option in symmetryStatusOptions"
@@ -1374,6 +1426,8 @@ initAdminData();
                   :key="entry.id"
                   :entry="entry"
                   :grid-size="symmetryReviewGridSize"
+                  @set-review-status="updateSymmetryReviewStatus(entry.id, $event)"
+                  @toggle-deleted="toggleSymmetryEntryDeleted(entry.id)"
                 />
               </div>
 

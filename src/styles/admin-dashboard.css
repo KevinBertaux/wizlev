@@ -956,6 +956,12 @@ pre {
   color: #8f2f2f;
 }
 
+.sym-review-pill.is-dirty {
+  border-color: #87b0d8;
+  background: #e7f1ff;
+  color: #15436b;
+}
+
 .sym-review-toolbar {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
@@ -1057,18 +1063,29 @@ pre {
 }
 
 .sym-review-card.is-accepted {
-  background: linear-gradient(180deg, #ffffff 0%, #f3fbf4 100%);
+  background: #f3fbf4;
   border-color: #b7dcc0;
 }
 
 .sym-review-card.is-review {
-  background: linear-gradient(180deg, #ffffff 0%, #fff8eb 100%);
+  background: #fff8eb;
   border-color: #ead39a;
 }
 
 .sym-review-card.is-rejected {
-  background: linear-gradient(180deg, #ffffff 0%, #fff2f2 100%);
+  background: #fff2f2;
   border-color: #e3b7b7;
+}
+
+.sym-review-card.is-pending {
+  background: #f4f8fc;
+  border-color: #d4dfeb;
+}
+
+.sym-review-card.is-deleted {
+  background: #eef3f8;
+  border-color: #cbd6e2;
+  opacity: 0.88;
 }
 
 .sym-review-card__head {
@@ -1136,6 +1153,13 @@ pre {
   border-color: #e1a6a6;
   background: #fff0f0;
   color: #8f2f2f;
+}
+
+.sym-review-card__status.is-pending,
+.sym-review-card__status.is-deleted {
+  border-color: #ccd8e4;
+  background: #f1f5f9;
+  color: #3b536a;
 }
 
 .sym-review-axis-toggle {
