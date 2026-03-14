@@ -159,8 +159,6 @@ const shouldCloseShape = computed(() => props.renderMode === 'closed' && display
 
 <style scoped>
 .symmetry-shape-preview {
-  width: 100%;
-  height: auto;
   display: block;
 }
 
