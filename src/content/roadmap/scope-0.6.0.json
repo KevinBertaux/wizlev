@@ -14,7 +14,15 @@
       "priority": "High",
       "domain": "math",
       "feature": "symetrie",
-      "label": "Symétrie V2 (placement de points sur quadrillage)",
+      "label": "Symétrie V2: banque R2, reviewer admin, export éditorial et futur placement de points sur quadrillage",
+      "done": false
+    },
+    {
+      "id": "scope-060-sym-render-contract",
+      "priority": "Med",
+      "domain": "tech",
+      "feature": "symetrie",
+      "label": "Symétrie: rendre le composant partagé purement visuel et sortir la projection/orientation hors composant",
       "done": false
     },
     {

@@ -2,6 +2,7 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import QuizEmptyState from '@/components/QuizEmptyState.vue';
 import QuizSelectField from '@/components/QuizSelectField.vue';
+import RemoteContentLoading from '@/components/RemoteContentLoading.vue';
 import { getEnglishList, hydrateRemoteEnglishLists, listEnglishOptions } from '@/features/languages/englishLists';
 
 const cardDirectionStorageKey = 'manabuplay_english_card_direction';
@@ -31,6 +32,7 @@ let voicesChangedHandler = null;
 const touchStartX = ref(0);
 const touchStartY = ref(0);
 const suppressNextFlip = ref(false);
+const isLoadingLists = ref(true);
 
 const availableEnglishOptions = ref(listEnglishOptions());
 const activeList = computed(() => (selectedList.value ? getEnglishList(selectedList.value) : null));
@@ -325,11 +327,14 @@ onMounted(async () => {
     }
   }
 
-  await hydrateRemoteEnglishLists();
-  availableEnglishOptions.value = listEnglishOptions();
-
-  loadList(selectedList.value);
-  window.addEventListener('keydown', handleKeyboardNav);
+  try {
+    await hydrateRemoteEnglishLists();
+    availableEnglishOptions.value = listEnglishOptions();
+    loadList(selectedList.value);
+    window.addEventListener('keydown', handleKeyboardNav);
+  } finally {
+    isLoadingLists.value = false;
+  }
 
   if (!ttsSupported) {
     return;
@@ -364,6 +369,13 @@ onUnmounted(() => {
   <section class="page-block quiz-module">
     <h1>Vocabulaire anglais</h1>
 
+    <RemoteContentLoading
+      v-if="isLoadingLists"
+      title="Préparation des cartes"
+      message="Chargement des listes de vocabulaire…"
+    />
+
+    <template v-else>
     <div class="settings-box">
       <div class="mb-3">
         <QuizSelectField
@@ -442,6 +454,7 @@ onUnmounted(() => {
     </template>
 
     <QuizEmptyState v-else message="Choisir une liste pour commencer." />
+    </template>
   </section>
 </template>
 

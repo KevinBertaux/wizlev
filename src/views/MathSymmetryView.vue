@@ -1,10 +1,13 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { createSymmetryQuestionBag, evaluateSymmetryAnswer } from '@/features/math/symmetryEngine';
+import { hydrateRemoteSymmetryShapesConfig } from '@/features/math/symmetryShapeStore';
 import MotivationToast from '@/components/MotivationToast.vue';
+import RemoteContentLoading from '@/components/RemoteContentLoading.vue';
 import QuizActions from '@/components/QuizActions.vue';
 import QuizFeedbackBanner from '@/components/QuizFeedbackBanner.vue';
 import QuizScoreBar from '@/components/QuizScoreBar.vue';
+import SymmetryShapePreview from '@/components/SymmetryShapePreview.vue';
 import { useQuizFlow } from '@/composables/useQuizFlow';
 import {
   buildMotivationToast,
@@ -15,11 +18,12 @@ import {
 const BEST_STREAK_KEY = 'manabuplay_symmetry_best_streak_v1';
 const AUTO_NEXT_DELAY_MS = 2000;
 
-const questionBag = createSymmetryQuestionBag();
+const questionBag = ref(createSymmetryQuestionBag());
 const selectedOptionId = ref('');
 const toastMessage = ref('');
 const toastTone = ref('streak');
 const toastTimeoutId = ref(null);
+const isReady = ref(false);
 const motivationState = ref({
   hasShownX3InSession: false,
   hasShownRecordInRun: false,
@@ -74,7 +78,7 @@ function showMotivationToast(toast) {
 function loadNextQuestion() {
   nextQuestion({
     isReady: () => true,
-    buildQuestion: () => questionBag.next(),
+    buildQuestion: () => questionBag.value.next(),
   });
   selectedOptionId.value = '';
 }
@@ -158,60 +162,6 @@ function optionStateClass(option) {
   return '';
 }
 
-function pointToPixel(point, gridSize, size = 120, padding = 12) {
-  const step = (size - padding * 2) / (gridSize - 1);
-  return {
-    x: padding + point.x * step,
-    y: padding + point.y * step,
-  };
-}
-
-function shapePoints(points, gridSize) {
-  return points
-    .map((point) => pointToPixel(point, gridSize))
-    .map((point) => `${point.x},${point.y}`)
-    .join(' ');
-}
-
-function shouldCloseShape(points) {
-  return currentQuestion.value.renderMode === 'closed' && points.length >= 3;
-}
-
-function axisLine(axis, gridSize, size = 120, padding = 12) {
-  const step = (size - padding * 2) / (gridSize - 1);
-
-  if (axis === 'horizontal') {
-    const axisY = padding + ((gridSize - 1) / 2) * step;
-    return {
-      x1: padding,
-      y1: axisY,
-      x2: size - padding,
-      y2: axisY,
-    };
-  }
-
-  const axisX = padding + ((gridSize - 1) / 2) * step;
-  return {
-    x1: axisX,
-    y1: padding,
-    x2: axisX,
-    y2: size - padding,
-  };
-}
-
-function renderGridLines(gridSize, size = 120, padding = 12) {
-  const lines = [];
-  const step = (size - padding * 2) / (gridSize - 1);
-
-  for (let i = 0; i < gridSize; i += 1) {
-    const position = padding + i * step;
-    lines.push({ x1: padding, y1: position, x2: size - padding, y2: position });
-    lines.push({ x1: position, y1: padding, x2: position, y2: size - padding });
-  }
-
-  return lines;
-}
-
 function onKeydown(event) {
   const mapping = {
     1: 0,
@@ -236,9 +186,13 @@ function onKeydown(event) {
   }
 }
 
-loadNextQuestion();
-
-onMounted(() => {
+onMounted(async () => {
+  const remoteResult = await hydrateRemoteSymmetryShapesConfig();
+  if (remoteResult.updated > 0) {
+    questionBag.value = createSymmetryQuestionBag();
+  }
+  loadNextQuestion();
+  isReady.value = true;
   window.addEventListener('keydown', onKeydown);
 });
 
@@ -253,6 +207,13 @@ onUnmounted(() => {
   <section class="page-block quiz-module symmetry-page">
     <h1>Math - Symétrie</h1>
 
+    <RemoteContentLoading
+      v-if="!isReady || !currentQuestion"
+      title="Préparation de la session"
+      message="Chargement des formes de symétrie…"
+    />
+
+    <template v-else>
     <QuizScoreBar
       :score="score"
       :total="total"
@@ -268,46 +229,14 @@ onUnmounted(() => {
 
     <div class="prompt-box">
       <p>{{ currentQuestion.prompt }}</p>
-      <svg
-        viewBox="0 0 120 120"
+      <SymmetryShapePreview
         class="shape-preview h-[120px] w-[120px] md:h-[150px] md:w-[150px]"
-        aria-label="Figure de référence"
-      >
-        <line
-          v-for="(line, index) in renderGridLines(currentQuestion.gridSize)"
-          :key="`grid-${index}`"
-          :x1="line.x1"
-          :y1="line.y1"
-          :x2="line.x2"
-          :y2="line.y2"
-          class="grid-line"
-        />
-        <polygon
-          v-if="shouldCloseShape(currentQuestion.baseShape)"
-          :points="shapePoints(currentQuestion.baseShape, currentQuestion.gridSize)"
-          class="shape-line"
-        />
-        <polyline
-          v-else
-          :points="shapePoints(currentQuestion.baseShape, currentQuestion.gridSize)"
-          class="shape-line"
-        />
-        <circle
-          v-for="(point, idx) in currentQuestion.baseShape"
-          :key="`base-point-${idx}`"
-          :cx="pointToPixel(point, currentQuestion.gridSize).x"
-          :cy="pointToPixel(point, currentQuestion.gridSize).y"
-          r="3.2"
-          class="shape-dot"
-        />
-        <line
-          :x1="axisLine(currentQuestion.axis, currentQuestion.gridSize).x1"
-          :y1="axisLine(currentQuestion.axis, currentQuestion.gridSize).y1"
-          :x2="axisLine(currentQuestion.axis, currentQuestion.gridSize).x2"
-          :y2="axisLine(currentQuestion.axis, currentQuestion.gridSize).y2"
-          class="axis-line"
-        />
-      </svg>
+        :points="currentQuestion.baseShape"
+        :axis="currentQuestion.axis"
+        :render-mode="currentQuestion.renderMode"
+        :grid-size="currentQuestion.gridSize"
+        :transform-for-axis="false"
+      />
     </div>
 
     <div class="mx-auto grid w-full max-w-[720px] grid-cols-1 gap-2 md:grid-cols-2">
@@ -320,52 +249,21 @@ onUnmounted(() => {
         @click="selectOption(option.id)"
       >
         <span class="option-label">{{ optionLabels[idx] }}</span>
-        <svg
-          viewBox="0 0 120 120"
+        <SymmetryShapePreview
           class="option-preview h-[120px] w-[120px] md:h-[150px] md:w-[150px]"
-          :aria-label="`Option ${optionLabels[idx]}`"
-        >
-          <line
-            v-for="(line, index) in renderGridLines(currentQuestion.gridSize)"
-            :key="`option-grid-${idx}-${index}`"
-            :x1="line.x1"
-            :y1="line.y1"
-            :x2="line.x2"
-            :y2="line.y2"
-            class="grid-line"
-          />
-          <polygon
-            v-if="shouldCloseShape(option.points)"
-            :points="shapePoints(option.points, currentQuestion.gridSize)"
-            class="shape-line"
-          />
-          <polyline
-            v-else
-            :points="shapePoints(option.points, currentQuestion.gridSize)"
-            class="shape-line"
-          />
-          <circle
-            v-for="(point, pointIndex) in option.points"
-            :key="`option-point-${idx}-${pointIndex}`"
-            :cx="pointToPixel(point, currentQuestion.gridSize).x"
-            :cy="pointToPixel(point, currentQuestion.gridSize).y"
-            r="3.2"
-            class="shape-dot"
-          />
-          <line
-            :x1="axisLine(currentQuestion.axis, currentQuestion.gridSize).x1"
-            :y1="axisLine(currentQuestion.axis, currentQuestion.gridSize).y1"
-            :x2="axisLine(currentQuestion.axis, currentQuestion.gridSize).x2"
-            :y2="axisLine(currentQuestion.axis, currentQuestion.gridSize).y2"
-            class="axis-line"
-          />
-        </svg>
+          :points="option.points"
+          :axis="currentQuestion.axis"
+          :render-mode="currentQuestion.renderMode"
+          :grid-size="currentQuestion.gridSize"
+          :transform-for-axis="false"
+        />
       </button>
     </div>
 
     <QuizActions :can-check="canCheck" @check="checkAnswer" @next="loadNextQuestion" />
 
     <p class="hint">Raccourcis clavier: 1, 2, 3, 4 pour choisir une option, Entrée pour vérifier/suivant.</p>
+    </template>
   </section>
 </template>
 
@@ -439,8 +337,12 @@ onUnmounted(() => {
 }
 
 .option-btn.is-selected {
-  border-color: #1d4ed8;
-  box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.2);
+  border-color: #155e75;
+  background: #f1fbfb;
+  box-shadow:
+    0 0 0 2px rgba(21, 94, 117, 0.22),
+    0 10px 18px rgba(15, 23, 42, 0.14);
+  transform: translateY(-1px);
 }
 
 .option-btn.is-correct {
@@ -451,27 +353,6 @@ onUnmounted(() => {
 .option-btn.is-incorrect {
   border-color: #d95f5f;
   background: #fff3f3;
-}
-
-.grid-line {
-  stroke: #e6edf6;
-  stroke-width: 1;
-}
-
-.axis-line {
-  stroke: #0f766e;
-  stroke-width: 2;
-  stroke-dasharray: 4 3;
-}
-
-.shape-line {
-  fill: none;
-  stroke: #243041;
-  stroke-width: 2.4;
-}
-
-.shape-dot {
-  fill: #243041;
 }
 
 .hint {
