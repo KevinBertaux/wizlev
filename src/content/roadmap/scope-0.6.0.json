@@ -18,6 +18,14 @@
       "done": false
     },
     {
+      "id": "scope-060-sym-render-contract",
+      "priority": "Med",
+      "domain": "tech",
+      "feature": "symetrie",
+      "label": "Symétrie: rendre le composant partagé purement visuel et sortir la projection/orientation hors composant",
+      "done": false
+    },
+    {
       "id": "scope-060-monetization-kids-safe",
       "priority": "High",
       "domain": "legal",
