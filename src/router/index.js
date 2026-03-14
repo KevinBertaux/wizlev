@@ -24,6 +24,21 @@ const routes = [
     component: () => import('@/views/MathSymmetryView.vue'),
   },
   {
+    path: ROUTE_PATHS.ARTS_HUB,
+    name: ROUTE_NAMES.ARTS_HUB,
+    component: () => import('@/views/ArtsHubView.vue'),
+  },
+  {
+    path: ROUTE_PATHS.ARTS_DRAWING_GUIDED,
+    name: ROUTE_NAMES.ARTS_DRAWING_GUIDED,
+    component: () => import('@/views/ArtsDrawingGuidedView.vue'),
+  },
+  {
+    path: ROUTE_PATHS.ARTS_DRAWING_GUIDED_LESSON,
+    name: ROUTE_NAMES.ARTS_DRAWING_GUIDED_LESSON,
+    component: () => import('@/views/ArtsDrawingGuidedLessonView.vue'),
+  },
+  {
     path: ROUTE_PATHS.LANGUAGES_HUB,
     name: ROUTE_NAMES.LANGUAGES_HUB,
     component: () => import('@/views/LanguagesHubView.vue'),

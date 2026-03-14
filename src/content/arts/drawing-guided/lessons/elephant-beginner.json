@@ -1,0 +1,41 @@
+{
+  "key": "elephant-beginner",
+  "title": "Eléphant",
+  "subtitle": "Construis un éléphant simple de face avec de grandes oreilles.",
+  "level": "debutant",
+  "language": "fr",
+  "durationMinutes": 8,
+  "finalImage": "/arts/drawing-guided/elephant-final.svg",
+  "steps": [
+    {
+      "index": 1,
+      "instruction": "Dessine la forme de la tête.",
+      "image": "/arts/drawing-guided/elephant-step-1.svg"
+    },
+    {
+      "index": 2,
+      "instruction": "Ajoute deux grandes oreilles.",
+      "image": "/arts/drawing-guided/elephant-step-2.svg"
+    },
+    {
+      "index": 3,
+      "instruction": "Dessine une longue trompe.",
+      "image": "/arts/drawing-guided/elephant-step-3.svg"
+    },
+    {
+      "index": 4,
+      "instruction": "Ajoute deux petits yeux.",
+      "image": "/arts/drawing-guided/elephant-step-4.svg"
+    },
+    {
+      "index": 5,
+      "instruction": "Dessine deux longues défenses.",
+      "image": "/arts/drawing-guided/elephant-step-5.svg"
+    },
+    {
+      "index": 6,
+      "instruction": "Ajoute quelques cheveux sur la tête.",
+      "image": "/arts/drawing-guided/elephant-step-6.svg"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 220'>
+  <rect width='320' height='220' fill='#fffdf8'/>
+  <path d='M112 72 A56 56 0 1 1 208 72' fill='none' stroke='#243041' stroke-width='6' stroke-linecap='round'/>
+  <path d='M112 84 C78 60 68 102 94 130 C104 140 112 136 116 122' fill='none' stroke='#243041' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/>
+  <path d='M208 84 C242 60 252 102 226 130 C216 140 208 136 204 122' fill='none' stroke='#243041' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/>
+  <path d='M160 102 C152 118 152 134 160 144 C168 154 165 170 154 180' fill='none' stroke='#243041' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/>
+  <path d='M168 102 C176 118 176 136 170 150 C166 160 170 174 178 180' fill='none' stroke='#243041' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/>
+  <circle cx='144' cy='92' r='4' fill='#243041'/>
+  <circle cx='176' cy='92' r='4' fill='#243041'/>
+  <path d='M152 132 C142 138 138 150 136 166' fill='none' stroke='#243041' stroke-width='5' stroke-linecap='round'/>
+  <path d='M168 132 C178 138 182 150 184 166' fill='none' stroke='#243041' stroke-width='5' stroke-linecap='round'/>
+  <path d='M148 64 L144 56' fill='none' stroke='#243041' stroke-width='4' stroke-linecap='round'/>
+  <path d='M160 60 L160 50' fill='none' stroke='#243041' stroke-width='4' stroke-linecap='round'/>
+  <path d='M172 64 L176 56' fill='none' stroke='#243041' stroke-width='4' stroke-linecap='round'/>
+</svg>

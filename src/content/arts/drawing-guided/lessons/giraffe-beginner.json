@@ -1,0 +1,41 @@
+{
+  "key": "giraffe-beginner",
+  "title": "Girafe",
+  "subtitle": "Dessine une girafe pas à pas, en suivant une silhouette de profil.",
+  "level": "debutant",
+  "language": "fr",
+  "durationMinutes": 8,
+  "finalImage": "/arts/drawing-guided/giraffe-final.svg",
+  "steps": [
+    {
+      "index": 1,
+      "instruction": "Dessine la forme de la tête.",
+      "image": "/arts/drawing-guided/giraffe-step-1.svg"
+    },
+    {
+      "index": 2,
+      "instruction": "Ajoute deux oreilles.",
+      "image": "/arts/drawing-guided/giraffe-step-2.svg"
+    },
+    {
+      "index": 3,
+      "instruction": "Dessine le nez et la bouche.",
+      "image": "/arts/drawing-guided/giraffe-step-3.svg"
+    },
+    {
+      "index": 4,
+      "instruction": "Ajoute deux cornes et quelques cheveux.",
+      "image": "/arts/drawing-guided/giraffe-step-4.svg"
+    },
+    {
+      "index": 5,
+      "instruction": "Trace un long cou.",
+      "image": "/arts/drawing-guided/giraffe-step-5.svg"
+    },
+    {
+      "index": 6,
+      "instruction": "Ajoute des taches pour finir la girafe.",
+      "image": "/arts/drawing-guided/giraffe-step-6.svg"
+    }
+  ]
+}

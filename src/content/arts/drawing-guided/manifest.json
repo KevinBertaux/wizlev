@@ -1,0 +1,25 @@
+{
+  "version": "2026-03-14.1",
+  "category": "arts-plastiques",
+  "module": "drawing-guided",
+  "lessons": [
+    {
+      "key": "giraffe-beginner",
+      "file": "giraffe-beginner.json",
+      "title": "Girafe",
+      "level": "debutant",
+      "steps": 6,
+      "tags": ["animal", "profil"],
+      "coverImage": "/arts/drawing-guided/giraffe-final.svg"
+    },
+    {
+      "key": "elephant-beginner",
+      "file": "elephant-beginner.json",
+      "title": "Eléphant",
+      "level": "debutant",
+      "steps": 6,
+      "tags": ["animal", "face"],
+      "coverImage": "/arts/drawing-guided/elephant-final.svg"
+    }
+  ]
+}

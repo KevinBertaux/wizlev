@@ -1,0 +1,9 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 220'>
+  <rect width='320' height='220' fill='#fffdf8'/>
+  <path d='M78 114 L120 84 L176 84 L176 146' fill='none' stroke='#243041' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/>
+  <path d='M122 82 L108 62 L130 70' fill='none' stroke='#243041' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/>
+  <path d='M170 82 L198 68 L184 88' fill='none' stroke='#243041' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/>
+  <path d='M82 112 H114' fill='none' stroke='#243041' stroke-width='6' stroke-linecap='round'/>
+  <circle cx='90' cy='104' r='3.5' fill='#243041'/>
+  <circle cx='100' cy='104' r='3.5' fill='#243041'/>
+</svg>

@@ -87,11 +87,20 @@
       "done": false
     },
     {
-      "id": "scope-060-course-arts-plastiques",
+      "id": "scope-060-arts-hub",
       "priority": "Med",
       "domain": "ui",
-      "feature": "cours",
-      "label": "Ajouter la catégorie de cours Arts plastiques (Dessin) dans l'architecture et l'accueil",
+      "feature": "arts-plastiques",
+      "label": "Ajouter la matière Arts plastiques dans l'accueil, le routeur et le hub dédié",
+      "done": false
+    },
+    {
+      "id": "scope-060-drawing-guided-v1",
+      "priority": "High",
+      "domain": "ui",
+      "feature": "drawing-guided",
+      "dependsOn": ["scope-060-arts-hub"],
+      "label": "Dessin guidé V1: fiches pas à pas locales avec navigation par étape et aperçu final",
       "done": false
     },
     {

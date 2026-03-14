@@ -41,8 +41,8 @@
       "priority": "Med",
       "domain": "ui",
       "feature": "cours",
-      "dependsOn": ["scope-060-course-arts-plastiques"],
-      "label": "Préparer les futurs modules Arts plastiques (Dessin) après intégration de la catégorie",
+      "dependsOn": ["scope-060-drawing-guided-v1"],
+      "label": "Préparer les futurs modules Arts plastiques après livraison de Dessin guidé V1",
       "done": false
     },
     {

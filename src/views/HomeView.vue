@@ -24,5 +24,15 @@
         </router-link>
       </div>
     </div>
+
+    <div class="page-block section-block">
+      <h1>🎨 Arts plastiques</h1>
+      <div class="cards-grid grid grid-cols-1 gap-4">
+        <router-link class="home-card" :to="{ name: 'arts-hub' }">
+          <h2>✏️ Dessin guidé</h2>
+          <p>Observe chaque étape, dessine sur papier, puis avance jusqu'au résultat final.</p>
+        </router-link>
+      </div>
+    </div>
   </section>
 </template>
