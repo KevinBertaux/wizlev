@@ -38,3 +38,6 @@ tests/e2e/visual-regression.playwright.js-snapshots/*mobile-chrome*
 
 # Added by ggshield
 .cache_ggshield
+
+# Workspace scratch
+tmp/

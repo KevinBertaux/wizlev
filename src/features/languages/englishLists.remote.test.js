@@ -131,6 +131,79 @@ describe('englishLists remote hydration', () => {
     expect(listEnglishOptions().some((item) => item.key === 'bonusList')).toBe(true);
   });
 
+  it('downloads two additional remote lists declared only in the manifest', async () => {
+    vi.stubEnv('VITE_LANGUAGES_REMOTE_BASE_URL', 'https://example.test');
+    vi.stubEnv('VITE_LANGUAGES_REMOTE_LANG', 'en');
+
+    const fetchMock = vi.fn(async (url) => {
+      const asText = String(url);
+      if (asText.endsWith('/en/manifest.json')) {
+        return okJson({
+          lists: [
+            { key: 'actionsVerbs1', file: 'actions-verbs-1.json' },
+            { key: 'actionsVerbs2', file: 'actions-verbs-2.json' },
+          ],
+        });
+      }
+      if (asText.endsWith('/en/actions-verbs-1.json')) {
+        return okJson({
+          name: 'Verbes d’action 1',
+          label: '🏃 Verbes d’action 1',
+          description: 'Liste distante supplémentaire',
+          words: [
+            { english: 'Smile', french: 'Sourire' },
+            { english: 'Carry', french: 'Porter' },
+          ],
+        });
+      }
+      if (asText.endsWith('/en/actions-verbs-2.json')) {
+        return okJson({
+          name: 'Verbes d’action 2',
+          label: '🏃 Verbes d’action 2',
+          description: 'Deuxième liste distante supplémentaire',
+          words: [
+            { english: 'Climb', french: 'Grimper' },
+            { english: 'Play', french: 'Jouer' },
+          ],
+        });
+      }
+      return { ok: false, json: async () => ({}) };
+    });
+
+    Object.defineProperty(globalThis, 'fetch', {
+      configurable: true,
+      value: fetchMock,
+    });
+
+    const { getEnglishList, hydrateRemoteEnglishLists, listEnglishOptions } = await loadEnglishModule();
+    const result = await hydrateRemoteEnglishLists();
+
+    expect(result).toEqual({
+      enabled: true,
+      loaded: 2,
+      updated: 2,
+      skipped: expect.any(Number),
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://example.test/en/manifest.json',
+      expect.objectContaining({ method: 'GET' }),
+    );
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://example.test/en/actions-verbs-1.json',
+      expect.objectContaining({ method: 'GET' }),
+    );
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://example.test/en/actions-verbs-2.json',
+      expect.objectContaining({ method: 'GET' }),
+    );
+
+    expect(getEnglishList('actionsVerbs1')?.name).toBe('Verbes d’action 1');
+    expect(getEnglishList('actionsVerbs2')?.name).toBe('Verbes d’action 2');
+    expect(listEnglishOptions().some((item) => item.key === 'actionsVerbs1')).toBe(true);
+    expect(listEnglishOptions().some((item) => item.key === 'actionsVerbs2')).toBe(true);
+  });
+
   it('ignores remote payload with empty words and keeps local fallback', async () => {
     vi.stubEnv('VITE_LANGUAGES_REMOTE_BASE_URL', 'https://example.test');
     vi.stubEnv('VITE_LANGUAGES_REMOTE_LANG', 'en');
