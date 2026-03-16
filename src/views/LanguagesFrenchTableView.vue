@@ -40,6 +40,17 @@ function openInput() {
     params: { verbKey: verb.value.key },
   });
 }
+
+function openFlashcards() {
+  if (!verb.value) {
+    return;
+  }
+
+  router.push({
+    name: 'languages-french-flashcards',
+    params: { verbKey: verb.value.key },
+  });
+}
 </script>
 
 <template>
@@ -63,6 +74,7 @@ function openInput() {
       </div>
 
       <div class="french-table-view__actions">
+        <button class="mp-btn mp-btn-secondary" type="button" @click="openFlashcards">Passer aux flashcards →</button>
         <button class="mp-btn mp-btn-primary" type="button" @click="openQcm">Passer au QCM →</button>
         <button class="mp-btn mp-btn-secondary" type="button" @click="openInput">Passer à la saisie →</button>
       </div>

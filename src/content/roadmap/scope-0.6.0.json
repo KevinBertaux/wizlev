@@ -69,6 +69,33 @@
       "done": false
     },
     {
+      "id": "scope-060-language-quiz-pattern",
+      "priority": "High",
+      "domain": "langues",
+      "feature": "architecture",
+      "dependsOn": ["scope-060-french-conjugation-v1"],
+      "label": "Stabiliser un pattern réutilisable Langues : hub par verbe, flashcards, QCM, saisie, score, série et sac dédié",
+      "done": false
+    },
+    {
+      "id": "scope-060-english-qcm",
+      "priority": "Med",
+      "domain": "langues",
+      "feature": "anglais",
+      "dependsOn": ["scope-060-language-quiz-pattern"],
+      "label": "Anglais : ajouter un mode QCM aligné sur le parcours Français",
+      "done": false
+    },
+    {
+      "id": "scope-060-english-input",
+      "priority": "Med",
+      "domain": "langues",
+      "feature": "anglais",
+      "dependsOn": ["scope-060-language-quiz-pattern"],
+      "label": "Anglais : ajouter un mode saisie aligné sur le parcours Français",
+      "done": false
+    },
+    {
       "id": "scope-060-tooltip-system",
       "priority": "Med",
       "domain": "ui",

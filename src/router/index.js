@@ -44,6 +44,11 @@ const routes = [
     component: () => import('@/views/LanguagesFrenchTableView.vue'),
   },
   {
+    path: ROUTE_PATHS.LANGUAGES_FRENCH_FLASHCARDS,
+    name: ROUTE_NAMES.LANGUAGES_FRENCH_FLASHCARDS,
+    component: () => import('@/views/LanguagesFrenchFlashcardsView.vue'),
+  },
+  {
     path: ROUTE_PATHS.LANGUAGES_FRENCH_QCM,
     name: ROUTE_NAMES.LANGUAGES_FRENCH_QCM,
     component: () => import('@/views/LanguagesFrenchQcmView.vue'),

@@ -42,6 +42,17 @@ function openInput() {
     params: { verbKey: selectedVerb.value },
   });
 }
+
+function openFlashcards() {
+  if (!selectedVerb.value) {
+    return;
+  }
+
+  router.push({
+    name: 'languages-french-flashcards',
+    params: { verbKey: selectedVerb.value },
+  });
+}
 </script>
 
 <template>
@@ -72,10 +83,10 @@ function openInput() {
         <p>Consulte la fiche de référence du verbe avec les 6 lignes du présent.</p>
       </button>
 
-      <article class="home-card french-hub__card french-hub__card--locked" aria-disabled="true">
+      <button class="home-card french-hub__card french-hub__card--action" type="button" @click="openFlashcards">
         <h2>🃏 Flashcards</h2>
-        <p>Mémorisation pronom par pronom. Lot suivant du module.</p>
-      </article>
+        <p>Mémorisation pronom par pronom avec cartes à retourner et mélange.</p>
+      </button>
 
       <button class="home-card french-hub__card french-hub__card--action" type="button" @click="openQcm">
         <h2>✅ QCM</h2>
