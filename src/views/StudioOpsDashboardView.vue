@@ -1,5 +1,5 @@
 <script setup>
-import { computed, nextTick, ref, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import AdminStatusBanner from '@/components/AdminStatusBanner.vue';
 import RemoteContentLoading from '@/components/RemoteContentLoading.vue';
@@ -82,6 +82,7 @@ const sidebarGroups = Object.freeze([
     items: [
       { id: 'overview', icon: '📊', label: "Vue d'ensemble" },
       { id: 'roadmap', icon: '🗺️', label: 'Roadmap & Scopes' },
+      { id: 'tmp-lab', icon: '🧪', label: 'Lab tmp' },
       { id: 'maintenance', icon: '🧹', label: 'Maintenance locale' },
       { id: 'admin-help', icon: '📘', label: 'Aide' },
     ],
@@ -93,6 +94,7 @@ const sectionTitleMap = Object.freeze({
   roadmap: 'Roadmap & Scopes',
   english: 'Édition de listes d’anglais',
   symmetry: 'Formes de symétrie',
+  'tmp-lab': 'Lab tmp local',
   maintenance: 'Maintenance locale',
   'admin-help': 'Manuel du panneau interne',
 });
@@ -172,6 +174,539 @@ function createDraft(listKey) {
 }
 
 const draft = ref(createDraft(selectedList.value));
+const tmpFolderInput = ref(null);
+const tmpEntries = ref([]);
+const tmpSelectedId = ref('');
+const tmpPreviewUrl = ref('');
+const tmpPreviewText = ref('');
+const tmpPreviewKind = ref('none');
+const tmpFolderLabel = ref('');
+const tmpPickerSupportChecked = ref(false);
+const tmpSavedHandleAvailable = ref(false);
+const tmpLoadState = ref('idle');
+const tmpFolderOpen = ref({});
+
+const TMP_TEXT_EXTENSIONS = new Set(['.json', '.txt', '.md', '.csv', '.log', '.env', '.mjs', '.js']);
+const TMP_IMAGE_EXTENSIONS = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp']);
+const TMP_DIRECTORY_DB_NAME = 'manabuplay-admin-tmp-lab-v1';
+const TMP_DIRECTORY_DB_STORE = 'handles';
+const TMP_DIRECTORY_DB_KEY = 'tmp-directory-handle';
+
+const tmpSelectedEntry = computed(() => tmpEntries.value.find((entry) => entry.id === tmpSelectedId.value) || null);
+const tmpEntryCount = computed(() => tmpEntries.value.length);
+const tmpCanPreview = computed(() => Boolean(tmpSelectedEntry.value));
+const tmpSupportsDirectoryPicker = computed(
+  () => typeof window !== 'undefined' && typeof window.showDirectoryPicker === 'function'
+);
+const tmpTreeNodes = computed(() => buildTmpTreeNodes(tmpEntries.value, tmpFolderOpen.value));
+const tmpCanReuseSavedHandle = computed(() => tmpSupportsDirectoryPicker.value && tmpSavedHandleAvailable.value);
+const tmpStatusMessage = computed(() => {
+  if (tmpLoadState.value === 'loading') {
+    return 'Chargement du dossier local en cours...';
+  }
+  if (tmpCanReuseSavedHandle.value) {
+    return 'Le navigateur connaît déjà un dossier tmp/. Tu peux le reconnecter sans le rechercher.';
+  }
+  if (tmpSupportsDirectoryPicker.value) {
+    return "Le navigateur peut mémoriser un dossier tmp/ après la première connexion.";
+  }
+  return "Le navigateur ne supporte pas la connexion persistée de dossier. Fallback : sélection manuelle du dossier local.";
+});
+
+function resetTmpPreview() {
+  if (tmpPreviewUrl.value) {
+    URL.revokeObjectURL(tmpPreviewUrl.value);
+  }
+  tmpPreviewUrl.value = '';
+  tmpPreviewText.value = '';
+  tmpPreviewKind.value = 'none';
+}
+
+function detectTmpExtension(name = '') {
+  const normalized = String(name).toLowerCase();
+  const index = normalized.lastIndexOf('.');
+  return index >= 0 ? normalized.slice(index) : '';
+}
+
+function normalizeTmpRelativePath(path = '') {
+  const parts = String(path)
+    .split('/')
+    .filter(Boolean);
+  const tmpIndex = parts.findIndex((part) => part.toLowerCase() === 'tmp');
+  if (tmpIndex >= 0) {
+    return parts.slice(tmpIndex + 1).join('/');
+  }
+  return parts.join('/');
+}
+
+function buildTmpEntry(file, index) {
+  const relativePath = normalizeTmpRelativePath(file.webkitRelativePath || file.name) || file.name;
+  const extension = detectTmpExtension(relativePath);
+
+  return {
+    id: `${relativePath}-${index}`,
+    name: file.name,
+    relativePath,
+    extension,
+    size: file.size,
+    type: file.type || 'application/octet-stream',
+    file,
+  };
+}
+
+function buildTmpHandleEntry(file, handle, relativePath, index) {
+  const normalizedPath = normalizeTmpRelativePath(relativePath) || file.name;
+  const extension = detectTmpExtension(normalizedPath);
+
+  return {
+    id: `${normalizedPath}-${index}`,
+    name: file.name,
+    relativePath: normalizedPath,
+    extension,
+    size: file.size,
+    type: file.type || 'application/octet-stream',
+    file,
+    handle,
+  };
+}
+
+function ensureTmpFolderState(entries) {
+  const nextState = { ...tmpFolderOpen.value };
+  entries.forEach((entry) => {
+    const parts = entry.relativePath.split('/').filter(Boolean);
+    for (let index = 0; index < parts.length - 1; index += 1) {
+      const key = parts.slice(0, index + 1).join('/');
+      if (!(key in nextState)) {
+        nextState[key] = false;
+      }
+    }
+  });
+  tmpFolderOpen.value = nextState;
+}
+
+function formatBytes(value) {
+  if (!Number.isFinite(value) || value < 1024) {
+    return `${value || 0} o`;
+  }
+  if (value < 1024 * 1024) {
+    return `${Math.round(value / 102.4) / 10} Ko`;
+  }
+  return `${Math.round(value / 104857.6) / 10} Mo`;
+}
+
+function triggerTmpFolderPicker() {
+  if (tmpSupportsDirectoryPicker.value) {
+    connectTmpDirectory();
+    return;
+  }
+
+  if (tmpFolderInput.value) {
+    tmpFolderInput.value.value = '';
+    tmpFolderInput.value.click();
+  }
+}
+
+function openTmpDirectoryDb() {
+  if (typeof window === 'undefined' || !window.indexedDB) {
+    return Promise.resolve(null);
+  }
+
+  return new Promise((resolve, reject) => {
+    const request = window.indexedDB.open(TMP_DIRECTORY_DB_NAME, 1);
+    request.onupgradeneeded = () => {
+      const db = request.result;
+      if (!db.objectStoreNames.contains(TMP_DIRECTORY_DB_STORE)) {
+        db.createObjectStore(TMP_DIRECTORY_DB_STORE);
+      }
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function readSavedTmpDirectoryHandle() {
+  const db = await openTmpDirectoryDb();
+  if (!db) {
+    return null;
+  }
+
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(TMP_DIRECTORY_DB_STORE, 'readonly');
+    const store = tx.objectStore(TMP_DIRECTORY_DB_STORE);
+    const request = store.get(TMP_DIRECTORY_DB_KEY);
+    request.onsuccess = () => resolve(request.result || null);
+    request.onerror = () => reject(request.error);
+    tx.oncomplete = () => db.close();
+  });
+}
+
+async function writeSavedTmpDirectoryHandle(handle) {
+  const db = await openTmpDirectoryDb();
+  if (!db) {
+    return;
+  }
+
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(TMP_DIRECTORY_DB_STORE, 'readwrite');
+    const store = tx.objectStore(TMP_DIRECTORY_DB_STORE);
+    store.put(handle, TMP_DIRECTORY_DB_KEY);
+    tx.oncomplete = () => {
+      db.close();
+      resolve();
+    };
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+async function ensureTmpPickerSupportChecked() {
+  if (!tmpSupportsDirectoryPicker.value || tmpPickerSupportChecked.value) {
+    return;
+  }
+  try {
+    tmpSavedHandleAvailable.value = Boolean(await readSavedTmpDirectoryHandle());
+  } catch {
+    tmpSavedHandleAvailable.value = false;
+  }
+  tmpPickerSupportChecked.value = true;
+}
+
+async function resolveTmpDirectoryHandle(directoryHandle) {
+  if (!directoryHandle) {
+    return null;
+  }
+  if (directoryHandle.name === 'tmp') {
+    return directoryHandle;
+  }
+  try {
+    return await directoryHandle.getDirectoryHandle('tmp');
+  } catch {
+    return directoryHandle;
+  }
+}
+
+async function queryTmpHandlePermission(handle) {
+  if (!handle?.queryPermission) {
+    return 'granted';
+  }
+  try {
+    return await handle.queryPermission({ mode: 'read' });
+  } catch {
+    return 'prompt';
+  }
+}
+
+async function requestTmpHandlePermission(handle) {
+  if (!handle?.requestPermission) {
+    return 'granted';
+  }
+  try {
+    return await handle.requestPermission({ mode: 'read' });
+  } catch {
+    return 'denied';
+  }
+}
+
+async function listTmpHandleEntries(directoryHandle, prefix = '') {
+  const entries = [];
+  let fileIndex = 0;
+
+  async function walk(handle, currentPrefix) {
+    const directories = [];
+    const files = [];
+
+    for await (const child of handle.values()) {
+      if (child.kind === 'directory') {
+        directories.push(child);
+      } else {
+        files.push(child);
+      }
+    }
+
+    directories.sort((left, right) => left.name.localeCompare(right.name, 'fr'));
+    files.sort((left, right) => left.name.localeCompare(right.name, 'fr'));
+
+    for (const directory of directories) {
+      const nextPrefix = currentPrefix ? `${currentPrefix}/${directory.name}` : directory.name;
+      await walk(directory, nextPrefix);
+    }
+
+    for (const fileHandle of files) {
+      const file = await fileHandle.getFile();
+      const relativePath = currentPrefix ? `${currentPrefix}/${file.name}` : file.name;
+      entries.push(buildTmpHandleEntry(file, fileHandle, relativePath, fileIndex));
+      fileIndex += 1;
+    }
+  }
+
+  await walk(directoryHandle, prefix);
+  return entries;
+}
+
+function buildTmpTreeNodes(entries, folderState = {}) {
+  const root = [];
+  const folders = new Map();
+
+  function makeFolderKey(parts) {
+    return parts.join('/');
+  }
+
+  function ensureFolder(parts) {
+    const key = makeFolderKey(parts);
+    if (folders.has(key)) {
+      return folders.get(key);
+    }
+
+    const node = {
+      kind: 'folder',
+      id: `folder:${key}`,
+      path: key,
+      name: parts[parts.length - 1],
+      depth: parts.length - 1,
+      children: [],
+    };
+
+    folders.set(key, node);
+
+    if (parts.length === 1) {
+      root.push(node);
+    } else {
+      ensureFolder(parts.slice(0, -1)).children.push(node);
+    }
+
+    return node;
+  }
+
+  entries.forEach((entry) => {
+    const parts = entry.relativePath.split('/').filter(Boolean);
+    if (parts.length > 1) {
+      ensureFolder(parts.slice(0, -1)).children.push({
+        kind: 'file',
+        id: entry.id,
+        name: entry.name,
+        depth: parts.length - 1,
+        entry,
+      });
+      return;
+    }
+
+    root.push({
+      kind: 'file',
+      id: entry.id,
+      name: entry.name,
+      depth: 0,
+      entry,
+    });
+  });
+
+  function sortNodes(nodes) {
+    nodes.sort((left, right) => {
+      if (left.kind !== right.kind) {
+        return left.kind === 'folder' ? -1 : 1;
+      }
+      return left.name.localeCompare(right.name, 'fr');
+    });
+    nodes.forEach((node) => {
+      if (node.kind === 'folder') {
+        sortNodes(node.children);
+      }
+    });
+  }
+
+  sortNodes(root);
+
+  const flat = [];
+  function flatten(nodes) {
+    nodes.forEach((node) => {
+      flat.push(node);
+      if (node.kind === 'folder' && folderState[node.path] !== false) {
+        flatten(node.children);
+      }
+    });
+  }
+  flatten(root);
+  return flat;
+}
+
+async function readTmpEntryFile(entry) {
+  if (entry?.file instanceof File) {
+    return entry.file;
+  }
+  if (entry?.handle?.getFile) {
+    return entry.handle.getFile();
+  }
+  return null;
+}
+
+async function previewTmpEntry(entry) {
+  if (!entry) {
+    resetTmpPreview();
+    return;
+  }
+
+  resetTmpPreview();
+  const file = await readTmpEntryFile(entry);
+  if (!file) {
+    tmpPreviewKind.value = 'binary';
+    return;
+  }
+
+  const extension = entry.extension;
+  if (extension === '.html' || extension === '.htm') {
+    tmpPreviewUrl.value = URL.createObjectURL(new Blob([await file.text()], { type: 'text/html' }));
+    tmpPreviewKind.value = 'html';
+    return;
+  }
+
+  if (extension === '.svg') {
+    tmpPreviewUrl.value = URL.createObjectURL(new Blob([await file.text()], { type: 'image/svg+xml' }));
+    tmpPreviewKind.value = 'svg';
+    return;
+  }
+
+  if (TMP_TEXT_EXTENSIONS.has(extension)) {
+    tmpPreviewText.value = await file.text();
+    tmpPreviewKind.value = 'text';
+    return;
+  }
+
+  if (TMP_IMAGE_EXTENSIONS.has(extension)) {
+    tmpPreviewUrl.value = URL.createObjectURL(file);
+    tmpPreviewKind.value = 'image';
+    return;
+  }
+
+  tmpPreviewKind.value = 'binary';
+}
+
+async function selectTmpEntry(entry) {
+  tmpSelectedId.value = entry?.id || '';
+  await previewTmpEntry(entry);
+}
+
+async function onTmpFolderChange(event) {
+  const files = Array.from(event?.target?.files || []);
+  resetTmpPreview();
+
+  if (files.length === 0) {
+    tmpEntries.value = [];
+    tmpSelectedId.value = '';
+    tmpFolderLabel.value = '';
+    return;
+  }
+
+  const entries = files
+    .map((file, index) => buildTmpEntry(file, index))
+    .sort((left, right) => left.relativePath.localeCompare(right.relativePath, 'fr'));
+
+  const topPath = entries[0]?.relativePath || '';
+  tmpFolderLabel.value = topPath.includes('/') ? topPath.split('/')[0] : 'Dossier local';
+  tmpEntries.value = entries;
+  ensureTmpFolderState(entries);
+  tmpSelectedId.value = '';
+  tmpLoadState.value = 'ready';
+}
+
+async function hydrateTmpFromDirectoryHandle(directoryHandle) {
+  tmpLoadState.value = 'loading';
+  resetTmpPreview();
+
+  try {
+    const tmpHandle = await resolveTmpDirectoryHandle(directoryHandle);
+    const permission = await queryTmpHandlePermission(tmpHandle);
+    if (permission !== 'granted') {
+      tmpLoadState.value = 'idle';
+      return false;
+    }
+
+    const entries = await listTmpHandleEntries(tmpHandle);
+    tmpFolderLabel.value = tmpHandle.name || 'tmp';
+    tmpEntries.value = entries;
+    ensureTmpFolderState(entries);
+    tmpSelectedId.value = '';
+    tmpLoadState.value = 'ready';
+    return true;
+  } catch {
+    tmpLoadState.value = 'idle';
+    return false;
+  }
+}
+
+async function connectTmpDirectory() {
+  if (!tmpSupportsDirectoryPicker.value) {
+    triggerTmpFolderPicker();
+    return;
+  }
+
+  tmpLoadState.value = 'loading';
+
+  try {
+    const pickedHandle = await window.showDirectoryPicker({ mode: 'read' });
+    const tmpHandle = await resolveTmpDirectoryHandle(pickedHandle);
+    const permission = await requestTmpHandlePermission(tmpHandle);
+    if (permission !== 'granted') {
+      tmpLoadState.value = 'idle';
+      return;
+    }
+
+    await writeSavedTmpDirectoryHandle(tmpHandle);
+    tmpSavedHandleAvailable.value = true;
+    await hydrateTmpFromDirectoryHandle(tmpHandle);
+  } catch {
+    tmpLoadState.value = 'idle';
+  }
+}
+
+async function reuseSavedTmpDirectory() {
+  if (!tmpSupportsDirectoryPicker.value) {
+    return;
+  }
+
+  tmpLoadState.value = 'loading';
+
+  try {
+    const savedHandle = await readSavedTmpDirectoryHandle();
+    if (!savedHandle) {
+      tmpSavedHandleAvailable.value = false;
+      tmpLoadState.value = 'idle';
+      return;
+    }
+
+    const permission = await requestTmpHandlePermission(savedHandle);
+    if (permission !== 'granted') {
+      tmpLoadState.value = 'idle';
+      return;
+    }
+
+    await hydrateTmpFromDirectoryHandle(savedHandle);
+  } catch {
+    tmpLoadState.value = 'idle';
+  }
+}
+
+async function openTmpEntry(entry = tmpSelectedEntry.value) {
+  if (!entry) {
+    return;
+  }
+
+  const file = await readTmpEntryFile(entry);
+  if (!file) {
+    return;
+  }
+
+  const url = URL.createObjectURL(file);
+  window.open(url, '_blank', 'noopener,noreferrer');
+  window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+}
+
+function toggleTmpFolder(node) {
+  if (!node || node.kind !== 'folder') {
+    return;
+  }
+  tmpFolderOpen.value = {
+    ...tmpFolderOpen.value,
+    [node.path]: !tmpFolderOpen.value[node.path],
+  };
+}
 
 const adminListOptionsWithCount = computed(() =>
   englishListOptions.map((option) => {
@@ -198,6 +733,26 @@ watch(sidebarCollapsed, (value) => {
   }
   window.localStorage.setItem(ADMIN_SIDEBAR_COLLAPSED_KEY, value ? '1' : '0');
 });
+
+watch(
+  selectedSection,
+  async (value) => {
+    if (value !== 'tmp-lab') {
+      return;
+    }
+
+    await ensureTmpPickerSupportChecked();
+
+    if (tmpEntries.value.length === 0 && tmpCanReuseSavedHandle.value) {
+      try {
+        await hydrateTmpFromDirectoryHandle(await readSavedTmpDirectoryHandle());
+      } catch {
+        tmpLoadState.value = 'idle';
+      }
+    }
+  },
+  { immediate: true }
+);
 
 function toggleSidebar() {
   sidebarCollapsed.value = !sidebarCollapsed.value;
@@ -255,6 +810,10 @@ useSessionCountdown({
   onExpire: () => {
     logout();
   },
+});
+
+onBeforeUnmount(() => {
+  resetTmpPreview();
 });
 
 watch(selectedList, (newList) => {
@@ -1218,6 +1777,15 @@ initAdminData();
 
         <AdminStatusBanner :message="statusMessage" :tone="statusType || 'info'" />
 
+        <input
+          ref="tmpFolderInput"
+          class="tmp-lab__folder-input"
+          type="file"
+          webkitdirectory
+          multiple
+          @change="onTmpFolderChange"
+        />
+
         <section v-if="selectedSection === 'overview'" class="grid gap-3 p-3 md:px-4 md:pt-3 md:pb-4">
           <div class="stat-grid">
             <article class="admin-card">
@@ -1628,6 +2196,110 @@ initAdminData();
               </div>
             </div>
           </template>
+        </section>
+
+        <section v-else-if="selectedSection === 'tmp-lab'" class="grid gap-3 p-3 md:px-4 md:pt-3 md:pb-4">
+          <article class="admin-card tmp-lab-card">
+            <div class="scope-head">
+              <div>
+                <h2>Lab tmp local</h2>
+                <p class="meta-line">
+                  Vue locale type bucket R2 / FTP pour ouvrir rapidement les maquettes, exports et fichiers de travail.
+                </p>
+              </div>
+              <div class="actions">
+                <button class="btn btn-secondary" type="button" @click="triggerTmpFolderPicker">
+                  {{ tmpSupportsDirectoryPicker ? 'Connecter tmp/' : 'Choisir un dossier local' }}
+                </button>
+                <button v-if="tmpCanReuseSavedHandle" class="btn btn-secondary" type="button" @click="reuseSavedTmpDirectory">
+                  Réutiliser tmp/
+                </button>
+              </div>
+            </div>
+
+            <div class="tmp-lab-summary">
+              <span class="sym-review-pill">Dossier : {{ tmpFolderLabel || 'aucun' }}</span>
+              <span class="sym-review-pill">{{ tmpEntryCount }} fichier(s)</span>
+              <span class="sym-review-pill">Accès local navigateur</span>
+              <span v-if="tmpSupportsDirectoryPicker" class="sym-review-pill is-accepted">Mémoire dossier supportée</span>
+              <span v-else class="sym-review-pill is-review">Fallback manuel</span>
+            </div>
+
+            <p class="meta-line">{{ tmpStatusMessage }}</p>
+
+            <div class="tmp-lab-layout">
+              <div class="tmp-lab-list">
+                <p v-if="tmpEntryCount === 0" class="meta-line">
+                  Aucun dossier chargé. Clique sur <strong>{{ tmpSupportsDirectoryPicker ? 'Connecter tmp/' : 'Choisir un dossier local' }}</strong>.
+                </p>
+
+                <template v-for="node in tmpTreeNodes" :key="node.id">
+                  <button
+                    v-if="node.kind === 'folder'"
+                    class="tmp-lab-folder"
+                    :class="{ 'is-open': tmpFolderOpen[node.path] !== false }"
+                    :style="{ '--tmp-depth': node.depth }"
+                    type="button"
+                    @click="toggleTmpFolder(node)"
+                  >
+                    <span class="tmp-lab-folder__chevron" aria-hidden="true">▶</span>
+                    <strong>{{ node.name }}</strong>
+                  </button>
+                  <button
+                    v-else
+                    class="tmp-lab-item"
+                    :class="{ 'is-active': tmpSelectedId === node.entry.id }"
+                    :style="{ '--tmp-depth': node.depth }"
+                    type="button"
+                    @click="selectTmpEntry(node.entry)"
+                  >
+                    <strong>📄 {{ node.name }}</strong>
+                    <span>{{ node.entry.extension || 'sans extension' }} · {{ formatBytes(node.entry.size) }}</span>
+                  </button>
+                </template>
+              </div>
+
+              <div class="tmp-lab-preview">
+                <template v-if="tmpCanPreview && tmpSelectedEntry">
+                  <div class="tmp-lab-preview__head">
+                    <div>
+                      <h3>{{ tmpSelectedEntry.relativePath }}</h3>
+                      <p class="meta-line">{{ tmpSelectedEntry.type }} · {{ formatBytes(tmpSelectedEntry.size) }}</p>
+                    </div>
+                    <button class="btn btn-secondary" type="button" @click="openTmpEntry()">
+                      Ouvrir dans un onglet
+                    </button>
+                  </div>
+
+                  <iframe
+                    v-if="tmpPreviewKind === 'html'"
+                    class="tmp-lab-preview__frame"
+                    :src="tmpPreviewUrl"
+                    sandbox="allow-scripts allow-same-origin"
+                    title="Aperçu HTML local"
+                  />
+
+                  <div v-else-if="tmpPreviewKind === 'svg'" class="tmp-lab-preview__image-wrap">
+                    <img :src="tmpPreviewUrl" :alt="tmpSelectedEntry.name" class="tmp-lab-preview__image" />
+                  </div>
+
+                  <pre v-else-if="tmpPreviewKind === 'text'" class="tmp-lab-preview__text">{{
+                    tmpPreviewText
+                  }}</pre>
+
+                  <div v-else-if="tmpPreviewKind === 'image'" class="tmp-lab-preview__image-wrap">
+                    <img :src="tmpPreviewUrl" :alt="tmpSelectedEntry.name" class="tmp-lab-preview__image" />
+                  </div>
+
+                  <p v-else-if="tmpPreviewKind === 'binary'" class="meta-line">
+                    Aperçu inline non pris en charge pour ce type. Utilise <strong>Ouvrir dans un onglet</strong>.
+                  </p>
+                </template>
+
+                <p v-else class="meta-line">Sélectionne un fichier pour afficher son aperçu.</p>
+              </div>
+            </div>
+          </article>
         </section>
 
         <section v-else-if="selectedSection === 'admin-help'" class="grid gap-3 p-3 md:px-4 md:pt-3 md:pb-4">
