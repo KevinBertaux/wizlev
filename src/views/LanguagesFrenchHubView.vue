@@ -20,6 +20,17 @@ function openTable() {
     params: { verbKey: selectedVerb.value },
   });
 }
+
+function openQcm() {
+  if (!selectedVerb.value) {
+    return;
+  }
+
+  router.push({
+    name: 'languages-french-qcm',
+    params: { verbKey: selectedVerb.value },
+  });
+}
 </script>
 
 <template>
@@ -55,10 +66,10 @@ function openTable() {
         <p>Mémorisation pronom par pronom. Lot suivant du module.</p>
       </article>
 
-      <article class="home-card french-hub__card french-hub__card--locked" aria-disabled="true">
+      <button class="home-card french-hub__card french-hub__card--action" type="button" @click="openQcm">
         <h2>✅ QCM</h2>
-        <p>Reconnaissance rapide avec réponses 1, 2, 3, 4 au clavier. Lot suivant.</p>
-      </article>
+        <p>Reconnaissance rapide avec réponses 1, 2, 3, 4 au clavier, score et série.</p>
+      </button>
 
       <article class="home-card french-hub__card french-hub__card--locked" aria-disabled="true">
         <h2>⌨️ Saisie</h2>

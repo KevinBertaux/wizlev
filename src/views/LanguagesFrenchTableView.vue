@@ -18,6 +18,17 @@ const rows = computed(() => buildFrenchVerbRows(verbKey.value));
 function goBack() {
   router.push({ name: 'languages-french' });
 }
+
+function openQcm() {
+  if (!verb.value) {
+    return;
+  }
+
+  router.push({
+    name: 'languages-french-qcm',
+    params: { verbKey: verb.value.key },
+  });
+}
 </script>
 
 <template>
@@ -38,6 +49,10 @@ function goBack() {
           <div class="conjugation-label" role="rowheader">{{ row.label }}</div>
           <div class="conjugation-values" role="cell">{{ row.values.join(' • ') }}</div>
         </div>
+      </div>
+
+      <div class="french-table-view__actions">
+        <button class="mp-btn mp-btn-primary" type="button" @click="openQcm">Passer au QCM →</button>
       </div>
     </section>
 
@@ -73,6 +88,12 @@ function goBack() {
 .conjugation-table {
   display: grid;
   gap: 10px;
+}
+
+.french-table-view__actions {
+  margin-top: 18px;
+  display: flex;
+  justify-content: center;
 }
 
 .conjugation-row {
