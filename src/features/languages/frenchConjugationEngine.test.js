@@ -1,9 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildFrenchQcmChoices,
+  createFrenchInputBag,
+  createFrenchInputQuestion,
   createFrenchPronounBag,
   createFrenchQcmBag,
   createFrenchQcmQuestion,
+  evaluateFrenchInputAnswer,
   evaluateFrenchQcmAnswer,
 } from './frenchConjugationEngine';
 
@@ -61,5 +64,24 @@ describe('frenchConjugationEngine', () => {
 
     expect(question?.verbKey).toBe('prendre');
     expect(question?.options).toHaveLength(4);
+  });
+
+  it('creates an input question and validates answer case-insensitively', () => {
+    const question = createFrenchInputQuestion('aller', 'nous');
+
+    expect(question?.prompt).toBe('Nous + aller');
+    expect(evaluateFrenchInputAnswer(question, 'ALLONS')).toEqual({
+      isValid: true,
+      isCorrect: true,
+      correctAnswer: 'allons',
+    });
+  });
+
+  it('creates an input bag that yields prompt-only questions', () => {
+    const bag = createFrenchInputBag('etre', () => 0);
+    const question = bag.next();
+
+    expect(question?.verbKey).toBe('etre');
+    expect(question?.expectedAnswer).toBeTruthy();
   });
 });

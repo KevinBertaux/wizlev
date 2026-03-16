@@ -49,6 +49,11 @@ const routes = [
     component: () => import('@/views/LanguagesFrenchQcmView.vue'),
   },
   {
+    path: ROUTE_PATHS.LANGUAGES_FRENCH_INPUT,
+    name: ROUTE_NAMES.LANGUAGES_FRENCH_INPUT,
+    component: () => import('@/views/LanguagesFrenchInputView.vue'),
+  },
+  {
     path: ROUTE_PATHS.STUDIO_OPS_HELP,
     name: ROUTE_NAMES.STUDIO_OPS_HELP,
     component: () => import('@/views/StudioOpsHelpView.vue'),

@@ -82,6 +82,26 @@ export function createFrenchQcmQuestion(verbKey, pronounKey, randomFn = Math.ran
   };
 }
 
+export function createFrenchInputQuestion(verbKey, pronounKey) {
+  const verb = getFrenchVerb(verbKey);
+  const pronoun = listFrenchPronouns().find((item) => item.key === pronounKey);
+
+  if (!verb || !pronoun) {
+    return null;
+  }
+
+  return {
+    id: `${verb.key}-${pronoun.key}`,
+    verbKey: verb.key,
+    verbLabel: verb.label,
+    infinitive: verb.infinitive,
+    pronounKey: pronoun.key,
+    pronounLabel: pronoun.label,
+    prompt: `${pronoun.label} + ${verb.infinitive}`,
+    expectedAnswer: verb.forms[pronoun.key],
+  };
+}
+
 export function createFrenchPronounBag(verbKey, randomFn = Math.random) {
   const verb = getFrenchVerb(verbKey);
   const pronouns = listFrenchPronouns();
@@ -133,6 +153,23 @@ export function createFrenchQcmBag(verbKey, randomFn = Math.random) {
   };
 }
 
+export function createFrenchInputBag(verbKey, randomFn = Math.random) {
+  const pronounBag = createFrenchPronounBag(verbKey, randomFn);
+
+  return {
+    next() {
+      const pronoun = pronounBag.next();
+      if (!pronoun) {
+        return null;
+      }
+      return createFrenchInputQuestion(verbKey, pronoun.key);
+    },
+    clear() {
+      pronounBag.clear();
+    },
+  };
+}
+
 export function evaluateFrenchQcmAnswer(question, selectedOptionId) {
   if (!question || !Array.isArray(question.options)) {
     return {
@@ -157,5 +194,30 @@ export function evaluateFrenchQcmAnswer(question, selectedOptionId) {
     isValid: true,
     isCorrect: selectedOption.id === question.correctOptionId,
     correctAnswer: correctOption.answer,
+  };
+}
+
+export function evaluateFrenchInputAnswer(question, answer) {
+  if (!question || typeof question.expectedAnswer !== 'string') {
+    return {
+      isValid: false,
+      isCorrect: false,
+      correctAnswer: '',
+    };
+  }
+
+  const normalized = normalizeFrenchAnswer(answer);
+  if (!normalized) {
+    return {
+      isValid: false,
+      isCorrect: false,
+      correctAnswer: question.expectedAnswer,
+    };
+  }
+
+  return {
+    isValid: true,
+    isCorrect: normalized === normalizeFrenchAnswer(question.expectedAnswer),
+    correctAnswer: question.expectedAnswer,
   };
 }

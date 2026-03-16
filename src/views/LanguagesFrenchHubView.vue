@@ -31,6 +31,17 @@ function openQcm() {
     params: { verbKey: selectedVerb.value },
   });
 }
+
+function openInput() {
+  if (!selectedVerb.value) {
+    return;
+  }
+
+  router.push({
+    name: 'languages-french-input',
+    params: { verbKey: selectedVerb.value },
+  });
+}
 </script>
 
 <template>
@@ -71,10 +82,10 @@ function openQcm() {
         <p>Reconnaissance rapide avec réponses 1, 2, 3, 4 au clavier, score et série.</p>
       </button>
 
-      <article class="home-card french-hub__card french-hub__card--locked" aria-disabled="true">
+      <button class="home-card french-hub__card french-hub__card--action" type="button" @click="openInput">
         <h2>⌨️ Saisie</h2>
-        <p>Rappel actif avec champ texte, score et série. Lot suivant.</p>
-      </article>
+        <p>Rappel actif avec champ texte, score, série et validation au clavier.</p>
+      </button>
     </div>
   </section>
 </template>

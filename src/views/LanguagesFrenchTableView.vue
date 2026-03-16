@@ -29,6 +29,17 @@ function openQcm() {
     params: { verbKey: verb.value.key },
   });
 }
+
+function openInput() {
+  if (!verb.value) {
+    return;
+  }
+
+  router.push({
+    name: 'languages-french-input',
+    params: { verbKey: verb.value.key },
+  });
+}
 </script>
 
 <template>
@@ -53,6 +64,7 @@ function openQcm() {
 
       <div class="french-table-view__actions">
         <button class="mp-btn mp-btn-primary" type="button" @click="openQcm">Passer au QCM →</button>
+        <button class="mp-btn mp-btn-secondary" type="button" @click="openInput">Passer à la saisie →</button>
       </div>
     </section>
 
@@ -94,6 +106,7 @@ function openQcm() {
   margin-top: 18px;
   display: flex;
   justify-content: center;
+  gap: 12px;
 }
 
 .conjugation-row {
