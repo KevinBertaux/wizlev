@@ -11,9 +11,34 @@
   "schemaFile": "schema.fr.v1.json",
   "verbs": [
     {
+      "key": "aller",
+      "label": "Aller",
+      "file": "verbs/aller.json"
+    },
+    {
+      "key": "avoir",
+      "label": "Avoir",
+      "file": "verbs/avoir.json"
+    },
+    {
+      "key": "etre",
+      "label": "Être",
+      "file": "verbs/etre.json"
+    },
+    {
       "key": "manabuer",
       "label": "Manabuer",
       "file": "verbs/manabuer.json"
+    },
+    {
+      "key": "prendre",
+      "label": "Prendre",
+      "file": "verbs/prendre.json"
+    },
+    {
+      "key": "venir",
+      "label": "Venir",
+      "file": "verbs/venir.json"
     }
   ]
 }

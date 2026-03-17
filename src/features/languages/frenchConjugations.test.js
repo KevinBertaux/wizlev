@@ -60,19 +60,30 @@ describe('frenchConjugations', () => {
 
   it('lit aussi le POC multi-langue sans casser le format legacy', () => {
     const poc = getFrenchConjugationPocModule();
-    expect(listFrenchVerbOptions(poc)).toEqual([{ value: 'manabuer', label: 'Manabuer' }]);
-    expect(getFrenchVerb('manabuer', poc, 'indicatif', 'futur-simple')?.forms.nous).toBe('manabuerons');
+    expect(listFrenchVerbOptions(poc)).toEqual([
+      { value: 'aller', label: 'Aller' },
+      { value: 'avoir', label: 'Avoir' },
+      { value: 'etre', label: 'Être' },
+      { value: 'manabuer', label: 'Manabuer' },
+      { value: 'prendre', label: 'Prendre' },
+      { value: 'venir', label: 'Venir' },
+    ]);
+    expect(getFrenchVerb('etre', poc, 'indicatif', 'futur-simple')?.forms.nous).toBe('serons');
+    expect(getFrenchVerb('aller', poc, 'indicatif', 'passe-compose')?.forms.nous).toBe('sommes allés');
+    expect(getFrenchVerb('aller', poc, 'indicatif', 'passe-compose')?.forms.elle).toBe('est allée');
+    expect(getFrenchVerb('venir', poc, 'subjonctif', 'present')?.forms.je).toBe('vienne');
+    expect(getFrenchVerb('venir', poc, 'conditionnel', 'passe')?.forms.elles).toBe('seraient venues');
     expect(getFrenchTense('passe-anterieur', poc)?.label).toBe('Indicatif passé antérieur');
 
-    const rows = buildFrenchVerbRows('manabuer', 'present', poc);
+    const rows = buildFrenchVerbRows('prendre', 'present', poc);
     expect(rows).toHaveLength(6);
-    expect(rows[2].forms).toEqual(['manabue']);
+    expect(rows[2].forms).toEqual(['prend']);
 
-    const infinitifRows = buildFrenchVerbRows('manabuer', 'present', poc, 'infinitif');
+    const infinitifRows = buildFrenchVerbRows('venir', 'present', poc, 'infinitif');
     expect(infinitifRows).toHaveLength(1);
-    expect(infinitifRows[0].forms).toEqual(['manabuer']);
+    expect(infinitifRows[0].forms).toEqual(['venir']);
 
-    const cards = buildFrenchVerbCards('manabuer', 'futur-simple', poc);
-    expect(cards[0].answer).toBe('manabuerai');
+    const cards = buildFrenchVerbCards('avoir', 'futur-simple', poc);
+    expect(cards[0].answer).toBe('aurai');
   });
 });

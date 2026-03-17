@@ -1,7 +1,12 @@
 import presentCoreVerbs from '@/content/languages/fr/present-core-verbs.json';
 import conjugationManifest from '@/content/languages/fr/conjugation/manifest.json';
 import conjugationSchema from '@/content/languages/fr/conjugation/schema.fr.v1.json';
+import allerVerb from '@/content/languages/fr/conjugation/verbs/aller.json';
+import avoirVerb from '@/content/languages/fr/conjugation/verbs/avoir.json';
+import etreVerb from '@/content/languages/fr/conjugation/verbs/etre.json';
 import manabuerVerb from '@/content/languages/fr/conjugation/verbs/manabuer.json';
+import prendreVerb from '@/content/languages/fr/conjugation/verbs/prendre.json';
+import venirVerb from '@/content/languages/fr/conjugation/verbs/venir.json';
 import {
   buildInflectionRows,
   getInflectionLanguage,
@@ -11,7 +16,14 @@ import {
 
 const DEFAULT_LANGUAGE_KEY = 'fr';
 const DEFAULT_MOOD_KEY = 'indicatif';
-const pocVerbRecords = [manabuerVerb];
+const inflectionVerbRecords = [
+  allerVerb,
+  avoirVerb,
+  etreVerb,
+  manabuerVerb,
+  prendreVerb,
+  venirVerb,
+];
 
 const legacyModuleData = sanitizeLegacyModule(presentCoreVerbs);
 const legacyPronounsByKey = new Map(legacyModuleData.pronouns.map((pronoun) => [pronoun.key, pronoun]));
@@ -63,6 +75,13 @@ const legacyTenseMap = new Map(
 
 function sanitizeString(value, fallback = '') {
   return typeof value === 'string' && value.trim() ? value.trim() : fallback;
+}
+
+function stripFrenchPronounPrefix(value) {
+  return value.replace(
+    /^(?:que\s+|qu')?(?:j'|je\s+|tu\s+|il\s+|nous\s+|vous\s+|ils\s+)/i,
+    ''
+  );
 }
 
 function sanitizeForms(forms, pronouns) {
@@ -278,7 +297,11 @@ export function getFrenchConjugationModule(source = legacyModuleData) {
 }
 
 export function getFrenchConjugationPocModule() {
-  return buildInflectionModuleFromManifest(conjugationManifest, conjugationSchema, pocVerbRecords);
+  return buildInflectionModuleFromManifest(
+    conjugationManifest,
+    conjugationSchema,
+    inflectionVerbRecords
+  );
 }
 
 export function listFrenchTenseFamilies(source = legacyModuleData, moodKey = DEFAULT_MOOD_KEY) {
@@ -452,7 +475,7 @@ export function createFrenchExercise(
 }
 
 export function normalizeFrenchAnswer(value) {
-  return sanitizeString(value).toLowerCase();
+  return stripFrenchPronounPrefix(sanitizeString(value)).toLowerCase();
 }
 
 export function isFrenchExerciseAnswerCorrect(exercise, answer) {

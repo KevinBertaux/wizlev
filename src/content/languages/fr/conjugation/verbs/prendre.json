@@ -1,0 +1,197 @@
+{
+  "key": "prendre",
+  "lemma": "prendre",
+  "label": "Prendre",
+  "meta": {
+    "group": "3",
+    "auxiliary": "avoir",
+    "irregular": true,
+    "tags": [
+      "core"
+    ]
+  },
+  "forms": {
+    "indicatif.present": {
+      "je": "prends",
+      "tu": "prends",
+      "il": "prend",
+      "elle": "prend",
+      "on": "prend",
+      "nous": "prenons",
+      "vous": "prenez",
+      "ils": "prennent",
+      "elles": "prennent"
+    },
+    "indicatif.passe-compose": {
+      "je": "ai pris",
+      "tu": "as pris",
+      "il": "a pris",
+      "elle": "a pris",
+      "on": "a pris",
+      "nous": "avons pris",
+      "vous": "avez pris",
+      "ils": "ont pris",
+      "elles": "ont pris"
+    },
+    "indicatif.imparfait": {
+      "je": "prenais",
+      "tu": "prenais",
+      "il": "prenait",
+      "elle": "prenait",
+      "on": "prenait",
+      "nous": "prenions",
+      "vous": "preniez",
+      "ils": "prenaient",
+      "elles": "prenaient"
+    },
+    "indicatif.plus-que-parfait": {
+      "je": "avais pris",
+      "tu": "avais pris",
+      "il": "avait pris",
+      "elle": "avait pris",
+      "on": "avait pris",
+      "nous": "avions pris",
+      "vous": "aviez pris",
+      "ils": "avaient pris",
+      "elles": "avaient pris"
+    },
+    "indicatif.passe-simple": {
+      "je": "pris",
+      "tu": "pris",
+      "il": "prit",
+      "elle": "prit",
+      "on": "prit",
+      "nous": "prîmes",
+      "vous": "prîtes",
+      "ils": "prirent",
+      "elles": "prirent"
+    },
+    "indicatif.passe-anterieur": {
+      "je": "eus pris",
+      "tu": "eus pris",
+      "il": "eut pris",
+      "elle": "eut pris",
+      "on": "eut pris",
+      "nous": "eûmes pris",
+      "vous": "eûtes pris",
+      "ils": "eurent pris",
+      "elles": "eurent pris"
+    },
+    "indicatif.futur-simple": {
+      "je": "prendrai",
+      "tu": "prendras",
+      "il": "prendra",
+      "elle": "prendra",
+      "on": "prendra",
+      "nous": "prendrons",
+      "vous": "prendrez",
+      "ils": "prendront",
+      "elles": "prendront"
+    },
+    "indicatif.futur-anterieur": {
+      "je": "aurai pris",
+      "tu": "auras pris",
+      "il": "aura pris",
+      "elle": "aura pris",
+      "on": "aura pris",
+      "nous": "aurons pris",
+      "vous": "aurez pris",
+      "ils": "auront pris",
+      "elles": "auront pris"
+    },
+    "conditionnel.present": {
+      "je": "prendrais",
+      "tu": "prendrais",
+      "il": "prendrait",
+      "elle": "prendrait",
+      "on": "prendrait",
+      "nous": "prendrions",
+      "vous": "prendriez",
+      "ils": "prendraient",
+      "elles": "prendraient"
+    },
+    "conditionnel.passe": {
+      "je": "aurais pris",
+      "tu": "aurais pris",
+      "il": "aurait pris",
+      "elle": "aurait pris",
+      "on": "aurait pris",
+      "nous": "aurions pris",
+      "vous": "auriez pris",
+      "ils": "auraient pris",
+      "elles": "auraient pris"
+    },
+    "subjonctif.present": {
+      "je": "prenne",
+      "tu": "prennes",
+      "il": "prenne",
+      "elle": "prenne",
+      "on": "prenne",
+      "nous": "prenions",
+      "vous": "preniez",
+      "ils": "prennent",
+      "elles": "prennent"
+    },
+    "subjonctif.passe": {
+      "je": "aie pris",
+      "tu": "aies pris",
+      "il": "ait pris",
+      "elle": "ait pris",
+      "on": "ait pris",
+      "nous": "ayons pris",
+      "vous": "ayez pris",
+      "ils": "aient pris",
+      "elles": "aient pris"
+    },
+    "subjonctif.imparfait": {
+      "je": "prisse",
+      "tu": "prisses",
+      "il": "prît",
+      "elle": "prît",
+      "on": "prît",
+      "nous": "prissions",
+      "vous": "prissiez",
+      "ils": "prissent",
+      "elles": "prissent"
+    },
+    "subjonctif.plus-que-parfait": {
+      "je": "eusse pris",
+      "tu": "eusses pris",
+      "il": "eût pris",
+      "elle": "eût pris",
+      "on": "eût pris",
+      "nous": "eussions pris",
+      "vous": "eussiez pris",
+      "ils": "eussent pris",
+      "elles": "eussent pris"
+    },
+    "imperatif.present": {
+      "tu": "prends",
+      "nous": "prenons",
+      "vous": "prenez"
+    },
+    "imperatif.passe": {
+      "tu": "aie pris",
+      "nous": "ayons pris",
+      "vous": "ayez pris"
+    },
+    "infinitif.present": {
+      "base": "prendre"
+    },
+    "infinitif.passe": {
+      "base": "avoir pris"
+    },
+    "participe.present": {
+      "base": "prenant"
+    },
+    "participe.passe": {
+      "base": "pris"
+    },
+    "gerondif.present": {
+      "base": "en prenant"
+    },
+    "gerondif.passe": {
+      "base": "en ayant pris"
+    }
+  }
+}
