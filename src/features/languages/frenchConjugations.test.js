@@ -3,8 +3,12 @@ import {
   buildFrenchVerbCards,
   buildFrenchVerbRows,
   createFrenchExercise,
+  getFrenchConjugationPocModule,
+  getFrenchTense,
   getFrenchVerb,
   isFrenchExerciseAnswerCorrect,
+  isFrenchTenseAvailable,
+  listFrenchTenseFamilies,
   listFrenchVerbOptions,
 } from './frenchConjugations';
 
@@ -18,8 +22,21 @@ describe('frenchConjugations', () => {
   it('construit 6 lignes de tableau pour un verbe', () => {
     const rows = buildFrenchVerbRows('avoir');
     expect(rows).toHaveLength(6);
-    expect(rows[2].values).toEqual(['Il a', 'Elle a', 'On a']);
-    expect(rows[5].values).toEqual(['Ils ont', 'Elles ont']);
+    expect(rows[2].pronounValues).toEqual(['Il a', 'Elle a', 'On a']);
+    expect(rows[2].forms).toEqual(['a']);
+    expect(rows[5].pronounValues).toEqual(['Ils ont', 'Elles ont']);
+    expect(rows[5].forms).toEqual(['ont']);
+  });
+
+  it('expose les familles de temps avec disponibilite', () => {
+    const families = listFrenchTenseFamilies();
+    expect(families).toHaveLength(3);
+    expect(families[0].options[0].key).toBe('present');
+    expect(families[0].options[0].label).toBe('Indicatif présent');
+    expect(families[1].options.at(-1)?.key).toBe('passe-anterieur');
+    expect(getFrenchTense('present')?.familyKey).toBe('present');
+    expect(isFrenchTenseAvailable('present')).toBe(true);
+    expect(isFrenchTenseAvailable('imparfait')).toBe(false);
   });
 
   it('construit 9 flashcards par verbe', () => {
@@ -39,5 +56,23 @@ describe('frenchConjugations', () => {
     const exercise = createFrenchExercise('prendre', () => 0);
     expect(isFrenchExerciseAnswerCorrect(exercise, exercise.expectedAnswer.toUpperCase())).toBe(true);
     expect(isFrenchExerciseAnswerCorrect(exercise, 'xxx')).toBe(false);
+  });
+
+  it('lit aussi le POC multi-langue sans casser le format legacy', () => {
+    const poc = getFrenchConjugationPocModule();
+    expect(listFrenchVerbOptions(poc)).toEqual([{ value: 'manabuer', label: 'Manabuer' }]);
+    expect(getFrenchVerb('manabuer', poc, 'indicatif', 'futur-simple')?.forms.nous).toBe('manabuerons');
+    expect(getFrenchTense('passe-anterieur', poc)?.label).toBe('Indicatif passé antérieur');
+
+    const rows = buildFrenchVerbRows('manabuer', 'present', poc);
+    expect(rows).toHaveLength(6);
+    expect(rows[2].forms).toEqual(['manabue']);
+
+    const infinitifRows = buildFrenchVerbRows('manabuer', 'present', poc, 'infinitif');
+    expect(infinitifRows).toHaveLength(1);
+    expect(infinitifRows[0].forms).toEqual(['manabuer']);
+
+    const cards = buildFrenchVerbCards('manabuer', 'futur-simple', poc);
+    expect(cards[0].answer).toBe('manabuerai');
   });
 });

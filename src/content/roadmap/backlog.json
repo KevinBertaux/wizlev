@@ -94,6 +94,15 @@
       "dependsOn": ["scope-050-high-r2-v1"],
       "label": "Afficher dans le panneau admin l etat HTTP des listes distantes (200, 3xx, 4xx, 5xx)",
       "done": false
+    },
+    {
+      "id": "backlog-language-rich-form-objects-v2",
+      "priority": "Low",
+      "domain": "langues",
+      "feature": "architecture",
+      "dependsOn": ["scope-060-language-quiz-pattern"],
+      "label": "Langues V2 : autoriser des objets de forme plus riches que string simple (acceptedAnswers, audio, note, meta) sans casser le moteur V1",
+      "done": false
     }
   ]
 }
