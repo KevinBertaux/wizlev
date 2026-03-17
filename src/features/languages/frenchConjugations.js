@@ -1,5 +1,7 @@
 import presentCoreVerbs from '@/content/languages/fr/present-core-verbs.json';
-import conjugationPocManabuer from '@/content/languages/fr/conjugation-poc-manabuer.json';
+import conjugationManifest from '@/content/languages/fr/conjugation/manifest.json';
+import conjugationSchema from '@/content/languages/fr/conjugation/schema.fr.v1.json';
+import manabuerVerb from '@/content/languages/fr/conjugation/verbs/manabuer.json';
 import {
   buildInflectionRows,
   getInflectionLanguage,
@@ -9,6 +11,7 @@ import {
 
 const DEFAULT_LANGUAGE_KEY = 'fr';
 const DEFAULT_MOOD_KEY = 'indicatif';
+const pocVerbRecords = [manabuerVerb];
 
 const legacyModuleData = sanitizeLegacyModule(presentCoreVerbs);
 const legacyPronounsByKey = new Map(legacyModuleData.pronouns.map((pronoun) => [pronoun.key, pronoun]));
@@ -126,6 +129,27 @@ function isInflectionModule(payload) {
 
 function getFrenchSource(source = legacyModuleData) {
   return source || legacyModuleData;
+}
+
+function buildInflectionModuleFromManifest(manifestPayload, schemaPayload, verbPayloads = []) {
+  const manifest = manifestPayload && typeof manifestPayload === 'object' ? manifestPayload : {};
+  const language = manifest.language && typeof manifest.language === 'object' ? manifest.language : {};
+  const schema = schemaPayload && typeof schemaPayload === 'object' ? schemaPayload : {};
+  return {
+    schemaVersion: manifest.schemaVersion || 1,
+    kind: 'inflection-module',
+    languages: [
+      {
+        key: sanitizeString(language.key, DEFAULT_LANGUAGE_KEY),
+        locale: sanitizeString(language.locale, 'fr-FR'),
+        label: sanitizeString(language.label, 'Français'),
+        rows: Array.isArray(schema.rows) ? schema.rows : [],
+        slotSets: Array.isArray(schema.slotSets) ? schema.slotSets : [],
+        moods: Array.isArray(schema.moods) ? schema.moods : [],
+        verbs: Array.isArray(verbPayloads) ? verbPayloads : [],
+      },
+    ],
+  };
 }
 
 function getFamilyLabel(familyKey) {
@@ -254,7 +278,7 @@ export function getFrenchConjugationModule(source = legacyModuleData) {
 }
 
 export function getFrenchConjugationPocModule() {
-  return conjugationPocManabuer;
+  return buildInflectionModuleFromManifest(conjugationManifest, conjugationSchema, pocVerbRecords);
 }
 
 export function listFrenchTenseFamilies(source = legacyModuleData, moodKey = DEFAULT_MOOD_KEY) {

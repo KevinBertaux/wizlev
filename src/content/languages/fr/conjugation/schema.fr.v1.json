@@ -1,0 +1,145 @@
+{
+  "schemaVersion": 1,
+  "kind": "inflection-schema",
+  "language": {
+    "key": "fr",
+    "locale": "fr-FR",
+    "label": "Français"
+  },
+  "rows": [
+    {
+      "key": "je",
+      "label": "Je"
+    },
+    {
+      "key": "tu",
+      "label": "Tu"
+    },
+    {
+      "key": "thirdSingular",
+      "label": "Il / Elle / On"
+    },
+    {
+      "key": "nous",
+      "label": "Nous"
+    },
+    {
+      "key": "vous",
+      "label": "Vous"
+    },
+    {
+      "key": "thirdPlural",
+      "label": "Ils / Elles"
+    },
+    {
+      "key": "base",
+      "label": "Forme"
+    }
+  ],
+  "slotSets": [
+    {
+      "key": "personal-9",
+      "label": "Formes personnelles",
+      "slots": [
+        { "key": "je", "label": "Je", "rowKey": "je" },
+        { "key": "tu", "label": "Tu", "rowKey": "tu" },
+        { "key": "il", "label": "Il", "rowKey": "thirdSingular" },
+        { "key": "elle", "label": "Elle", "rowKey": "thirdSingular" },
+        { "key": "on", "label": "On", "rowKey": "thirdSingular" },
+        { "key": "nous", "label": "Nous", "rowKey": "nous" },
+        { "key": "vous", "label": "Vous", "rowKey": "vous" },
+        { "key": "ils", "label": "Ils", "rowKey": "thirdPlural" },
+        { "key": "elles", "label": "Elles", "rowKey": "thirdPlural" }
+      ]
+    },
+    {
+      "key": "imperative-3",
+      "label": "Impératif",
+      "slots": [
+        { "key": "tu", "label": "Tu", "rowKey": "tu" },
+        { "key": "nous", "label": "Nous", "rowKey": "nous" },
+        { "key": "vous", "label": "Vous", "rowKey": "vous" }
+      ]
+    },
+    {
+      "key": "non-finite-1",
+      "label": "Forme non personnelle",
+      "slots": [
+        { "key": "base", "label": "Forme", "rowKey": "base" }
+      ]
+    }
+  ],
+  "moods": [
+    {
+      "key": "indicatif",
+      "label": "Indicatif",
+      "families": ["present", "past", "future"],
+      "tenses": [
+        { "key": "present", "label": "Indicatif présent", "slotSetKey": "personal-9", "compound": false, "familyKey": "present" },
+        { "key": "passe-compose", "label": "Indicatif passé composé", "slotSetKey": "personal-9", "compound": true, "familyKey": "past" },
+        { "key": "imparfait", "label": "Indicatif imparfait", "slotSetKey": "personal-9", "compound": false, "familyKey": "past" },
+        { "key": "plus-que-parfait", "label": "Indicatif plus-que-parfait", "slotSetKey": "personal-9", "compound": true, "familyKey": "past" },
+        { "key": "passe-simple", "label": "Indicatif passé simple", "slotSetKey": "personal-9", "compound": false, "familyKey": "past" },
+        { "key": "passe-anterieur", "label": "Indicatif passé antérieur", "slotSetKey": "personal-9", "compound": true, "familyKey": "past" },
+        { "key": "futur-simple", "label": "Indicatif futur simple", "slotSetKey": "personal-9", "compound": false, "familyKey": "future" },
+        { "key": "futur-anterieur", "label": "Indicatif futur antérieur", "slotSetKey": "personal-9", "compound": true, "familyKey": "future" }
+      ]
+    },
+    {
+      "key": "conditionnel",
+      "label": "Conditionnel",
+      "families": ["present", "past"],
+      "tenses": [
+        { "key": "present", "label": "Conditionnel présent", "slotSetKey": "personal-9", "compound": false, "familyKey": "present" },
+        { "key": "passe", "label": "Conditionnel passé", "slotSetKey": "personal-9", "compound": true, "familyKey": "past" }
+      ]
+    },
+    {
+      "key": "subjonctif",
+      "label": "Subjonctif",
+      "families": ["present", "past"],
+      "tenses": [
+        { "key": "present", "label": "Subjonctif présent", "slotSetKey": "personal-9", "compound": false, "familyKey": "present" },
+        { "key": "passe", "label": "Subjonctif passé", "slotSetKey": "personal-9", "compound": true, "familyKey": "past" },
+        { "key": "imparfait", "label": "Subjonctif imparfait", "slotSetKey": "personal-9", "compound": false, "familyKey": "past" },
+        { "key": "plus-que-parfait", "label": "Subjonctif plus-que-parfait", "slotSetKey": "personal-9", "compound": true, "familyKey": "past" }
+      ]
+    },
+    {
+      "key": "imperatif",
+      "label": "Impératif",
+      "families": ["present", "past"],
+      "tenses": [
+        { "key": "present", "label": "Impératif présent", "slotSetKey": "imperative-3", "compound": false, "familyKey": "present" },
+        { "key": "passe", "label": "Impératif passé", "slotSetKey": "imperative-3", "compound": true, "familyKey": "past" }
+      ]
+    },
+    {
+      "key": "infinitif",
+      "label": "Infinitif",
+      "families": ["present", "past"],
+      "tenses": [
+        { "key": "present", "label": "Infinitif présent", "slotSetKey": "non-finite-1", "compound": false, "familyKey": "present" },
+        { "key": "passe", "label": "Infinitif passé", "slotSetKey": "non-finite-1", "compound": true, "familyKey": "past" }
+      ]
+    },
+    {
+      "key": "participe",
+      "label": "Participe",
+      "families": ["present", "past"],
+      "tenses": [
+        { "key": "present", "label": "Participe présent", "slotSetKey": "non-finite-1", "compound": false, "familyKey": "present" },
+        { "key": "passe", "label": "Participe passé", "slotSetKey": "non-finite-1", "compound": false, "familyKey": "past" }
+      ]
+    },
+    {
+      "key": "gerondif",
+      "label": "Gérondif",
+      "families": ["present", "past"],
+      "tenses": [
+        { "key": "present", "label": "Gérondif présent", "slotSetKey": "non-finite-1", "compound": false, "familyKey": "present" },
+        { "key": "passe", "label": "Gérondif passé", "slotSetKey": "non-finite-1", "compound": true, "familyKey": "past" }
+      ]
+    }
+  ]
+}

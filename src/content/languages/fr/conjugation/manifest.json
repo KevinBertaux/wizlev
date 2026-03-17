@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "kind": "inflection-manifest",
+  "language": {
+    "key": "fr",
+    "locale": "fr-FR",
+    "label": "Français"
+  },
+  "version": "2026-03-17.1",
+  "generatedAt": "2026-03-17",
+  "schemaFile": "schema.fr.v1.json",
+  "verbs": [
+    {
+      "key": "manabuer",
+      "label": "Manabuer",
+      "file": "verbs/manabuer.json"
+    }
+  ]
+}

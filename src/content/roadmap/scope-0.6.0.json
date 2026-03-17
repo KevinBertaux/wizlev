@@ -69,6 +69,15 @@
       "done": false
     },
     {
+      "id": "scope-060-french-conjugation-r2",
+      "priority": "Med",
+      "domain": "langues",
+      "feature": "francais",
+      "dependsOn": ["scope-050-high-r2-v1", "scope-060-french-conjugation-v1"],
+      "label": "Français : manifest R2 + 1 verbe = 1 JSON, pour ajouter des verbes sans redéployer",
+      "done": false
+    },
+    {
       "id": "scope-060-language-quiz-pattern",
       "priority": "High",
       "domain": "langues",
