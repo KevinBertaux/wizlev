@@ -132,12 +132,54 @@
       "done": false
     },
     {
-      "id": "backlog-french-elision-lexical-rules",
+      "id": "backlog-admin-ui-foundation-audit",
+      "priority": "Med",
+      "domain": "admin",
+      "feature": "design-system",
+      "label": "Admin : audit composants/composables pour préparer un futur chantier d'harmonisation sans toucher l'admin tout de suite",
+      "done": false
+    },
+    {
+      "id": "backlog-lab-json-viewer",
+      "priority": "Med",
+      "domain": "admin",
+      "feature": "lab",
+      "label": "Lab : rendre l'affichage des JSON plus humain-friendly",
+      "done": false
+    },
+    {
+      "id": "backlog-mailer-foundation",
+      "priority": "Med",
+      "domain": "infra",
+      "feature": "mailer",
+      "label": "Ajouter une fondation mailer transactionnelle exploitable plus tard par les alertes et digests",
+      "done": false
+    },
+    {
+      "id": "backlog-content-missing-digest",
+      "priority": "Low",
+      "domain": "admin",
+      "feature": "alerting",
+      "dependsOn": ["backlog-mailer-foundation"],
+      "label": "Journaliser les demandes d'éléments indisponibles et préparer un digest HTML quotidien côté support/admin",
+      "done": false
+    },
+    {
+      "id": "backlog-language-fill-in-the-blank",
       "priority": "Med",
       "domain": "langues",
-      "feature": "francais",
-      "dependsOn": ["scope-060-french-conjugation-v1"],
-      "label": "Français : gérer proprement l'élision (j'ai, j'aime) et préparer une métadonnée lexicale pour distinguer h muet et h aspiré",
+      "feature": "exercises",
+      "dependsOn": ["scope-060-language-workspace-alignment"],
+      "label": "Langues : exercices de texte à trou en QCM et réponse libre",
+      "done": false
+    },
+    {
+      "id": "backlog-drop-legacy-vocab-keys",
+      "priority": "Low",
+      "domain": "tech",
+      "feature": "nettoyage-legacy",
+      "dependsOn": ["scope-050-high-r2-v1"],
+      "label": "Retirer la compatibilité legacy localStorage manabuplay_vocab_* après nettoyage des routes et flux legacy, cible 0.7",
       "done": false
     }
   ]

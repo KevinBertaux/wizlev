@@ -61,21 +61,71 @@
       "done": true
     },
     {
-      "id": "scope-060-english-qcm",
-      "priority": "Med",
+      "id": "scope-060-french-elision-rules",
+      "priority": "High",
       "domain": "langues",
-      "feature": "anglais",
-      "dependsOn": ["scope-060-language-quiz-pattern"],
-      "label": "Anglais : ajouter un mode QCM aligné sur le parcours Français",
+      "feature": "francais",
+      "dependsOn": ["scope-060-french-conjugation-v1"],
+      "label": "Français : gérer l'élision (j', h muet / h aspiré) pour fiabiliser l'affichage, la correction et le futur TTS",
       "done": false
     },
     {
-      "id": "scope-060-english-input",
+      "id": "scope-060-language-workspace-alignment",
+      "priority": "High",
+      "domain": "langues",
+      "feature": "architecture",
+      "dependsOn": ["scope-060-language-quiz-pattern", "scope-060-french-tts-alignment"],
+      "label": "Langues : aligner les modules sur le workspace validé en Français, avec shell commun, QCM, réponse libre et TTS partagé",
+      "done": false
+    },
+    {
+      "id": "scope-060-english-background-loading",
       "priority": "Med",
       "domain": "langues",
       "feature": "anglais",
-      "dependsOn": ["scope-060-language-quiz-pattern"],
-      "label": "Anglais : ajouter un mode saisie aligné sur le parcours Français",
+      "dependsOn": ["scope-050-high-r2-v1"],
+      "label": "Anglais : chargement en tâche de fond et affichage du loader seulement si l'utilisateur interagit avant la fin du chargement R2",
+      "done": false
+    },
+    {
+      "id": "scope-060-french-tts-alignment",
+      "priority": "Med",
+      "domain": "langues",
+      "feature": "francais",
+      "dependsOn": ["scope-060-french-elision-rules"],
+      "label": "Français : brancher le TTS sur flashcards, QCM et réponse libre, pour servir ensuite de base au TTS des modules Langues",
+      "done": false
+    },
+    {
+      "id": "scope-060-answer-actions-ux",
+      "priority": "High",
+      "domain": "ui",
+      "feature": "exercises",
+      "label": "Réduire les miss-clic sur les actions Vérifier et Question suivante",
+      "done": false
+    },
+    {
+      "id": "scope-060-header-responsive-compaction",
+      "priority": "Med",
+      "domain": "ui",
+      "feature": "header",
+      "label": "Réduire la hauteur du header au scroll et en responsive tablette/mobile",
+      "done": false
+    },
+    {
+      "id": "scope-060-playwright-responsive-matrix",
+      "priority": "Med",
+      "domain": "qa",
+      "feature": "playwright",
+      "label": "Étendre Playwright avec des profils tablette et des cas responsive encore non couverts",
+      "done": false
+    },
+    {
+      "id": "scope-060-legal-pages-refresh",
+      "priority": "Med",
+      "domain": "legal",
+      "feature": "pages",
+      "label": "Mettre à jour les pages légales avec manabuplay.fr, contact@manabuplay.fr et les informations produit cohérentes",
       "done": false
     },
     {
@@ -83,7 +133,7 @@
       "priority": "Med",
       "domain": "ui",
       "feature": "design-system",
-      "label": "Refonte globale post-Tailwind v4: CSS/UI/UX + design system + harmonisation complète des breakpoints (mobile/tablette/desktop)",
+      "label": "Faire évoluer les composants/composables côté client pour coller à l'état actuel de ManabuPlay (hors admin), avec plus de factorisation et d'harmonisation UI",
       "done": false
     },
     {
@@ -93,15 +143,6 @@
       "feature": "content-storage",
       "dependsOn": ["scope-050-high-r2-v1"],
       "label": "Cloudflare R2 V2: acces securise (URL signees/Worker) + controle d integrite",
-      "done": false
-    },
-    {
-      "id": "scope-060-drop-legacy-vocab-keys",
-      "priority": "Med",
-      "domain": "tech",
-      "feature": "nettoyage-legacy",
-      "dependsOn": ["scope-050-high-r2-v1"],
-      "label": "Retirer la compatibilité legacy localStorage manabuplay_vocab_* (fin de migration 0.5)",
       "done": false
     },
     {
