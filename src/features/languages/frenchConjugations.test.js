@@ -3,6 +3,7 @@ import {
   buildFrenchVerbCards,
   buildFrenchVerbRows,
   createFrenchExercise,
+  getFrenchInflectionModule,
   getFrenchConjugationPocModule,
   getFrenchTense,
   getFrenchVerb,
@@ -126,5 +127,16 @@ describe('frenchConjugations', () => {
 
     const cards = buildFrenchVerbCards('avoir', 'futur-simple', poc);
     expect(cards[0].answer).toBe('aurai');
+  });
+
+  it('déduit la disponibilité depuis les formes réellement présentes sur le verbe', () => {
+    const source = JSON.parse(JSON.stringify(getFrenchInflectionModule()));
+    const aimer = source.languages[0].verbs.find((verb) => verb.key === 'aimer');
+
+    delete aimer.forms['indicatif.imparfait'];
+
+    expect(isFrenchVerbTenseAvailable('aimer', 'present', source)).toBe(true);
+    expect(isFrenchVerbTenseAvailable('aimer', 'imparfait', source)).toBe(false);
+    expect(isFrenchVerbTenseAvailable('finir', 'imparfait', source)).toBe(true);
   });
 });
