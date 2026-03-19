@@ -98,7 +98,14 @@ function showMotivationToast(toast) {
 }
 
 function goBack() {
-  router.push({ name: 'languages-french' });
+  router.push({
+    name: 'languages-french',
+    query: {
+      ...route.query,
+      verb: verbKey.value || route.query.verb,
+      mode: 'qcm',
+    },
+  });
 }
 
 function loadNextQuestion() {

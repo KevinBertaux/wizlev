@@ -16,7 +16,14 @@ const verb = computed(() => getFrenchVerb(verbKey.value));
 const rows = computed(() => buildFrenchVerbRows(verbKey.value));
 
 function goBack() {
-  router.push({ name: 'languages-french' });
+  router.push({
+    name: 'languages-french',
+    query: {
+      ...route.query,
+      verb: verbKey.value || route.query.verb,
+      mode: 'table',
+    },
+  });
 }
 
 function openQcm() {
@@ -27,6 +34,11 @@ function openQcm() {
   router.push({
     name: 'languages-french-qcm',
     params: { verbKey: verb.value.key },
+    query: {
+      ...route.query,
+      verb: verb.value.key,
+      mode: 'qcm',
+    },
   });
 }
 
@@ -38,6 +50,11 @@ function openInput() {
   router.push({
     name: 'languages-french-input',
     params: { verbKey: verb.value.key },
+    query: {
+      ...route.query,
+      verb: verb.value.key,
+      mode: 'input',
+    },
   });
 }
 
@@ -49,6 +66,11 @@ function openFlashcards() {
   router.push({
     name: 'languages-french-flashcards',
     params: { verbKey: verb.value.key },
+    query: {
+      ...route.query,
+      verb: verb.value.key,
+      mode: 'flashcards',
+    },
   });
 }
 </script>
@@ -69,7 +91,7 @@ function openFlashcards() {
       <div class="conjugation-table" role="table" aria-label="Tableau de conjugaison du présent">
         <div v-for="row in rows" :key="row.key" class="conjugation-row" role="row">
           <div class="conjugation-label" role="rowheader">{{ row.label }}</div>
-          <div class="conjugation-values" role="cell">{{ row.values.join(' • ') }}</div>
+          <div class="conjugation-values" role="cell">{{ row.forms.join(' • ') }}</div>
         </div>
       </div>
 
