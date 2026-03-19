@@ -9,6 +9,7 @@ import {
   evaluateFrenchInputAnswer,
   evaluateFrenchQcmAnswer,
 } from './frenchConjugationEngine';
+import { getFrenchInflectionModule } from './frenchConjugations';
 
 describe('frenchConjugationEngine', () => {
   it('builds four QCM choices with one correct answer from the same verb', () => {
@@ -83,5 +84,18 @@ describe('frenchConjugationEngine', () => {
 
     expect(question?.verbKey).toBe('etre');
     expect(question?.expectedAnswer).toBeTruthy();
+  });
+
+  it('supports a non-present tense when the caller passes mood and tense', () => {
+    const question = createFrenchQcmQuestion(
+      'venir',
+      'elles',
+      () => 0,
+      getFrenchInflectionModule(),
+      'indicatif',
+      'passe-compose'
+    );
+    expect(question?.expectedAnswer).toBe('sont venues');
+    expect(question?.prompt).toBe('Elles + venir');
   });
 });

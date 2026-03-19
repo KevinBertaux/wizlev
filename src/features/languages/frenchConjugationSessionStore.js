@@ -15,9 +15,15 @@ export function buildFrenchSessionKey(mode, verbKey, metric) {
   return `${STORAGE_PREFIX}${sanitizeToken(mode)}_${sanitizeToken(verbKey)}_${sanitizeToken(metric)}`;
 }
 
-export function createFrenchModeSessionStore(mode, verbKey) {
-  const bestScoreKey = buildFrenchSessionKey(mode, verbKey, 'best_score');
-  const bestStreakKey = buildFrenchSessionKey(mode, verbKey, 'best_streak');
+export function createFrenchModeSessionStore(
+  mode,
+  verbKey,
+  moodKey = 'indicatif',
+  tenseKey = 'present'
+) {
+  const scopeKey = `${sanitizeToken(verbKey)}_${sanitizeToken(moodKey)}_${sanitizeToken(tenseKey)}`;
+  const bestScoreKey = buildFrenchSessionKey(mode, scopeKey, 'best_score');
+  const bestStreakKey = buildFrenchSessionKey(mode, scopeKey, 'best_streak');
 
   function readNumber(key) {
     const storage = getStorage();

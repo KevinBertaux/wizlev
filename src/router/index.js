@@ -41,22 +41,22 @@ const routes = [
   {
     path: ROUTE_PATHS.LANGUAGES_FRENCH_TABLE,
     name: ROUTE_NAMES.LANGUAGES_FRENCH_TABLE,
-    component: () => import('@/views/LanguagesFrenchTableView.vue'),
+    redirect: { name: ROUTE_NAMES.LANGUAGES_FRENCH },
   },
   {
     path: ROUTE_PATHS.LANGUAGES_FRENCH_FLASHCARDS,
     name: ROUTE_NAMES.LANGUAGES_FRENCH_FLASHCARDS,
-    component: () => import('@/views/LanguagesFrenchFlashcardsView.vue'),
+    redirect: { name: ROUTE_NAMES.LANGUAGES_FRENCH },
   },
   {
     path: ROUTE_PATHS.LANGUAGES_FRENCH_QCM,
     name: ROUTE_NAMES.LANGUAGES_FRENCH_QCM,
-    component: () => import('@/views/LanguagesFrenchQcmView.vue'),
+    redirect: { name: ROUTE_NAMES.LANGUAGES_FRENCH },
   },
   {
     path: ROUTE_PATHS.LANGUAGES_FRENCH_INPUT,
     name: ROUTE_NAMES.LANGUAGES_FRENCH_INPUT,
-    component: () => import('@/views/LanguagesFrenchInputView.vue'),
+    redirect: { name: ROUTE_NAMES.LANGUAGES_FRENCH },
   },
   {
     path: ROUTE_PATHS.STUDIO_OPS_HELP,

@@ -1,6 +1,17 @@
 import { createRefillBag, shuffleList } from '@/features/common/questionBag';
 import { getFrenchVerb, listFrenchPronouns, normalizeFrenchAnswer } from './frenchConjugations';
 
+const DEFAULT_MOOD_KEY = 'indicatif';
+const DEFAULT_TENSE_KEY = 'present';
+
+function getExerciseVerb(verbKey, moodKey = DEFAULT_MOOD_KEY, tenseKey = DEFAULT_TENSE_KEY, source) {
+  return getFrenchVerb(verbKey, source, moodKey, tenseKey);
+}
+
+function getExercisePronouns(source, moodKey = DEFAULT_MOOD_KEY, tenseKey = DEFAULT_TENSE_KEY) {
+  return listFrenchPronouns(source, moodKey, tenseKey);
+}
+
 function uniqueFormsForVerb(verb, excludedAnswer = '') {
   if (!verb) {
     return [];
@@ -36,8 +47,15 @@ function avoidImmediatePronounRepeat(pronouns, lastPronounKey) {
   return pronouns;
 }
 
-export function buildFrenchQcmChoices(verbKey, pronounKey, randomFn = Math.random) {
-  const verb = getFrenchVerb(verbKey);
+export function buildFrenchQcmChoices(
+  verbKey,
+  pronounKey,
+  randomFn = Math.random,
+  source,
+  moodKey = DEFAULT_MOOD_KEY,
+  tenseKey = DEFAULT_TENSE_KEY
+) {
+  const verb = getExerciseVerb(verbKey, moodKey, tenseKey, source);
   if (!verb) {
     return [];
   }
@@ -53,15 +71,22 @@ export function buildFrenchQcmChoices(verbKey, pronounKey, randomFn = Math.rando
   }));
 }
 
-export function createFrenchQcmQuestion(verbKey, pronounKey, randomFn = Math.random) {
-  const verb = getFrenchVerb(verbKey);
-  const pronoun = listFrenchPronouns().find((item) => item.key === pronounKey);
+export function createFrenchQcmQuestion(
+  verbKey,
+  pronounKey,
+  randomFn = Math.random,
+  source,
+  moodKey = DEFAULT_MOOD_KEY,
+  tenseKey = DEFAULT_TENSE_KEY
+) {
+  const verb = getExerciseVerb(verbKey, moodKey, tenseKey, source);
+  const pronoun = getExercisePronouns(source, moodKey, tenseKey).find((item) => item.key === pronounKey);
 
   if (!verb || !pronoun) {
     return null;
   }
 
-  const options = buildFrenchQcmChoices(verbKey, pronounKey, randomFn);
+  const options = buildFrenchQcmChoices(verbKey, pronounKey, randomFn, source, moodKey, tenseKey);
   const correctOption = options.find((option) => option.isCorrect);
 
   if (!correctOption || options.length < 4) {
@@ -82,9 +107,15 @@ export function createFrenchQcmQuestion(verbKey, pronounKey, randomFn = Math.ran
   };
 }
 
-export function createFrenchInputQuestion(verbKey, pronounKey) {
-  const verb = getFrenchVerb(verbKey);
-  const pronoun = listFrenchPronouns().find((item) => item.key === pronounKey);
+export function createFrenchInputQuestion(
+  verbKey,
+  pronounKey,
+  source,
+  moodKey = DEFAULT_MOOD_KEY,
+  tenseKey = DEFAULT_TENSE_KEY
+) {
+  const verb = getExerciseVerb(verbKey, moodKey, tenseKey, source);
+  const pronoun = getExercisePronouns(source, moodKey, tenseKey).find((item) => item.key === pronounKey);
 
   if (!verb || !pronoun) {
     return null;
@@ -102,9 +133,15 @@ export function createFrenchInputQuestion(verbKey, pronounKey) {
   };
 }
 
-export function createFrenchPronounBag(verbKey, randomFn = Math.random) {
-  const verb = getFrenchVerb(verbKey);
-  const pronouns = listFrenchPronouns();
+export function createFrenchPronounBag(
+  verbKey,
+  randomFn = Math.random,
+  source,
+  moodKey = DEFAULT_MOOD_KEY,
+  tenseKey = DEFAULT_TENSE_KEY
+) {
+  const verb = getExerciseVerb(verbKey, moodKey, tenseKey, source);
+  const pronouns = getExercisePronouns(source, moodKey, tenseKey);
   let lastPronounKey = '';
 
   if (!verb || !pronouns.length) {
@@ -136,8 +173,14 @@ export function createFrenchPronounBag(verbKey, randomFn = Math.random) {
   };
 }
 
-export function createFrenchQcmBag(verbKey, randomFn = Math.random) {
-  const pronounBag = createFrenchPronounBag(verbKey, randomFn);
+export function createFrenchQcmBag(
+  verbKey,
+  randomFn = Math.random,
+  source,
+  moodKey = DEFAULT_MOOD_KEY,
+  tenseKey = DEFAULT_TENSE_KEY
+) {
+  const pronounBag = createFrenchPronounBag(verbKey, randomFn, source, moodKey, tenseKey);
 
   return {
     next() {
@@ -145,7 +188,7 @@ export function createFrenchQcmBag(verbKey, randomFn = Math.random) {
       if (!pronoun) {
         return null;
       }
-      return createFrenchQcmQuestion(verbKey, pronoun.key, randomFn);
+      return createFrenchQcmQuestion(verbKey, pronoun.key, randomFn, source, moodKey, tenseKey);
     },
     clear() {
       pronounBag.clear();
@@ -153,8 +196,14 @@ export function createFrenchQcmBag(verbKey, randomFn = Math.random) {
   };
 }
 
-export function createFrenchInputBag(verbKey, randomFn = Math.random) {
-  const pronounBag = createFrenchPronounBag(verbKey, randomFn);
+export function createFrenchInputBag(
+  verbKey,
+  randomFn = Math.random,
+  source,
+  moodKey = DEFAULT_MOOD_KEY,
+  tenseKey = DEFAULT_TENSE_KEY
+) {
+  const pronounBag = createFrenchPronounBag(verbKey, randomFn, source, moodKey, tenseKey);
 
   return {
     next() {
@@ -162,7 +211,7 @@ export function createFrenchInputBag(verbKey, randomFn = Math.random) {
       if (!pronoun) {
         return null;
       }
-      return createFrenchInputQuestion(verbKey, pronoun.key);
+      return createFrenchInputQuestion(verbKey, pronoun.key, source, moodKey, tenseKey);
     },
     clear() {
       pronounBag.clear();

@@ -16,7 +16,7 @@ describe('StudyFlashcardCarousel', () => {
     });
 
     expect(wrapper.text()).toContain('Je + être');
-    expect(wrapper.text()).not.toContain('suis');
+    expect(wrapper.get('.flashcard-translation').attributes('style')).toContain('display: none');
 
     await wrapper.get('.flashcard').trigger('click');
 

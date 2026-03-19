@@ -1,9 +1,13 @@
 <script setup>
-import { computed, ref, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { computed, onMounted, ref, watch } from 'vue';
+import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
+import FrenchFlashcardsPanel from '@/components/french/FrenchFlashcardsPanel.vue';
+import FrenchInputPanel from '@/components/french/FrenchInputPanel.vue';
+import FrenchQcmPanel from '@/components/french/FrenchQcmPanel.vue';
+import FrenchTablePanel from '@/components/french/FrenchTablePanel.vue';
 import QuizSelectField from '@/components/QuizSelectField.vue';
 import {
-  buildFrenchVerbRows,
+  getFrenchInflectionModule,
   getFrenchTense,
   getFrenchVerb,
   isFrenchTenseAvailable,
@@ -13,16 +17,19 @@ import {
 
 const DEFAULT_MOOD_KEY = 'indicatif';
 const DEFAULT_MODE_KEY = 'table';
+const FRENCH_WORKSPACE_STORAGE_KEY = 'manabuplay_french_workspace';
 
 const route = useRoute();
 const router = useRouter();
-const verbOptions = listFrenchVerbOptions();
-const tenseFamilies = listFrenchTenseFamilies();
+const frenchSource = getFrenchInflectionModule();
+const verbOptions = listFrenchVerbOptions(frenchSource).filter((option) => option.value !== 'manabuer');
+const tenseFamilies = listFrenchTenseFamilies(frenchSource);
 
 const validVerbKeys = new Set(verbOptions.map((option) => option.value));
 const validTenseKeys = new Set(
   tenseFamilies.flatMap((family) => family.options.map((option) => option.key))
 );
+const validModeKeys = new Set(['table', 'flashcards', 'qcm', 'input']);
 
 function resolveVerbKey(value) {
   return typeof value === 'string' && validVerbKeys.has(value)
@@ -34,30 +41,66 @@ function resolveTenseKey(value) {
   return typeof value === 'string' && validTenseKeys.has(value) ? value : 'present';
 }
 
-function buildFrenchWorkspaceQuery(verbKey, tenseKey, moodKey = DEFAULT_MOOD_KEY, modeKey = DEFAULT_MODE_KEY) {
-  return {
-    verb: resolveVerbKey(verbKey),
-    tense: resolveTenseKey(tenseKey),
-    mood: moodKey || DEFAULT_MOOD_KEY,
-    mode: modeKey || DEFAULT_MODE_KEY,
-  };
+function readStoredWorkspace() {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  try {
+    const raw = window.sessionStorage.getItem(FRENCH_WORKSPACE_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
 }
 
-const selectedVerb = ref(resolveVerbKey(route.query.verb));
-const selectedTense = ref(resolveTenseKey(route.query.tense));
+const initialWorkspace = readStoredWorkspace();
+const selectedVerb = ref(resolveVerbKey(route.query.verb || initialWorkspace?.verb));
+const selectedTense = ref(resolveTenseKey(route.query.tense || initialWorkspace?.tense));
 const selectedMood = ref(
-  typeof route.query.mood === 'string' && route.query.mood ? route.query.mood : DEFAULT_MOOD_KEY
+  typeof (route.query.mood || initialWorkspace?.mood) === 'string' &&
+    (route.query.mood || initialWorkspace?.mood)
+    ? route.query.mood || initialWorkspace?.mood
+    : DEFAULT_MOOD_KEY
+);
+const selectedMode = ref(
+  typeof (route.query.mode || initialWorkspace?.mode) === 'string' &&
+    validModeKeys.has(route.query.mode || initialWorkspace?.mode)
+    ? route.query.mode || initialWorkspace?.mode
+    : DEFAULT_MODE_KEY
 );
 
-const activeVerb = computed(() => getFrenchVerb(selectedVerb.value));
-const activeTense = computed(() => getFrenchTense(selectedTense.value, undefined, selectedMood.value));
-const rows = computed(() =>
-  buildFrenchVerbRows(selectedVerb.value, selectedTense.value, undefined, selectedMood.value)
+const activeVerb = computed(() =>
+  getFrenchVerb(selectedVerb.value, frenchSource, selectedMood.value, selectedTense.value)
+);
+const activeTense = computed(() =>
+  getFrenchTense(selectedTense.value, frenchSource, selectedMood.value)
 );
 const tenseAvailable = computed(() =>
-  isFrenchTenseAvailable(selectedTense.value, undefined, selectedMood.value)
+  isFrenchTenseAvailable(selectedTense.value, frenchSource, selectedMood.value)
 );
 const activeFamilyKey = computed(() => activeTense.value?.familyKey || 'present');
+const activePanelComponent = computed(() => {
+  if (selectedMode.value === 'flashcards') {
+    return FrenchFlashcardsPanel;
+  }
+  if (selectedMode.value === 'qcm') {
+    return FrenchQcmPanel;
+  }
+  if (selectedMode.value === 'input') {
+    return FrenchInputPanel;
+  }
+  return FrenchTablePanel;
+});
+const modeOptions = Object.freeze([
+  { key: 'table', label: '📖 Tableau', description: 'Voir la fiche active.' },
+  { key: 'flashcards', label: '🃏 Flashcards', description: 'Révision visuelle des formes.' },
+  { key: 'qcm', label: '✅ QCM', description: 'Reconnaître rapidement la bonne conjugaison.' },
+  { key: 'input', label: '⌨️ Saisie', description: 'Valider vraiment la mémorisation.' },
+]);
+const visibleModeOptions = computed(() =>
+  modeOptions.filter((mode) => mode.key !== selectedMode.value)
+);
 
 const activePillLabel = computed(() => {
   if (!activeVerb.value || !activeTense.value) {
@@ -71,7 +114,7 @@ const timeHelperText = computed(() => {
     return '';
   }
   if (tenseAvailable.value) {
-    return `Le temps ${activeTense.value.label.toLowerCase()} est disponible pour la fiche et les trois modes d'exercice.`;
+    return `Le temps ${activeTense.value.label.toLowerCase()} est disponible pour la fiche et les quatre vues du module.`;
   }
   return `${activeTense.value.label} est visible pour preparer la suite du module, mais le contenu n'est pas encore disponible.`;
 });
@@ -83,81 +126,63 @@ function selectFamilyDefault(family) {
   selectedTense.value = family.defaultTenseKey;
 }
 
-function syncFromRoute(query) {
-  selectedVerb.value = resolveVerbKey(query.verb);
-  selectedTense.value = resolveTenseKey(query.tense);
-  selectedMood.value =
-    typeof query.mood === 'string' && query.mood ? query.mood : DEFAULT_MOOD_KEY;
-}
-
-watch(
-  () => route.query,
-  (query) => {
-    syncFromRoute(query);
+function writeStoredWorkspace() {
+  if (typeof window === 'undefined') {
+    return;
   }
-);
 
-watch(
-  [selectedVerb, selectedTense, selectedMood],
-  ([verbKey, tenseKey, moodKey]) => {
-    const nextQuery = buildFrenchWorkspaceQuery(verbKey, tenseKey, moodKey);
-    const currentQuery = buildFrenchWorkspaceQuery(
-      route.query.verb,
-      route.query.tense,
-      typeof route.query.mood === 'string' ? route.query.mood : DEFAULT_MOOD_KEY,
-      typeof route.query.mode === 'string' ? route.query.mode : DEFAULT_MODE_KEY
+  const payload = {
+    verb: selectedVerb.value,
+    tense: selectedTense.value,
+    mood: selectedMood.value,
+    mode: selectedMode.value,
+  };
+
+  try {
+    window.sessionStorage.setItem(FRENCH_WORKSPACE_STORAGE_KEY, JSON.stringify(payload));
+    window.history.replaceState(
+      {
+        ...(window.history.state || {}),
+        frenchWorkspace: payload,
+      },
+      '',
+      route.path
     );
-
-    if (JSON.stringify(nextQuery) === JSON.stringify(currentQuery)) {
-      return;
-    }
-
-    router.replace({
-      name: 'languages-french',
-      query: nextQuery,
-    });
+  } catch {
+    // Ignore storage/history failures.
   }
+}
+
+onMounted(() => {
+  if (Object.keys(route.query).length > 0) {
+    router.replace({ name: 'languages-french' });
+  }
+});
+
+onBeforeRouteLeave((to) => {
+  if (to.name !== 'languages-french') {
+    selectedMode.value = DEFAULT_MODE_KEY;
+    writeStoredWorkspace();
+  }
+  return true;
+});
+
+watch(
+  [selectedVerb, selectedTense, selectedMood, selectedMode],
+  () => {
+    writeStoredWorkspace();
+  },
+  { immediate: true }
 );
 
-function openQcm() {
-  if (!selectedVerb.value || !tenseAvailable.value) {
+function setMode(modeKey) {
+  if (!validModeKeys.has(modeKey)) {
     return;
   }
-
-  router.push({
-    name: 'languages-french-qcm',
-    params: { verbKey: selectedVerb.value },
-    query: buildFrenchWorkspaceQuery(selectedVerb.value, selectedTense.value, selectedMood.value, 'qcm'),
-  });
-}
-
-function openInput() {
-  if (!selectedVerb.value || !tenseAvailable.value) {
+  if (modeKey !== 'table' && !tenseAvailable.value) {
     return;
   }
-
-  router.push({
-    name: 'languages-french-input',
-    params: { verbKey: selectedVerb.value },
-    query: buildFrenchWorkspaceQuery(selectedVerb.value, selectedTense.value, selectedMood.value, 'input'),
-  });
-}
-
-function openFlashcards() {
-  if (!selectedVerb.value || !tenseAvailable.value) {
-    return;
-  }
-
-  router.push({
-    name: 'languages-french-flashcards',
-    params: { verbKey: selectedVerb.value },
-    query: buildFrenchWorkspaceQuery(
-      selectedVerb.value,
-      selectedTense.value,
-      selectedMood.value,
-      'flashcards'
-    ),
-  });
+  selectedMode.value = modeKey;
 }
 </script>
 
@@ -231,8 +256,8 @@ function openFlashcards() {
     <section class="page-block french-hub__table-card">
       <div class="french-hub__table-head">
         <div>
-          <h2>Tableau actif</h2>
-          <p>Tout reste centré autour de la fiche active, puis tu lances un mode d'exercice.</p>
+          <h2>Workspace actif</h2>
+          <p>Le verbe, le temps et le mode restent en place pendant toute la révision.</p>
         </div>
         <span v-if="activePillLabel" class="french-hub__pill">{{ activePillLabel }}</span>
       </div>
@@ -242,14 +267,25 @@ function openFlashcards() {
         {{ timeHelperText }}
       </p>
 
-      <div v-if="tenseAvailable" class="conjugation-table" role="table" aria-label="Tableau de conjugaison">
-        <div v-for="row in rows" :key="row.key" class="conjugation-row" role="row">
-          <div class="conjugation-label" role="rowheader">{{ row.label }}</div>
-          <div class="conjugation-values" role="cell">{{ row.forms.join(' • ') }}</div>
-        </div>
+      <div class="french-hub__modes">
+        <button
+          v-for="mode in visibleModeOptions"
+          :key="mode.key"
+          class="home-card french-hub__mode-card"
+          :class="{
+            'is-active': selectedMode === mode.key,
+            'is-disabled': mode.key !== 'table' && !tenseAvailable,
+          }"
+          type="button"
+          :disabled="mode.key !== 'table' && !tenseAvailable"
+          @click="setMode(mode.key)"
+        >
+          <h3>{{ mode.label }}</h3>
+          <p>{{ mode.description }}</p>
+        </button>
       </div>
 
-      <div v-else class="french-hub__coming-soon">
+      <div v-if="!tenseAvailable" class="french-hub__coming-soon">
         <h3>Temps non disponible</h3>
         <p>
           Le présent est disponible maintenant. Les temps passé et futur restent cliquables pour
@@ -257,39 +293,14 @@ function openFlashcards() {
         </p>
       </div>
 
-      <div class="french-hub__modes">
-        <button
-          class="home-card french-hub__mode-card"
-          :class="{ 'is-disabled': !tenseAvailable }"
-          type="button"
-          :disabled="!tenseAvailable"
-          @click="openFlashcards"
-        >
-          <h3>🃏 Flashcards</h3>
-          <p>Révision visuelle des formes.</p>
-        </button>
-
-        <button
-          class="home-card french-hub__mode-card"
-          :class="{ 'is-disabled': !tenseAvailable }"
-          type="button"
-          :disabled="!tenseAvailable"
-          @click="openQcm"
-        >
-          <h3>✅ QCM</h3>
-          <p>Reconnaître rapidement la bonne conjugaison.</p>
-        </button>
-
-        <button
-          class="home-card french-hub__mode-card"
-          :class="{ 'is-disabled': !tenseAvailable }"
-          type="button"
-          :disabled="!tenseAvailable"
-          @click="openInput"
-        >
-          <h3>⌨️ Saisie</h3>
-          <p>Valider vraiment la mémorisation.</p>
-        </button>
+      <div v-if="tenseAvailable" class="french-hub__panel" :class="`is-mode-${selectedMode}`">
+        <component
+          :is="activePanelComponent"
+          :verb-key="selectedVerb"
+          :mood-key="selectedMood"
+          :tense-key="selectedTense"
+          :source="frenchSource"
+        />
       </div>
     </section>
   </section>
@@ -474,6 +485,10 @@ function openFlashcards() {
   line-height: 1.5;
 }
 
+.french-hub__panel {
+  min-width: 0;
+}
+
 .french-hub__modes {
   display: grid;
   gap: 12px;
@@ -520,6 +535,12 @@ function openFlashcards() {
 
   .french-hub__modes {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .french-hub__panel.is-mode-flashcards {
+    margin-inline: -17px;
   }
 }
 </style>

@@ -33,18 +33,21 @@ afterEach(() => {
 });
 
 describe('frenchConjugationSessionStore', () => {
-  it('builds stable keys per mode and verb', () => {
+  it('builds stable keys per mode and scope token', () => {
     expect(buildFrenchSessionKey('qcm', 'etre', 'best_score')).toBe(
       'manabuplay_french_qcm_etre_best_score'
     );
   });
 
-  it('reads and writes best score with isolated keys', () => {
-    const store = createFrenchModeSessionStore('qcm', 'aller');
+  it('reads and writes best score with isolated keys per verbe, mode et temps', () => {
+    const store = createFrenchModeSessionStore('qcm', 'aller', 'indicatif', 'imparfait');
 
     expect(store.readBestScore()).toBe(0);
     store.writeBestScore(7);
     expect(store.readBestScore()).toBe(7);
     expect(store.readBestStreak()).toBe(0);
+    expect(store.bestScoreKey).toBe(
+      'manabuplay_french_qcm_aller_indicatif_imparfait_best_score'
+    );
   });
 });

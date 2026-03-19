@@ -304,6 +304,10 @@ export function getFrenchConjugationPocModule() {
   );
 }
 
+export function getFrenchInflectionModule() {
+  return getFrenchConjugationPocModule();
+}
+
 export function listFrenchTenseFamilies(source = legacyModuleData, moodKey = DEFAULT_MOOD_KEY) {
   const resolvedSource = getFrenchSource(source);
   if (isInflectionModule(resolvedSource)) {
