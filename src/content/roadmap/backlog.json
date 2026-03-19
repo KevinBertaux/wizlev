@@ -20,6 +20,15 @@
       "done": false
     },
     {
+      "id": "backlog-sym-grid-placement",
+      "priority": "Med",
+      "domain": "math",
+      "feature": "symetrie",
+      "dependsOn": ["scope-060-sym-v2"],
+      "label": "Symétrie : édition et placement manuel de points sur quadrillage dans le reviewer",
+      "done": false
+    },
+    {
       "id": "backlog-history-scores",
       "priority": "Med",
       "domain": "math",
@@ -60,6 +69,15 @@
       "feature": "design-system",
       "dependsOn": ["backlog-brand-book"],
       "label": "Refonte globale post-Tailwind v4: CSS/UI/UX + design system + harmonisation complète des breakpoints sur tous les modules",
+      "done": false
+    },
+    {
+      "id": "backlog-tooltip-system",
+      "priority": "Med",
+      "domain": "ui",
+      "feature": "tooltips",
+      "dependsOn": ["scope-060-ui-foundation-post-v4"],
+      "label": "Système global d'info-bulles cohérent",
       "done": false
     },
     {
@@ -105,12 +123,21 @@
       "done": false
     },
     {
+      "id": "backlog-multi-lang-structure",
+      "priority": "Med",
+      "domain": "langues",
+      "feature": "architecture",
+      "dependsOn": ["scope-050-high-r2-v1", "scope-060-language-quiz-pattern"],
+      "label": "Structure multi-langues extensible pour futures matières Langues (latin, espagnol, autres) à horizon rentrée 2026-2027",
+      "done": false
+    },
+    {
       "id": "backlog-french-elision-lexical-rules",
       "priority": "Med",
       "domain": "langues",
       "feature": "francais",
       "dependsOn": ["scope-060-french-conjugation-v1"],
-      "label": "Français lot F : gérer proprement l'élision (j'ai, j'aime) et préparer une métadonnée lexicale pour distinguer h muet et h aspiré",
+      "label": "Français : gérer proprement l'élision (j'ai, j'aime) et préparer une métadonnée lexicale pour distinguer h muet et h aspiré",
       "done": false
     }
   ]

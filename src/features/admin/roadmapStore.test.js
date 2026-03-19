@@ -28,6 +28,11 @@ describe('roadmapStore', () => {
     expect(scope050?.id).toBe('0.5.0');
     expect(scope050?.items.length).toBeGreaterThan(0);
 
+    const adsFoundation = getRoadmapEntryById('ads-foundation');
+    expect(adsFoundation).not.toBeNull();
+    expect(adsFoundation?.id).toBe('ads-foundation');
+    expect(adsFoundation?.items.length).toBeGreaterThan(0);
+
     expect(getRoadmapEntryById('unknown-scope-id')).toBeNull();
   });
 

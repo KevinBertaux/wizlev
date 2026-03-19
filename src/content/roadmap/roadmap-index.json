@@ -48,6 +48,13 @@
       "startDate": "2026-03-13"
     },
     {
+      "id": "ads-foundation",
+      "title": "Scope Ads Foundation",
+      "type": "scope",
+      "sourceKey": "scope-ads-foundation",
+      "startDate": "2026-03-19"
+    },
+    {
       "id": "backlog",
       "title": "Backlog produit",
       "type": "backlog",

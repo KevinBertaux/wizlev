@@ -27,15 +27,6 @@
       "done": false
     },
     {
-      "id": "scope-060-sym-grid-placement",
-      "priority": "Med",
-      "domain": "math",
-      "feature": "symetrie",
-      "dependsOn": ["scope-060-sym-v2"],
-      "label": "Symétrie: édition et placement manuel de points sur quadrillage dans le reviewer",
-      "done": false
-    },
-    {
       "id": "scope-060-roadmap-dependencies",
       "priority": "Med",
       "domain": "admin",
@@ -44,29 +35,12 @@
       "done": true
     },
     {
-      "id": "scope-060-monetization-kids-safe",
-      "priority": "High",
-      "domain": "legal",
-      "feature": "monetisation",
-      "label": "Monétisation cadrée pour public mineur (pub kids-safe + conformité)",
-      "done": false
-    },
-    {
-      "id": "scope-060-multi-lang-structure",
-      "priority": "Med",
-      "domain": "langues",
-      "feature": "architecture",
-      "dependsOn": ["scope-050-high-r2-v1"],
-      "label": "Structure multi-langues complète et extensible (anglais + français + espagnol)",
-      "done": false
-    },
-    {
       "id": "scope-060-french-conjugation-v1",
       "priority": "High",
       "domain": "langues",
       "feature": "francais",
-      "label": "Français V1 : architecture par verbe avec hub, fiche tableau séparée et parcours d'exercices progressif",
-      "done": false
+      "label": "Français V1 : workspace de conjugaison par verbe avec tableau, flashcards, QCM, réponse libre et validation complète",
+      "done": true
     },
     {
       "id": "scope-060-french-conjugation-r2",
@@ -84,7 +58,7 @@
       "feature": "architecture",
       "dependsOn": ["scope-060-french-conjugation-v1"],
       "label": "Stabiliser un pattern réutilisable Langues : hub par verbe, flashcards, QCM, saisie, score, série et sac dédié",
-      "done": false
+      "done": true
     },
     {
       "id": "scope-060-english-qcm",
@@ -102,15 +76,6 @@
       "feature": "anglais",
       "dependsOn": ["scope-060-language-quiz-pattern"],
       "label": "Anglais : ajouter un mode saisie aligné sur le parcours Français",
-      "done": false
-    },
-    {
-      "id": "scope-060-tooltip-system",
-      "priority": "Med",
-      "domain": "ui",
-      "feature": "tooltips",
-      "dependsOn": ["scope-060-ui-foundation-post-v4"],
-      "label": "Système global d'info-bulles cohérent",
       "done": false
     },
     {

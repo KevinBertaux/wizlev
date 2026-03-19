@@ -6,6 +6,7 @@ import scope030 from '@/content/roadmap/scope-0.3.0.json';
 import scope040 from '@/content/roadmap/scope-0.4.0.json';
 import scope050 from '@/content/roadmap/scope-0.5.0.json';
 import scope060 from '@/content/roadmap/scope-0.6.0.json';
+import scopeAdsFoundation from '@/content/roadmap/scope-ads-foundation.json';
 
 export const ROADMAP_PRIORITY_ORDER = Object.freeze(['Crit', 'High', 'Med', 'Low']);
 export const ROADMAP_DEPENDENCY_STATUS = Object.freeze(['none', 'ready', 'blocked', 'missing', 'invalid', 'cyclic']);
@@ -18,6 +19,7 @@ const sourceMap = Object.freeze({
   'scope-0.4.0': scope040,
   'scope-0.5.0': scope050,
   'scope-0.6.0': scope060,
+  'scope-ads-foundation': scopeAdsFoundation,
 });
 
 function normalizeDependsOn(item) {
