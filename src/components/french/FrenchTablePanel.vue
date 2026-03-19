@@ -44,13 +44,13 @@ const rows = computed(() =>
 <style scoped>
 .conjugation-table {
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 
 .conjugation-row {
   display: grid;
-  gap: 8px;
-  padding: 12px 14px;
+  gap: 5px;
+  padding: 9px 12px;
   border-radius: 12px;
   border: 1px solid rgba(140, 167, 193, 0.35);
   background: rgba(245, 248, 252, 0.92);
@@ -63,12 +63,12 @@ const rows = computed(() =>
 
 .conjugation-values {
   color: #2b4461;
-  line-height: 1.5;
+  line-height: 1.35;
 }
 
 @media (min-width: 980px) {
   .conjugation-row {
-    grid-template-columns: 180px minmax(0, 1fr);
+    grid-template-columns: 160px minmax(0, 1fr);
     align-items: center;
   }
 }

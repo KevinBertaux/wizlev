@@ -176,17 +176,18 @@ const activePillLabel = computed(() => {
   return activeOption ? `${activeOption.label} · ${toShortTenseLabel(activeTense.value.label)}` : '';
 });
 
-const timeHelperText = computed(() => {
-  if (!hasCompleteSelection.value) {
-    return 'Choisir un verbe et un temps pour commencer.';
+function getFamilySummary(family) {
+  if (family.familyKey === 'present') {
+    return 'présent';
   }
-  if (activeTense.value && tenseAvailable.value) {
-    return `${toShortTenseLabel(activeTense.value.label)} est disponible pour la fiche et les exercices du module.`;
+  if (family.familyKey === 'past') {
+    return '5 temps';
   }
-  return activeTense.value
-    ? `${toShortTenseLabel(activeTense.value.label)} n'est pas encore disponible pour ce verbe.`
-    : 'Choisir un temps.';
-});
+  if (family.familyKey === 'future') {
+    return '2 temps';
+  }
+  return family.options.map((option) => toShortTenseLabel(option.label)).join(' · ');
+}
 
 function refreshScoreSummary() {
   scoreSummary.value = {
@@ -249,9 +250,17 @@ function guideToSelectors() {
 
 function scrollToExercise() {
   nextTick(() => {
-    exerciseSection.value?.scrollIntoView({
+    const target = exerciseSection.value;
+    if (!target || typeof window === 'undefined') {
+      return;
+    }
+    const rect = target.getBoundingClientRect();
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+    const centeredTop = window.scrollY + rect.top - Math.max((viewportHeight - rect.height) / 2, 24);
+    const top = Math.max(centeredTop, 0);
+    window.scrollTo({
+      top,
       behavior: 'smooth',
-      block: 'start',
     });
   });
 }
@@ -370,10 +379,12 @@ watch(
 <template>
   <section class="page-block french-hub">
     <div class="section-block">
-      <h1>🇫🇷 Français</h1>
-      <p class="hub-intro">
-        Révise la conjugaison française avec tableaux, flashcards et exercices progressifs.
-      </p>
+      <div class="french-hub__header">
+        <h1>Conjugaison française</h1>
+        <p class="hub-intro">
+          Choisis un verbe, un temps, puis un entraînement.
+        </p>
+      </div>
     </div>
 
     <section class="page-block section-block french-hub__settings">
@@ -425,18 +436,9 @@ watch(
               @click="selectFamilyDefault(family)"
             >
               <strong>{{ family.label }}</strong>
-              <span>
-                {{
-                  family.options.map((option) => toShortTenseLabel(option.label)).join(' · ')
-                }}
-              </span>
+              <span>{{ getFamilySummary(family) }}</span>
             </button>
           </div>
-
-          <p class="french-hub__helper">
-            <strong>Choix du temps :</strong>
-            {{ timeHelperText }}
-          </p>
         </div>
 
         <section class="page-block french-hub__table-card">
@@ -505,7 +507,11 @@ watch(
           <h3>{{ mode.label }}</h3>
           <p>{{ mode.description }}</p>
           <div class="french-hub__score-list">
-            <template v-if="mode.key === 'qcm'">
+            <template v-if="mode.key === 'flashcards'">
+              <span class="french-hub__score-chip">6 cartes</span>
+              <span class="french-hub__score-chip">Révision libre</span>
+            </template>
+            <template v-else-if="mode.key === 'qcm'">
               <span class="french-hub__score-chip">Meilleur score : {{ scoreSummary.qcm.bestScore }}</span>
               <span class="french-hub__score-chip">Meilleure série : {{ scoreSummary.qcm.bestStreak }}</span>
             </template>
@@ -541,7 +547,12 @@ watch(
 <style scoped>
 .french-hub {
   display: grid;
-  gap: 18px;
+  gap: 10px;
+}
+
+.french-hub__header {
+  display: grid;
+  gap: 4px;
 }
 
 .french-hub__settings,
@@ -549,12 +560,21 @@ watch(
 .french-hub__controls,
 .french-hub__workspace-grid {
   display: grid;
-  gap: 16px;
+  gap: 8px;
+}
+
+.french-hub__settings {
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.french-hub__exercise-card {
+  padding-top: 16px;
 }
 
 .french-hub__settings-grid {
   display: grid;
-  gap: 12px;
+  gap: 8px;
 }
 
 .french-hub__select-field {
@@ -575,16 +595,16 @@ watch(
 
 .french-hub__bands {
   display: grid;
-  gap: 10px;
+  gap: 6px;
 }
 
 .french-hub__band {
   display: grid;
-  gap: 3px;
+  gap: 1px;
   text-align: left;
   border: 1px solid rgba(140, 167, 193, 0.35);
   border-radius: 14px;
-  padding: 10px 12px;
+  padding: 7px 10px;
   background: rgba(245, 248, 252, 0.92);
   color: #17304d;
   cursor: pointer;
@@ -596,13 +616,13 @@ watch(
 }
 
 .french-hub__band strong {
-  font-size: 0.95rem;
+  font-size: 0.92rem;
 }
 
 .french-hub__band span {
   color: #4b647d;
-  font-size: 0.88rem;
-  line-height: 1.3;
+  font-size: 0.82rem;
+  line-height: 1.15;
 }
 
 .french-hub__band.is-active {
@@ -628,30 +648,17 @@ watch(
   opacity: 0.6;
 }
 
-.french-hub__helper {
-  margin: 0;
-  padding: 12px 14px;
-  border-radius: 14px;
-  border: 1px dashed rgba(140, 167, 193, 0.45);
-  background: rgba(248, 251, 255, 0.96);
-  color: #4b647d;
-  line-height: 1.5;
-}
-
-.french-hub__helper strong {
-  color: #17304d;
-}
-
 .french-hub__table-card {
   display: grid;
-  gap: 16px;
+  gap: 8px;
   margin: 0;
   background: rgba(255, 255, 255, 0.96);
+  padding: 14px;
 }
 
 .french-hub__table-head {
   display: grid;
-  gap: 10px;
+  gap: 6px;
 }
 
 .french-hub__table-head h2,
@@ -666,13 +673,14 @@ watch(
 .french-hub__pill {
   display: inline-flex;
   align-items: center;
-  min-height: 34px;
+  min-height: 30px;
   width: fit-content;
-  padding: 0 12px;
+  padding: 0 10px;
   border-radius: 999px;
   background: #eaf8ef;
   border: 1px solid #b6d9bf;
   font-weight: 800;
+  font-size: 0.92rem;
 }
 
 .french-hub__table-wrap {
@@ -686,7 +694,7 @@ watch(
 }
 
 .french-hub__table-placeholder {
-  min-height: 320px;
+  min-height: 180px;
   border-radius: 16px;
   border: 1px dashed rgba(140, 167, 193, 0.4);
   background:
@@ -712,15 +720,15 @@ watch(
   inset: 0;
   display: grid;
   place-items: center;
-  padding: 20px;
+  padding: 12px;
   z-index: 2;
 }
 
 .french-hub__table-overlay-card {
-  width: min(360px, 100%);
+  width: min(320px, 100%);
   display: grid;
-  gap: 10px;
-  padding: 18px;
+  gap: 6px;
+  padding: 14px;
   text-align: center;
   border-radius: 18px;
   border: 1px solid rgba(181, 198, 220, 0.7);
@@ -741,7 +749,7 @@ watch(
 
 .french-hub__table-overlay-card p {
   color: #4b647d;
-  line-height: 1.45;
+  line-height: 1.35;
 }
 
 .french-hub__table-overlay-card button {
@@ -756,14 +764,38 @@ watch(
 
 .french-hub__modes {
   display: grid;
-  gap: 12px;
+  gap: 8px;
 }
 
 .french-hub__mode-card {
   width: 100%;
-  border: 0;
+  border: 1px solid rgba(200, 214, 232, 0.95);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow:
+    0 12px 24px rgba(32, 49, 74, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
   text-align: left;
   cursor: pointer;
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease,
+    border-color 0.16s ease;
+}
+
+.french-hub__mode-card:hover:not(.is-disabled),
+.french-hub__mode-card:focus-visible:not(.is-disabled) {
+  transform: translateY(-1px);
+  box-shadow:
+    0 16px 28px rgba(32, 49, 74, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.french-hub__mode-card.is-active {
+  border-color: rgba(87, 153, 255, 0.45);
+  box-shadow:
+    0 16px 28px rgba(42, 76, 122, 0.12),
+    0 0 0 3px rgba(87, 153, 255, 0.14);
 }
 
 .french-hub__mode-card h3 {
@@ -783,7 +815,7 @@ watch(
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 2px;
+  margin-top: 0;
 }
 
 .french-hub__score-chip {
@@ -818,7 +850,7 @@ watch(
 }
 
 .french-hub__exercise-empty {
-  padding: 6px 2px 0;
+  padding: 0;
   text-align: center;
   color: #4b647d;
 }
@@ -832,17 +864,31 @@ watch(
 }
 
 @media (min-width: 900px) {
+  .french-hub__header {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: baseline;
+    gap: 14px;
+  }
+
+  .french-hub__header .hub-intro {
+    margin: 0;
+    text-align: left;
+  }
+
   .french-hub__workspace-grid {
-    grid-template-columns: 1.02fr 1.18fr;
+    grid-template-columns: 1fr 1.12fr;
     align-items: start;
+  }
+
+  .french-hub__modes {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .french-hub__settings-grid {
     grid-template-columns: 1fr 1fr;
   }
 
-  .french-hub__bands,
-  .french-hub__modes {
+  .french-hub__bands {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
