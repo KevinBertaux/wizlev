@@ -63,7 +63,9 @@ const tenseOptionGroups = computed(() =>
     label: family.label,
     options: family.options.map((option) => ({
       value: option.key,
-      label: option.available ? option.label : `${option.label} (bientôt)`,
+      label: option.available
+        ? capitalizeLabel(toShortTenseLabel(option.label))
+        : `${capitalizeLabel(toShortTenseLabel(option.label))} (bientôt)`,
       disabled: !option.available,
     })),
   }))
@@ -71,6 +73,13 @@ const tenseOptionGroups = computed(() =>
 
 function toShortTenseLabel(label) {
   return typeof label === 'string' ? label.replace(/^[A-Za-zÀ-ÿ-]+\s+/, '') : '';
+}
+
+function capitalizeLabel(label) {
+  if (typeof label !== 'string' || !label) {
+    return '';
+  }
+  return `${label.charAt(0).toUpperCase()}${label.slice(1)}`;
 }
 
 function resolveVerbKey(value) {
