@@ -1,9 +1,13 @@
 import presentCoreVerbs from '@/content/languages/fr/present-core-verbs.json';
 import conjugationManifest from '@/content/languages/fr/conjugation/manifest.json';
 import conjugationSchema from '@/content/languages/fr/conjugation/schema.fr.v1.json';
+import aimerVerb from '@/content/languages/fr/conjugation/verbs/aimer.json';
 import allerVerb from '@/content/languages/fr/conjugation/verbs/aller.json';
 import avoirVerb from '@/content/languages/fr/conjugation/verbs/avoir.json';
+import chanterVerb from '@/content/languages/fr/conjugation/verbs/chanter.json';
 import etreVerb from '@/content/languages/fr/conjugation/verbs/etre.json';
+import faireVerb from '@/content/languages/fr/conjugation/verbs/faire.json';
+import finirVerb from '@/content/languages/fr/conjugation/verbs/finir.json';
 import manabuerVerb from '@/content/languages/fr/conjugation/verbs/manabuer.json';
 import prendreVerb from '@/content/languages/fr/conjugation/verbs/prendre.json';
 import venirVerb from '@/content/languages/fr/conjugation/verbs/venir.json';
@@ -16,10 +20,19 @@ import {
 
 const DEFAULT_LANGUAGE_KEY = 'fr';
 const DEFAULT_MOOD_KEY = 'indicatif';
+const GROUP_LABELS = Object.freeze({
+  '1': '1er groupe',
+  '2': '2e groupe',
+  '3': '3e groupe',
+});
 const inflectionVerbRecords = [
+  aimerVerb,
   allerVerb,
   avoirVerb,
+  chanterVerb,
   etreVerb,
+  faireVerb,
+  finirVerb,
   manabuerVerb,
   prendreVerb,
   venirVerb,
@@ -351,6 +364,8 @@ export function listFrenchVerbOptions(source = legacyModuleData) {
     return (language?.verbs || []).map((verb) => ({
       value: verb.key,
       label: verb.label || verb.lemma,
+      group: sanitizeString(verb.meta?.group),
+      irregular: Boolean(verb.meta?.irregular),
     }));
   }
 
@@ -378,6 +393,36 @@ export function listFrenchVerbSummaries(source = legacyModuleData) {
   }));
 }
 
+export function listFrenchVerbOptionGroups(source = legacyModuleData) {
+  const options = listFrenchVerbOptions(source);
+  const groupedOptions = new Map([
+    ['1', { key: '1', label: GROUP_LABELS['1'], options: [] }],
+    ['2', { key: '2', label: GROUP_LABELS['2'], options: [] }],
+    ['3', { key: '3', label: GROUP_LABELS['3'], options: [] }],
+  ]);
+
+  for (const option of options) {
+    const groupKey = sanitizeString(option.group);
+    if (!groupedOptions.has(groupKey)) {
+      continue;
+    }
+    groupedOptions.get(groupKey).options.push({
+      value: option.value,
+      label: option.label,
+      disabled: Boolean(option.disabled),
+    });
+  }
+
+  return Array.from(groupedOptions.values())
+    .map((group) => ({
+      ...group,
+      options: [...group.options].sort((left, right) =>
+        left.label.localeCompare(right.label, 'fr', { sensitivity: 'base' })
+      ),
+    }))
+    .filter((group) => group.options.length > 0);
+}
+
 export function getFrenchVerb(
   verbKey,
   source = legacyModuleData,
@@ -397,6 +442,29 @@ export function getFrenchVerb(
   return getLegacyVerb(verbKey);
 }
 
+export function isFrenchVerbTenseAvailable(
+  verbKey,
+  tenseKey = 'present',
+  source = legacyModuleData,
+  moodKey = DEFAULT_MOOD_KEY
+) {
+  if (!sanitizeString(verbKey) || !sanitizeString(tenseKey)) {
+    return false;
+  }
+
+  const resolvedSource = getFrenchSource(source);
+  if (!isInflectionModule(resolvedSource)) {
+    return Boolean(getLegacyVerb(verbKey) && tenseKey === 'present' && isFrenchTenseAvailable(tenseKey, resolvedSource, moodKey));
+  }
+
+  const verb = getFrenchVerb(verbKey, source, moodKey, tenseKey);
+  if (!verb) {
+    return false;
+  }
+
+  return Object.values(verb.forms || {}).some((value) => sanitizeString(value));
+}
+
 export function listFrenchPronouns(source = legacyModuleData, moodKey = DEFAULT_MOOD_KEY, tenseKey = 'present') {
   const resolvedSource = getFrenchSource(source);
   if (isInflectionModule(resolvedSource)) {
@@ -414,6 +482,9 @@ export function buildFrenchVerbRows(
 ) {
   const resolvedSource = getFrenchSource(source);
   if (isInflectionModule(resolvedSource)) {
+    if (!isFrenchVerbTenseAvailable(verbKey, tenseKey, resolvedSource, moodKey)) {
+      return [];
+    }
     return buildInflectionRows(resolvedSource, DEFAULT_LANGUAGE_KEY, verbKey, moodKey, tenseKey);
   }
 
@@ -433,7 +504,7 @@ export function buildFrenchVerbCards(
 ) {
   const verb = getFrenchVerb(verbKey, source, moodKey, tenseKey);
   const pronouns = listFrenchPronouns(source, moodKey, tenseKey);
-  if (!verb) {
+  if (!verb || !isFrenchVerbTenseAvailable(verbKey, tenseKey, source, moodKey)) {
     return [];
   }
 
@@ -458,7 +529,7 @@ export function createFrenchExercise(
 ) {
   const verb = getFrenchVerb(verbKey, source, moodKey, tenseKey);
   const pronouns = listFrenchPronouns(source, moodKey, tenseKey);
-  if (!verb || !pronouns.length) {
+  if (!verb || !pronouns.length || !isFrenchVerbTenseAvailable(verbKey, tenseKey, source, moodKey)) {
     return null;
   }
 

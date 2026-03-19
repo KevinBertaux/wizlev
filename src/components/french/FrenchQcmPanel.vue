@@ -6,7 +6,7 @@ import QuizEmptyState from '@/components/QuizEmptyState.vue';
 import QuizFeedbackBanner from '@/components/QuizFeedbackBanner.vue';
 import QuizScoreBar from '@/components/QuizScoreBar.vue';
 import { useQuizFlow } from '@/composables/useQuizFlow';
-import { getFrenchVerb } from '@/features/languages/frenchConjugations';
+import { getFrenchTense, getFrenchVerb } from '@/features/languages/frenchConjugations';
 import {
   createFrenchQcmBag,
   evaluateFrenchQcmAnswer,
@@ -41,6 +41,7 @@ const props = defineProps({
 });
 
 const verb = computed(() => getFrenchVerb(props.verbKey, props.source, props.moodKey, props.tenseKey));
+const tense = computed(() => getFrenchTense(props.tenseKey, props.source, props.moodKey));
 const sessionStorage = computed(() =>
   createFrenchModeSessionStore('qcm', props.verbKey, props.moodKey, props.tenseKey)
 );
@@ -84,7 +85,7 @@ const headerExtras = computed(() => {
 
   return [
     `Verbe : ${verb.value.label}`,
-    `Temps : ${props.tenseKey}`,
+    `Temps : ${tense.value?.label?.replace(/^[A-Za-zÀ-ÿ-]+\s+/, '') || props.tenseKey}`,
     `Meilleur score : ${bestScore.value}`,
   ];
 });

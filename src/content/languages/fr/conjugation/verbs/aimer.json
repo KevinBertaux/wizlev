@@ -1,0 +1,35 @@
+{
+  "key": "aimer",
+  "lemma": "aimer",
+  "label": "Aimer",
+  "meta": {
+    "group": "1",
+    "auxiliary": "avoir",
+    "irregular": false,
+    "tags": ["school"]
+  },
+  "forms": {
+    "indicatif.present": { "je": "aime", "tu": "aimes", "il": "aime", "elle": "aime", "on": "aime", "nous": "aimons", "vous": "aimez", "ils": "aiment", "elles": "aiment" },
+    "indicatif.passe-compose": { "je": "ai aimé", "tu": "as aimé", "il": "a aimé", "elle": "a aimé", "on": "a aimé", "nous": "avons aimé", "vous": "avez aimé", "ils": "ont aimé", "elles": "ont aimé" },
+    "indicatif.imparfait": { "je": "aimais", "tu": "aimais", "il": "aimait", "elle": "aimait", "on": "aimait", "nous": "aimions", "vous": "aimiez", "ils": "aimaient", "elles": "aimaient" },
+    "indicatif.plus-que-parfait": { "je": "avais aimé", "tu": "avais aimé", "il": "avait aimé", "elle": "avait aimé", "on": "avait aimé", "nous": "avions aimé", "vous": "aviez aimé", "ils": "avaient aimé", "elles": "avaient aimé" },
+    "indicatif.passe-simple": { "je": "aimai", "tu": "aimas", "il": "aima", "elle": "aima", "on": "aima", "nous": "aimâmes", "vous": "aimâtes", "ils": "aimèrent", "elles": "aimèrent" },
+    "indicatif.passe-anterieur": { "je": "eus aimé", "tu": "eus aimé", "il": "eut aimé", "elle": "eut aimé", "on": "eut aimé", "nous": "eûmes aimé", "vous": "eûtes aimé", "ils": "eurent aimé", "elles": "eurent aimé" },
+    "indicatif.futur-simple": { "je": "aimerai", "tu": "aimeras", "il": "aimera", "elle": "aimera", "on": "aimera", "nous": "aimerons", "vous": "aimerez", "ils": "aimeront", "elles": "aimeront" },
+    "indicatif.futur-anterieur": { "je": "aurai aimé", "tu": "auras aimé", "il": "aura aimé", "elle": "aura aimé", "on": "aura aimé", "nous": "aurons aimé", "vous": "aurez aimé", "ils": "auront aimé", "elles": "auront aimé" },
+    "conditionnel.present": { "je": "aimerais", "tu": "aimerais", "il": "aimerait", "elle": "aimerait", "on": "aimerait", "nous": "aimerions", "vous": "aimeriez", "ils": "aimeraient", "elles": "aimeraient" },
+    "conditionnel.passe": { "je": "aurais aimé", "tu": "aurais aimé", "il": "aurait aimé", "elle": "aurait aimé", "on": "aurait aimé", "nous": "aurions aimé", "vous": "auriez aimé", "ils": "auraient aimé", "elles": "auraient aimé" },
+    "subjonctif.present": { "je": "aime", "tu": "aimes", "il": "aime", "elle": "aime", "on": "aime", "nous": "aimions", "vous": "aimiez", "ils": "aiment", "elles": "aiment" },
+    "subjonctif.passe": { "je": "aie aimé", "tu": "aies aimé", "il": "ait aimé", "elle": "ait aimé", "on": "ait aimé", "nous": "ayons aimé", "vous": "ayez aimé", "ils": "aient aimé", "elles": "aient aimé" },
+    "subjonctif.imparfait": { "je": "aimasse", "tu": "aimasses", "il": "aimât", "elle": "aimât", "on": "aimât", "nous": "aimassions", "vous": "aimassiez", "ils": "aimassent", "elles": "aimassent" },
+    "subjonctif.plus-que-parfait": { "je": "eusse aimé", "tu": "eusses aimé", "il": "eût aimé", "elle": "eût aimé", "on": "eût aimé", "nous": "eussions aimé", "vous": "eussiez aimé", "ils": "eussent aimé", "elles": "eussent aimé" },
+    "imperatif.present": { "tu": "aime", "nous": "aimons", "vous": "aimez" },
+    "imperatif.passe": { "tu": "aie aimé", "nous": "ayons aimé", "vous": "ayez aimé" },
+    "infinitif.present": { "base": "aimer" },
+    "infinitif.passe": { "base": "avoir aimé" },
+    "participe.present": { "base": "aimant" },
+    "participe.passe": { "base": "aimé" },
+    "gerondif.present": { "base": "en aimant" },
+    "gerondif.passe": { "base": "en ayant aimé" }
+  }
+}

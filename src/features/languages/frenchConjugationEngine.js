@@ -1,10 +1,18 @@
 import { createRefillBag, shuffleList } from '@/features/common/questionBag';
-import { getFrenchVerb, listFrenchPronouns, normalizeFrenchAnswer } from './frenchConjugations';
+import {
+  getFrenchVerb,
+  isFrenchVerbTenseAvailable,
+  listFrenchPronouns,
+  normalizeFrenchAnswer,
+} from './frenchConjugations';
 
 const DEFAULT_MOOD_KEY = 'indicatif';
 const DEFAULT_TENSE_KEY = 'present';
 
 function getExerciseVerb(verbKey, moodKey = DEFAULT_MOOD_KEY, tenseKey = DEFAULT_TENSE_KEY, source) {
+  if (!isFrenchVerbTenseAvailable(verbKey, tenseKey, source, moodKey)) {
+    return null;
+  }
   return getFrenchVerb(verbKey, source, moodKey, tenseKey);
 }
 

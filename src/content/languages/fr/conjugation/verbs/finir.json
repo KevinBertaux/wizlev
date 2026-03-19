@@ -1,0 +1,35 @@
+{
+  "key": "finir",
+  "lemma": "finir",
+  "label": "Finir",
+  "meta": {
+    "group": "2",
+    "auxiliary": "avoir",
+    "irregular": false,
+    "tags": ["school"]
+  },
+  "forms": {
+    "indicatif.present": { "je": "finis", "tu": "finis", "il": "finit", "elle": "finit", "on": "finit", "nous": "finissons", "vous": "finissez", "ils": "finissent", "elles": "finissent" },
+    "indicatif.passe-compose": { "je": "ai fini", "tu": "as fini", "il": "a fini", "elle": "a fini", "on": "a fini", "nous": "avons fini", "vous": "avez fini", "ils": "ont fini", "elles": "ont fini" },
+    "indicatif.imparfait": { "je": "finissais", "tu": "finissais", "il": "finissait", "elle": "finissait", "on": "finissait", "nous": "finissions", "vous": "finissiez", "ils": "finissaient", "elles": "finissaient" },
+    "indicatif.plus-que-parfait": { "je": "avais fini", "tu": "avais fini", "il": "avait fini", "elle": "avait fini", "on": "avait fini", "nous": "avions fini", "vous": "aviez fini", "ils": "avaient fini", "elles": "avaient fini" },
+    "indicatif.passe-simple": { "je": "finis", "tu": "finis", "il": "finit", "elle": "finit", "on": "finit", "nous": "finîmes", "vous": "finîtes", "ils": "finirent", "elles": "finirent" },
+    "indicatif.passe-anterieur": { "je": "eus fini", "tu": "eus fini", "il": "eut fini", "elle": "eut fini", "on": "eut fini", "nous": "eûmes fini", "vous": "eûtes fini", "ils": "eurent fini", "elles": "eurent fini" },
+    "indicatif.futur-simple": { "je": "finirai", "tu": "finiras", "il": "finira", "elle": "finira", "on": "finira", "nous": "finirons", "vous": "finirez", "ils": "finiront", "elles": "finiront" },
+    "indicatif.futur-anterieur": { "je": "aurai fini", "tu": "auras fini", "il": "aura fini", "elle": "aura fini", "on": "aura fini", "nous": "aurons fini", "vous": "aurez fini", "ils": "auront fini", "elles": "auront fini" },
+    "conditionnel.present": { "je": "finirais", "tu": "finirais", "il": "finirait", "elle": "finirait", "on": "finirait", "nous": "finirions", "vous": "finiriez", "ils": "finiraient", "elles": "finiraient" },
+    "conditionnel.passe": { "je": "aurais fini", "tu": "aurais fini", "il": "aurait fini", "elle": "aurait fini", "on": "aurait fini", "nous": "aurions fini", "vous": "auriez fini", "ils": "auraient fini", "elles": "auraient fini" },
+    "subjonctif.present": { "je": "finisse", "tu": "finisses", "il": "finisse", "elle": "finisse", "on": "finisse", "nous": "finissions", "vous": "finissiez", "ils": "finissent", "elles": "finissent" },
+    "subjonctif.passe": { "je": "aie fini", "tu": "aies fini", "il": "ait fini", "elle": "ait fini", "on": "ait fini", "nous": "ayons fini", "vous": "ayez fini", "ils": "aient fini", "elles": "aient fini" },
+    "subjonctif.imparfait": { "je": "finisse", "tu": "finisses", "il": "finît", "elle": "finît", "on": "finît", "nous": "finissions", "vous": "finissiez", "ils": "finissent", "elles": "finissent" },
+    "subjonctif.plus-que-parfait": { "je": "eusse fini", "tu": "eusses fini", "il": "eût fini", "elle": "eût fini", "on": "eût fini", "nous": "eussions fini", "vous": "eussiez fini", "ils": "eussent fini", "elles": "eussent fini" },
+    "imperatif.present": { "tu": "finis", "nous": "finissons", "vous": "finissez" },
+    "imperatif.passe": { "tu": "aie fini", "nous": "ayons fini", "vous": "ayez fini" },
+    "infinitif.present": { "base": "finir" },
+    "infinitif.passe": { "base": "avoir fini" },
+    "participe.present": { "base": "finissant" },
+    "participe.passe": { "base": "fini" },
+    "gerondif.present": { "base": "en finissant" },
+    "gerondif.passe": { "base": "en ayant fini" }
+  }
+}

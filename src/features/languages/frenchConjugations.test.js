@@ -8,7 +8,9 @@ import {
   getFrenchVerb,
   isFrenchExerciseAnswerCorrect,
   isFrenchTenseAvailable,
+  isFrenchVerbTenseAvailable,
   listFrenchTenseFamilies,
+  listFrenchVerbOptionGroups,
   listFrenchVerbOptions,
 } from './frenchConjugations';
 
@@ -37,6 +39,8 @@ describe('frenchConjugations', () => {
     expect(getFrenchTense('present')?.familyKey).toBe('present');
     expect(isFrenchTenseAvailable('present')).toBe(true);
     expect(isFrenchTenseAvailable('imparfait')).toBe(false);
+    expect(isFrenchVerbTenseAvailable('avoir', 'present')).toBe(true);
+    expect(isFrenchVerbTenseAvailable('avoir', 'imparfait')).toBe(false);
   });
 
   it('construit 9 flashcards par verbe', () => {
@@ -61,12 +65,44 @@ describe('frenchConjugations', () => {
   it('lit aussi le POC multi-langue sans casser le format legacy', () => {
     const poc = getFrenchConjugationPocModule();
     expect(listFrenchVerbOptions(poc)).toEqual([
-      { value: 'aller', label: 'Aller' },
-      { value: 'avoir', label: 'Avoir' },
-      { value: 'etre', label: 'Être' },
-      { value: 'manabuer', label: 'Manabuer' },
-      { value: 'prendre', label: 'Prendre' },
-      { value: 'venir', label: 'Venir' },
+      { value: 'aimer', label: 'Aimer', group: '1', irregular: false },
+      { value: 'aller', label: 'Aller', group: '3', irregular: true },
+      { value: 'avoir', label: 'Avoir', group: '3', irregular: true },
+      { value: 'chanter', label: 'Chanter', group: '1', irregular: false },
+      { value: 'etre', label: 'Être', group: '3', irregular: true },
+      { value: 'faire', label: 'Faire', group: '3', irregular: true },
+      { value: 'finir', label: 'Finir', group: '2', irregular: false },
+      { value: 'manabuer', label: 'Manabuer', group: '1', irregular: false },
+      { value: 'prendre', label: 'Prendre', group: '3', irregular: true },
+      { value: 'venir', label: 'Venir', group: '3', irregular: true },
+    ]);
+    expect(listFrenchVerbOptionGroups(poc)).toEqual([
+      {
+        key: '1',
+        label: '1er groupe',
+        options: [
+          { value: 'aimer', label: 'Aimer', disabled: false },
+          { value: 'chanter', label: 'Chanter', disabled: false },
+          { value: 'manabuer', label: 'Manabuer', disabled: false },
+        ],
+      },
+      {
+        key: '2',
+        label: '2e groupe',
+        options: [{ value: 'finir', label: 'Finir', disabled: false }],
+      },
+      {
+        key: '3',
+        label: '3e groupe',
+        options: [
+          { value: 'aller', label: 'Aller', disabled: false },
+          { value: 'avoir', label: 'Avoir', disabled: false },
+          { value: 'etre', label: 'Être', disabled: false },
+          { value: 'faire', label: 'Faire', disabled: false },
+          { value: 'prendre', label: 'Prendre', disabled: false },
+          { value: 'venir', label: 'Venir', disabled: false },
+        ],
+      },
     ]);
     expect(getFrenchVerb('etre', poc, 'indicatif', 'futur-simple')?.forms.nous).toBe('serons');
     expect(getFrenchVerb('aller', poc, 'indicatif', 'passe-compose')?.forms.nous).toBe('sommes allés');
@@ -74,6 +110,7 @@ describe('frenchConjugations', () => {
     expect(getFrenchVerb('venir', poc, 'subjonctif', 'present')?.forms.je).toBe('vienne');
     expect(getFrenchVerb('venir', poc, 'conditionnel', 'passe')?.forms.elles).toBe('seraient venues');
     expect(getFrenchTense('passe-anterieur', poc)?.label).toBe('Indicatif passé antérieur');
+    expect(isFrenchVerbTenseAvailable('etre', 'imparfait', poc)).toBe(true);
 
     const rows = buildFrenchVerbRows('prendre', 'present', poc);
     expect(rows).toHaveLength(6);

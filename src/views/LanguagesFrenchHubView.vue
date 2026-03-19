@@ -10,9 +10,10 @@ import { createFrenchModeSessionStore } from '@/features/languages/frenchConjuga
 import {
   getFrenchInflectionModule,
   getFrenchTense,
+  isFrenchVerbTenseAvailable,
   listFrenchTenseFamilies,
+  listFrenchVerbOptionGroups,
   listFrenchVerbOptions,
-  isFrenchTenseAvailable,
 } from '@/features/languages/frenchConjugations';
 
 const DEFAULT_MOOD_KEY = 'indicatif';
@@ -23,6 +24,14 @@ const route = useRoute();
 const router = useRouter();
 const frenchSource = getFrenchInflectionModule();
 const verbOptions = listFrenchVerbOptions(frenchSource).filter((option) => option.value !== 'manabuer');
+const verbOptionGroups = computed(() =>
+  listFrenchVerbOptionGroups(frenchSource)
+    .map((group) => ({
+      ...group,
+      options: (group.options || []).filter((option) => option.value !== 'manabuer'),
+    }))
+    .filter((group) => group.options.length > 0)
+);
 const tenseFamilies = listFrenchTenseFamilies(frenchSource);
 
 const validVerbKeys = new Set(verbOptions.map((option) => option.value));
@@ -40,23 +49,36 @@ const modeOptions = Object.freeze([
   {
     key: 'qcm',
     label: '✅ QCM',
-    description: 'Reconnaître rapidement la bonne conjugaison.',
+    description: 'Choisir la bonne conjugaison.',
   },
   {
     key: 'input',
-    label: '⌨️ Saisie',
-    description: 'Valider vraiment la mémorisation.',
+    label: '✍️ Réponse libre',
+    description: 'Saisir la conjugaison correcte.',
   },
 ]);
+const tenseOptionGroups = computed(() =>
+  tenseFamilies.map((family) => ({
+    key: family.key,
+    label: family.label,
+    options: family.options.map((option) => ({
+      value: option.key,
+      label: option.available ? option.label : `${option.label} (bientôt)`,
+      disabled: !option.available,
+    })),
+  }))
+);
+
+function toShortTenseLabel(label) {
+  return typeof label === 'string' ? label.replace(/^[A-Za-zÀ-ÿ-]+\s+/, '') : '';
+}
 
 function resolveVerbKey(value) {
-  return typeof value === 'string' && validVerbKeys.has(value)
-    ? value
-    : (verbOptions[0]?.value ?? '');
+  return typeof value === 'string' && validVerbKeys.has(value) ? value : '';
 }
 
 function resolveTenseKey(value) {
-  return typeof value === 'string' && validTenseKeys.has(value) ? value : 'present';
+  return typeof value === 'string' && validTenseKeys.has(value) ? value : '';
 }
 
 function readStoredWorkspace() {
@@ -73,8 +95,8 @@ function readStoredWorkspace() {
 }
 
 const initialWorkspace = readStoredWorkspace();
-const selectedVerb = ref(resolveVerbKey(route.query.verb || initialWorkspace?.verb));
-const selectedTense = ref(resolveTenseKey(route.query.tense || initialWorkspace?.tense));
+const selectedVerb = ref(resolveVerbKey(route.query.verb || initialWorkspace?.verb || ''));
+const selectedTense = ref(resolveTenseKey(route.query.tense || initialWorkspace?.tense || ''));
 const selectedMood = ref(
   typeof (route.query.mood || initialWorkspace?.mood) === 'string' &&
     (route.query.mood || initialWorkspace?.mood)
@@ -93,13 +115,33 @@ const scoreSummary = ref({
 });
 
 const activeTense = computed(() =>
-  getFrenchTense(selectedTense.value, frenchSource, selectedMood.value)
+  selectedTense.value ? getFrenchTense(selectedTense.value, frenchSource, selectedMood.value) : null
 );
+const hasCompleteSelection = computed(() => Boolean(selectedVerb.value && selectedTense.value));
 const tenseAvailable = computed(() =>
-  isFrenchTenseAvailable(selectedTense.value, frenchSource, selectedMood.value)
+  hasCompleteSelection.value
+    ? isFrenchVerbTenseAvailable(
+        selectedVerb.value,
+        selectedTense.value,
+        frenchSource,
+        selectedMood.value
+      )
+    : false
 );
-const activeFamilyKey = computed(() => activeTense.value?.familyKey || 'present');
-const tableLocked = computed(() => selectedMode.value !== 'table' && tenseAvailable.value);
+const activeFamilyKey = computed(() => activeTense.value?.familyKey || '');
+const tableState = computed(() => {
+  if (!hasCompleteSelection.value) {
+    return 'setup';
+  }
+  if (!tenseAvailable.value) {
+    return 'unavailable';
+  }
+  if (selectedMode.value !== 'table') {
+    return 'exercise';
+  }
+  return 'table';
+});
+const tableLocked = computed(() => tableState.value !== 'table');
 const activePanelComponent = computed(() => {
   if (selectedMode.value === 'flashcards') {
     return FrenchFlashcardsPanel;
@@ -113,21 +155,23 @@ const activePanelComponent = computed(() => {
   return null;
 });
 const activePillLabel = computed(() => {
-  if (!activeTense.value) {
+  if (!activeTense.value || !selectedVerb.value) {
     return '';
   }
   const activeOption = verbOptions.find((option) => option.value === selectedVerb.value);
-  return activeOption ? `${activeOption.label} · ${activeTense.value.label}` : '';
+  return activeOption ? `${activeOption.label} · ${toShortTenseLabel(activeTense.value.label)}` : '';
 });
 
 const timeHelperText = computed(() => {
-  if (!activeTense.value) {
-    return '';
+  if (!hasCompleteSelection.value) {
+    return 'Choisir un verbe et un temps pour commencer.';
   }
-  if (tenseAvailable.value) {
-    return `Le temps ${activeTense.value.label.toLowerCase()} est disponible pour la fiche et les exercices du module.`;
+  if (activeTense.value && tenseAvailable.value) {
+    return `${toShortTenseLabel(activeTense.value.label)} est disponible pour la fiche et les exercices du module.`;
   }
-  return `${activeTense.value.label} est visible pour preparer la suite du module, mais le contenu n'est pas encore disponible.`;
+  return activeTense.value
+    ? `${toShortTenseLabel(activeTense.value.label)} n'est pas encore disponible pour ce verbe.`
+    : 'Choisir un temps.';
 });
 
 function refreshScoreSummary() {
@@ -197,11 +241,30 @@ function writeStoredWorkspace() {
   }
 }
 
+function clearStoredWorkspace() {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  try {
+    window.sessionStorage.removeItem(FRENCH_WORKSPACE_STORAGE_KEY);
+    window.history.replaceState(
+      {
+        ...(window.history.state || {}),
+        frenchWorkspace: null,
+      },
+      '',
+      route.path
+    );
+  } catch {
+    // Ignore storage/history failures.
+  }
+}
+
 function setMode(modeKey) {
   if (!validModeKeys.has(modeKey) || modeKey === 'table') {
     return;
   }
-  if (!tenseAvailable.value) {
+  if (!hasCompleteSelection.value || !tenseAvailable.value) {
     return;
   }
   selectedMode.value = modeKey;
@@ -222,7 +285,9 @@ onMounted(() => {
 onBeforeRouteLeave((to) => {
   if (to.name !== 'languages-french') {
     selectedMode.value = DEFAULT_MODE_KEY;
-    writeStoredWorkspace();
+    selectedVerb.value = '';
+    selectedTense.value = '';
+    clearStoredWorkspace();
   }
   return true;
 });
@@ -230,6 +295,10 @@ onBeforeRouteLeave((to) => {
 watch(
   [selectedVerb, selectedTense, selectedMood, selectedMode],
   () => {
+    if ((!hasCompleteSelection.value || !tenseAvailable.value) && selectedMode.value !== DEFAULT_MODE_KEY) {
+      selectedMode.value = DEFAULT_MODE_KEY;
+      return;
+    }
     writeStoredWorkspace();
     refreshScoreSummary();
   },
@@ -254,29 +323,17 @@ watch(
               v-model="selectedVerb"
               select-id="frenchHubVerbSelect"
               label="Choisir un verbe :"
-              :options="verbOptions"
+              placeholder="-- Choisir un verbe --"
+              :option-groups="verbOptionGroups"
             />
 
-            <div class="quiz-select-field">
-              <label class="quiz-select-label" for="frenchHubTenseSelect">Choisir un temps :</label>
-              <select
-                id="frenchHubTenseSelect"
-                class="quiz-select-control"
-                :value="selectedTense"
-                @change="selectedTense = $event.target.value"
-              >
-                <optgroup v-for="family in tenseFamilies" :key="family.key" :label="family.label">
-                  <option
-                    v-for="option in family.options"
-                    :key="option.key"
-                    :value="option.key"
-                    :disabled="!option.available"
-                  >
-                    {{ option.available ? option.label : `${option.label} (bientot)` }}
-                  </option>
-                </optgroup>
-              </select>
-            </div>
+            <QuizSelectField
+              v-model="selectedTense"
+              select-id="frenchHubTenseSelect"
+              label="Choisir un temps :"
+              placeholder="-- Choisir un temps --"
+              :option-groups="tenseOptionGroups"
+            />
           </div>
 
           <div class="french-hub__bands">
@@ -297,16 +354,14 @@ watch(
               <strong>{{ family.label }}</strong>
               <span>
                 {{
-                  family.options
-                    .map((option) => (option.available ? option.label : `${option.label} (bientot)`))
-                    .join(' · ')
+                  family.options.map((option) => toShortTenseLabel(option.label)).join(' · ')
                 }}
               </span>
             </button>
           </div>
 
           <p class="french-hub__helper">
-            <strong>Sélection du temps :</strong>
+            <strong>Choix du temps :</strong>
             {{ timeHelperText }}
           </p>
         </div>
@@ -314,7 +369,7 @@ watch(
         <section class="page-block french-hub__table-card">
           <div class="french-hub__table-head">
             <div>
-              <h2>Tableau actif</h2>
+              <h2>Conjugaison</h2>
             </div>
             <span v-if="activePillLabel" class="french-hub__pill">{{ activePillLabel }}</span>
           </div>
@@ -322,18 +377,30 @@ watch(
           <div class="french-hub__table-wrap" :class="{ 'is-locked': tableLocked }">
             <div class="french-hub__table-content">
               <FrenchTablePanel
+                v-if="hasCompleteSelection && tenseAvailable"
                 :verb-key="selectedVerb"
                 :mood-key="selectedMood"
                 :tense-key="selectedTense"
                 :source="frenchSource"
               />
+              <div v-else class="french-hub__table-placeholder" aria-hidden="true"></div>
             </div>
 
             <div v-if="tableLocked" class="french-hub__table-overlay">
               <div class="french-hub__table-overlay-card">
-                <h3>Le tableau est masqué pendant l'exercice.</h3>
-                <p>L'afficher mettra fin à la série en cours.</p>
-                <button type="button" @click="showTable">Afficher le tableau</button>
+                <template v-if="tableState === 'setup'">
+                  <h3>Choisir un verbe et un temps pour commencer.</h3>
+                  <p>La conjugaison et les exercices apparaîtront ensuite.</p>
+                </template>
+                <template v-else-if="tableState === 'unavailable'">
+                  <h3>Ce temps n'est pas disponible pour ce verbe.</h3>
+                  <p>Choisir un autre verbe ou un autre temps.</p>
+                </template>
+                <template v-else>
+                  <h3>Le tableau est masqué pendant l'exercice.</h3>
+                  <p>L'afficher mettra fin à la série en cours.</p>
+                  <button type="button" @click="showTable">Afficher la conjugaison</button>
+                </template>
               </div>
             </div>
           </div>
@@ -349,19 +416,16 @@ watch(
           class="home-card french-hub__mode-card"
           :class="{
             'is-active': selectedMode === mode.key,
-            'is-disabled': !tenseAvailable,
+            'is-disabled': !hasCompleteSelection || !tenseAvailable,
           }"
           type="button"
-          :disabled="!tenseAvailable"
+          :disabled="!hasCompleteSelection || !tenseAvailable"
           @click="setMode(mode.key)"
         >
           <h3>{{ mode.label }}</h3>
           <p>{{ mode.description }}</p>
           <div class="french-hub__score-list">
-            <template v-if="mode.key === 'flashcards'">
-              <span class="french-hub__score-chip">9 cartes</span>
-            </template>
-            <template v-else-if="mode.key === 'qcm'">
+            <template v-if="mode.key === 'qcm'">
               <span class="french-hub__score-chip">Meilleur score : {{ scoreSummary.qcm.bestScore }}</span>
               <span class="french-hub__score-chip">Meilleure série : {{ scoreSummary.qcm.bestStreak }}</span>
             </template>
@@ -373,19 +437,14 @@ watch(
         </button>
       </div>
 
-      <div v-if="!tenseAvailable" class="french-hub__coming-soon">
-        <h3>Temps non disponible</h3>
-        <p>
-          Le présent est disponible maintenant. Les temps passé et futur restent cliquables pour
-          préparer la suite du module, mais leurs tableaux et exercices ne sont pas encore ouverts.
-        </p>
-      </div>
-
-      <div v-else-if="selectedMode === 'table'" class="french-hub__exercise-empty">
+      <div
+        v-if="selectedMode === 'table' && hasCompleteSelection && tenseAvailable"
+        class="french-hub__exercise-empty"
+      >
         <p>Choisir un mode d'entraînement.</p>
       </div>
 
-      <div v-else class="french-hub__panel" :class="`is-mode-${selectedMode}`">
+      <div v-else-if="selectedMode !== 'table' && hasCompleteSelection && tenseAvailable" class="french-hub__panel" :class="`is-mode-${selectedMode}`">
         <component
           :is="activePanelComponent"
           :verb-key="selectedVerb"
@@ -417,28 +476,6 @@ watch(
   gap: 12px;
 }
 
-.quiz-select-label {
-  display: block;
-  margin: 0 0 8px;
-  font-weight: 700;
-}
-
-.quiz-select-control {
-  width: 100%;
-  min-height: 44px;
-  padding: 10px;
-  border-radius: 10px;
-  border: 1px solid #9ab0c8;
-  background: #fbfdff;
-  color: #17304d;
-}
-
-.quiz-select-control:focus-visible {
-  border-color: #1d4ed8;
-  box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.16);
-  outline: none;
-}
-
 .french-hub__bands {
   display: grid;
   gap: 10px;
@@ -446,11 +483,11 @@ watch(
 
 .french-hub__band {
   display: grid;
-  gap: 4px;
+  gap: 3px;
   text-align: left;
   border: 1px solid rgba(140, 167, 193, 0.35);
   border-radius: 14px;
-  padding: 12px 14px;
+  padding: 10px 12px;
   background: rgba(245, 248, 252, 0.92);
   color: #17304d;
   cursor: pointer;
@@ -462,12 +499,13 @@ watch(
 }
 
 .french-hub__band strong {
-  font-size: 0.98rem;
+  font-size: 0.95rem;
 }
 
 .french-hub__band span {
   color: #4b647d;
-  line-height: 1.45;
+  font-size: 0.88rem;
+  line-height: 1.3;
 }
 
 .french-hub__band.is-active {
@@ -548,6 +586,21 @@ watch(
   transition:
     filter 0.18s ease,
     opacity 0.18s ease;
+}
+
+.french-hub__table-placeholder {
+  min-height: 320px;
+  border-radius: 16px;
+  border: 1px dashed rgba(140, 167, 193, 0.4);
+  background:
+    linear-gradient(180deg, rgba(249, 252, 255, 0.98), rgba(243, 248, 255, 0.96)),
+    repeating-linear-gradient(
+      180deg,
+      transparent 0,
+      transparent 42px,
+      rgba(140, 167, 193, 0.08) 42px,
+      rgba(140, 167, 193, 0.08) 43px
+    );
 }
 
 .french-hub__table-wrap.is-locked .french-hub__table-content {

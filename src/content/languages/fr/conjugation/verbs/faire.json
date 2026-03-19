@@ -1,0 +1,35 @@
+{
+  "key": "faire",
+  "lemma": "faire",
+  "label": "Faire",
+  "meta": {
+    "group": "3",
+    "auxiliary": "avoir",
+    "irregular": true,
+    "tags": ["school", "core"]
+  },
+  "forms": {
+    "indicatif.present": { "je": "fais", "tu": "fais", "il": "fait", "elle": "fait", "on": "fait", "nous": "faisons", "vous": "faites", "ils": "font", "elles": "font" },
+    "indicatif.passe-compose": { "je": "ai fait", "tu": "as fait", "il": "a fait", "elle": "a fait", "on": "a fait", "nous": "avons fait", "vous": "avez fait", "ils": "ont fait", "elles": "ont fait" },
+    "indicatif.imparfait": { "je": "faisais", "tu": "faisais", "il": "faisait", "elle": "faisait", "on": "faisait", "nous": "faisions", "vous": "faisiez", "ils": "faisaient", "elles": "faisaient" },
+    "indicatif.plus-que-parfait": { "je": "avais fait", "tu": "avais fait", "il": "avait fait", "elle": "avait fait", "on": "avait fait", "nous": "avions fait", "vous": "aviez fait", "ils": "avaient fait", "elles": "avaient fait" },
+    "indicatif.passe-simple": { "je": "fis", "tu": "fis", "il": "fit", "elle": "fit", "on": "fit", "nous": "fîmes", "vous": "fîtes", "ils": "firent", "elles": "firent" },
+    "indicatif.passe-anterieur": { "je": "eus fait", "tu": "eus fait", "il": "eut fait", "elle": "eut fait", "on": "eut fait", "nous": "eûmes fait", "vous": "eûtes fait", "ils": "eurent fait", "elles": "eurent fait" },
+    "indicatif.futur-simple": { "je": "ferai", "tu": "feras", "il": "fera", "elle": "fera", "on": "fera", "nous": "ferons", "vous": "ferez", "ils": "feront", "elles": "feront" },
+    "indicatif.futur-anterieur": { "je": "aurai fait", "tu": "auras fait", "il": "aura fait", "elle": "aura fait", "on": "aura fait", "nous": "aurons fait", "vous": "aurez fait", "ils": "auront fait", "elles": "auront fait" },
+    "conditionnel.present": { "je": "ferais", "tu": "ferais", "il": "ferait", "elle": "ferait", "on": "ferait", "nous": "ferions", "vous": "feriez", "ils": "feraient", "elles": "feraient" },
+    "conditionnel.passe": { "je": "aurais fait", "tu": "aurais fait", "il": "aurait fait", "elle": "aurait fait", "on": "aurait fait", "nous": "aurions fait", "vous": "auriez fait", "ils": "auraient fait", "elles": "auraient fait" },
+    "subjonctif.present": { "je": "fasse", "tu": "fasses", "il": "fasse", "elle": "fasse", "on": "fasse", "nous": "fassions", "vous": "fassiez", "ils": "fassent", "elles": "fassent" },
+    "subjonctif.passe": { "je": "aie fait", "tu": "aies fait", "il": "ait fait", "elle": "ait fait", "on": "ait fait", "nous": "ayons fait", "vous": "ayez fait", "ils": "aient fait", "elles": "aient fait" },
+    "subjonctif.imparfait": { "je": "fisse", "tu": "fisses", "il": "fît", "elle": "fît", "on": "fît", "nous": "fissions", "vous": "fissiez", "ils": "fissent", "elles": "fissent" },
+    "subjonctif.plus-que-parfait": { "je": "eusse fait", "tu": "eusses fait", "il": "eût fait", "elle": "eût fait", "on": "eût fait", "nous": "eussions fait", "vous": "eussiez fait", "ils": "eussent fait", "elles": "eussent fait" },
+    "imperatif.present": { "tu": "fais", "nous": "faisons", "vous": "faites" },
+    "imperatif.passe": { "tu": "aie fait", "nous": "ayons fait", "vous": "ayez fait" },
+    "infinitif.present": { "base": "faire" },
+    "infinitif.passe": { "base": "avoir fait" },
+    "participe.present": { "base": "faisant" },
+    "participe.passe": { "base": "fait" },
+    "gerondif.present": { "base": "en faisant" },
+    "gerondif.passe": { "base": "en ayant fait" }
+  }
+}

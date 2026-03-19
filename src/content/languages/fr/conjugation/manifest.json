@@ -11,6 +11,11 @@
   "schemaFile": "schema.fr.v1.json",
   "verbs": [
     {
+      "key": "aimer",
+      "label": "Aimer",
+      "file": "verbs/aimer.json"
+    },
+    {
       "key": "aller",
       "label": "Aller",
       "file": "verbs/aller.json"
@@ -21,9 +26,24 @@
       "file": "verbs/avoir.json"
     },
     {
+      "key": "chanter",
+      "label": "Chanter",
+      "file": "verbs/chanter.json"
+    },
+    {
       "key": "etre",
       "label": "Être",
       "file": "verbs/etre.json"
+    },
+    {
+      "key": "faire",
+      "label": "Faire",
+      "file": "verbs/faire.json"
+    },
+    {
+      "key": "finir",
+      "label": "Finir",
+      "file": "verbs/finir.json"
     },
     {
       "key": "manabuer",
