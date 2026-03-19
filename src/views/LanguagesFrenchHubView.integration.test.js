@@ -103,8 +103,9 @@ describe('LanguagesFrenchHubView integration', () => {
     await wrapper.get('.mp-btn-primary').trigger('click');
     await flushPromises();
 
-    expect(qcmCard.text()).toContain('Meilleur score : 1');
-    expect(qcmCard.text()).toContain('Meilleure série : 1');
+    const updatedQcmCard = wrapper.findAll('.french-hub__mode-card')[1];
+    expect(updatedQcmCard.text()).toContain('Meilleur score : 1');
+    expect(updatedQcmCard.text()).toContain('Meilleure série : 1');
 
     vi.runOnlyPendingTimers();
     wrapper.unmount();
