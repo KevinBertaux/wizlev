@@ -29,7 +29,7 @@ const rows = computed(() =>
 </script>
 
 <template>
-  <section class="page-block french-table-card">
+  <section class="french-table-card">
     <div v-if="verb" class="conjugation-table" role="table" aria-label="Tableau de conjugaison">
       <div v-for="row in rows" :key="row.key" class="conjugation-row" role="row">
         <div class="conjugation-label" role="rowheader">{{ row.label }}</div>
@@ -42,10 +42,6 @@ const rows = computed(() =>
 </template>
 
 <style scoped>
-.french-table-card {
-  background: rgba(255, 255, 255, 0.94);
-}
-
 .conjugation-table {
   display: grid;
   gap: 10px;
