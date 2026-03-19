@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "kind": "inflection-manifest",
+  "language": {
+    "key": "fr",
+    "locale": "fr-FR",
+    "label": "Français"
+  },
+  "version": "2026-03-17.1",
+  "generatedAt": "2026-03-17",
+  "schemaFile": "schema.fr.v1.json",
+  "verbs": [
+    {
+      "key": "aimer",
+      "label": "Aimer",
+      "file": "verbs/aimer.json"
+    },
+    {
+      "key": "aller",
+      "label": "Aller",
+      "file": "verbs/aller.json"
+    },
+    {
+      "key": "avoir",
+      "label": "Avoir",
+      "file": "verbs/avoir.json"
+    },
+    {
+      "key": "chanter",
+      "label": "Chanter",
+      "file": "verbs/chanter.json"
+    },
+    {
+      "key": "etre",
+      "label": "Être",
+      "file": "verbs/etre.json"
+    },
+    {
+      "key": "faire",
+      "label": "Faire",
+      "file": "verbs/faire.json"
+    },
+    {
+      "key": "finir",
+      "label": "Finir",
+      "file": "verbs/finir.json"
+    },
+    {
+      "key": "manabuer",
+      "label": "Manabuer",
+      "file": "verbs/manabuer.json"
+    },
+    {
+      "key": "prendre",
+      "label": "Prendre",
+      "file": "verbs/prendre.json"
+    },
+    {
+      "key": "venir",
+      "label": "Venir",
+      "file": "verbs/venir.json"
+    }
+  ]
+}

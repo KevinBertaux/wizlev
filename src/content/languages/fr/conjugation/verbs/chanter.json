@@ -1,0 +1,35 @@
+{
+  "key": "chanter",
+  "lemma": "chanter",
+  "label": "Chanter",
+  "meta": {
+    "group": "1",
+    "auxiliary": "avoir",
+    "irregular": false,
+    "tags": ["school"]
+  },
+  "forms": {
+    "indicatif.present": { "je": "chante", "tu": "chantes", "il": "chante", "elle": "chante", "on": "chante", "nous": "chantons", "vous": "chantez", "ils": "chantent", "elles": "chantent" },
+    "indicatif.passe-compose": { "je": "ai chanté", "tu": "as chanté", "il": "a chanté", "elle": "a chanté", "on": "a chanté", "nous": "avons chanté", "vous": "avez chanté", "ils": "ont chanté", "elles": "ont chanté" },
+    "indicatif.imparfait": { "je": "chantais", "tu": "chantais", "il": "chantait", "elle": "chantait", "on": "chantait", "nous": "chantions", "vous": "chantiez", "ils": "chantaient", "elles": "chantaient" },
+    "indicatif.plus-que-parfait": { "je": "avais chanté", "tu": "avais chanté", "il": "avait chanté", "elle": "avait chanté", "on": "avait chanté", "nous": "avions chanté", "vous": "aviez chanté", "ils": "avaient chanté", "elles": "avaient chanté" },
+    "indicatif.passe-simple": { "je": "chantai", "tu": "chantas", "il": "chanta", "elle": "chanta", "on": "chanta", "nous": "chantâmes", "vous": "chantâtes", "ils": "chantèrent", "elles": "chantèrent" },
+    "indicatif.passe-anterieur": { "je": "eus chanté", "tu": "eus chanté", "il": "eut chanté", "elle": "eut chanté", "on": "eut chanté", "nous": "eûmes chanté", "vous": "eûtes chanté", "ils": "eurent chanté", "elles": "eurent chanté" },
+    "indicatif.futur-simple": { "je": "chanterai", "tu": "chanteras", "il": "chantera", "elle": "chantera", "on": "chantera", "nous": "chanterons", "vous": "chanterez", "ils": "chanteront", "elles": "chanteront" },
+    "indicatif.futur-anterieur": { "je": "aurai chanté", "tu": "auras chanté", "il": "aura chanté", "elle": "aura chanté", "on": "aura chanté", "nous": "aurons chanté", "vous": "aurez chanté", "ils": "auront chanté", "elles": "auront chanté" },
+    "conditionnel.present": { "je": "chanterais", "tu": "chanterais", "il": "chanterait", "elle": "chanterait", "on": "chanterait", "nous": "chanterions", "vous": "chanteriez", "ils": "chanteraient", "elles": "chanteraient" },
+    "conditionnel.passe": { "je": "aurais chanté", "tu": "aurais chanté", "il": "aurait chanté", "elle": "aurait chanté", "on": "aurait chanté", "nous": "aurions chanté", "vous": "auriez chanté", "ils": "auraient chanté", "elles": "auraient chanté" },
+    "subjonctif.present": { "je": "chante", "tu": "chantes", "il": "chante", "elle": "chante", "on": "chante", "nous": "chantions", "vous": "chantiez", "ils": "chantent", "elles": "chantent" },
+    "subjonctif.passe": { "je": "aie chanté", "tu": "aies chanté", "il": "ait chanté", "elle": "ait chanté", "on": "ait chanté", "nous": "ayons chanté", "vous": "ayez chanté", "ils": "aient chanté", "elles": "aient chanté" },
+    "subjonctif.imparfait": { "je": "chantasse", "tu": "chantasses", "il": "chantât", "elle": "chantât", "on": "chantât", "nous": "chantassions", "vous": "chantassiez", "ils": "chantassent", "elles": "chantassent" },
+    "subjonctif.plus-que-parfait": { "je": "eusse chanté", "tu": "eusses chanté", "il": "eût chanté", "elle": "eût chanté", "on": "eût chanté", "nous": "eussions chanté", "vous": "eussiez chanté", "ils": "eussent chanté", "elles": "eussent chanté" },
+    "imperatif.present": { "tu": "chante", "nous": "chantons", "vous": "chantez" },
+    "imperatif.passe": { "tu": "aie chanté", "nous": "ayons chanté", "vous": "ayez chanté" },
+    "infinitif.present": { "base": "chanter" },
+    "infinitif.passe": { "base": "avoir chanté" },
+    "participe.present": { "base": "chantant" },
+    "participe.passe": { "base": "chanté" },
+    "gerondif.present": { "base": "en chantant" },
+    "gerondif.passe": { "base": "en ayant chanté" }
+  }
+}

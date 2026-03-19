@@ -57,7 +57,51 @@
       "domain": "langues",
       "feature": "architecture",
       "dependsOn": ["scope-050-high-r2-v1"],
-      "label": "Structure multi-langues complète (anglais + espagnol)",
+      "label": "Structure multi-langues complète et extensible (anglais + français + espagnol)",
+      "done": false
+    },
+    {
+      "id": "scope-060-french-conjugation-v1",
+      "priority": "High",
+      "domain": "langues",
+      "feature": "francais",
+      "label": "Français V1 : architecture par verbe avec hub, fiche tableau séparée et parcours d'exercices progressif",
+      "done": false
+    },
+    {
+      "id": "scope-060-french-conjugation-r2",
+      "priority": "Med",
+      "domain": "langues",
+      "feature": "francais",
+      "dependsOn": ["scope-050-high-r2-v1", "scope-060-french-conjugation-v1"],
+      "label": "Français : manifest R2 + 1 verbe = 1 JSON, pour ajouter des verbes sans redéployer",
+      "done": false
+    },
+    {
+      "id": "scope-060-language-quiz-pattern",
+      "priority": "High",
+      "domain": "langues",
+      "feature": "architecture",
+      "dependsOn": ["scope-060-french-conjugation-v1"],
+      "label": "Stabiliser un pattern réutilisable Langues : hub par verbe, flashcards, QCM, saisie, score, série et sac dédié",
+      "done": false
+    },
+    {
+      "id": "scope-060-english-qcm",
+      "priority": "Med",
+      "domain": "langues",
+      "feature": "anglais",
+      "dependsOn": ["scope-060-language-quiz-pattern"],
+      "label": "Anglais : ajouter un mode QCM aligné sur le parcours Français",
+      "done": false
+    },
+    {
+      "id": "scope-060-english-input",
+      "priority": "Med",
+      "domain": "langues",
+      "feature": "anglais",
+      "dependsOn": ["scope-060-language-quiz-pattern"],
+      "label": "Anglais : ajouter un mode saisie aligné sur le parcours Français",
       "done": false
     },
     {
