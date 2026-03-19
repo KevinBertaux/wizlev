@@ -21,20 +21,21 @@ describe('frenchConjugationEngine', () => {
     expect(new Set(choices.map((choice) => choice.answer)).size).toBe(4);
   });
 
-  it('cycles through the 9 pronouns before refill', () => {
+  it('cycles through the 6 grammatical rows before refill', () => {
     const bag = createFrenchPronounBag('aller', () => 0.999);
     const seen = new Set();
 
-    for (let index = 0; index < 9; index += 1) {
-      seen.add(bag.next()?.key);
+    for (let index = 0; index < 6; index += 1) {
+      seen.add(bag.next()?.rowKey);
     }
 
-    expect(seen.size).toBe(9);
+    expect(seen.size).toBe(6);
   });
 
   it('avoids immediate repeat across bag refill boundary when possible', () => {
     const bag = createFrenchPronounBag('venir', () => 0.999);
     let previousKey = '';
+    let previousRowKey = '';
 
     for (let index = 0; index < 18; index += 1) {
       const current = bag.next();
@@ -42,7 +43,26 @@ describe('frenchConjugationEngine', () => {
       if (previousKey) {
         expect(current.key).not.toBe(previousKey);
       }
+      if (previousRowKey) {
+        expect(current.rowKey).not.toBe(previousRowKey);
+      }
       previousKey = current.key;
+      previousRowKey = current.rowKey;
+    }
+  });
+
+  it('avoids immediate row repeat in the real inflection module used by the app', () => {
+    const source = getFrenchInflectionModule();
+    const bag = createFrenchPronounBag('etre', () => 0.999, source, 'indicatif', 'present');
+    let previousRowKey = '';
+
+    for (let index = 0; index < 18; index += 1) {
+      const current = bag.next();
+      expect(current).not.toBeNull();
+      if (previousRowKey) {
+        expect(current.rowKey).not.toBe(previousRowKey);
+      }
+      previousRowKey = current.rowKey;
     }
   });
 

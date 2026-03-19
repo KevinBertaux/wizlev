@@ -41,18 +41,51 @@ function uniqueFormsForVerb(verb, excludedAnswer = '') {
   return values;
 }
 
-function avoidImmediatePronounRepeat(pronouns, lastPronounKey) {
-  if (!lastPronounKey || pronouns.length <= 1) {
+function reorderPronounsForBag(pronouns, lastPronounKey, lastRowKey) {
+  if (pronouns.length <= 1) {
     return pronouns;
   }
 
-  const nextIndex = pronouns.findIndex((pronoun) => pronoun.key !== lastPronounKey);
-  if (nextIndex > 0) {
-    const [nextPronoun] = pronouns.splice(nextIndex, 1);
-    pronouns.unshift(nextPronoun);
+  const pending = [...pronouns];
+  const ordered = [];
+  let previousKey = lastPronounKey;
+  let previousRowKey = lastRowKey;
+
+  while (pending.length > 0) {
+    let nextIndex = pending.findIndex(
+      (pronoun) => pronoun.rowKey !== previousRowKey && pronoun.key !== previousKey
+    );
+
+    if (nextIndex === -1) {
+      nextIndex = pending.findIndex((pronoun) => pronoun.key !== previousKey);
+    }
+
+    if (nextIndex === -1) {
+      nextIndex = 0;
+    }
+
+    const [nextPronoun] = pending.splice(nextIndex, 1);
+    ordered.push(nextPronoun);
+    previousKey = nextPronoun.key;
+    previousRowKey = nextPronoun.rowKey || '';
   }
 
-  return pronouns;
+  return ordered;
+}
+
+function reorderRowsForBag(rows, lastRowKey) {
+  if (!lastRowKey || rows.length <= 1) {
+    return rows;
+  }
+
+  const ordered = [...rows];
+  const nextIndex = ordered.findIndex((row) => row.rowKey !== lastRowKey);
+  if (nextIndex > 0) {
+    const [nextRow] = ordered.splice(nextIndex, 1);
+    ordered.unshift(nextRow);
+  }
+
+  return ordered;
 }
 
 export function buildFrenchQcmChoices(
@@ -150,7 +183,8 @@ export function createFrenchPronounBag(
 ) {
   const verb = getExerciseVerb(verbKey, moodKey, tenseKey, source);
   const pronouns = getExercisePronouns(source, moodKey, tenseKey);
-  let lastPronounKey = '';
+  let lastRowKey = '';
+  const lastPronounKeysByRow = new Map();
 
   if (!verb || !pronouns.length) {
     return {
@@ -161,22 +195,43 @@ export function createFrenchPronounBag(
     };
   }
 
-  const bag = createRefillBag({
-    refill: () => avoidImmediatePronounRepeat(shuffleList(pronouns, randomFn), lastPronounKey),
+  const rowEntries = Array.from(
+    pronouns.reduce((groups, pronoun) => {
+      const rowKey = pronoun.rowKey || pronoun.key;
+      if (!groups.has(rowKey)) {
+        groups.set(rowKey, []);
+      }
+      groups.get(rowKey).push(pronoun);
+      return groups;
+    }, new Map()),
+    ([rowKey, rowPronouns]) => ({ rowKey, pronouns: rowPronouns })
+  );
+
+  const rowBag = createRefillBag({
+    refill: () => reorderRowsForBag(shuffleList(rowEntries, randomFn), lastRowKey),
   });
 
   return {
     next() {
-      const pronoun = bag.next();
-      if (!pronoun) {
+      const row = rowBag.next();
+      if (!row) {
         return null;
       }
-      lastPronounKey = pronoun.key;
+      const previousPronounKey = lastPronounKeysByRow.get(row.rowKey) || '';
+      const orderedPronouns = reorderPronounsForBag(
+        shuffleList(row.pronouns, randomFn),
+        previousPronounKey,
+        ''
+      );
+      const pronoun = orderedPronouns[0] || row.pronouns[0];
+      lastPronounKeysByRow.set(row.rowKey, pronoun.key);
+      lastRowKey = pronoun.rowKey || '';
       return pronoun;
     },
     clear() {
-      lastPronounKey = '';
-      bag.clear();
+      lastRowKey = '';
+      lastPronounKeysByRow.clear();
+      rowBag.clear();
     },
   };
 }

@@ -202,7 +202,13 @@ function getLegacyVerb(verbKey) {
 }
 
 function getLegacyPronouns() {
-  return legacyModuleData.pronouns.map((pronoun) => ({ ...pronoun }));
+  return legacyModuleData.pronouns.map((pronoun) => {
+    const row = legacyModuleData.rows.find((item) => item.pronouns.includes(pronoun.key));
+    return {
+      ...pronoun,
+      rowKey: row?.key || pronoun.key,
+    };
+  });
 }
 
 function buildLegacyVerbRows(verbKey) {
@@ -271,6 +277,7 @@ function listInflectionPronouns(source, moodKey = DEFAULT_MOOD_KEY, tenseKey = '
   return slotSet.slots.map((slot) => ({
     key: slot.key,
     label: slot.label,
+    rowKey: slot.rowKey || slot.key,
   }));
 }
 
@@ -503,17 +510,17 @@ export function buildFrenchVerbCards(
   moodKey = DEFAULT_MOOD_KEY
 ) {
   const verb = getFrenchVerb(verbKey, source, moodKey, tenseKey);
-  const pronouns = listFrenchPronouns(source, moodKey, tenseKey);
   if (!verb || !isFrenchVerbTenseAvailable(verbKey, tenseKey, source, moodKey)) {
     return [];
   }
+  const rows = buildFrenchVerbRows(verbKey, tenseKey, source, moodKey);
 
-  return pronouns.map((pronoun) => ({
-    id: `${verb.key}-${pronoun.key}`,
-    pronounKey: pronoun.key,
-    pronounLabel: pronoun.label,
-    prompt: `${pronoun.label} + ${verb.infinitive}`,
-    answer: verb.forms[pronoun.key],
+  return rows.map((row) => ({
+    id: `${verb.key}-${row.key}`,
+    pronounKey: row.key,
+    pronounLabel: row.label,
+    prompt: `${row.label} + ${verb.infinitive}`,
+    answer: row.forms[0] || '',
     infinitive: verb.infinitive,
     label: verb.label,
   }));

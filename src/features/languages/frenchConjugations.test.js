@@ -43,11 +43,15 @@ describe('frenchConjugations', () => {
     expect(isFrenchVerbTenseAvailable('avoir', 'imparfait')).toBe(false);
   });
 
-  it('construit 9 flashcards par verbe', () => {
+  it('construit 6 flashcards par verbe en regroupant les lignes partagees', () => {
     const cards = buildFrenchVerbCards('aller');
-    expect(cards).toHaveLength(9);
+    expect(cards).toHaveLength(6);
     expect(cards[0].prompt).toBe('Je + aller');
     expect(cards[0].answer).toBe('vais');
+    expect(cards[2].prompt).toBe('Il / Elle / On + aller');
+    expect(cards[2].answer).toBe('va');
+    expect(cards[5].prompt).toBe('Ils / Elles + aller');
+    expect(cards[5].answer).toBe('vont');
   });
 
   it('crée un exercice en évitant le même pronom immédiat si possible', () => {

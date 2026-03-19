@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
 import FrenchFlashcardsPanel from '@/components/french/FrenchFlashcardsPanel.vue';
 import FrenchInputPanel from '@/components/french/FrenchInputPanel.vue';
@@ -122,6 +122,11 @@ const scoreSummary = ref({
   qcm: { bestScore: 0, bestStreak: 0 },
   input: { bestScore: 0, bestStreak: 0 },
 });
+const controlsHighlight = ref(false);
+const controlsHighlightTimeoutId = ref(null);
+const exerciseSection = ref(null);
+const verbSelectField = ref(null);
+const tenseSelectField = ref(null);
 
 const activeTense = computed(() =>
   selectedTense.value ? getFrenchTense(selectedTense.value, frenchSource, selectedMood.value) : null
@@ -216,6 +221,41 @@ function refreshScoreSummary() {
   };
 }
 
+function clearControlsHighlightTimeout() {
+  if (controlsHighlightTimeoutId.value) {
+    clearTimeout(controlsHighlightTimeoutId.value);
+    controlsHighlightTimeoutId.value = null;
+  }
+}
+
+function focusRelevantSelect() {
+  const targetRef = !selectedVerb.value ? verbSelectField.value : tenseSelectField.value;
+  const selectElement = targetRef?.querySelector?.('select');
+  selectElement?.focus();
+}
+
+function guideToSelectors() {
+  clearControlsHighlightTimeout();
+  controlsHighlight.value = false;
+  nextTick(() => {
+    controlsHighlight.value = true;
+    controlsHighlightTimeoutId.value = setTimeout(() => {
+      controlsHighlight.value = false;
+      controlsHighlightTimeoutId.value = null;
+    }, 900);
+    focusRelevantSelect();
+  });
+}
+
+function scrollToExercise() {
+  nextTick(() => {
+    exerciseSection.value?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  });
+}
+
 function selectFamilyDefault(family) {
   if (!family?.defaultTenseKey) {
     return;
@@ -277,6 +317,7 @@ function setMode(modeKey) {
     return;
   }
   selectedMode.value = modeKey;
+  scrollToExercise();
 }
 
 function showTable() {
@@ -284,11 +325,22 @@ function showTable() {
   refreshScoreSummary();
 }
 
+function handleTableOverlayClick() {
+  if (tableState.value === 'exercise') {
+    return;
+  }
+  guideToSelectors();
+}
+
 onMounted(() => {
   if (Object.keys(route.query).length > 0) {
     router.replace({ name: 'languages-french' });
   }
   refreshScoreSummary();
+});
+
+onUnmounted(() => {
+  clearControlsHighlightTimeout();
 });
 
 onBeforeRouteLeave((to) => {
@@ -328,21 +380,33 @@ watch(
       <div class="french-hub__workspace-grid">
         <div class="french-hub__controls">
           <div class="french-hub__settings-grid">
-            <QuizSelectField
-              v-model="selectedVerb"
-              select-id="frenchHubVerbSelect"
-              label="Choisir un verbe :"
-              placeholder="-- Choisir un verbe --"
-              :option-groups="verbOptionGroups"
-            />
+            <div
+              ref="verbSelectField"
+              class="french-hub__select-field"
+              :class="{ 'is-guided': controlsHighlight }"
+            >
+              <QuizSelectField
+                v-model="selectedVerb"
+                select-id="frenchHubVerbSelect"
+                label="Choisir un verbe :"
+                placeholder="-- Choisir un verbe --"
+                :option-groups="verbOptionGroups"
+              />
+            </div>
 
-            <QuizSelectField
-              v-model="selectedTense"
-              select-id="frenchHubTenseSelect"
-              label="Choisir un temps :"
-              placeholder="-- Choisir un temps --"
-              :option-groups="tenseOptionGroups"
-            />
+            <div
+              ref="tenseSelectField"
+              class="french-hub__select-field"
+              :class="{ 'is-guided': controlsHighlight }"
+            >
+              <QuizSelectField
+                v-model="selectedTense"
+                select-id="frenchHubTenseSelect"
+                label="Choisir un temps :"
+                placeholder="-- Choisir un temps --"
+                :option-groups="tenseOptionGroups"
+              />
+            </div>
           </div>
 
           <div class="french-hub__bands">
@@ -395,20 +459,27 @@ watch(
               <div v-else class="french-hub__table-placeholder" aria-hidden="true"></div>
             </div>
 
-            <div v-if="tableLocked" class="french-hub__table-overlay">
-              <div class="french-hub__table-overlay-card">
+            <div
+              v-if="tableLocked"
+              class="french-hub__table-overlay"
+              @click="handleTableOverlayClick"
+            >
+              <div
+                class="french-hub__table-overlay-card"
+                :class="{ 'is-guidance': tableState !== 'exercise' }"
+              >
                 <template v-if="tableState === 'setup'">
-                  <h3>Choisir un verbe et un temps pour commencer.</h3>
-                  <p>La conjugaison et les exercices apparaîtront ensuite.</p>
+                  <h3>Choisis un verbe et un temps pour commencer.</h3>
+                  <p>Utilise les deux menus en haut.</p>
                 </template>
                 <template v-else-if="tableState === 'unavailable'">
                   <h3>Ce temps n'est pas disponible pour ce verbe.</h3>
-                  <p>Choisir un autre verbe ou un autre temps.</p>
+                  <p>Choisis un autre verbe ou un autre temps dans les menus.</p>
                 </template>
                 <template v-else>
                   <h3>Le tableau est masqué pendant l'exercice.</h3>
                   <p>L'afficher mettra fin à la série en cours.</p>
-                  <button type="button" @click="showTable">Afficher la conjugaison</button>
+                  <button type="button" @click.stop="showTable">Afficher la conjugaison</button>
                 </template>
               </div>
             </div>
@@ -417,7 +488,7 @@ watch(
       </div>
     </section>
 
-    <section class="page-block french-hub__exercise-card">
+    <section ref="exerciseSection" class="page-block french-hub__exercise-card">
       <div class="french-hub__modes">
         <button
           v-for="mode in modeOptions"
@@ -484,6 +555,22 @@ watch(
 .french-hub__settings-grid {
   display: grid;
   gap: 12px;
+}
+
+.french-hub__select-field {
+  border-radius: 14px;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.french-hub__select-field.is-guided {
+  background: rgba(224, 255, 235, 0.9);
+  box-shadow:
+    0 0 0 3px rgba(47, 163, 107, 0.22),
+    0 10px 20px rgba(47, 163, 107, 0.18);
+  transform: translateY(-1px);
 }
 
 .french-hub__bands {
@@ -639,6 +726,12 @@ watch(
   border: 1px solid rgba(181, 198, 220, 0.7);
   background: rgba(255, 255, 255, 0.96);
   box-shadow: 0 14px 26px rgba(36, 48, 65, 0.16);
+}
+
+.french-hub__table-overlay-card.is-guidance {
+  border-style: dashed;
+  background: rgba(252, 254, 255, 0.94);
+  box-shadow: 0 10px 18px rgba(36, 48, 65, 0.1);
 }
 
 .french-hub__table-overlay-card h3,
