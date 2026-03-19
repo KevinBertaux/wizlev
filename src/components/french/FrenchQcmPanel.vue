@@ -39,6 +39,7 @@ const props = defineProps({
     default: undefined,
   },
 });
+const emit = defineEmits(['summary-update']);
 
 const verb = computed(() => getFrenchVerb(props.verbKey, props.source, props.moodKey, props.tenseKey));
 const tense = computed(() => getFrenchTense(props.tenseKey, props.source, props.moodKey));
@@ -133,6 +134,7 @@ function resetPanel() {
     ? createFrenchQcmBag(props.verbKey, Math.random, props.source, props.moodKey, props.tenseKey)
     : null;
   loadNextQuestion();
+  emit('summary-update');
 }
 
 function optionStateClass(option) {
@@ -175,11 +177,13 @@ function checkAnswer() {
 
   setChecked(true);
   const { bestStreakBefore } = applyAttempt(result.isCorrect);
+  emit('summary-update');
 
   if (result.isCorrect) {
     if (score.value > bestScore.value) {
       bestScore.value = score.value;
       sessionStorage.value.writeBestScore(bestScore.value);
+      emit('summary-update');
     }
 
     const motivation = buildMotivationToast({

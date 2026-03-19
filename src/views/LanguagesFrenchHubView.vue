@@ -451,6 +451,7 @@ watch(
           :mood-key="selectedMood"
           :tense-key="selectedTense"
           :source="frenchSource"
+          @summary-update="refreshScoreSummary"
         />
       </div>
     </section>
