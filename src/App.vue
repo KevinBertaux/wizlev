@@ -1,10 +1,11 @@
 <script setup>
-import { computed, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { ROUTE_NAMES } from "@/router/routes";
 
 const navOpen = ref(false);
 const openGroup = ref("");
+const isHeaderCompact = ref(false);
 const route = useRoute();
 
 const isMathRoute = computed(() => route.path.startsWith("/math"));
@@ -35,11 +36,28 @@ function closeNav() {
   navOpen.value = false;
   openGroup.value = "";
 }
+
+function updateHeaderCompactState() {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  isHeaderCompact.value = window.scrollY > 24;
+}
+
+onMounted(() => {
+  updateHeaderCompactState();
+  window.addEventListener("scroll", updateHeaderCompactState, { passive: true });
+});
+
+onUnmounted(() => {
+  window.removeEventListener("scroll", updateHeaderCompactState);
+});
 </script>
 
 <template>
   <div class="app-shell">
-    <header class="topbar">
+    <header class="topbar" :class="{ 'topbar--compact': isHeaderCompact }">
       <router-link :to="{ name: ROUTE_NAMES.HOME }" class="brand" aria-label="Accueil" @click="closeNav">
         <img src="/brand-logo.png" alt="ManabuPlay" class="brand-logo" />
       </router-link>
