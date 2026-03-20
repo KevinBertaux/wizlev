@@ -125,8 +125,8 @@
       "priority": "Med",
       "domain": "legal",
       "feature": "pages",
-      "label": "Mettre à jour les pages légales avec manabuplay.fr, contact@manabuplay.fr et les informations produit cohérentes",
-      "done": false
+      "label": "Mettre à jour les pages légales avec manabuplay.fr, le contact public et des informations produit cohérentes",
+      "done": true
     },
     {
       "id": "scope-060-ui-foundation-post-v4",

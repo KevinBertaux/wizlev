@@ -156,6 +156,15 @@
       "done": false
     },
     {
+      "id": "backlog-public-contact-form",
+      "priority": "Low",
+      "domain": "legal",
+      "feature": "contact",
+      "dependsOn": ["backlog-mailer-foundation"],
+      "label": "Formulaire de contact public avec anti-spam, validation et traitement conforme aux pages légales",
+      "done": false
+    },
+    {
       "id": "backlog-content-missing-digest",
       "priority": "Low",
       "domain": "admin",
