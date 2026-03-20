@@ -2,29 +2,12 @@
   "version": "0.6.0",
   "items": [
     {
-      "id": "scope-060-math-divisions",
-      "priority": "High",
-      "domain": "math",
-      "feature": "divisions",
-      "label": "Module divisions V1",
-      "done": false
-    },
-    {
       "id": "scope-060-sym-v2",
       "priority": "High",
       "domain": "math",
       "feature": "symetrie",
       "label": "Symétrie V2: banque R2, reviewer admin et export éditorial",
       "done": true
-    },
-    {
-      "id": "scope-060-sym-render-contract",
-      "priority": "High",
-      "domain": "tech",
-      "feature": "symetrie",
-      "dependsOn": ["scope-060-sym-v2"],
-      "label": "Symétrie: rendre le composant partagé purement visuel et sortir la projection/orientation hors composant",
-      "done": false
     },
     {
       "id": "scope-060-roadmap-dependencies",
@@ -68,15 +51,6 @@
       "dependsOn": ["scope-060-french-conjugation-v1"],
       "label": "Français : gérer l'élision (j', h muet / h aspiré) pour fiabiliser l'affichage, la correction et le futur TTS",
       "done": true
-    },
-    {
-      "id": "scope-060-language-workspace-alignment",
-      "priority": "High",
-      "domain": "langues",
-      "feature": "architecture",
-      "dependsOn": ["scope-060-language-quiz-pattern", "scope-060-french-tts-flashcards"],
-      "label": "Langues : aligner les modules sur le workspace validé en Français, avec shell commun, QCM, réponse libre et TTS partagé",
-      "done": false
     },
     {
       "id": "scope-060-english-background-loading",
