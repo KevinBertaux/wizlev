@@ -3,6 +3,7 @@ import {
   buildFrenchVerbCards,
   buildFrenchVerbRows,
   createFrenchExercise,
+  formatFrenchPronounAnswer,
   getFrenchInflectionModule,
   getFrenchConjugationPocModule,
   getFrenchTense,
@@ -25,6 +26,7 @@ describe('frenchConjugations', () => {
   it('construit 6 lignes de tableau pour un verbe', () => {
     const rows = buildFrenchVerbRows('avoir');
     expect(rows).toHaveLength(6);
+    expect(rows[0].pronounValues).toEqual(["J'ai"]);
     expect(rows[2].pronounValues).toEqual(['Il a', 'Elle a', 'On a']);
     expect(rows[2].forms).toEqual(['a']);
     expect(rows[5].pronounValues).toEqual(['Ils ont', 'Elles ont']);
@@ -65,6 +67,13 @@ describe('frenchConjugations', () => {
     const exercise = createFrenchExercise('prendre', () => 0);
     expect(isFrenchExerciseAnswerCorrect(exercise, exercise.expectedAnswer.toUpperCase())).toBe(true);
     expect(isFrenchExerciseAnswerCorrect(exercise, 'xxx')).toBe(false);
+  });
+
+  it("formate l'élision française pour je et normalise les réponses avec pronom", () => {
+    expect(formatFrenchPronounAnswer('je', 'Je', 'ai')).toBe("J'ai");
+    expect(formatFrenchPronounAnswer('je', 'Je', 'aime')).toBe("J'aime");
+    expect(isFrenchExerciseAnswerCorrect({ expectedAnswer: 'ai' }, "j'ai")).toBe(true);
+    expect(isFrenchExerciseAnswerCorrect({ expectedAnswer: 'aime' }, "J'aime")).toBe(true);
   });
 
   it('lit aussi le POC multi-langue sans casser le format legacy', () => {
@@ -120,6 +129,7 @@ describe('frenchConjugations', () => {
     const rows = buildFrenchVerbRows('prendre', 'present', poc);
     expect(rows).toHaveLength(6);
     expect(rows[2].forms).toEqual(['prend']);
+    expect(buildFrenchVerbRows('avoir', 'present', poc)[0].pronounValues).toEqual(["J'ai"]);
 
     const infinitifRows = buildFrenchVerbRows('venir', 'present', poc, 'infinitif');
     expect(infinitifRows).toHaveLength(1);
