@@ -11,6 +11,20 @@ import router from './router';
 import './styles/base.css';
 import './styles/quiz-modules.css';
 
+if (import.meta.env.DEV && typeof document !== 'undefined') {
+  const devFaviconPath = '/android-chrome-512x512%20dev.png';
+  const faviconSelectors = [
+    'link[rel="icon"]',
+    'link[rel="apple-touch-icon"]',
+  ];
+
+  faviconSelectors.forEach((selector) => {
+    document.querySelectorAll(selector).forEach((node) => {
+      node.setAttribute('href', devFaviconPath);
+    });
+  });
+}
+
 const app = createApp(App);
 
 app.use(createPinia());

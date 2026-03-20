@@ -305,11 +305,13 @@ onUnmounted(() => {
         shuffle-label="🔀 Mélanger"
         @state-change="handleFlashcardStateChange"
       >
-        <template v-if="canPlayTts" #aside-control>
+        <template v-if="ttsSupported" #aside-control>
           <button
             class="tts-inline-btn"
             :class="{ 'is-speaking': isSpeaking }"
             type="button"
+            :disabled="!canPlayTts"
+            :aria-disabled="!canPlayTts"
             :aria-label="isSpeaking ? 'Arrêter la lecture' : 'Écouter le mot'"
             @click.stop="toggleSpeakWord"
           >
@@ -531,6 +533,22 @@ onUnmounted(() => {
 .tts-inline-btn:active {
   transform: translateY(0);
   box-shadow: 0 2px 0 rgba(15, 23, 42, 0.14);
+}
+
+.tts-inline-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
+  transform: none;
+  box-shadow: 0 2px 0 rgba(15, 23, 42, 0.08);
+}
+
+.tts-inline-btn:disabled:hover,
+.tts-inline-btn:disabled:focus-visible,
+.tts-inline-btn:disabled:active {
+  transform: none;
+  border-color: rgba(36, 48, 65, 0.26);
+  background: #fbfdff;
+  box-shadow: 0 2px 0 rgba(15, 23, 42, 0.08);
 }
 
 :deep(.flashcard.flipped) .tts-inline-btn {
