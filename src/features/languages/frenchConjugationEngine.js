@@ -1,5 +1,6 @@
 import { createRefillBag, shuffleList } from '@/features/common/questionBag';
 import {
+  formatFrenchPronounAnswer,
   getFrenchVerb,
   isFrenchVerbTenseAvailable,
   listFrenchPronouns,
@@ -143,6 +144,9 @@ export function createFrenchQcmQuestion(
     pronounLabel: pronoun.label,
     prompt: `${pronoun.label} + ${verb.infinitive}`,
     expectedAnswer: verb.forms[pronoun.key],
+    expectedAnswerLabel: formatFrenchPronounAnswer(pronoun.key, pronoun.label, verb.forms[pronoun.key], verb.meta, {
+      lowercasePronoun: true,
+    }),
     correctOptionId: correctOption.id,
     options,
   };
@@ -171,6 +175,9 @@ export function createFrenchInputQuestion(
     pronounLabel: pronoun.label,
     prompt: `${pronoun.label} + ${verb.infinitive}`,
     expectedAnswer: verb.forms[pronoun.key],
+    expectedAnswerLabel: formatFrenchPronounAnswer(pronoun.key, pronoun.label, verb.forms[pronoun.key], verb.meta, {
+      lowercasePronoun: true,
+    }),
   };
 }
 

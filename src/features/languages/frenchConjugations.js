@@ -25,6 +25,7 @@ const GROUP_LABELS = Object.freeze({
   '2': '2e groupe',
   '3': '3e groupe',
 });
+const ELIDABLE_INITIAL_RE = /^[aeiouyàâäæéèêëîïôöœùûüÿh]/i;
 const inflectionVerbRecords = [
   aimerVerb,
   allerVerb,
@@ -90,11 +91,53 @@ function sanitizeString(value, fallback = '') {
   return typeof value === 'string' && value.trim() ? value.trim() : fallback;
 }
 
+function normalizeFrenchText(value) {
+  return sanitizeString(value).replace(/[’]/g, "'").replace(/\s+/g, ' ').trim();
+}
+
 function stripFrenchPronounPrefix(value) {
-  return value.replace(
-    /^(?:que\s+|qu')?(?:j'|je\s+|tu\s+|il\s+|nous\s+|vous\s+|ils\s+)/i,
+  return normalizeFrenchText(value).replace(
+    /^(?:que\s+|qu['’])?(?:j['’]|j\s+|je\s+|tu\s+|il\s+|elle\s+|on\s+|nous\s+|vous\s+|ils\s+|elles\s+)/i,
     ''
   );
+}
+
+function capitalizeLabel(label) {
+  const normalized = sanitizeString(label);
+  return normalized ? normalized.charAt(0).toUpperCase() + normalized.slice(1) : '';
+}
+
+function shouldElideFrenchJe(answer, verbMeta = {}) {
+  const normalizedAnswer = normalizeFrenchText(answer);
+  if (!normalizedAnswer) {
+    return false;
+  }
+  if (sanitizeString(verbMeta?.hType) === 'aspire') {
+    return false;
+  }
+  return ELIDABLE_INITIAL_RE.test(normalizedAnswer);
+}
+
+export function formatFrenchPronounAnswer(
+  pronounKey,
+  pronounLabel,
+  answer,
+  verbMeta = {},
+  { lowercasePronoun = false } = {}
+) {
+  const normalizedAnswer = normalizeFrenchText(answer);
+  const normalizedLabel = sanitizeString(pronounLabel);
+  if (!normalizedAnswer || !normalizedLabel) {
+    return '';
+  }
+
+  if (sanitizeString(pronounKey) === 'je' && shouldElideFrenchJe(normalizedAnswer, verbMeta)) {
+    const prefix = lowercasePronoun ? 'j' : 'J';
+    return `${prefix}'${normalizedAnswer}`;
+  }
+
+  const label = lowercasePronoun ? normalizedLabel.toLowerCase() : capitalizeLabel(normalizedLabel);
+  return `${label} ${normalizedAnswer}`;
 }
 
 function sanitizeForms(forms, pronouns) {
@@ -226,7 +269,9 @@ function buildLegacyVerbRows(verbKey) {
       pronounValues: row.pronouns
         .map((pronounKey) => {
           const pronoun = legacyPronounsByKey.get(pronounKey);
-          return pronoun ? `${pronoun.label} ${verb.forms[pronounKey]}` : '';
+          return pronoun
+            ? formatFrenchPronounAnswer(pronoun.key, pronoun.label, verb.forms[pronounKey], verb.meta)
+            : '';
         })
         .filter(Boolean),
       forms: [...new Set(forms)],
@@ -492,7 +537,15 @@ export function buildFrenchVerbRows(
     if (!isFrenchVerbTenseAvailable(verbKey, tenseKey, resolvedSource, moodKey)) {
       return [];
     }
-    return buildInflectionRows(resolvedSource, DEFAULT_LANGUAGE_KEY, verbKey, moodKey, tenseKey);
+    const verb = getFrenchVerb(verbKey, resolvedSource, moodKey, tenseKey);
+    return buildInflectionRows(resolvedSource, DEFAULT_LANGUAGE_KEY, verbKey, moodKey, tenseKey).map((row) => ({
+      ...row,
+      pronounValues: (row.slotLabels || [])
+        .map((slotLabel, index) =>
+          formatFrenchPronounAnswer(slotLabel.toLowerCase(), slotLabel, row.forms[index] || row.forms[0] || '', verb?.meta)
+        )
+        .filter(Boolean),
+    }));
   }
 
   const verb = getLegacyVerb(verbKey);
@@ -553,11 +606,14 @@ export function createFrenchExercise(
     pronounKey: pronoun.key,
     pronounLabel: pronoun.label,
     expectedAnswer: verb.forms[pronoun.key],
+    expectedAnswerLabel: formatFrenchPronounAnswer(pronoun.key, pronoun.label, verb.forms[pronoun.key], verb.meta, {
+      lowercasePronoun: true,
+    }),
   };
 }
 
 export function normalizeFrenchAnswer(value) {
-  return stripFrenchPronounPrefix(sanitizeString(value)).toLowerCase();
+  return stripFrenchPronounPrefix(value).replace(/\s*['’]\s*/g, "'").toLowerCase();
 }
 
 export function isFrenchExerciseAnswerCorrect(exercise, answer) {

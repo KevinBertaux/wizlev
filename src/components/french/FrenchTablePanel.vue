@@ -33,7 +33,9 @@ const rows = computed(() =>
     <div v-if="verb" class="conjugation-table" role="table" aria-label="Tableau de conjugaison">
       <div v-for="row in rows" :key="row.key" class="conjugation-row" role="row">
         <div class="conjugation-label" role="rowheader">{{ row.label }}</div>
-        <div class="conjugation-values" role="cell">{{ row.forms.join(' • ') }}</div>
+        <div class="conjugation-values" role="cell">
+          {{ (row.pronounValues?.length ? row.pronounValues : row.forms).join(' • ') }}
+        </div>
       </div>
     </div>
 

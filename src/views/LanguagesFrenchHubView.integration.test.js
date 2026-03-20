@@ -95,7 +95,9 @@ describe('LanguagesFrenchHubView integration', () => {
     expect(correctAnswer).toBeTruthy();
 
     const optionButtons = wrapper.findAll('.french-qcm-panel__option');
-    const correctButton = optionButtons.find((option) => option.text().includes(correctAnswer));
+    const correctButton = optionButtons.find(
+      (option) => option.text().trim().replace(/^[^A-Za-zÀ-ÿ]*/, '') === correctAnswer
+    );
 
     expect(correctButton).toBeTruthy();
 

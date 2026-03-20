@@ -98,6 +98,14 @@ describe('frenchConjugationEngine', () => {
     });
   });
 
+  it("exposes an elided expected answer label for qcm and input questions", () => {
+    const qcmQuestion = createFrenchQcmQuestion('avoir', 'je', () => 0);
+    const inputQuestion = createFrenchInputQuestion('aimer', 'je', getFrenchInflectionModule(), 'indicatif', 'present');
+
+    expect(qcmQuestion?.expectedAnswerLabel).toBe("j'ai");
+    expect(inputQuestion?.expectedAnswerLabel).toBe("j'aime");
+  });
+
   it('creates an input bag that yields prompt-only questions', () => {
     const bag = createFrenchInputBag('etre', () => 0);
     const question = bag.next();

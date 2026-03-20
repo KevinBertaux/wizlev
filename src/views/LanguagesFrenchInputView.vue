@@ -171,7 +171,7 @@ function checkAnswer() {
   setFeedback({
     type: 'incorrect',
     main: '❌ Mauvaise réponse.',
-    extra: `Bonne réponse : ${currentQuestion.value.pronounLabel.toLowerCase()} ${result.correctAnswer}.`,
+    extra: `Bonne réponse : ${currentQuestion.value.expectedAnswerLabel}.`,
   });
 }
 
