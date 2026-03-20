@@ -183,6 +183,15 @@
       "done": false
     },
     {
+      "id": "backlog-language-tts-foundation",
+      "priority": "Med",
+      "domain": "langues",
+      "feature": "tts",
+      "dependsOn": ["scope-060-language-quiz-pattern"],
+      "label": "Langues : cadrer une fondation TTS commune (navigateur, voix, fallback, cache et futures options offline/cloud)",
+      "done": false
+    },
+    {
       "id": "backlog-drop-legacy-vocab-keys",
       "priority": "Low",
       "domain": "tech",

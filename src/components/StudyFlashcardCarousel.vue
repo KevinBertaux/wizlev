@@ -32,6 +32,7 @@ const totalCards = computed(() => orderedCards.value.length);
 const currentCard = computed(() => orderedCards.value[currentIndex.value] || null);
 const cardNumber = computed(() => (totalCards.value ? currentIndex.value + 1 : 0));
 const hasAsideControl = computed(() => Boolean(slots['aside-control']));
+const hasActionsSlot = computed(() => Boolean(slots.actions));
 
 function emitState() {
   emit('state-change', {
@@ -205,6 +206,7 @@ onUnmounted(() => {
     </div>
 
     <div class="study-flashcards__actions">
+      <slot v-if="hasActionsSlot" name="actions" :card="currentCard" :is-flipped="isFlipped" />
       <button class="mp-btn mp-btn-secondary" type="button" @click="shuffleCards">{{ shuffleLabel }}</button>
     </div>
   </div>
