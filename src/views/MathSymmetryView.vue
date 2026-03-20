@@ -50,6 +50,13 @@ const {
   autoNextDelayMs: AUTO_NEXT_DELAY_MS,
 });
 
+const actionState = computed(() => {
+  if (!hasChecked.value) {
+    return 'check';
+  }
+  return feedbackType.value === 'correct' ? 'none' : 'next';
+});
+
 const optionLabels = ['1', '2', '3', '4'];
 const axisLabel = computed(() =>
   currentQuestion.value?.axis === 'horizontal' ? 'horizontal' : 'vertical'
@@ -260,7 +267,13 @@ onUnmounted(() => {
       </button>
     </div>
 
-    <QuizActions :can-check="canCheck" @check="checkAnswer" @next="loadNextQuestion" />
+    <QuizActions
+      :state="actionState"
+      :can-check="canCheck"
+      next-label="Continuer →"
+      @check="checkAnswer"
+      @next="loadNextQuestion"
+    />
 
     <p class="hint">Raccourcis clavier: 1, 2, 3, 4 pour choisir une option, Entrée pour vérifier/suivant.</p>
     </template>

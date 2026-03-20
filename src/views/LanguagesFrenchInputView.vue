@@ -76,6 +76,13 @@ const headerExtras = computed(() => {
   ];
 });
 
+const actionState = computed(() => {
+  if (!hasChecked.value) {
+    return 'check';
+  }
+  return feedbackType.value === 'correct' ? 'none' : 'next';
+});
+
 function clearToastTimeout() {
   if (toastTimeoutId.value) {
     clearTimeout(toastTimeoutId.value);
@@ -254,9 +261,10 @@ onUnmounted(() => {
       </div>
 
       <QuizActions
+        :state="actionState"
         :can-check="canCheck"
         check-label="Vérifier ✓"
-        next-label="Question suivante →"
+        next-label="Continuer →"
         @check="checkAnswer"
         @next="loadNextQuestion"
       />

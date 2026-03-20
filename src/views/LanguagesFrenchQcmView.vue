@@ -76,6 +76,13 @@ const headerExtras = computed(() => {
   ];
 });
 
+const actionState = computed(() => {
+  if (!hasChecked.value) {
+    return 'check';
+  }
+  return feedbackType.value === 'correct' ? 'none' : 'next';
+});
+
 function clearToastTimeout() {
   if (toastTimeoutId.value) {
     clearTimeout(toastTimeoutId.value);
@@ -284,7 +291,14 @@ onUnmounted(() => {
         </button>
       </div>
 
-      <QuizActions :can-check="canCheck" check-label="Vérifier ✓" next-label="Question suivante →" @check="checkAnswer" @next="loadNextQuestion" />
+      <QuizActions
+        :state="actionState"
+        :can-check="canCheck"
+        check-label="Vérifier ✓"
+        next-label="Continuer →"
+        @check="checkAnswer"
+        @next="loadNextQuestion"
+      />
 
       <p class="hint">Raccourcis clavier : 1, 2, 3, 4 pour répondre, Entrée pour vérifier puis continuer.</p>
     </template>

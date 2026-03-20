@@ -1,5 +1,10 @@
 <script setup>
 defineProps({
+  state: {
+    type: String,
+    default: 'check',
+    validator: (value) => ['check', 'next', 'none'].includes(value),
+  },
   canCheck: {
     type: Boolean,
     default: true,
@@ -18,11 +23,17 @@ defineEmits(['check', 'next']);
 </script>
 
 <template>
-  <div class="mp-actions">
-    <button class="mp-btn mp-btn-primary" type="button" :disabled="!canCheck" @click="$emit('check')">
+  <div v-if="state !== 'none'" class="mp-actions">
+    <button
+      v-if="state === 'check'"
+      class="mp-btn mp-btn-primary"
+      type="button"
+      :disabled="!canCheck"
+      @click="$emit('check')"
+    >
       {{ checkLabel }}
     </button>
-    <button class="mp-btn mp-btn-secondary" type="button" @click="$emit('next')">
+    <button v-else class="mp-btn mp-btn-secondary" type="button" @click="$emit('next')">
       {{ nextLabel }}
     </button>
   </div>
