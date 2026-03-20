@@ -67,7 +67,7 @@
       "feature": "francais",
       "dependsOn": ["scope-060-french-conjugation-v1"],
       "label": "Français : gérer l'élision (j', h muet / h aspiré) pour fiabiliser l'affichage, la correction et le futur TTS",
-      "done": false
+      "done": true
     },
     {
       "id": "scope-060-language-workspace-alignment",
@@ -94,7 +94,7 @@
       "feature": "francais",
       "dependsOn": ["scope-060-french-elision-rules"],
       "label": "Français : brancher le TTS sur flashcards, QCM et réponse libre, pour servir ensuite de base au TTS des modules Langues",
-      "done": false
+      "done": true
     },
     {
       "id": "scope-060-answer-actions-ux",
