@@ -192,6 +192,24 @@
       "done": false
     },
     {
+      "id": "backlog-french-tts-qcm",
+      "priority": "Low",
+      "domain": "langues",
+      "feature": "francais",
+      "dependsOn": ["scope-060-french-tts-flashcards"],
+      "label": "Français : brancher le TTS sur le QCM",
+      "done": false
+    },
+    {
+      "id": "backlog-french-tts-input",
+      "priority": "Low",
+      "domain": "langues",
+      "feature": "francais",
+      "dependsOn": ["scope-060-french-tts-flashcards"],
+      "label": "Français : brancher le TTS sur la réponse libre",
+      "done": false
+    },
+    {
       "id": "backlog-drop-legacy-vocab-keys",
       "priority": "Low",
       "domain": "tech",
