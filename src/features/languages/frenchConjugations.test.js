@@ -50,11 +50,11 @@ describe('frenchConjugations', () => {
     const cards = buildFrenchVerbCards('aller');
     expect(cards).toHaveLength(6);
     expect(cards[0].prompt).toBe('Je + aller');
-    expect(cards[0].answer).toBe('vais');
+    expect(cards[0].answer).toBe('Je vais');
     expect(cards[2].prompt).toBe('Il / Elle / On + aller');
-    expect(cards[2].answer).toBe('va');
+    expect(cards[2].answer).toBe('Il va • Elle va • On va');
     expect(cards[5].prompt).toBe('Ils / Elles + aller');
-    expect(cards[5].answer).toBe('vont');
+    expect(cards[5].answer).toBe('Ils vont • Elles vont');
   });
 
   it('crée un exercice en évitant le même pronom immédiat si possible', () => {
@@ -136,7 +136,7 @@ describe('frenchConjugations', () => {
     expect(infinitifRows[0].forms).toEqual(['venir']);
 
     const cards = buildFrenchVerbCards('avoir', 'futur-simple', poc);
-    expect(cards[0].answer).toBe('aurai');
+    expect(cards[0].answer).toBe("J'aurai");
   });
 
   it('déduit la disponibilité depuis les formes réellement présentes sur le verbe', () => {

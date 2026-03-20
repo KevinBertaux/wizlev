@@ -573,7 +573,7 @@ export function buildFrenchVerbCards(
     pronounKey: row.key,
     pronounLabel: row.label,
     prompt: `${row.label} + ${verb.infinitive}`,
-    answer: row.forms[0] || '',
+    answer: (row.pronounValues?.length ? row.pronounValues : row.forms).join(' • '),
     infinitive: verb.infinitive,
     label: verb.label,
   }));
