@@ -98,6 +98,17 @@
       "done": true
     },
     {
+      "id": "scope-060-nav-site-state-alignment",
+      "priority": "Med",
+      "domain": "ui",
+      "feature": "navigation",
+      "dependsOn": [
+        "scope-060-header-responsive-compaction"
+      ],
+      "label": "Aligner la navigation principale sur l'état réel du site (Math, Langues, Français, informations utiles et entrées visibles)",
+      "done": false
+    },
+    {
       "id": "scope-060-playwright-responsive-matrix",
       "priority": "Med",
       "domain": "qa",
