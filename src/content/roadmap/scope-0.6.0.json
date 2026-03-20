@@ -95,7 +95,7 @@
       "domain": "ui",
       "feature": "header",
       "label": "Réduire la hauteur du header au scroll et en responsive tablette/mobile",
-      "done": false
+      "done": true
     },
     {
       "id": "scope-060-playwright-responsive-matrix",
