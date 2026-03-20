@@ -114,6 +114,9 @@ onUnmounted(() => {
             <router-link class="submenu-link" :to="{ name: ROUTE_NAMES.LANGUAGES_ENGLISH }" @click="closeNav">
               Anglais
             </router-link>
+            <router-link class="submenu-link" :to="{ name: ROUTE_NAMES.LANGUAGES_FRENCH }" @click="closeNav">
+              Français
+            </router-link>
           </div>
         </div>
 
