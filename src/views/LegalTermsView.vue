@@ -3,7 +3,7 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
 </script>
 
 <template>
-  <LegalPageLayout title="Conditions générales d'utilisation (CGU)" updated-at="13 mars 2026">
+  <LegalPageLayout title="Conditions générales d'utilisation (CGU)" updated-at="20 mars 2026">
     <h2>1. Objet</h2>
     <p>
       Les présentes conditions générales d'utilisation définissent les règles d'accès et d'usage du site
@@ -65,6 +65,6 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
 
     <h2>9. Droit applicable et contact</h2>
     <p>Les présentes CGU sont soumises au droit français.</p>
-    <p>Pour toute question relative à ces CGU : kevinbertaux+manabuplay [at] gmail [dot] com</p>
+    <p>Pour toute question relative à ces CGU : contact [at] manabuplay [dot] fr</p>
   </LegalPageLayout>
 </template>

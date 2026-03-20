@@ -3,16 +3,17 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
 </script>
 
 <template>
-  <LegalPageLayout title="Mentions légales" updated-at="13 mars 2026">
+  <LegalPageLayout title="Mentions légales" updated-at="20 mars 2026">
     <h2>Version du service</h2>
     <p>
-      Version en cours : <strong>0.5.0</strong><br />
-      Dernière révision éditoriale : 13 mars 2026
+      Version en cours : <strong>0.6.0</strong><br />
+      Dernière révision éditoriale : 20 mars 2026
     </p>
 
     <h2>Éditeur du site</h2>
     <p>
-      Le site <strong>ManabuPlay</strong> est édité à titre non professionnel. Conformément à l'article 6, III, 2
+      Le site <strong>ManabuPlay</strong>, publié sous le domaine <strong>manabuplay.fr</strong>, est édité à titre non
+      professionnel. Conformément à l'article 6, III, 2
       de la loi n° 2004-575 du 21 juin 2004 (LCEN), l'éditeur a choisi de préserver son anonymat public.
     </p>
     <p>
@@ -24,11 +25,14 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
     <p>Directeur de la publication : éditeur non professionnel du site ManabuPlay.</p>
 
     <h2>Contact</h2>
-    <p>Pour toute question légale, éditoriale ou relative aux données personnelles : kevinbertaux+manabuplay [at] gmail [dot] com</p>
+    <p>
+      Pour toute question légale, éditoriale ou relative aux données personnelles : contact [at] manabuplay [dot]
+      fr
+    </p>
 
     <h2>Hébergement</h2>
     <p>
-      Hébergeur au 13 mars 2026 : <strong>Netlify, Inc.</strong><br />
+      Hébergeur au 20 mars 2026 : <strong>Netlify, Inc.</strong><br />
       512 2nd Street, Suite 200, San Francisco, CA 94107, USA<br />
       Site : <a href="https://www.netlify.com" target="_blank" rel="noreferrer">netlify.com</a>
     </p>
