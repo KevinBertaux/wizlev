@@ -35,8 +35,8 @@ async function disableMotion(page) {
 
 async function prepareEnglishFlashcards(page) {
   await page.goto('/languages/english');
-  await expect(page.getByText('Choisir une liste pour commencer.')).toBeVisible();
-  await page.getByLabel('Choisir une liste :').selectOption('fruits');
+  await expect(page.locator('#englishListSelect')).toBeVisible();
+  await page.locator('#englishListSelect').selectOption('fruits');
   await expect(page.locator('.flashcard')).toBeVisible();
   await expect(page.locator('.flashcard-count')).toContainText('/');
 }
@@ -44,6 +44,8 @@ async function prepareEnglishFlashcards(page) {
 async function prepareFrenchFlashcards(page) {
   await page.goto('/languages/french');
   await expect(page.getByLabel('Choisir un verbe :')).toBeVisible();
+  await page.getByLabel('Choisir un verbe :').selectOption('aimer');
+  await page.getByLabel('Choisir un temps :').selectOption('present');
   await page.getByRole('button', { name: /🃏 Flashcards/i }).click();
   await expect(page.locator('.flashcard')).toBeVisible();
   await expect(page.locator('.flashcard-count')).toContainText('/');
