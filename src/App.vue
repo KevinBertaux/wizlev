@@ -1,12 +1,15 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { ROUTE_NAMES } from "@/router/routes";
 
 const navOpen = ref(false);
 const openGroup = ref("");
 const isHeaderCompact = ref(false);
+const hoverOpenTimer = ref(null);
+const hoverCloseTimer = ref(null);
 const route = useRoute();
+const router = useRouter();
 
 const isMathRoute = computed(() => route.path.startsWith("/math"));
 const isLangRoute = computed(() => route.path.startsWith("/languages"));
@@ -18,8 +21,32 @@ watch(
   () => {
     navOpen.value = false;
     openGroup.value = "";
+    clearHoverOpenTimer();
+    clearHoverCloseTimer();
   }
 );
+
+function clearHoverOpenTimer() {
+  if (hoverOpenTimer.value !== null) {
+    window.clearTimeout(hoverOpenTimer.value);
+    hoverOpenTimer.value = null;
+  }
+}
+
+function clearHoverCloseTimer() {
+  if (hoverCloseTimer.value !== null) {
+    window.clearTimeout(hoverCloseTimer.value);
+    hoverCloseTimer.value = null;
+  }
+}
+
+function isDesktopHoverNav() {
+  if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+    return false;
+  }
+
+  return window.matchMedia("(min-width: 1024px) and (hover: hover) and (pointer: fine)").matches;
+}
 
 function toggleMenu() {
   navOpen.value = !navOpen.value;
@@ -32,9 +59,60 @@ function toggleGroup(groupName) {
   openGroup.value = openGroup.value === groupName ? "" : groupName;
 }
 
+function navigateToTopLevelHub(groupName) {
+  const routeName = groupName === "math" ? ROUTE_NAMES.MATH_HUB : ROUTE_NAMES.LANGUAGES_HUB;
+  router.push({ name: routeName });
+}
+
+function handleTopLevelTriggerClick(groupName) {
+  if (isDesktopHoverNav()) {
+    clearHoverOpenTimer();
+    clearHoverCloseTimer();
+    openGroup.value = "";
+    navigateToTopLevelHub(groupName);
+    return;
+  }
+
+  toggleGroup(groupName);
+}
+
+function handleNavGroupMouseEnter(groupName) {
+  if (!isDesktopHoverNav()) {
+    return;
+  }
+
+  clearHoverOpenTimer();
+  clearHoverCloseTimer();
+  if (openGroup.value && openGroup.value !== groupName) {
+    openGroup.value = groupName;
+    return;
+  }
+  hoverOpenTimer.value = window.setTimeout(() => {
+    openGroup.value = groupName;
+    hoverOpenTimer.value = null;
+  }, 300);
+}
+
+function handleNavGroupMouseLeave(groupName) {
+  if (!isDesktopHoverNav()) {
+    return;
+  }
+
+  clearHoverOpenTimer();
+  clearHoverCloseTimer();
+  hoverCloseTimer.value = window.setTimeout(() => {
+    if (openGroup.value === groupName) {
+      openGroup.value = "";
+    }
+    hoverCloseTimer.value = null;
+  }, 180);
+}
+
 function closeNav() {
   navOpen.value = false;
   openGroup.value = "";
+  clearHoverOpenTimer();
+  clearHoverCloseTimer();
 }
 
 function updateHeaderCompactState() {
@@ -51,6 +129,8 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
+  clearHoverOpenTimer();
+  clearHoverCloseTimer();
   window.removeEventListener("scroll", updateHeaderCompactState);
 });
 </script>
@@ -74,46 +154,55 @@ onUnmounted(() => {
       </button>
 
       <nav id="main-nav" class="main-nav" :class="{ open: navOpen }">
-        <div class="nav-group" :class="{ open: openGroup === 'math' }">
-          <button
-            class="nav-trigger"
-            type="button"
-            :class="{ active: isMathRoute }"
-            :aria-expanded="openGroup === 'math' ? 'true' : 'false'"
-            @click="toggleGroup('math')"
+        <div class="nav-cluster">
+          <div
+            class="nav-group"
+            :class="{ open: openGroup === 'math' }"
+            @mouseenter="handleNavGroupMouseEnter('math')"
+            @mouseleave="handleNavGroupMouseLeave('math')"
           >
-            Math
-          </button>
-          <div class="submenu">
-            <router-link class="submenu-link" :to="{ name: ROUTE_NAMES.MATH_HUB }" @click="closeNav">
-              Mathématiques
-            </router-link>
-            <router-link class="submenu-link" :to="{ name: ROUTE_NAMES.MATH_MULTIPLICATIONS }" @click="closeNav">
-              Multiplications
-            </router-link>
-            <router-link class="submenu-link" :to="{ name: ROUTE_NAMES.MATH_SYMMETRY }" @click="closeNav">
-              Symétrie
-            </router-link>
+            <button
+              class="nav-trigger"
+              type="button"
+              :class="{ active: isMathRoute }"
+              :aria-expanded="openGroup === 'math' ? 'true' : 'false'"
+              @click="handleTopLevelTriggerClick('math')"
+            >
+              Maths
+            </button>
+            <div class="submenu">
+              <router-link class="submenu-link" :to="{ name: ROUTE_NAMES.MATH_MULTIPLICATIONS }" @click="closeNav">
+                Multiplications
+              </router-link>
+              <router-link class="submenu-link" :to="{ name: ROUTE_NAMES.MATH_SYMMETRY }" @click="closeNav">
+                Symétrie
+              </router-link>
+            </div>
           </div>
-        </div>
 
-        <div class="nav-group" :class="{ open: openGroup === 'lang' }">
-          <button
-            class="nav-trigger"
-            type="button"
-            :class="{ active: isLangRoute }"
-            :aria-expanded="openGroup === 'lang' ? 'true' : 'false'"
-            @click="toggleGroup('lang')"
+          <div
+            class="nav-group"
+            :class="{ open: openGroup === 'lang' }"
+            @mouseenter="handleNavGroupMouseEnter('lang')"
+            @mouseleave="handleNavGroupMouseLeave('lang')"
           >
-            Langues
-          </button>
-          <div class="submenu">
-            <router-link class="submenu-link" :to="{ name: ROUTE_NAMES.LANGUAGES_HUB }" @click="closeNav">
+            <button
+              class="nav-trigger"
+              type="button"
+              :class="{ active: isLangRoute }"
+              :aria-expanded="openGroup === 'lang' ? 'true' : 'false'"
+              @click="handleTopLevelTriggerClick('lang')"
+            >
               Langues
-            </router-link>
-            <router-link class="submenu-link" :to="{ name: ROUTE_NAMES.LANGUAGES_ENGLISH }" @click="closeNav">
-              Anglais
-            </router-link>
+            </button>
+            <div class="submenu">
+              <router-link class="submenu-link" :to="{ name: ROUTE_NAMES.LANGUAGES_ENGLISH }" @click="closeNav">
+                Anglais
+              </router-link>
+              <router-link class="submenu-link" :to="{ name: ROUTE_NAMES.LANGUAGES_FRENCH }" @click="closeNav">
+                Français
+              </router-link>
+            </div>
           </div>
         </div>
 
