@@ -90,7 +90,7 @@ function handleNavGroupMouseEnter(groupName) {
   hoverOpenTimer.value = window.setTimeout(() => {
     openGroup.value = groupName;
     hoverOpenTimer.value = null;
-  }, 400);
+  }, 300);
 }
 
 function handleNavGroupMouseLeave(groupName) {
