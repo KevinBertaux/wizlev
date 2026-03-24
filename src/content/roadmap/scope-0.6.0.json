@@ -106,7 +106,7 @@
         "scope-060-header-responsive-compaction"
       ],
       "label": "Aligner la navigation principale sur l'état réel du site (Math, Langues, Français, informations utiles et entrées visibles)",
-      "done": false
+      "done": true
     },
     {
       "id": "scope-060-playwright-responsive-matrix",
