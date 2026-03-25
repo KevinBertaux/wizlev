@@ -16,6 +16,7 @@ import {
   getInflectionLanguage,
   getInflectionTense,
   getInflectionVerb,
+  validateInflectionModule,
 } from './inflectionSchema';
 
 const DEFAULT_LANGUAGE_KEY = 'fr';
@@ -38,6 +39,7 @@ const inflectionVerbRecords = [
   prendreVerb,
   venirVerb,
 ];
+const FRENCH_INFLECTION_LANGUAGE_KEY = 'fr';
 
 const legacyModuleData = sanitizeLegacyModule(presentCoreVerbs);
 const legacyPronounsByKey = new Map(legacyModuleData.pronouns.map((pronoun) => [pronoun.key, pronoun]));
@@ -89,6 +91,10 @@ const legacyTenseMap = new Map(
 
 function sanitizeString(value, fallback = '') {
   return typeof value === 'string' && value.trim() ? value.trim() : fallback;
+}
+
+function cloneJsonPayload(value) {
+  return JSON.parse(JSON.stringify(value));
 }
 
 function normalizeFrenchText(value) {
@@ -227,6 +233,25 @@ function buildInflectionModuleFromManifest(manifestPayload, schemaPayload, verbP
   };
 }
 
+function createLocalFrenchInflectionModule() {
+  return buildInflectionModuleFromManifest(conjugationManifest, conjugationSchema, inflectionVerbRecords);
+}
+
+function validateFrenchInflectionRuntime(moduleData) {
+  const issues = validateInflectionModule(moduleData);
+  return {
+    ok: issues.length === 0,
+    issues,
+  };
+}
+
+const baseFrenchInflectionModule = Object.freeze(createLocalFrenchInflectionModule());
+let runtimeFrenchInflectionModule = cloneJsonPayload(baseFrenchInflectionModule);
+let runtimeFrenchInflectionMeta = {
+  source: 'local',
+  version: sanitizeString(conjugationManifest?.version),
+};
+
 function getFamilyLabel(familyKey) {
   if (familyKey === 'present') {
     return 'Présent';
@@ -362,15 +387,61 @@ export function getFrenchConjugationModule(source = legacyModuleData) {
 }
 
 export function getFrenchConjugationPocModule() {
-  return buildInflectionModuleFromManifest(
-    conjugationManifest,
-    conjugationSchema,
-    inflectionVerbRecords
-  );
+  return cloneJsonPayload(baseFrenchInflectionModule);
+}
+
+export function getBaseFrenchInflectionModule() {
+  return cloneJsonPayload(baseFrenchInflectionModule);
 }
 
 export function getFrenchInflectionModule() {
-  return getFrenchConjugationPocModule();
+  return cloneJsonPayload(runtimeFrenchInflectionModule);
+}
+
+export function getFrenchInflectionRuntimeMeta() {
+  return { ...runtimeFrenchInflectionMeta };
+}
+
+export function resetRuntimeFrenchInflectionModule() {
+  runtimeFrenchInflectionModule = cloneJsonPayload(baseFrenchInflectionModule);
+  runtimeFrenchInflectionMeta = {
+    source: 'local',
+    version: sanitizeString(conjugationManifest?.version),
+  };
+  return getFrenchInflectionModule();
+}
+
+export function setRuntimeFrenchInflectionModule(moduleData, meta = {}) {
+  const candidate = cloneJsonPayload(moduleData);
+  const validation = validateFrenchInflectionRuntime(candidate);
+  if (!validation.ok) {
+    return {
+      ok: false,
+      issues: validation.issues,
+      value: getFrenchInflectionModule(),
+    };
+  }
+
+  const language = getInflectionLanguage(candidate, FRENCH_INFLECTION_LANGUAGE_KEY);
+  if (!language) {
+    return {
+      ok: false,
+      issues: ['Module invalide: langue fr absente.'],
+      value: getFrenchInflectionModule(),
+    };
+  }
+
+  runtimeFrenchInflectionModule = candidate;
+  runtimeFrenchInflectionMeta = {
+    source: sanitizeString(meta.source, 'runtime'),
+    version: sanitizeString(meta.version) || sanitizeString(conjugationManifest?.version),
+  };
+
+  return {
+    ok: true,
+    issues: [],
+    value: getFrenchInflectionModule(),
+  };
 }
 
 export function listFrenchTenseFamilies(source = legacyModuleData, moodKey = DEFAULT_MOOD_KEY) {

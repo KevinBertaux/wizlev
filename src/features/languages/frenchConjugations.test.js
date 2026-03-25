@@ -1,10 +1,12 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import {
   buildFrenchVerbCards,
   buildFrenchVerbRows,
   createFrenchExercise,
   formatFrenchPronounAnswer,
+  getBaseFrenchInflectionModule,
   getFrenchInflectionModule,
+  getFrenchInflectionRuntimeMeta,
   getFrenchConjugationPocModule,
   getFrenchTense,
   getFrenchVerb,
@@ -14,9 +16,15 @@ import {
   listFrenchTenseFamilies,
   listFrenchVerbOptionGroups,
   listFrenchVerbOptions,
+  resetRuntimeFrenchInflectionModule,
+  setRuntimeFrenchInflectionModule,
 } from './frenchConjugations';
 
 describe('frenchConjugations', () => {
+  afterEach(() => {
+    resetRuntimeFrenchInflectionModule();
+  });
+
   it('expose les cinq verbes ciblés', () => {
     expect(listFrenchVerbOptions()).toHaveLength(5);
     expect(getFrenchVerb('etre')?.forms.nous).toBe('sommes');
@@ -148,5 +156,60 @@ describe('frenchConjugations', () => {
     expect(isFrenchVerbTenseAvailable('aimer', 'present', source)).toBe(true);
     expect(isFrenchVerbTenseAvailable('aimer', 'imparfait', source)).toBe(false);
     expect(isFrenchVerbTenseAvailable('finir', 'imparfait', source)).toBe(true);
+  });
+
+  it('expose un runtime français indépendant de la base locale', () => {
+    const base = getBaseFrenchInflectionModule();
+    const runtime = getFrenchInflectionModule();
+
+    expect(runtime).toEqual(base);
+    expect(runtime).not.toBe(base);
+    expect(getFrenchInflectionRuntimeMeta()).toEqual({
+      source: 'local',
+      version: '2026-03-17.1',
+    });
+  });
+
+  it('accepte une mise à jour runtime française valide puis sait revenir à la base locale', () => {
+    const candidate = getFrenchInflectionModule();
+    candidate.languages[0].verbs.find((verb) => verb.key === 'aimer').label = 'Aimer (remote)';
+
+    const result = setRuntimeFrenchInflectionModule(candidate, {
+      source: 'remote-cache',
+      version: '2026-03-25.1',
+    });
+
+    expect(result.ok).toBe(true);
+    expect(getFrenchVerb('aimer', getFrenchInflectionModule())?.label).toBe('Aimer (remote)');
+    expect(getFrenchInflectionRuntimeMeta()).toEqual({
+      source: 'remote-cache',
+      version: '2026-03-25.1',
+    });
+
+    resetRuntimeFrenchInflectionModule();
+
+    expect(getFrenchVerb('aimer', getFrenchInflectionModule())?.label).toBe('Aimer');
+    expect(getFrenchInflectionRuntimeMeta()).toEqual({
+      source: 'local',
+      version: '2026-03-17.1',
+    });
+  });
+
+  it('refuse une mise à jour runtime française invalide et conserve l’état courant', () => {
+    const candidate = getFrenchInflectionModule();
+    delete candidate.languages[0].verbs.find((verb) => verb.key === 'aimer').forms['indicatif.present'].je;
+
+    const result = setRuntimeFrenchInflectionModule(candidate, {
+      source: 'remote',
+      version: '2026-03-25.1',
+    });
+
+    expect(result.ok).toBe(false);
+    expect(result.issues.some((issue) => issue.includes('aimer manque le slot je'))).toBe(true);
+    expect(getFrenchVerb('aimer', getFrenchInflectionModule())?.forms.je).toBe('aime');
+    expect(getFrenchInflectionRuntimeMeta()).toEqual({
+      source: 'local',
+      version: '2026-03-17.1',
+    });
   });
 });
