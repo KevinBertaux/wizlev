@@ -10,6 +10,8 @@
     { "key": "reglesClasse", "file": "regles-classe.json" },
     { "key": "materielScolaire", "file": "materiel-scolaire.json" },
     { "key": "activitesCapacites", "file": "activites-capacites.json" },
+    { "key": "actionsVerbs1", "file": "actions-verbs-1.json" },
+    { "key": "actionsVerbs2", "file": "actions-verbs-2.json" },
     { "key": "fetesSymboles", "file": "fetes-symboles.json" },
     { "key": "thanksgiving", "file": "thanksgiving.json" },
     { "key": "paysNationalites", "file": "pays-nationalites.json" },

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { getEnglishList, resetEnglishList, saveEnglishList } from './englishLists';
+import { getEnglishList, listEnglishOptions, resetEnglishList, saveEnglishList } from './englishLists';
 
 class MemoryStorage {
   constructor() {
@@ -64,6 +64,23 @@ describe('englishLists storage behavior', () => {
     expect(list.name.length).toBeGreaterThan(0);
     expect(Array.isArray(list.words)).toBe(true);
     expect(list.words.length).toBeGreaterThan(0);
+  });
+
+  it('exposes actionsVerbs1 and actionsVerbs2 in local fallback', () => {
+    const list1 = getEnglishList('actionsVerbs1');
+    const list2 = getEnglishList('actionsVerbs2');
+    const options = listEnglishOptions();
+
+    expect(list1).not.toBeNull();
+    expect(list1.name).toBe('Actions et verbes 1');
+    expect(list1.words.length).toBe(25);
+
+    expect(list2).not.toBeNull();
+    expect(list2.name).toBe('Actions et verbes 2');
+    expect(list2.words.length).toBe(25);
+
+    expect(options.some((item) => item.key === 'actionsVerbs1')).toBe(true);
+    expect(options.some((item) => item.key === 'actionsVerbs2')).toBe(true);
   });
 
   it('saves and returns sanitized payload', () => {
@@ -149,6 +166,5 @@ describe('englishLists storage behavior', () => {
     expect(saveEnglishList('unknown-key', { name: 'x', words: [] })).toBe(false);
   });
 });
-
 
 

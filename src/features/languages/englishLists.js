@@ -6,6 +6,8 @@ import consignesClasse from '@/content/languages/en/consignes-classe.json';
 import reglesClasse from '@/content/languages/en/regles-classe.json';
 import materielScolaire from '@/content/languages/en/materiel-scolaire.json';
 import activitesCapacites from '@/content/languages/en/activites-capacites.json';
+import actionsVerbs1 from '@/content/languages/en/actions-verbs-1.json';
+import actionsVerbs2 from '@/content/languages/en/actions-verbs-2.json';
 import fetesSymboles from '@/content/languages/en/fetes-symboles.json';
 import thanksgiving from '@/content/languages/en/thanksgiving.json';
 import paysNationalites from '@/content/languages/en/pays-nationalites.json';
@@ -81,6 +83,20 @@ const baseEnglishLists = {
     name: activitesCapacites.name,
     description: activitesCapacites.description,
     words: activitesCapacites.words,
+  },
+  actionsVerbs1: {
+    key: 'actionsVerbs1',
+    label: actionsVerbs1.label || actionsVerbs1.name,
+    name: actionsVerbs1.name,
+    description: actionsVerbs1.description,
+    words: actionsVerbs1.words,
+  },
+  actionsVerbs2: {
+    key: 'actionsVerbs2',
+    label: actionsVerbs2.label || actionsVerbs2.name,
+    name: actionsVerbs2.name,
+    description: actionsVerbs2.description,
+    words: actionsVerbs2.words,
   },
   fetesSymboles: {
     key: 'fetesSymboles',
@@ -184,6 +200,8 @@ const listFileByKey = {
   reglesClasse: 'regles-classe.json',
   materielScolaire: 'materiel-scolaire.json',
   activitesCapacites: 'activites-capacites.json',
+  actionsVerbs1: 'actions-verbs-1.json',
+  actionsVerbs2: 'actions-verbs-2.json',
   fetesSymboles: 'fetes-symboles.json',
   thanksgiving: 'thanksgiving.json',
   paysNationalites: 'pays-nationalites.json',
@@ -519,7 +537,6 @@ export function resetEnglishList(listKey) {
   localStorage.removeItem(getStorageKey(listKey));
   localStorage.removeItem(getLegacyStorageKey(listKey));
 }
-
 
 
 
