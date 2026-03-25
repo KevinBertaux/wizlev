@@ -2,6 +2,10 @@ import localManifest from '../../content/math/symmetry/manifest.json';
 import shapesThreePoints from '../../content/math/symmetry/shapes-3-points.json';
 import shapesFourPoints from '../../content/math/symmetry/shapes-4-points.json';
 import shapesFivePoints from '../../content/math/symmetry/shapes-5-points.json';
+import {
+  compareManifestVersionTokens,
+  getManifestVersionToken,
+} from '../remote/manifestSync';
 
 export const SYMMETRY_SHAPES_STORAGE_KEY = 'manabuplay_symmetry_shapes_v1';
 
@@ -24,6 +28,7 @@ let localBaseShapesConfig = createLocalBaseShapesConfig();
 let runtimeBaseShapesConfig = cloneJson(localBaseShapesConfig);
 let remoteHydrated = false;
 let remoteHydrationPromise = null;
+const LOCAL_MANIFEST_VERSION = getManifestVersionToken(localManifest);
 
 function cloneJson(value) {
   return JSON.parse(JSON.stringify(value));
@@ -307,10 +312,6 @@ function joinRemoteUrl(baseUrl, ...segments) {
   return [stripTrailingSlashes(baseUrl), ...cleaned].join('/');
 }
 
-function compareUpdatedAt(left, right) {
-  return String(left || '').localeCompare(String(right || ''));
-}
-
 function createTimeoutSignal(timeoutMs) {
   if (typeof AbortController === 'undefined') {
     return { signal: undefined, clear: () => {} };
@@ -364,8 +365,9 @@ async function hydrateFromRemoteManifest(baseUrl, folder, fallbackFile) {
   const manifestUrl = joinRemoteUrl(baseUrl, folder, DEFAULT_REMOTE_MANIFEST_FILE);
   const remoteManifestPayload = await fetchJson(manifestUrl);
   const manifest = sanitizeManifest(remoteManifestPayload, localManifest);
+  const remoteManifestVersion = getManifestVersionToken(remoteManifestPayload);
 
-  if (!manifest.updatedAt || compareUpdatedAt(manifest.updatedAt, localManifest.updatedAt) <= 0) {
+  if (!remoteManifestVersion || compareManifestVersionTokens(remoteManifestVersion, LOCAL_MANIFEST_VERSION) <= 0) {
     return {
       enabled: true,
       loaded: 0,
