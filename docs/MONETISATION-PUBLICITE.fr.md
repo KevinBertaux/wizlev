@@ -7,8 +7,8 @@ Document de cadrage. Il décrit la ligne monétisation du projet, ses prérequis
 La monétisation est maintenant découplée des versions produit.
 
 - ligne produit :
-  - `feat/0.6.0-prep`
-  - puis `feat/0.7.0-prep`
+  - `feat/0.5.0-prep`
+  - puis `feat/0.6.0-prep`
 - ligne monétisation :
   - `epic/ads-cmp`
 
@@ -56,9 +56,9 @@ Conséquence :
 ### Produit
 
 - `main` = branche stable
-- `feat/0.6.0-prep` = ligne produit actuelle
+- `feat/0.5.0-prep` = ligne produit actuelle
 - futures branches produit :
-  - `feat/0.7.0-prep`
+  - `feat/0.6.0-prep`
   - etc.
 
 ### Monétisation

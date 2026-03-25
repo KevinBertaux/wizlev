@@ -6,7 +6,7 @@ English documentation hub. This file points to the right sources instead of dupl
 
 ## Status
 
-- Published product version: `0.6.0`
+- Current product version: `0.6.0-prep`
 - Active product branch: `feat/0.6.0-prep`
 - Separate monetization line: `epic/ads-cmp`
 
@@ -16,7 +16,7 @@ English documentation hub. This file points to the right sources instead of dupl
 
 - Short GitHub overview: `README.md`
 - Short planning summary: `ROADMAP.md`
-- Latest published release notes: `docs/RELEASE-NOTES.0.6.0.fr.md`
+- Latest published release notes: `docs/RELEASE-NOTES.0.5.0-prep.fr.md`
 
 ### Operations and quality
 
@@ -75,7 +75,7 @@ English documentation hub. This file points to the right sources instead of dupl
   - modules: `multiplications`, `symmetry`
 - `Languages`
   - hub: `/languages`
-  - modules: `english`, `french`
+  - module: `english`
 - `Internal panel`
   - documentation and access reserved for internal use
 
