@@ -126,7 +126,7 @@
         "scope-060-playwright-responsive-matrix"
       ],
       "label": "Pré-launch 0.6 : aligner version produit, références documentaires et pages légales avant mise en production",
-      "done": false
+      "done": true
     },
     {
       "id": "scope-060-legal-pages-refresh",
