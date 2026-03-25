@@ -35,7 +35,7 @@
         "scope-060-french-conjugation-v1"
       ],
       "label": "Français : manifest R2 + 1 verbe = 1 JSON, pour ajouter des verbes sans redéployer",
-      "done": false
+      "done": true
     },
     {
       "id": "scope-060-language-quiz-pattern",
