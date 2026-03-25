@@ -25,7 +25,7 @@ export async function fetchBuildInfo(fetchImpl = globalThis.fetch) {
     return null;
   }
 
-  if (typeof import.meta !== 'undefined' && import.meta.env?.DEV) {
+  if (fetchImpl === globalThis.fetch && typeof import.meta !== 'undefined' && import.meta.env?.DEV) {
     return null;
   }
 

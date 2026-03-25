@@ -17,7 +17,7 @@ export default defineConfig({
     video: 'retain-on-failure',
   },
   webServer: {
-    command: 'npm run build -- --mode e2e && npm run preview -- --strictPort --host 127.0.0.1 --port 4173',
+    command: 'npm run build:e2e && npm run preview -- --strictPort --host 127.0.0.1 --port 4173',
     url: 'http://127.0.0.1:4173',
     reuseExistingServer: false,
     timeout: 180 * 1000,
@@ -45,4 +45,3 @@ export default defineConfig({
     },
   ],
 });
-
