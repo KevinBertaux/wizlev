@@ -12,6 +12,16 @@ import manabuerVerb from '@/content/languages/fr/conjugation/verbs/manabuer.json
 import prendreVerb from '@/content/languages/fr/conjugation/verbs/prendre.json';
 import venirVerb from '@/content/languages/fr/conjugation/verbs/venir.json';
 import {
+  compareManifestVersionTokens,
+  getLatestManifestVersionToken,
+  getManifestVersionToken,
+  hasManifestEntryChanged,
+  indexManifestEntriesByKey,
+  normalizeManifestEntries,
+  readRemotePayloadCache,
+  writeRemotePayloadCache,
+} from '@/features/remote/manifestSync';
+import {
   buildInflectionRows,
   getInflectionLanguage,
   getInflectionTense,
@@ -27,6 +37,11 @@ const GROUP_LABELS = Object.freeze({
   '3': '3e groupe',
 });
 const ELIDABLE_INITIAL_RE = /^[aeiouyàâäæéèêëîïôöœùûüÿh]/i;
+const REMOTE_CACHE_STORAGE_KEY = 'manabuplay_french_conjugation_remote_cache_v1';
+const REMOTE_TIMEOUT_MS = 3500;
+const DEFAULT_REMOTE_FOLDER = 'languages/fr/conjugation';
+const REMOTE_SCHEMA_KEY = '__schema';
+const REMOTE_MANIFEST_KEY = '__manifest';
 const inflectionVerbRecords = [
   aimerVerb,
   allerVerb,
@@ -95,6 +110,73 @@ function sanitizeString(value, fallback = '') {
 
 function cloneJsonPayload(value) {
   return JSON.parse(JSON.stringify(value));
+}
+
+function getEnvValue(keys) {
+  if (typeof import.meta === 'undefined' || !import.meta.env) {
+    return '';
+  }
+
+  for (const key of keys) {
+    const value = import.meta.env[key];
+    if (typeof value === 'string' && value.trim()) {
+      return value.trim();
+    }
+  }
+
+  return '';
+}
+
+function trimRemoteFolder(value) {
+  return String(value || '')
+    .replace(/^\/+/, '')
+    .replace(/\/+$/, '')
+    .trim();
+}
+
+function getRemoteBaseUrl() {
+  const env = getEnvValue([
+    'VITE_FRENCH_CONJUGATION_REMOTE_BASE_URL',
+    'VITE_REMOTE_CONTENT_BASE_URL',
+    'VITE_LANGUAGES_REMOTE_BASE_URL',
+  ]);
+
+  if (!env) {
+    return '';
+  }
+
+  return env.replace(/\/$/, '');
+}
+
+function getRemoteFolder() {
+  const explicitFolder = trimRemoteFolder(
+    getEnvValue(['VITE_FRENCH_CONJUGATION_REMOTE_FOLDER', 'VITE_LANGUAGES_REMOTE_FOLDER'])
+  );
+
+  return explicitFolder || DEFAULT_REMOTE_FOLDER;
+}
+
+async function fetchJsonWithTimeout(url, timeoutMs = REMOTE_TIMEOUT_MS) {
+  const controller = typeof AbortController === 'undefined' ? null : new AbortController();
+  const timeoutId = setTimeout(() => controller?.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      signal: controller?.signal,
+      headers: { Accept: 'application/json' },
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    return await response.json();
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timeoutId);
+  }
 }
 
 function normalizeFrenchText(value) {
@@ -237,6 +319,38 @@ function createLocalFrenchInflectionModule() {
   return buildInflectionModuleFromManifest(conjugationManifest, conjugationSchema, inflectionVerbRecords);
 }
 
+function getSchemaToken(manifestPayload, fallbackVersion = '') {
+  const explicitToken =
+    sanitizeString(manifestPayload?.schemaToken) ||
+    sanitizeString(manifestPayload?.schemaUpdatedAt) ||
+    (typeof manifestPayload?.schemaVersion === 'string'
+      ? sanitizeString(manifestPayload.schemaVersion)
+      : '');
+
+  return explicitToken || sanitizeString(fallbackVersion);
+}
+
+function createSchemaManifestEntry(manifestPayload, fallbackVersion = '') {
+  const file = sanitizeString(manifestPayload?.schemaFile);
+  if (!file) {
+    return null;
+  }
+
+  const explicitToken =
+    sanitizeString(manifestPayload?.schemaToken) ||
+    sanitizeString(manifestPayload?.schemaUpdatedAt) ||
+    (typeof manifestPayload?.schemaVersion === 'string'
+      ? sanitizeString(manifestPayload.schemaVersion)
+      : '');
+
+  return {
+    key: REMOTE_SCHEMA_KEY,
+    file,
+    token: explicitToken || sanitizeString(fallbackVersion),
+    hasExplicitToken: Boolean(explicitToken),
+  };
+}
+
 function validateFrenchInflectionRuntime(moduleData) {
   const issues = validateInflectionModule(moduleData);
   return {
@@ -245,12 +359,26 @@ function validateFrenchInflectionRuntime(moduleData) {
   };
 }
 
+const LOCAL_MANIFEST_VERSION = getManifestVersionToken(conjugationManifest);
+const LOCAL_SCHEMA_ENTRY = createSchemaManifestEntry(conjugationManifest, LOCAL_MANIFEST_VERSION);
+const LOCAL_VERB_ENTRY_INDEX = indexManifestEntriesByKey(conjugationManifest, LOCAL_MANIFEST_VERSION);
+const LOCAL_VERB_PAYLOADS = Object.freeze(
+  Object.fromEntries(
+    inflectionVerbRecords
+      .filter((verb) => verb && typeof verb === 'object')
+      .map((verb) => [sanitizeString(verb.key), cloneJsonPayload(verb)])
+  )
+);
+
 const baseFrenchInflectionModule = Object.freeze(createLocalFrenchInflectionModule());
 let runtimeFrenchInflectionModule = cloneJsonPayload(baseFrenchInflectionModule);
 let runtimeFrenchInflectionMeta = {
   source: 'local',
   version: sanitizeString(conjugationManifest?.version),
 };
+let remoteHydrated = false;
+let remoteHydrationPromise = null;
+let cachedRemoteVersion = '';
 
 function getFamilyLabel(familyKey) {
   if (familyKey === 'present') {
@@ -443,6 +571,275 @@ export function setRuntimeFrenchInflectionModule(moduleData, meta = {}) {
     value: getFrenchInflectionModule(),
   };
 }
+
+function getCachedPayload(cache, key, token) {
+  if (!token || !cache || typeof cache !== 'object') {
+    return null;
+  }
+
+  const cachedEntry = cache.entries?.[key];
+  const cachedPayload = cache.payloads?.[key];
+  if (!cachedEntry || !cachedPayload || sanitizeString(cachedEntry.token) !== sanitizeString(token)) {
+    return null;
+  }
+
+  return cloneJsonPayload(cachedPayload);
+}
+
+function getLocalVerbPayload(entry) {
+  const localEntry = LOCAL_VERB_ENTRY_INDEX[entry.key];
+  if (!localEntry || sanitizeString(localEntry.token) !== sanitizeString(entry.token)) {
+    return null;
+  }
+
+  const localPayload = LOCAL_VERB_PAYLOADS[entry.key];
+  return localPayload ? cloneJsonPayload(localPayload) : null;
+}
+
+function getLocalSchemaPayload(entry) {
+  if (!LOCAL_SCHEMA_ENTRY || sanitizeString(LOCAL_SCHEMA_ENTRY.token) !== sanitizeString(entry?.token)) {
+    return null;
+  }
+
+  return cloneJsonPayload(conjugationSchema);
+}
+
+function buildFrenchInflectionModuleFromPayloads(manifestPayload, schemaPayload, payloadsByKey = {}) {
+  const verbEntries = normalizeManifestEntries(
+    manifestPayload,
+    getManifestVersionToken(manifestPayload)
+  );
+
+  if (!schemaPayload || verbEntries.length === 0) {
+    return null;
+  }
+
+  const verbPayloads = [];
+  for (const entry of verbEntries) {
+    const payload = payloadsByKey[entry.key];
+    if (!payload) {
+      return null;
+    }
+    verbPayloads.push(payload);
+  }
+
+  return buildInflectionModuleFromManifest(manifestPayload, schemaPayload, verbPayloads);
+}
+
+function applyCachedRemoteFrenchModule() {
+  const cache = readRemotePayloadCache(REMOTE_CACHE_STORAGE_KEY);
+  if (!cache.version || compareManifestVersionTokens(cache.version, LOCAL_MANIFEST_VERSION) <= 0) {
+    cachedRemoteVersion = '';
+    return 0;
+  }
+
+  const cachedManifest = cache.payloads?.[REMOTE_MANIFEST_KEY];
+  const cachedSchema = cache.payloads?.[REMOTE_SCHEMA_KEY];
+  if (!cachedManifest || !cachedSchema) {
+    cachedRemoteVersion = '';
+    return 0;
+  }
+
+  const moduleData = buildFrenchInflectionModuleFromPayloads(cachedManifest, cachedSchema, cache.payloads);
+  if (!moduleData) {
+    cachedRemoteVersion = '';
+    return 0;
+  }
+
+  const result = setRuntimeFrenchInflectionModule(moduleData, {
+    source: 'remote-cache',
+    version: cache.version,
+  });
+
+  if (!result.ok) {
+    cachedRemoteVersion = '';
+    return 0;
+  }
+
+  cachedRemoteVersion = cache.version;
+  return 1;
+}
+
+async function resolveRemoteFrenchManifest(baseUrl) {
+  const remoteFolder = getRemoteFolder();
+  const payload = await fetchJsonWithTimeout(`${baseUrl}/${remoteFolder}/manifest.json`);
+  const version = getManifestVersionToken(payload);
+
+  return {
+    payload,
+    version,
+    schemaEntry: createSchemaManifestEntry(payload, version),
+    verbEntries: normalizeManifestEntries(payload, version),
+  };
+}
+
+export async function hydrateRemoteFrenchConjugationModule() {
+  if (remoteHydrated) {
+    return { enabled: !!getRemoteBaseUrl(), loaded: 0, updated: 0, skipped: 0 };
+  }
+
+  if (remoteHydrationPromise) {
+    return remoteHydrationPromise;
+  }
+
+  remoteHydrationPromise = (async () => {
+    const baseUrl = getRemoteBaseUrl();
+    if (!baseUrl || typeof window === 'undefined' || typeof fetch !== 'function') {
+      remoteHydrated = true;
+      return { enabled: false, loaded: 0, updated: 0, skipped: 0 };
+    }
+
+    const {
+      payload: remoteManifestPayload,
+      version: remoteManifestVersion,
+      schemaEntry,
+      verbEntries,
+    } = await resolveRemoteFrenchManifest(baseUrl);
+    const baselineVersion = getLatestManifestVersionToken(LOCAL_MANIFEST_VERSION, cachedRemoteVersion);
+
+    if (!remoteManifestVersion || compareManifestVersionTokens(remoteManifestVersion, baselineVersion) <= 0) {
+      remoteHydrated = true;
+      return {
+        enabled: true,
+        loaded: 0,
+        updated: 0,
+        skipped: remoteManifestVersion ? 1 : 0,
+      };
+    }
+
+    if (!remoteManifestPayload || !schemaEntry || verbEntries.length === 0) {
+      remoteHydrated = true;
+      return { enabled: true, loaded: 0, updated: 0, skipped: 1 };
+    }
+
+    const currentCache = readRemotePayloadCache(REMOTE_CACHE_STORAGE_KEY);
+    const persistedPayloads = {
+      ...(currentCache.payloads || {}),
+      [REMOTE_MANIFEST_KEY]: remoteManifestPayload,
+    };
+    const persistedEntries = { ...(currentCache.entries || {}) };
+    const payloadsByKey = {};
+    const remoteFolder = getRemoteFolder();
+    const manifestProvidesEntryTokens =
+      schemaEntry.hasExplicitToken || verbEntries.some((entry) => entry.hasExplicitToken);
+
+    let loaded = 0;
+    let skipped = 0;
+    let failed = 0;
+
+    let schemaPayload = null;
+    if (manifestProvidesEntryTokens) {
+      schemaPayload = getCachedPayload(currentCache, REMOTE_SCHEMA_KEY, schemaEntry.token);
+      if (!schemaPayload) {
+        schemaPayload = getLocalSchemaPayload(schemaEntry);
+      }
+    }
+
+    if (!schemaPayload) {
+      schemaPayload = await fetchJsonWithTimeout(`${baseUrl}/${remoteFolder}/${schemaEntry.file}`);
+      if (schemaPayload) {
+        loaded += 1;
+      } else {
+        failed += 1;
+      }
+    } else {
+      skipped += 1;
+    }
+
+    if (schemaPayload) {
+      persistedPayloads[REMOTE_SCHEMA_KEY] = cloneJsonPayload(schemaPayload);
+      persistedEntries[REMOTE_SCHEMA_KEY] = {
+        key: REMOTE_SCHEMA_KEY,
+        file: schemaEntry.file,
+        token: schemaEntry.token,
+      };
+    }
+
+    for (const entry of verbEntries) {
+      let payload = null;
+
+      if (manifestProvidesEntryTokens && !hasManifestEntryChanged(entry, LOCAL_VERB_ENTRY_INDEX[entry.key])) {
+        payload = getLocalVerbPayload(entry);
+      }
+
+      if (!payload && manifestProvidesEntryTokens) {
+        payload = getCachedPayload(currentCache, entry.key, entry.token);
+      }
+
+      if (!payload) {
+        payload = await fetchJsonWithTimeout(`${baseUrl}/${remoteFolder}/${entry.file}`);
+        if (payload) {
+          loaded += 1;
+        } else {
+          failed += 1;
+        }
+      } else {
+        skipped += 1;
+      }
+
+      if (!payload) {
+        continue;
+      }
+
+      payloadsByKey[entry.key] = cloneJsonPayload(payload);
+      persistedPayloads[entry.key] = cloneJsonPayload(payload);
+      persistedEntries[entry.key] = {
+        key: entry.key,
+        file: entry.file,
+        token: entry.token || remoteManifestVersion,
+      };
+    }
+
+    if (failed > 0 || !schemaPayload) {
+      remoteHydrated = true;
+      return { enabled: true, loaded, updated: 0, skipped };
+    }
+
+    const moduleData = buildFrenchInflectionModuleFromPayloads(
+      remoteManifestPayload,
+      schemaPayload,
+      payloadsByKey
+    );
+    if (!moduleData) {
+      remoteHydrated = true;
+      return { enabled: true, loaded, updated: 0, skipped: skipped + 1 };
+    }
+
+    const result = setRuntimeFrenchInflectionModule(moduleData, {
+      source: 'remote',
+      version: remoteManifestVersion,
+    });
+
+    if (!result.ok) {
+      remoteHydrated = true;
+      return { enabled: true, loaded, updated: 0, skipped: skipped + 1 };
+    }
+
+    if (
+      writeRemotePayloadCache(REMOTE_CACHE_STORAGE_KEY, {
+        version: remoteManifestVersion,
+        entries: persistedEntries,
+        payloads: persistedPayloads,
+      })
+    ) {
+      cachedRemoteVersion = remoteManifestVersion;
+    }
+
+    remoteHydrated = true;
+    return {
+      enabled: true,
+      loaded,
+      updated: 1,
+      skipped,
+    };
+  })();
+
+  const result = await remoteHydrationPromise;
+  remoteHydrationPromise = null;
+  return result;
+}
+
+applyCachedRemoteFrenchModule();
 
 export function listFrenchTenseFamilies(source = legacyModuleData, moodKey = DEFAULT_MOOD_KEY) {
   const resolvedSource = getFrenchSource(source);

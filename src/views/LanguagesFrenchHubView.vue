@@ -9,6 +9,7 @@ import QuizSelectField from '@/components/QuizSelectField.vue';
 import { createFrenchModeSessionStore } from '@/features/languages/frenchConjugationSessionStore';
 import {
   getFrenchInflectionModule,
+  hydrateRemoteFrenchConjugationModule,
   getFrenchTense,
   isFrenchVerbTenseAvailable,
   listFrenchTenseFamilies,
@@ -22,21 +23,32 @@ const FRENCH_WORKSPACE_STORAGE_KEY = 'manabuplay_french_workspace';
 
 const route = useRoute();
 const router = useRouter();
-const frenchSource = getFrenchInflectionModule();
-const verbOptions = listFrenchVerbOptions(frenchSource).filter((option) => option.value !== 'manabuer');
+const initialFrenchSource = getFrenchInflectionModule();
+const initialVerbOptions = listFrenchVerbOptions(initialFrenchSource).filter(
+  (option) => option.value !== 'manabuer'
+);
+const initialTenseFamilies = listFrenchTenseFamilies(initialFrenchSource);
+const initialValidVerbKeys = new Set(initialVerbOptions.map((option) => option.value));
+const initialValidTenseKeys = new Set(
+  initialTenseFamilies.flatMap((family) => family.options.map((option) => option.key))
+);
+const frenchSource = ref(initialFrenchSource);
+const verbOptions = computed(() =>
+  listFrenchVerbOptions(frenchSource.value).filter((option) => option.value !== 'manabuer')
+);
 const verbOptionGroups = computed(() =>
-  listFrenchVerbOptionGroups(frenchSource)
+  listFrenchVerbOptionGroups(frenchSource.value)
     .map((group) => ({
       ...group,
       options: (group.options || []).filter((option) => option.value !== 'manabuer'),
     }))
     .filter((group) => group.options.length > 0)
 );
-const tenseFamilies = listFrenchTenseFamilies(frenchSource);
+const tenseFamilies = computed(() => listFrenchTenseFamilies(frenchSource.value));
 
-const validVerbKeys = new Set(verbOptions.map((option) => option.value));
-const validTenseKeys = new Set(
-  tenseFamilies.flatMap((family) => family.options.map((option) => option.key))
+const validVerbKeys = computed(() => new Set(verbOptions.value.map((option) => option.value)));
+const validTenseKeys = computed(
+  () => new Set(tenseFamilies.value.flatMap((family) => family.options.map((option) => option.key)))
 );
 const validModeKeys = new Set(['table', 'flashcards', 'qcm', 'input']);
 
@@ -58,7 +70,7 @@ const modeOptions = Object.freeze([
   },
 ]);
 const tenseOptionGroups = computed(() =>
-  tenseFamilies.map((family) => ({
+  tenseFamilies.value.map((family) => ({
     key: family.key,
     label: family.label,
     options: family.options.map((option) => ({
@@ -83,11 +95,11 @@ function capitalizeLabel(label) {
 }
 
 function resolveVerbKey(value) {
-  return typeof value === 'string' && validVerbKeys.has(value) ? value : '';
+  return typeof value === 'string' && validVerbKeys.value.has(value) ? value : '';
 }
 
 function resolveTenseKey(value) {
-  return typeof value === 'string' && validTenseKeys.has(value) ? value : '';
+  return typeof value === 'string' && validTenseKeys.value.has(value) ? value : '';
 }
 
 function readStoredWorkspace() {
@@ -104,8 +116,18 @@ function readStoredWorkspace() {
 }
 
 const initialWorkspace = readStoredWorkspace();
-const selectedVerb = ref(resolveVerbKey(route.query.verb || initialWorkspace?.verb || ''));
-const selectedTense = ref(resolveTenseKey(route.query.tense || initialWorkspace?.tense || ''));
+const selectedVerb = ref(
+  typeof (route.query.verb || initialWorkspace?.verb) === 'string' &&
+    initialValidVerbKeys.has(route.query.verb || initialWorkspace?.verb)
+    ? route.query.verb || initialWorkspace?.verb
+    : ''
+);
+const selectedTense = ref(
+  typeof (route.query.tense || initialWorkspace?.tense) === 'string' &&
+    initialValidTenseKeys.has(route.query.tense || initialWorkspace?.tense)
+    ? route.query.tense || initialWorkspace?.tense
+    : ''
+);
 const selectedMood = ref(
   typeof (route.query.mood || initialWorkspace?.mood) === 'string' &&
     (route.query.mood || initialWorkspace?.mood)
@@ -129,7 +151,7 @@ const verbSelectField = ref(null);
 const tenseSelectField = ref(null);
 
 const activeTense = computed(() =>
-  selectedTense.value ? getFrenchTense(selectedTense.value, frenchSource, selectedMood.value) : null
+  selectedTense.value ? getFrenchTense(selectedTense.value, frenchSource.value, selectedMood.value) : null
 );
 const hasCompleteSelection = computed(() => Boolean(selectedVerb.value && selectedTense.value));
 const tenseAvailable = computed(() =>
@@ -137,7 +159,7 @@ const tenseAvailable = computed(() =>
     ? isFrenchVerbTenseAvailable(
         selectedVerb.value,
         selectedTense.value,
-        frenchSource,
+        frenchSource.value,
         selectedMood.value
       )
     : false
@@ -172,7 +194,7 @@ const activePillLabel = computed(() => {
   if (!activeTense.value || !selectedVerb.value) {
     return '';
   }
-  const activeOption = verbOptions.find((option) => option.value === selectedVerb.value);
+  const activeOption = verbOptions.value.find((option) => option.value === selectedVerb.value);
   return activeOption ? `${activeOption.label} · ${toShortTenseLabel(activeTense.value.label)}` : '';
 });
 
@@ -346,6 +368,11 @@ onMounted(() => {
     router.replace({ name: 'languages-french' });
   }
   refreshScoreSummary();
+  hydrateRemoteFrenchConjugationModule().then((result) => {
+    if (result?.updated) {
+      frenchSource.value = getFrenchInflectionModule();
+    }
+  });
 });
 
 onUnmounted(() => {
@@ -361,6 +388,19 @@ onBeforeRouteLeave((to) => {
   }
   return true;
 });
+
+watch(
+  frenchSource,
+  () => {
+    if (selectedVerb.value && !validVerbKeys.value.has(selectedVerb.value)) {
+      selectedVerb.value = '';
+    }
+    if (selectedTense.value && !validTenseKeys.value.has(selectedTense.value)) {
+      selectedTense.value = '';
+    }
+  },
+  { deep: false }
+);
 
 watch(
   [selectedVerb, selectedTense, selectedMood, selectedMode],
