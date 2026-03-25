@@ -114,7 +114,7 @@
       "domain": "qa",
       "feature": "playwright",
       "label": "Étendre Playwright avec des profils tablette et des cas responsive encore non couverts",
-      "done": false
+      "done": true
     },
     {
       "id": "scope-060-legal-pages-refresh",

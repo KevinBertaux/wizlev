@@ -262,6 +262,14 @@
       "done": false
     },
     {
+      "id": "backlog-playwright-responsive-1280",
+      "priority": "Low",
+      "domain": "qa",
+      "feature": "playwright",
+      "label": "Ajouter une passe Playwright/QA responsive dédiée au palier 1280px",
+      "done": false
+    },
+    {
       "id": "backlog-ui-minor-polish",
       "priority": "Low",
       "domain": "ui",
