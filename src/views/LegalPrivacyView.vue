@@ -3,7 +3,7 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
 </script>
 
 <template>
-  <LegalPageLayout title="Politique de confidentialité" updated-at="20 mars 2026">
+  <LegalPageLayout title="Politique de confidentialité" updated-at="25 mars 2026">
     <h2>1. Responsable du traitement</h2>
     <p>
       Le site <strong>ManabuPlay</strong> est exploité par un éditeur non professionnel. Contact vie privée : contact
