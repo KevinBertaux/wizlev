@@ -1,7 +1,9 @@
 <script setup>
-import { computed, nextTick, ref, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import AdminStatusBanner from '@/components/AdminStatusBanner.vue';
+import RemoteContentLoading from '@/components/RemoteContentLoading.vue';
+import SymmetryShapeReviewCard from '@/components/SymmetryShapeReviewCard.vue';
 import { useSessionCountdown } from '@/composables/useSessionCountdown';
 import {
   getEnglishList,
@@ -25,20 +27,32 @@ import {
 } from '@/features/admin/storageMaintenance';
 import {
   getActiveSymmetryShapesConfig,
+  hydrateRemoteSymmetryShapesConfig,
   hasSymmetryShapesOverride,
-  resetSymmetryShapesOverride,
-  saveSymmetryShapesOverride,
 } from '@/features/math/symmetryShapeStore';
 import { fetchBuildInfo } from '@/features/admin/buildInfoStore';
 import { getRoadmapEntries, ROADMAP_PRIORITY_ORDER } from '@/features/admin/roadmapStore';
+import { buildSymmetryShapeReviewReport } from '@/features/math/symmetryShapeReview';
+import { buildSymmetryExportPayload, buildSymmetryExportZipBlob } from '@/features/math/symmetryReviewExport';
+import {
+  applySymmetryReviewSession,
+  createSymmetryReviewSession,
+  hasSymmetryReviewSessionChanges,
+  setSymmetryReviewStatus,
+  summarizeSymmetryReviewEntries,
+  SYMMETRY_REVIEW_STATUS,
+  toggleSymmetryReviewDeleted,
+  writeSymmetryReviewSession,
+} from '@/features/math/symmetryReviewSessionStore';
 
 const router = useRouter();
 const selectedList = ref('');
 const statusType = ref('');
 const statusMessage = ref('');
 const englishInputRefs = ref([]);
-const APP_VERSION = '0.5.0';
-const LAST_UPDATE_FR = '13 mars 2026';
+const APP_VERSION = '0.6.0';
+const ACTIVE_SCOPE_ID = '0.6.0';
+const LAST_UPDATE_FR = '25 mars 2026';
 const RESET_CONFIRM_TEXT = 'SUPPRIMER';
 const buildInfo = ref(null);
 
@@ -68,6 +82,7 @@ const sidebarGroups = Object.freeze([
     items: [
       { id: 'overview', icon: '📊', label: "Vue d'ensemble" },
       { id: 'roadmap', icon: '🗺️', label: 'Roadmap & Scopes' },
+      { id: 'tmp-lab', icon: '🧪', label: 'Lab tmp' },
       { id: 'maintenance', icon: '🧹', label: 'Maintenance locale' },
       { id: 'admin-help', icon: '📘', label: 'Aide' },
     ],
@@ -79,6 +94,7 @@ const sectionTitleMap = Object.freeze({
   roadmap: 'Roadmap & Scopes',
   english: 'Édition de listes d’anglais',
   symmetry: 'Formes de symétrie',
+  'tmp-lab': 'Lab tmp local',
   maintenance: 'Maintenance locale',
   'admin-help': 'Manuel du panneau interne',
 });
@@ -158,6 +174,539 @@ function createDraft(listKey) {
 }
 
 const draft = ref(createDraft(selectedList.value));
+const tmpFolderInput = ref(null);
+const tmpEntries = ref([]);
+const tmpSelectedId = ref('');
+const tmpPreviewUrl = ref('');
+const tmpPreviewText = ref('');
+const tmpPreviewKind = ref('none');
+const tmpFolderLabel = ref('');
+const tmpPickerSupportChecked = ref(false);
+const tmpSavedHandleAvailable = ref(false);
+const tmpLoadState = ref('idle');
+const tmpFolderOpen = ref({});
+
+const TMP_TEXT_EXTENSIONS = new Set(['.json', '.txt', '.md', '.csv', '.log', '.env', '.mjs', '.js']);
+const TMP_IMAGE_EXTENSIONS = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp']);
+const TMP_DIRECTORY_DB_NAME = 'manabuplay-admin-tmp-lab-v1';
+const TMP_DIRECTORY_DB_STORE = 'handles';
+const TMP_DIRECTORY_DB_KEY = 'tmp-directory-handle';
+
+const tmpSelectedEntry = computed(() => tmpEntries.value.find((entry) => entry.id === tmpSelectedId.value) || null);
+const tmpEntryCount = computed(() => tmpEntries.value.length);
+const tmpCanPreview = computed(() => Boolean(tmpSelectedEntry.value));
+const tmpSupportsDirectoryPicker = computed(
+  () => typeof window !== 'undefined' && typeof window.showDirectoryPicker === 'function'
+);
+const tmpTreeNodes = computed(() => buildTmpTreeNodes(tmpEntries.value, tmpFolderOpen.value));
+const tmpCanReuseSavedHandle = computed(() => tmpSupportsDirectoryPicker.value && tmpSavedHandleAvailable.value);
+const tmpStatusMessage = computed(() => {
+  if (tmpLoadState.value === 'loading') {
+    return 'Chargement du dossier local en cours...';
+  }
+  if (tmpCanReuseSavedHandle.value) {
+    return 'Le navigateur connaît déjà un dossier tmp/. Tu peux le reconnecter sans le rechercher.';
+  }
+  if (tmpSupportsDirectoryPicker.value) {
+    return "Le navigateur peut mémoriser un dossier tmp/ après la première connexion.";
+  }
+  return "Le navigateur ne supporte pas la connexion persistée de dossier. Fallback : sélection manuelle du dossier local.";
+});
+
+function resetTmpPreview() {
+  if (tmpPreviewUrl.value) {
+    URL.revokeObjectURL(tmpPreviewUrl.value);
+  }
+  tmpPreviewUrl.value = '';
+  tmpPreviewText.value = '';
+  tmpPreviewKind.value = 'none';
+}
+
+function detectTmpExtension(name = '') {
+  const normalized = String(name).toLowerCase();
+  const index = normalized.lastIndexOf('.');
+  return index >= 0 ? normalized.slice(index) : '';
+}
+
+function normalizeTmpRelativePath(path = '') {
+  const parts = String(path)
+    .split('/')
+    .filter(Boolean);
+  const tmpIndex = parts.findIndex((part) => part.toLowerCase() === 'tmp');
+  if (tmpIndex >= 0) {
+    return parts.slice(tmpIndex + 1).join('/');
+  }
+  return parts.join('/');
+}
+
+function buildTmpEntry(file, index) {
+  const relativePath = normalizeTmpRelativePath(file.webkitRelativePath || file.name) || file.name;
+  const extension = detectTmpExtension(relativePath);
+
+  return {
+    id: `${relativePath}-${index}`,
+    name: file.name,
+    relativePath,
+    extension,
+    size: file.size,
+    type: file.type || 'application/octet-stream',
+    file,
+  };
+}
+
+function buildTmpHandleEntry(file, handle, relativePath, index) {
+  const normalizedPath = normalizeTmpRelativePath(relativePath) || file.name;
+  const extension = detectTmpExtension(normalizedPath);
+
+  return {
+    id: `${normalizedPath}-${index}`,
+    name: file.name,
+    relativePath: normalizedPath,
+    extension,
+    size: file.size,
+    type: file.type || 'application/octet-stream',
+    file,
+    handle,
+  };
+}
+
+function ensureTmpFolderState(entries) {
+  const nextState = { ...tmpFolderOpen.value };
+  entries.forEach((entry) => {
+    const parts = entry.relativePath.split('/').filter(Boolean);
+    for (let index = 0; index < parts.length - 1; index += 1) {
+      const key = parts.slice(0, index + 1).join('/');
+      if (!(key in nextState)) {
+        nextState[key] = false;
+      }
+    }
+  });
+  tmpFolderOpen.value = nextState;
+}
+
+function formatBytes(value) {
+  if (!Number.isFinite(value) || value < 1024) {
+    return `${value || 0} o`;
+  }
+  if (value < 1024 * 1024) {
+    return `${Math.round(value / 102.4) / 10} Ko`;
+  }
+  return `${Math.round(value / 104857.6) / 10} Mo`;
+}
+
+function triggerTmpFolderPicker() {
+  if (tmpSupportsDirectoryPicker.value) {
+    connectTmpDirectory();
+    return;
+  }
+
+  if (tmpFolderInput.value) {
+    tmpFolderInput.value.value = '';
+    tmpFolderInput.value.click();
+  }
+}
+
+function openTmpDirectoryDb() {
+  if (typeof window === 'undefined' || !window.indexedDB) {
+    return Promise.resolve(null);
+  }
+
+  return new Promise((resolve, reject) => {
+    const request = window.indexedDB.open(TMP_DIRECTORY_DB_NAME, 1);
+    request.onupgradeneeded = () => {
+      const db = request.result;
+      if (!db.objectStoreNames.contains(TMP_DIRECTORY_DB_STORE)) {
+        db.createObjectStore(TMP_DIRECTORY_DB_STORE);
+      }
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function readSavedTmpDirectoryHandle() {
+  const db = await openTmpDirectoryDb();
+  if (!db) {
+    return null;
+  }
+
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(TMP_DIRECTORY_DB_STORE, 'readonly');
+    const store = tx.objectStore(TMP_DIRECTORY_DB_STORE);
+    const request = store.get(TMP_DIRECTORY_DB_KEY);
+    request.onsuccess = () => resolve(request.result || null);
+    request.onerror = () => reject(request.error);
+    tx.oncomplete = () => db.close();
+  });
+}
+
+async function writeSavedTmpDirectoryHandle(handle) {
+  const db = await openTmpDirectoryDb();
+  if (!db) {
+    return;
+  }
+
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(TMP_DIRECTORY_DB_STORE, 'readwrite');
+    const store = tx.objectStore(TMP_DIRECTORY_DB_STORE);
+    store.put(handle, TMP_DIRECTORY_DB_KEY);
+    tx.oncomplete = () => {
+      db.close();
+      resolve();
+    };
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+async function ensureTmpPickerSupportChecked() {
+  if (!tmpSupportsDirectoryPicker.value || tmpPickerSupportChecked.value) {
+    return;
+  }
+  try {
+    tmpSavedHandleAvailable.value = Boolean(await readSavedTmpDirectoryHandle());
+  } catch {
+    tmpSavedHandleAvailable.value = false;
+  }
+  tmpPickerSupportChecked.value = true;
+}
+
+async function resolveTmpDirectoryHandle(directoryHandle) {
+  if (!directoryHandle) {
+    return null;
+  }
+  if (directoryHandle.name === 'tmp') {
+    return directoryHandle;
+  }
+  try {
+    return await directoryHandle.getDirectoryHandle('tmp');
+  } catch {
+    return directoryHandle;
+  }
+}
+
+async function queryTmpHandlePermission(handle) {
+  if (!handle?.queryPermission) {
+    return 'granted';
+  }
+  try {
+    return await handle.queryPermission({ mode: 'read' });
+  } catch {
+    return 'prompt';
+  }
+}
+
+async function requestTmpHandlePermission(handle) {
+  if (!handle?.requestPermission) {
+    return 'granted';
+  }
+  try {
+    return await handle.requestPermission({ mode: 'read' });
+  } catch {
+    return 'denied';
+  }
+}
+
+async function listTmpHandleEntries(directoryHandle, prefix = '') {
+  const entries = [];
+  let fileIndex = 0;
+
+  async function walk(handle, currentPrefix) {
+    const directories = [];
+    const files = [];
+
+    for await (const child of handle.values()) {
+      if (child.kind === 'directory') {
+        directories.push(child);
+      } else {
+        files.push(child);
+      }
+    }
+
+    directories.sort((left, right) => left.name.localeCompare(right.name, 'fr'));
+    files.sort((left, right) => left.name.localeCompare(right.name, 'fr'));
+
+    for (const directory of directories) {
+      const nextPrefix = currentPrefix ? `${currentPrefix}/${directory.name}` : directory.name;
+      await walk(directory, nextPrefix);
+    }
+
+    for (const fileHandle of files) {
+      const file = await fileHandle.getFile();
+      const relativePath = currentPrefix ? `${currentPrefix}/${file.name}` : file.name;
+      entries.push(buildTmpHandleEntry(file, fileHandle, relativePath, fileIndex));
+      fileIndex += 1;
+    }
+  }
+
+  await walk(directoryHandle, prefix);
+  return entries;
+}
+
+function buildTmpTreeNodes(entries, folderState = {}) {
+  const root = [];
+  const folders = new Map();
+
+  function makeFolderKey(parts) {
+    return parts.join('/');
+  }
+
+  function ensureFolder(parts) {
+    const key = makeFolderKey(parts);
+    if (folders.has(key)) {
+      return folders.get(key);
+    }
+
+    const node = {
+      kind: 'folder',
+      id: `folder:${key}`,
+      path: key,
+      name: parts[parts.length - 1],
+      depth: parts.length - 1,
+      children: [],
+    };
+
+    folders.set(key, node);
+
+    if (parts.length === 1) {
+      root.push(node);
+    } else {
+      ensureFolder(parts.slice(0, -1)).children.push(node);
+    }
+
+    return node;
+  }
+
+  entries.forEach((entry) => {
+    const parts = entry.relativePath.split('/').filter(Boolean);
+    if (parts.length > 1) {
+      ensureFolder(parts.slice(0, -1)).children.push({
+        kind: 'file',
+        id: entry.id,
+        name: entry.name,
+        depth: parts.length - 1,
+        entry,
+      });
+      return;
+    }
+
+    root.push({
+      kind: 'file',
+      id: entry.id,
+      name: entry.name,
+      depth: 0,
+      entry,
+    });
+  });
+
+  function sortNodes(nodes) {
+    nodes.sort((left, right) => {
+      if (left.kind !== right.kind) {
+        return left.kind === 'folder' ? -1 : 1;
+      }
+      return left.name.localeCompare(right.name, 'fr');
+    });
+    nodes.forEach((node) => {
+      if (node.kind === 'folder') {
+        sortNodes(node.children);
+      }
+    });
+  }
+
+  sortNodes(root);
+
+  const flat = [];
+  function flatten(nodes) {
+    nodes.forEach((node) => {
+      flat.push(node);
+      if (node.kind === 'folder' && folderState[node.path] !== false) {
+        flatten(node.children);
+      }
+    });
+  }
+  flatten(root);
+  return flat;
+}
+
+async function readTmpEntryFile(entry) {
+  if (entry?.file instanceof File) {
+    return entry.file;
+  }
+  if (entry?.handle?.getFile) {
+    return entry.handle.getFile();
+  }
+  return null;
+}
+
+async function previewTmpEntry(entry) {
+  if (!entry) {
+    resetTmpPreview();
+    return;
+  }
+
+  resetTmpPreview();
+  const file = await readTmpEntryFile(entry);
+  if (!file) {
+    tmpPreviewKind.value = 'binary';
+    return;
+  }
+
+  const extension = entry.extension;
+  if (extension === '.html' || extension === '.htm') {
+    tmpPreviewUrl.value = URL.createObjectURL(new Blob([await file.text()], { type: 'text/html' }));
+    tmpPreviewKind.value = 'html';
+    return;
+  }
+
+  if (extension === '.svg') {
+    tmpPreviewUrl.value = URL.createObjectURL(new Blob([await file.text()], { type: 'image/svg+xml' }));
+    tmpPreviewKind.value = 'svg';
+    return;
+  }
+
+  if (TMP_TEXT_EXTENSIONS.has(extension)) {
+    tmpPreviewText.value = await file.text();
+    tmpPreviewKind.value = 'text';
+    return;
+  }
+
+  if (TMP_IMAGE_EXTENSIONS.has(extension)) {
+    tmpPreviewUrl.value = URL.createObjectURL(file);
+    tmpPreviewKind.value = 'image';
+    return;
+  }
+
+  tmpPreviewKind.value = 'binary';
+}
+
+async function selectTmpEntry(entry) {
+  tmpSelectedId.value = entry?.id || '';
+  await previewTmpEntry(entry);
+}
+
+async function onTmpFolderChange(event) {
+  const files = Array.from(event?.target?.files || []);
+  resetTmpPreview();
+
+  if (files.length === 0) {
+    tmpEntries.value = [];
+    tmpSelectedId.value = '';
+    tmpFolderLabel.value = '';
+    return;
+  }
+
+  const entries = files
+    .map((file, index) => buildTmpEntry(file, index))
+    .sort((left, right) => left.relativePath.localeCompare(right.relativePath, 'fr'));
+
+  const topPath = entries[0]?.relativePath || '';
+  tmpFolderLabel.value = topPath.includes('/') ? topPath.split('/')[0] : 'Dossier local';
+  tmpEntries.value = entries;
+  ensureTmpFolderState(entries);
+  tmpSelectedId.value = '';
+  tmpLoadState.value = 'ready';
+}
+
+async function hydrateTmpFromDirectoryHandle(directoryHandle) {
+  tmpLoadState.value = 'loading';
+  resetTmpPreview();
+
+  try {
+    const tmpHandle = await resolveTmpDirectoryHandle(directoryHandle);
+    const permission = await queryTmpHandlePermission(tmpHandle);
+    if (permission !== 'granted') {
+      tmpLoadState.value = 'idle';
+      return false;
+    }
+
+    const entries = await listTmpHandleEntries(tmpHandle);
+    tmpFolderLabel.value = tmpHandle.name || 'tmp';
+    tmpEntries.value = entries;
+    ensureTmpFolderState(entries);
+    tmpSelectedId.value = '';
+    tmpLoadState.value = 'ready';
+    return true;
+  } catch {
+    tmpLoadState.value = 'idle';
+    return false;
+  }
+}
+
+async function connectTmpDirectory() {
+  if (!tmpSupportsDirectoryPicker.value) {
+    triggerTmpFolderPicker();
+    return;
+  }
+
+  tmpLoadState.value = 'loading';
+
+  try {
+    const pickedHandle = await window.showDirectoryPicker({ mode: 'read' });
+    const tmpHandle = await resolveTmpDirectoryHandle(pickedHandle);
+    const permission = await requestTmpHandlePermission(tmpHandle);
+    if (permission !== 'granted') {
+      tmpLoadState.value = 'idle';
+      return;
+    }
+
+    await writeSavedTmpDirectoryHandle(tmpHandle);
+    tmpSavedHandleAvailable.value = true;
+    await hydrateTmpFromDirectoryHandle(tmpHandle);
+  } catch {
+    tmpLoadState.value = 'idle';
+  }
+}
+
+async function reuseSavedTmpDirectory() {
+  if (!tmpSupportsDirectoryPicker.value) {
+    return;
+  }
+
+  tmpLoadState.value = 'loading';
+
+  try {
+    const savedHandle = await readSavedTmpDirectoryHandle();
+    if (!savedHandle) {
+      tmpSavedHandleAvailable.value = false;
+      tmpLoadState.value = 'idle';
+      return;
+    }
+
+    const permission = await requestTmpHandlePermission(savedHandle);
+    if (permission !== 'granted') {
+      tmpLoadState.value = 'idle';
+      return;
+    }
+
+    await hydrateTmpFromDirectoryHandle(savedHandle);
+  } catch {
+    tmpLoadState.value = 'idle';
+  }
+}
+
+async function openTmpEntry(entry = tmpSelectedEntry.value) {
+  if (!entry) {
+    return;
+  }
+
+  const file = await readTmpEntryFile(entry);
+  if (!file) {
+    return;
+  }
+
+  const url = URL.createObjectURL(file);
+  window.open(url, '_blank', 'noopener,noreferrer');
+  window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+}
+
+function toggleTmpFolder(node) {
+  if (!node || node.kind !== 'folder') {
+    return;
+  }
+  tmpFolderOpen.value = {
+    ...tmpFolderOpen.value,
+    [node.path]: !tmpFolderOpen.value[node.path],
+  };
+}
 
 const adminListOptionsWithCount = computed(() =>
   englishListOptions.map((option) => {
@@ -184,6 +733,26 @@ watch(sidebarCollapsed, (value) => {
   }
   window.localStorage.setItem(ADMIN_SIDEBAR_COLLAPSED_KEY, value ? '1' : '0');
 });
+
+watch(
+  selectedSection,
+  async (value) => {
+    if (value !== 'tmp-lab') {
+      return;
+    }
+
+    await ensureTmpPickerSupportChecked();
+
+    if (tmpEntries.value.length === 0 && tmpCanReuseSavedHandle.value) {
+      try {
+        await hydrateTmpFromDirectoryHandle(await readSavedTmpDirectoryHandle());
+      } catch {
+        tmpLoadState.value = 'idle';
+      }
+    }
+  },
+  { immediate: true }
+);
 
 function toggleSidebar() {
   sidebarCollapsed.value = !sidebarCollapsed.value;
@@ -241,6 +810,10 @@ useSessionCountdown({
   onExpire: () => {
     logout();
   },
+});
+
+onBeforeUnmount(() => {
+  resetTmpPreview();
 });
 
 watch(selectedList, (newList) => {
@@ -431,7 +1004,7 @@ function onFrenchInputEnter(index) {
 const scopePriorityOrder = ROADMAP_PRIORITY_ORDER;
 const roadmapEntries = Object.freeze(getRoadmapEntries());
 const selectedRoadmapId = ref(
-  roadmapEntries.find((entry) => entry.id === APP_VERSION)?.id || roadmapEntries[0]?.id || ''
+  roadmapEntries.find((entry) => entry.id === ACTIVE_SCOPE_ID)?.id || roadmapEntries[0]?.id || ''
 );
 
 const activeRoadmapEntry = computed(() => {
@@ -562,6 +1135,15 @@ function compareBySortKey(a, b, key, dir) {
   return dir === 'desc' ? -result : result;
 }
 
+function roadmapDependencyStatusLabel(status) {
+  if (status === 'blocked') return 'Bloqué';
+  if (status === 'ready') return 'Prêt';
+  if (status === 'missing') return 'Dépendance manquante';
+  if (status === 'invalid') return 'Dépendance invalide';
+  if (status === 'cyclic') return 'Cycle';
+  return '';
+}
+
 const sortedRoadmapItems = computed(() => {
   const list = [...filteredRoadmapItems.value];
   list.sort((a, b) => {
@@ -612,119 +1194,325 @@ function refreshDashboardMetrics() {
     storageKeyCount: snapshot.filter((entry) => entry.exists).length,
   };
 }
-
-function pointsToText(points) {
-  return points.map((point) => `${point.x},${point.y}`).join(' | ');
-}
-
-function parsePointsText(pointsText, gridSize) {
-  const chunks = String(pointsText || '')
-    .split('|')
-    .map((chunk) => chunk.trim())
-    .filter(Boolean);
-  if (chunks.length < 3) {
-    return { ok: false, error: 'Une forme doit contenir au moins 3 points.', points: [] };
-  }
-
-  const points = [];
-  for (const chunk of chunks) {
-    const [xRaw, yRaw] = chunk.split(',').map((part) => part.trim());
-    const x = Number.parseInt(xRaw, 10);
-    const y = Number.parseInt(yRaw, 10);
-    if (!Number.isInteger(x) || !Number.isInteger(y)) {
-      return { ok: false, error: `Point invalide "${chunk}"`, points: [] };
-    }
-    if (x < 0 || x >= gridSize || y < 0 || y >= gridSize) {
-      return { ok: false, error: `Point hors grille "${chunk}"`, points: [] };
-    }
-    points.push({ x, y });
-  }
-
-  return { ok: true, points, error: '' };
-}
-
-function createSymmetryDraft() {
-  const config = getActiveSymmetryShapesConfig();
-  return {
-    gridSize: config.gridSize,
-    axes: [...config.axes],
-    shapes: config.shapes.map((shape) => ({
-      id: shape.id,
-      pointsText: pointsToText(shape.points),
-    })),
-  };
-}
-
-const symmetryDraft = ref(createSymmetryDraft());
+const symmetryReviewLoading = ref(true);
 const symmetryOverrideActive = ref(hasSymmetryShapesOverride());
+const symmetryReviewReport = ref({
+  generatedAt: '',
+  summary: {
+    total: 0,
+    accepted: 0,
+    review: 0,
+    rejected: 0,
+  },
+  results: [],
+});
+const symmetryReviewGridSize = ref(5);
+const symmetryReviewUpdatedAt = ref('');
+const symmetryReviewValidatedAt = ref('');
+const symmetryReviewValidatorVersion = ref('');
+const symmetryReviewSession = ref(createSymmetryReviewSession([]));
+const symmetryStatusFilters = ref([
+  SYMMETRY_REVIEW_STATUS.PENDING,
+  SYMMETRY_REVIEW_STATUS.ACCEPTED,
+  SYMMETRY_REVIEW_STATUS.REVIEW,
+  SYMMETRY_REVIEW_STATUS.REJECTED,
+]);
+const symmetryPointFilters = ref([3, 4, 5]);
+const symmetryPageSize = ref(20);
+const symmetryCurrentPage = ref(1);
+const symmetryStatusOptions = Object.freeze([
+  { id: SYMMETRY_REVIEW_STATUS.PENDING, label: 'En attente' },
+  { id: SYMMETRY_REVIEW_STATUS.ACCEPTED, label: 'Acceptées' },
+  { id: SYMMETRY_REVIEW_STATUS.REVIEW, label: 'À revoir' },
+  { id: SYMMETRY_REVIEW_STATUS.REJECTED, label: 'Rejetées' },
+]);
+const symmetryPointOptions = Object.freeze([
+  { id: 3, label: '3 points' },
+  { id: 4, label: '4 points' },
+  { id: 5, label: '5 points' },
+]);
+const symmetryPageSizeOptions = Object.freeze([20, 40, 60]);
 
-function refreshSymmetryDraft() {
-  symmetryDraft.value = createSymmetryDraft();
-  symmetryOverrideActive.value = hasSymmetryShapesOverride();
-}
+function toggleArrayFilter(listRef, value, allValues) {
+  const current = Array.isArray(listRef.value) ? [...listRef.value] : [];
+  const next = new Set(current);
+  const everySelected = allValues.every((entry) => next.has(entry));
+  const isActive = next.has(value);
 
-function addSymmetryShapeRow() {
-  const index = symmetryDraft.value.shapes.length + 1;
-  symmetryDraft.value.shapes.push({
-    id: `shape-${String(index).padStart(2, '0')}`,
-    pointsText: '0,1 | 1,2 | 0,3',
-  });
-}
-
-function removeSymmetryShapeRow(index) {
-  symmetryDraft.value.shapes.splice(index, 1);
-}
-
-function saveSymmetryShapes() {
-  const gridSize = symmetryDraft.value.gridSize;
-  const seenIds = new Set();
-  const shapes = [];
-
-  for (let i = 0; i < symmetryDraft.value.shapes.length; i += 1) {
-    const row = symmetryDraft.value.shapes[i];
-    const id = typeof row.id === 'string' ? row.id.trim() : '';
-    if (!id) {
-      setStatus('error', `Forme ${i + 1}: identifiant manquant.`);
-      return;
-    }
-    if (seenIds.has(id)) {
-      setStatus('error', `Forme ${i + 1}: identifiant dupliqué (${id}).`);
-      return;
-    }
-    seenIds.add(id);
-
-    const parsed = parsePointsText(row.pointsText, gridSize);
-    if (!parsed.ok) {
-      setStatus('error', `Forme ${i + 1}: ${parsed.error}`);
-      return;
-    }
-    shapes.push({ id, points: parsed.points });
-  }
-
-  const saved = saveSymmetryShapesOverride({
-    version: 'v1',
-    gridSize,
-    axes: symmetryDraft.value.axes,
-    shapes,
-  });
-
-  if (!saved) {
-    setStatus('error', 'Sauvegarde des formes impossible sur cet appareil.');
+  if (everySelected) {
+    listRef.value = [value];
     return;
   }
 
-  refreshSymmetryDraft();
-  refreshDashboardMetrics();
-  refreshMaintenanceData();
-  setStatus('success', 'Formes de symétrie sauvegardées localement.');
+  if (isActive && next.size > 1) {
+    next.delete(value);
+    listRef.value = [...next];
+    return;
+  }
+
+  if (isActive && next.size === 1) {
+    listRef.value = [...allValues];
+    return;
+  }
+
+  next.add(value);
+  listRef.value = [...next];
 }
 
-function resetSymmetryShapes() {
-  resetSymmetryShapesOverride();
-  refreshSymmetryDraft();
-  refreshDashboardMetrics();
-  refreshMaintenanceData();
-  setStatus('success', 'Formes de symétrie réinitialisées à la version par défaut.');
+function toggleSymmetryStatusFilter(value) {
+  toggleArrayFilter(
+    symmetryStatusFilters,
+    value,
+    symmetryStatusOptions.map((entry) => entry.id)
+  );
+}
+
+function toggleSymmetryPointFilter(value) {
+  toggleArrayFilter(
+    symmetryPointFilters,
+    value,
+    symmetryPointOptions.map((entry) => entry.id)
+  );
+}
+
+function resetSymmetryReviewPagination() {
+  symmetryCurrentPage.value = 1;
+}
+
+function buildSymmetryReviewFiles(config) {
+  const grouped = new Map([
+    [3, []],
+    [4, []],
+    [5, []],
+  ]);
+
+  for (const shape of config.shapes || []) {
+    const pointCount = Array.isArray(shape.points) ? shape.points.length : 0;
+    if (grouped.has(pointCount)) {
+      grouped.get(pointCount).push(shape);
+    }
+  }
+
+  return [
+    { file: 'shapes-3-points.json', shapes: grouped.get(3) },
+    { file: 'shapes-4-points.json', shapes: grouped.get(4) },
+    { file: 'shapes-5-points.json', shapes: grouped.get(5) },
+  ];
+}
+
+function refreshSymmetryReviewData() {
+  const config = getActiveSymmetryShapesConfig();
+  const report = buildSymmetryShapeReviewReport(buildSymmetryReviewFiles(config), {
+    gridSize: config.gridSize,
+  });
+
+  symmetryReviewReport.value = report;
+  symmetryReviewSession.value = createSymmetryReviewSession(report.results);
+  symmetryReviewGridSize.value = config.gridSize;
+  symmetryReviewUpdatedAt.value = config.updatedAt || '';
+  symmetryReviewValidatedAt.value = config.validatedAt || '';
+  symmetryReviewValidatorVersion.value = config.validatorVersion || report.validatorVersion || '';
+  symmetryOverrideActive.value = hasSymmetryShapesOverride();
+}
+
+const symmetryReviewEntries = computed(() =>
+  applySymmetryReviewSession(symmetryReviewReport.value.results, symmetryReviewSession.value)
+);
+
+const symmetryFilteredEntries = computed(() =>
+  symmetryReviewEntries.value.filter(
+    (entry) =>
+      symmetryStatusFilters.value.includes(entry.reviewStatus) && symmetryPointFilters.value.includes(entry.pointCount)
+  )
+);
+
+const symmetryTotalPages = computed(() =>
+  Math.max(1, Math.ceil(symmetryFilteredEntries.value.length / symmetryPageSize.value))
+);
+
+const symmetryVisibleEntries = computed(() => {
+  const start = (symmetryCurrentPage.value - 1) * symmetryPageSize.value;
+  return symmetryFilteredEntries.value.slice(start, start + symmetryPageSize.value);
+});
+
+const symmetryReviewDirty = computed(() => hasSymmetryReviewSessionChanges(symmetryReviewSession.value));
+const symmetryRejectedEntries = computed(() =>
+  symmetryReviewEntries.value.filter((entry) => entry.reviewStatus === SYMMETRY_REVIEW_STATUS.REJECTED && !entry.deleted)
+);
+const symmetryRejectedPrompt = computed(() => {
+  if (symmetryRejectedEntries.value.length === 0) {
+    return '';
+  }
+
+  const shapesBlock = symmetryRejectedEntries.value
+    .map((entry) => {
+      const issues = [...entry.hardFailures, ...entry.warnings];
+      const issueLabel = issues.length > 0 ? issues.join(', ') : 'aucun signal listé';
+      const points = entry.points.map((point) => `(${point.x},${point.y})`).join(' ');
+
+      return [
+        `- id: ${entry.id}`,
+        `  fichier: ${entry.file}`,
+        `  score: ${entry.score}/100`,
+        `  pré-tri: ${entry.autoStatus}`,
+        `  décision: ${entry.reviewStatus}`,
+        `  signaux: ${issueLabel}`,
+        `  points: ${points}`,
+      ].join('\n');
+    })
+    .join('\n');
+
+  return [
+    'Modifie directement les formes rejetées de la banque de symétrie.',
+    'Travaille sur les JSON source sous `src/content/math/symmetry/`, ajuste les points des formes listées ci-dessous, puis relance la validation et les tests ciblés.',
+    'Conserve les IDs si possible, améliore la lisibilité pédagogique, évite les formes dégénérées, et garde la grille 5x5 actuelle.',
+    '',
+    'Formes rejetées :',
+    shapesBlock,
+    '',
+    'À la fin :',
+    '1. relance `npm run validate:symmetry-shapes`',
+    '2. relance les tests symétrie ciblés',
+    '3. résume les modifications forme par forme',
+  ].join('\n');
+});
+const symmetryExportPayload = computed(() =>
+  buildSymmetryExportPayload({
+    entries: symmetryReviewEntries.value,
+    gridSize: symmetryReviewGridSize.value,
+    axes: ['vertical', 'horizontal'],
+    currentUpdatedAt: symmetryReviewUpdatedAt.value,
+    currentValidatedAt: symmetryReviewValidatedAt.value,
+    currentValidatorVersion: symmetryReviewValidatorVersion.value || symmetryReviewReport.value.validatorVersion,
+  })
+);
+const symmetryHasExportableShapes = computed(() => symmetryExportPayload.value.files.some((file) => file.shapes.length > 0));
+const symmetryCanExport = computed(
+  () => symmetryHasExportableShapes.value && (symmetryReviewDirty.value || !symmetryReviewValidatedAt.value)
+);
+const symmetryValidationState = computed(() => {
+  if (symmetryReviewDirty.value) {
+    return {
+      toneClass: 'is-warn',
+      label: 'Session locale modifiée',
+      message:
+        "L'export est prêt. Relancer `npm run validate:symmetry-shapes` reste recommandé si tu as modifié les règles du validateur ou la banque source hors panneau.",
+    };
+  }
+
+  if (!symmetryReviewValidatedAt.value) {
+    return {
+      toneClass: 'is-info',
+      label: 'Validation non tracée',
+      message:
+        "La banque active n'indique pas encore de validation exportée. Le pré-tri courant reste calculé dans le panneau et l'export initial est autorisé.",
+    };
+  }
+
+  return {
+    toneClass: 'is-ok',
+    label: 'Validation tracée',
+    message: `Dernière validation : ${formatDateTimeFr(symmetryReviewValidatedAt.value)} · validateur ${symmetryReviewValidatorVersion.value || symmetryReviewReport.value.validatorVersion || 'indisponible'}`,
+  };
+});
+const symmetryFilterSummary = computed(() => {
+  const summary = summarizeSymmetryReviewEntries(symmetryReviewEntries.value);
+  return {
+    total: summary.total,
+    visible: symmetryFilteredEntries.value.length,
+    pending: summary.pending,
+    accepted: summary.accepted,
+    review: summary.review,
+    rejected: summary.rejected,
+    deleted: summary.deleted,
+  };
+});
+
+watch(
+  symmetryReviewSession,
+  (session) => {
+    writeSymmetryReviewSession(session);
+  },
+  { deep: true }
+);
+
+watch([symmetryStatusFilters, symmetryPointFilters, symmetryPageSize], () => {
+  resetSymmetryReviewPagination();
+});
+
+watch(symmetryTotalPages, (value) => {
+  if (symmetryCurrentPage.value > value) {
+    symmetryCurrentPage.value = value;
+  }
+});
+
+function goToSymmetryPage(page) {
+  symmetryCurrentPage.value = Math.min(Math.max(page, 1), symmetryTotalPages.value);
+}
+
+function pluralizeFr(count, singular, plural = `${singular}s`) {
+  return count === 1 ? singular : plural;
+}
+
+function updateSymmetryReviewStatus(id, reviewStatus) {
+  const entry = symmetryReviewEntries.value.find((item) => item.id === id);
+  const nextStatus = entry?.reviewStatus === reviewStatus ? entry?.autoStatus : reviewStatus;
+  symmetryReviewSession.value = setSymmetryReviewStatus(
+    symmetryReviewSession.value,
+    id,
+    nextStatus || SYMMETRY_REVIEW_STATUS.PENDING,
+    entry?.autoStatus,
+    entry?.sourceReviewStatus
+  );
+}
+
+function toggleSymmetryEntryDeleted(id) {
+  const entry = symmetryReviewEntries.value.find((item) => item.id === id);
+  symmetryReviewSession.value = toggleSymmetryReviewDeleted(
+    symmetryReviewSession.value,
+    id,
+    entry?.autoStatus,
+    entry?.sourceReviewStatus
+  );
+}
+
+async function exportSymmetryReviewZip() {
+  if (!symmetryCanExport.value) {
+    setStatus('error', "Aucun changement local exportable pour la banque de symétrie.");
+    return;
+  }
+
+  try {
+    const blob = await buildSymmetryExportZipBlob(symmetryExportPayload.value);
+    const fileName = `manabuplay-content-symmetry-${symmetryExportPayload.value.nextUpdatedAt}.zip`;
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName;
+    link.click();
+    URL.revokeObjectURL(link.href);
+    setStatus('success', `ZIP ${fileName} téléchargé.`);
+  } catch {
+    setStatus('error', "Export ZIP impossible pour la banque de symétrie.");
+  }
+}
+
+async function copySymmetryRejectedPrompt() {
+  if (!symmetryRejectedPrompt.value) {
+    setStatus('error', 'Aucune forme rejetée disponible pour générer un prompt.');
+    return;
+  }
+
+  if (!navigator.clipboard?.writeText) {
+    setStatus('error', 'Copie non supportée par ce navigateur.');
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(symmetryRejectedPrompt.value);
+    setStatus('success', 'Prompt des formes rejetées copié.');
+  } catch {
+    setStatus('error', 'Copie du prompt impossible.');
+  }
 }
 
 const presetOptions = Object.freeze([...getPresetDefinitions(), { id: 'custom', label: 'RAZ ciblée' }]);
@@ -856,10 +1644,20 @@ async function loadBuildInfo() {
   buildInfo.value = await fetchBuildInfo();
 }
 
-loadBuildInfo();
-refreshSymmetryDraft();
-refreshMaintenanceData();
-refreshDashboardMetrics();
+async function initAdminData() {
+  symmetryReviewLoading.value = true;
+  try {
+    await hydrateRemoteSymmetryShapesConfig();
+    await loadBuildInfo();
+    refreshSymmetryReviewData();
+    refreshMaintenanceData();
+    refreshDashboardMetrics();
+  } finally {
+    symmetryReviewLoading.value = false;
+  }
+}
+
+initAdminData();
 </script>
 
 <template>
@@ -978,6 +1776,15 @@ refreshDashboardMetrics();
         </header>
 
         <AdminStatusBanner :message="statusMessage" :tone="statusType || 'info'" />
+
+        <input
+          ref="tmpFolderInput"
+          class="tmp-lab__folder-input"
+          type="file"
+          webkitdirectory
+          multiple
+          @change="onTmpFolderChange"
+        />
 
         <section v-if="selectedSection === 'overview'" class="grid gap-3 p-3 md:px-4 md:pt-3 md:pb-4">
           <div class="stat-grid">
@@ -1121,6 +1928,8 @@ refreshDashboardMetrics();
                     <th>État</th>
                     <th>Catégorie</th>
                     <th>Sous-catégorie</th>
+                    <th>Dépendances</th>
+                    <th>Item</th>
                     <th>Description</th>
                   </tr>
                 </thead>
@@ -1132,10 +1941,34 @@ refreshDashboardMetrics();
                     <td>{{ item.done ? '✅' : '⌛' }}</td>
                     <td>{{ item.domain }}</td>
                     <td>{{ item.feature }}</td>
-                    <td>{{ item.label }}</td>
+                    <td>
+                      <div v-if="item.dependencyStatus !== 'none'" class="roadmap-item-meta">
+                        <span class="dependency-chip" :class="`d-${item.dependencyStatus}`">
+                          {{ roadmapDependencyStatusLabel(item.dependencyStatus) }}
+                        </span>
+                        <div v-if="item.dependencyRefs.length > 0" class="dependency-ref-list">
+                          <span v-for="dependency in item.dependencyRefs" :key="`${item.id}-${dependency.id}`">
+                            <span
+                              class="dependency-ref"
+                              :class="{ 'is-missing': dependency.missing }"
+                              :title="`${dependency.label} (${dependency.location}) - ${dependency.locationLabel}`"
+                            >
+                              {{ dependency.id }}
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+                      <span v-else class="meta-line">-</span>
+                    </td>
+                    <td>
+                      <div class="roadmap-item-id">{{ item.id }}</div>
+                    </td>
+                    <td>
+                      <div class="roadmap-item-label">{{ item.label }}</div>
+                    </td>
                   </tr>
                   <tr v-if="sortedRoadmapItems.length === 0">
-                    <td colspan="5" class="meta-line">Aucun item pour ces filtres.</td>
+                    <td colspan="7" class="meta-line">Aucun item pour ces filtres.</td>
                   </tr>
                 </tbody>
               </table>
@@ -1215,32 +2048,262 @@ refreshDashboardMetrics();
         </section>
 
         <section v-else-if="selectedSection === 'symmetry'" class="grid gap-3 p-3 md:px-4 md:pt-3 md:pb-4">
-          <div class="admin-card">
+          <RemoteContentLoading
+            v-if="symmetryReviewLoading"
+            title="Chargement des formes de symétrie"
+            message="Analyse de la banque active en cours..."
+          />
+
+          <template v-else>
+            <div class="admin-card">
+              <div class="scope-head">
+                <div>
+                  <h2>Reviewer des formes de symétrie</h2>
+                  <p class="meta-line">
+                    Banque active : {{ symmetryFilterSummary.total }}
+                    {{ pluralizeFr(symmetryFilterSummary.total, 'forme') }} ·
+                    {{ symmetryFilterSummary.visible }}
+                    {{ pluralizeFr(symmetryFilterSummary.visible, 'visible') }}
+                  </p>
+                </div>
+                <span class="scope-chip" :class="{ active: symmetryOverrideActive }">
+                  {{ symmetryOverrideActive ? 'Override local actif' : 'Version chargée' }}
+                </span>
+              </div>
+
+              <div class="sym-review-summary">
+                <span class="sym-review-pill">En attente : {{ symmetryFilterSummary.pending }}</span>
+                <span class="sym-review-pill is-accepted">Acceptées : {{ symmetryFilterSummary.accepted }}</span>
+                <span class="sym-review-pill is-review">À revoir : {{ symmetryFilterSummary.review }}</span>
+                <span class="sym-review-pill is-rejected">Rejetées : {{ symmetryFilterSummary.rejected }}</span>
+                <span class="sym-review-pill">Supprimées : {{ symmetryFilterSummary.deleted }}</span>
+                <span v-if="symmetryReviewDirty" class="sym-review-pill is-dirty">Session locale modifiée</span>
+                <span class="sym-review-pill">
+                  Source : {{ symmetryReviewUpdatedAt || 'version locale embarquée' }}
+                </span>
+                <span class="sym-review-pill">Export : {{ symmetryExportPayload.nextUpdatedAt }}</span>
+              </div>
+
+              <div class="sym-review-validation" :class="symmetryValidationState.toneClass">
+                <div>
+                  <p class="sym-review-validation__title">{{ symmetryValidationState.label }}</p>
+                  <p class="sym-review-validation__message">{{ symmetryValidationState.message }}</p>
+                </div>
+                <div class="sym-review-validation__actions">
+                  <button class="btn btn-secondary" type="button" :disabled="!symmetryRejectedPrompt" @click="copySymmetryRejectedPrompt">
+                    Copier le prompt rejetés
+                  </button>
+                  <button class="btn btn-primary" type="button" :disabled="!symmetryCanExport" @click="exportSymmetryReviewZip">
+                    Exporter le ZIP R2
+                  </button>
+                </div>
+              </div>
+
+              <div class="sym-review-toolbar">
+                <div class="sym-review-filter-block">
+                  <span class="sym-review-filter-label">Décision</span>
+                  <div class="sym-review-filter-list">
+                    <button
+                      v-for="option in symmetryStatusOptions"
+                      :key="option.id"
+                      class="sym-review-filter-chip"
+                      :class="{ 'is-active': symmetryStatusFilters.includes(option.id) }"
+                      :aria-pressed="symmetryStatusFilters.includes(option.id) ? 'true' : 'false'"
+                      type="button"
+                      @click="toggleSymmetryStatusFilter(option.id)"
+                    >
+                      {{ option.label }}
+                    </button>
+                  </div>
+                </div>
+
+                <div class="sym-review-filter-block">
+                  <span class="sym-review-filter-label">Nombre de points</span>
+                  <div class="sym-review-filter-list">
+                    <button
+                      v-for="option in symmetryPointOptions"
+                      :key="option.id"
+                      class="sym-review-filter-chip"
+                      :class="{ 'is-active': symmetryPointFilters.includes(option.id) }"
+                      :aria-pressed="symmetryPointFilters.includes(option.id) ? 'true' : 'false'"
+                      type="button"
+                      @click="toggleSymmetryPointFilter(option.id)"
+                    >
+                      {{ option.label }}
+                    </button>
+                  </div>
+                </div>
+
+                <label class="sym-review-page-size">
+                  <span>Par page</span>
+                  <select v-model="symmetryPageSize">
+                    <option v-for="option in symmetryPageSizeOptions" :key="option" :value="option">
+                      {{ option }}
+                    </option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="sym-review-pagination">
+                <button
+                  class="btn btn-secondary"
+                  type="button"
+                  :disabled="symmetryCurrentPage <= 1"
+                  @click="goToSymmetryPage(symmetryCurrentPage - 1)"
+                >
+                  ← Précédent
+                </button>
+                <span>Page {{ symmetryCurrentPage }} / {{ symmetryTotalPages }}</span>
+                <button
+                  class="btn btn-secondary"
+                  type="button"
+                  :disabled="symmetryCurrentPage >= symmetryTotalPages"
+                  @click="goToSymmetryPage(symmetryCurrentPage + 1)"
+                >
+                  Suivant →
+                </button>
+              </div>
+
+              <p v-if="symmetryVisibleEntries.length === 0" class="meta-line">
+                Aucun résultat avec les filtres actuels.
+              </p>
+
+              <div v-else class="sym-review-grid">
+                <SymmetryShapeReviewCard
+                  v-for="entry in symmetryVisibleEntries"
+                  :key="entry.id"
+                  :entry="entry"
+                  :grid-size="symmetryReviewGridSize"
+                  @set-review-status="updateSymmetryReviewStatus(entry.id, $event)"
+                  @toggle-deleted="toggleSymmetryEntryDeleted(entry.id)"
+                />
+              </div>
+
+              <div class="sym-review-pagination">
+                <button
+                  class="btn btn-secondary"
+                  type="button"
+                  :disabled="symmetryCurrentPage <= 1"
+                  @click="goToSymmetryPage(symmetryCurrentPage - 1)"
+                >
+                  ← Précédent
+                </button>
+                <span>Page {{ symmetryCurrentPage }} / {{ symmetryTotalPages }}</span>
+                <button
+                  class="btn btn-secondary"
+                  type="button"
+                  :disabled="symmetryCurrentPage >= symmetryTotalPages"
+                  @click="goToSymmetryPage(symmetryCurrentPage + 1)"
+                >
+                  Suivant →
+                </button>
+              </div>
+            </div>
+          </template>
+        </section>
+
+        <section v-else-if="selectedSection === 'tmp-lab'" class="grid gap-3 p-3 md:px-4 md:pt-3 md:pb-4">
+          <article class="admin-card tmp-lab-card">
             <div class="scope-head">
-              <h2>Formes de symétrie</h2>
-              <span class="scope-chip" :class="{ active: symmetryOverrideActive }">
-                {{ symmetryOverrideActive ? 'Override local actif' : 'Version par défaut' }}
-              </span>
-            </div>
-            <p class="meta-line">Format: <code>x,y | x,y | x,y</code> - Grille 0 à {{ symmetryDraft.gridSize - 1 }}</p>
-
-            <div class="sym-grid sym-grid-head">
-              <span>ID</span>
-              <span>Points</span>
-              <span>Action</span>
-            </div>
-            <div v-for="(shape, index) in symmetryDraft.shapes" :key="`shape-${index}`" class="sym-grid">
-              <input v-model="shape.id" type="text" placeholder="shape-xx" />
-              <input v-model="shape.pointsText" type="text" placeholder="0,1 | 1,2 | 0,3" />
-              <button class="btn btn-danger" type="button" @click="removeSymmetryShapeRow(index)">Supprimer</button>
+              <div>
+                <h2>Lab tmp local</h2>
+                <p class="meta-line">
+                  Vue locale type bucket R2 / FTP pour ouvrir rapidement les maquettes, exports et fichiers de travail.
+                </p>
+              </div>
+              <div class="actions">
+                <button class="btn btn-secondary" type="button" @click="triggerTmpFolderPicker">
+                  {{ tmpSupportsDirectoryPicker ? 'Connecter tmp/' : 'Choisir un dossier local' }}
+                </button>
+                <button v-if="tmpCanReuseSavedHandle" class="btn btn-secondary" type="button" @click="reuseSavedTmpDirectory">
+                  Réutiliser tmp/
+                </button>
+              </div>
             </div>
 
-            <div class="actions">
-              <button class="btn btn-secondary" type="button" @click="addSymmetryShapeRow">+ Ajouter une forme</button>
-              <button class="btn btn-primary" type="button" @click="saveSymmetryShapes">Sauvegarder</button>
-              <button class="btn btn-secondary" type="button" @click="resetSymmetryShapes">Réinitialiser</button>
+            <div class="tmp-lab-summary">
+              <span class="sym-review-pill">Dossier : {{ tmpFolderLabel || 'aucun' }}</span>
+              <span class="sym-review-pill">{{ tmpEntryCount }} fichier(s)</span>
+              <span class="sym-review-pill">Accès local navigateur</span>
+              <span v-if="tmpSupportsDirectoryPicker" class="sym-review-pill is-accepted">Mémoire dossier supportée</span>
+              <span v-else class="sym-review-pill is-review">Fallback manuel</span>
             </div>
-          </div>
+
+            <p class="meta-line">{{ tmpStatusMessage }}</p>
+
+            <div class="tmp-lab-layout">
+              <div class="tmp-lab-list">
+                <p v-if="tmpEntryCount === 0" class="meta-line">
+                  Aucun dossier chargé. Clique sur <strong>{{ tmpSupportsDirectoryPicker ? 'Connecter tmp/' : 'Choisir un dossier local' }}</strong>.
+                </p>
+
+                <template v-for="node in tmpTreeNodes" :key="node.id">
+                  <button
+                    v-if="node.kind === 'folder'"
+                    class="tmp-lab-folder"
+                    :class="{ 'is-open': tmpFolderOpen[node.path] !== false }"
+                    :style="{ '--tmp-depth': node.depth }"
+                    type="button"
+                    @click="toggleTmpFolder(node)"
+                  >
+                    <span class="tmp-lab-folder__chevron" aria-hidden="true">▶</span>
+                    <strong>{{ node.name }}</strong>
+                  </button>
+                  <button
+                    v-else
+                    class="tmp-lab-item"
+                    :class="{ 'is-active': tmpSelectedId === node.entry.id }"
+                    :style="{ '--tmp-depth': node.depth }"
+                    type="button"
+                    @click="selectTmpEntry(node.entry)"
+                  >
+                    <strong>📄 {{ node.name }}</strong>
+                    <span>{{ node.entry.extension || 'sans extension' }} · {{ formatBytes(node.entry.size) }}</span>
+                  </button>
+                </template>
+              </div>
+
+              <div class="tmp-lab-preview">
+                <template v-if="tmpCanPreview && tmpSelectedEntry">
+                  <div class="tmp-lab-preview__head">
+                    <div>
+                      <h3>{{ tmpSelectedEntry.relativePath }}</h3>
+                      <p class="meta-line">{{ tmpSelectedEntry.type }} · {{ formatBytes(tmpSelectedEntry.size) }}</p>
+                    </div>
+                    <button class="btn btn-secondary" type="button" @click="openTmpEntry()">
+                      Ouvrir dans un onglet
+                    </button>
+                  </div>
+
+                  <iframe
+                    v-if="tmpPreviewKind === 'html'"
+                    class="tmp-lab-preview__frame"
+                    :src="tmpPreviewUrl"
+                    sandbox="allow-scripts allow-same-origin"
+                    title="Aperçu HTML local"
+                  />
+
+                  <div v-else-if="tmpPreviewKind === 'svg'" class="tmp-lab-preview__image-wrap">
+                    <img :src="tmpPreviewUrl" :alt="tmpSelectedEntry.name" class="tmp-lab-preview__image" />
+                  </div>
+
+                  <pre v-else-if="tmpPreviewKind === 'text'" class="tmp-lab-preview__text">{{
+                    tmpPreviewText
+                  }}</pre>
+
+                  <div v-else-if="tmpPreviewKind === 'image'" class="tmp-lab-preview__image-wrap">
+                    <img :src="tmpPreviewUrl" :alt="tmpSelectedEntry.name" class="tmp-lab-preview__image" />
+                  </div>
+
+                  <p v-else-if="tmpPreviewKind === 'binary'" class="meta-line">
+                    Aperçu inline non pris en charge pour ce type. Utilise <strong>Ouvrir dans un onglet</strong>.
+                  </p>
+                </template>
+
+                <p v-else class="meta-line">Sélectionne un fichier pour afficher son aperçu.</p>
+              </div>
+            </div>
+          </article>
         </section>
 
         <section v-else-if="selectedSection === 'admin-help'" class="grid gap-3 p-3 md:px-4 md:pt-3 md:pb-4">

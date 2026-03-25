@@ -58,7 +58,7 @@ test('math: selecting a table starts quiz and wrong answer does not auto-skip', 
 test('english: list selection loads flashcards and FR -> EN hides TTS until reveal', async ({ page }) => {
   await page.goto('/languages/english');
 
-  await expect(page.getByText('Choisir une liste pour commencer.')).toBeVisible();
+  await expect(page.getByLabel('Choisir une liste :')).toBeVisible();
 
   await page.getByLabel('Choisir une liste :').selectOption('fruits');
 
@@ -67,13 +67,19 @@ test('english: list selection loads flashcards and FR -> EN hides TTS until reve
   await expect(page.locator('.flashcard-count')).toHaveText(/\d+\/\d+/);
 
   await page.getByLabel('Sens :').selectOption('fr-first');
-  await expect(page.locator('.tts-inline-btn')).toHaveCount(0);
+  const ttsButton = page.locator('.tts-inline-btn');
+  const ttsCountBeforeFlip = await ttsButton.count();
+  if (ttsCountBeforeFlip > 0) {
+    await expect(ttsButton).toBeVisible();
+    await expect(ttsButton).toBeDisabled();
+  } else {
+    await expect(ttsButton).toHaveCount(0);
+  }
 
   await flashcard.click();
-  const ttsButton = page.locator('.tts-inline-btn');
-  const ttsCount = await ttsButton.count();
-  if (ttsCount > 0) {
-    await expect(ttsButton).toBeVisible();
+  const ttsCountAfterFlip = await ttsButton.count();
+  if (ttsCountAfterFlip > 0) {
+    await expect(ttsButton).toBeEnabled();
   } else {
     await expect(ttsButton).toHaveCount(0);
   }

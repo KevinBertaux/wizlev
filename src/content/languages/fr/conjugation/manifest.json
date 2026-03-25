@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "kind": "inflection-manifest",
+  "language": {
+    "key": "fr",
+    "locale": "fr-FR",
+    "label": "Français"
+  },
+  "version": "2026-03-25.2",
+  "generatedAt": "2026-03-25",
+  "schemaFile": "schema.fr.v1.json",
+  "schemaUpdatedAt": "2026-03-17.1",
+  "verbs": [
+    {
+      "key": "aimer",
+      "label": "Aimer",
+      "file": "verbs/aimer.json",
+      "version": "2026-03-17.1"
+    },
+    {
+      "key": "aller",
+      "label": "Aller",
+      "file": "verbs/aller.json",
+      "version": "2026-03-17.1"
+    },
+    {
+      "key": "avoir",
+      "label": "Avoir",
+      "file": "verbs/avoir.json",
+      "version": "2026-03-17.1"
+    },
+    {
+      "key": "chanter",
+      "label": "Chanter",
+      "file": "verbs/chanter.json",
+      "version": "2026-03-17.1"
+    },
+    {
+      "key": "etre",
+      "label": "Être",
+      "file": "verbs/etre.json",
+      "version": "2026-03-17.1"
+    },
+    {
+      "key": "faire",
+      "label": "Faire",
+      "file": "verbs/faire.json",
+      "version": "2026-03-17.1"
+    },
+    {
+      "key": "finir",
+      "label": "Finir",
+      "file": "verbs/finir.json",
+      "version": "2026-03-17.1"
+    },
+    {
+      "key": "grandir",
+      "label": "Grandir",
+      "file": "verbs/grandir.json",
+      "version": "2026-03-25.2"
+    },
+    {
+      "key": "manabuer",
+      "label": "Manabuer",
+      "file": "verbs/manabuer.json",
+      "version": "2026-03-17.1"
+    },
+    {
+      "key": "prendre",
+      "label": "Prendre",
+      "file": "verbs/prendre.json",
+      "version": "2026-03-17.1"
+    },
+    {
+      "key": "venir",
+      "label": "Venir",
+      "file": "verbs/venir.json",
+      "version": "2026-03-17.1"
+    }
+  ]
+}

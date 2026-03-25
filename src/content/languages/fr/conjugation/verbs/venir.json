@@ -1,0 +1,197 @@
+{
+  "key": "venir",
+  "lemma": "venir",
+  "label": "Venir",
+  "meta": {
+    "group": "3",
+    "auxiliary": "être",
+    "irregular": true,
+    "tags": [
+      "core"
+    ]
+  },
+  "forms": {
+    "indicatif.present": {
+      "je": "viens",
+      "tu": "viens",
+      "il": "vient",
+      "elle": "vient",
+      "on": "vient",
+      "nous": "venons",
+      "vous": "venez",
+      "ils": "viennent",
+      "elles": "viennent"
+    },
+    "indicatif.passe-compose": {
+      "je": "suis venu",
+      "tu": "es venu",
+      "il": "est venu",
+      "elle": "est venue",
+      "on": "est venu",
+      "nous": "sommes venus",
+      "vous": "êtes venus",
+      "ils": "sont venus",
+      "elles": "sont venues"
+    },
+    "indicatif.imparfait": {
+      "je": "venais",
+      "tu": "venais",
+      "il": "venait",
+      "elle": "venait",
+      "on": "venait",
+      "nous": "venions",
+      "vous": "veniez",
+      "ils": "venaient",
+      "elles": "venaient"
+    },
+    "indicatif.plus-que-parfait": {
+      "je": "étais venu",
+      "tu": "étais venu",
+      "il": "était venu",
+      "elle": "était venue",
+      "on": "était venu",
+      "nous": "étions venus",
+      "vous": "étiez venus",
+      "ils": "étaient venus",
+      "elles": "étaient venues"
+    },
+    "indicatif.passe-simple": {
+      "je": "vins",
+      "tu": "vins",
+      "il": "vint",
+      "elle": "vint",
+      "on": "vint",
+      "nous": "vînmes",
+      "vous": "vîntes",
+      "ils": "vinrent",
+      "elles": "vinrent"
+    },
+    "indicatif.passe-anterieur": {
+      "je": "fus venu",
+      "tu": "fus venu",
+      "il": "fut venu",
+      "elle": "fut venue",
+      "on": "fut venu",
+      "nous": "fûmes venus",
+      "vous": "fûtes venus",
+      "ils": "furent venus",
+      "elles": "furent venues"
+    },
+    "indicatif.futur-simple": {
+      "je": "viendrai",
+      "tu": "viendras",
+      "il": "viendra",
+      "elle": "viendra",
+      "on": "viendra",
+      "nous": "viendrons",
+      "vous": "viendrez",
+      "ils": "viendront",
+      "elles": "viendront"
+    },
+    "indicatif.futur-anterieur": {
+      "je": "serai venu",
+      "tu": "seras venu",
+      "il": "sera venu",
+      "elle": "sera venue",
+      "on": "sera venu",
+      "nous": "serons venus",
+      "vous": "serez venus",
+      "ils": "seront venus",
+      "elles": "seront venues"
+    },
+    "conditionnel.present": {
+      "je": "viendrais",
+      "tu": "viendrais",
+      "il": "viendrait",
+      "elle": "viendrait",
+      "on": "viendrait",
+      "nous": "viendrions",
+      "vous": "viendriez",
+      "ils": "viendraient",
+      "elles": "viendraient"
+    },
+    "conditionnel.passe": {
+      "je": "serais venu",
+      "tu": "serais venu",
+      "il": "serait venu",
+      "elle": "serait venue",
+      "on": "serait venu",
+      "nous": "serions venus",
+      "vous": "seriez venus",
+      "ils": "seraient venus",
+      "elles": "seraient venues"
+    },
+    "subjonctif.present": {
+      "je": "vienne",
+      "tu": "viennes",
+      "il": "vienne",
+      "elle": "vienne",
+      "on": "vienne",
+      "nous": "venions",
+      "vous": "veniez",
+      "ils": "viennent",
+      "elles": "viennent"
+    },
+    "subjonctif.passe": {
+      "je": "sois venu",
+      "tu": "sois venu",
+      "il": "soit venu",
+      "elle": "soit venue",
+      "on": "soit venu",
+      "nous": "soyons venus",
+      "vous": "soyez venus",
+      "ils": "soient venus",
+      "elles": "soient venues"
+    },
+    "subjonctif.imparfait": {
+      "je": "vinsse",
+      "tu": "vinsses",
+      "il": "vînt",
+      "elle": "vînt",
+      "on": "vînt",
+      "nous": "vinssions",
+      "vous": "vinssiez",
+      "ils": "vinssent",
+      "elles": "vinssent"
+    },
+    "subjonctif.plus-que-parfait": {
+      "je": "fusse venu",
+      "tu": "fusses venu",
+      "il": "fût venu",
+      "elle": "fût venue",
+      "on": "fût venu",
+      "nous": "fussions venus",
+      "vous": "fussiez venus",
+      "ils": "fussent venus",
+      "elles": "fussent venues"
+    },
+    "imperatif.present": {
+      "tu": "viens",
+      "nous": "venons",
+      "vous": "venez"
+    },
+    "imperatif.passe": {
+      "tu": "sois venu",
+      "nous": "soyons venus",
+      "vous": "soyez venus"
+    },
+    "infinitif.present": {
+      "base": "venir"
+    },
+    "infinitif.passe": {
+      "base": "être venu"
+    },
+    "participe.present": {
+      "base": "venant"
+    },
+    "participe.passe": {
+      "base": "venu"
+    },
+    "gerondif.present": {
+      "base": "en venant"
+    },
+    "gerondif.passe": {
+      "base": "en étant venu"
+    }
+  }
+}

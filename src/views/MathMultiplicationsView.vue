@@ -97,6 +97,16 @@ const firstTryBadge = computed(() => {
   return { emoji: '💪', label: "On s'entraîne encore !" };
 });
 
+const actionState = computed(() => {
+  if (!hasChecked.value) {
+    return 'check';
+  }
+  if (feedbackType.value === 'correct' || passAfterWrong.value) {
+    return 'none';
+  }
+  return 'next';
+});
+
 function resetFirstTryStats() {
   firstTryTotal.value = 0;
   firstTryCorrect.value = 0;
@@ -445,7 +455,9 @@ onUnmounted(() => {
 
     <QuizActions
       v-if="selectedTables.length > 0 && currentQuestion && !sessionCompleted"
+      :state="actionState"
       :can-check="canCheck"
+      next-label="Continuer →"
       @check="checkAnswer"
       @next="loadNextQuestion"
     />

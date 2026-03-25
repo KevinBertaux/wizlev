@@ -3,7 +3,7 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
 </script>
 
 <template>
-  <LegalPageLayout title="Politique cookies" updated-at="13 mars 2026">
+  <LegalPageLayout title="Politique cookies" updated-at="25 mars 2026">
     <h2>1. Objet</h2>
     <p>
       Cette page explique l'usage des cookies, stockages locaux et technologies similaires sur <strong>ManabuPlay</strong>,
@@ -40,6 +40,6 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
     </p>
 
     <h2>6. Contact</h2>
-    <p>Pour toute question relative aux cookies et traceurs : kevinbertaux+manabuplay [at] gmail [dot] com</p>
+    <p>Pour toute question relative aux cookies et traceurs : contact [at] manabuplay [dot] fr</p>
   </LegalPageLayout>
 </template>

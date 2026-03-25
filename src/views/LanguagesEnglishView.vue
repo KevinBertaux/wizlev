@@ -2,6 +2,7 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import QuizEmptyState from '@/components/QuizEmptyState.vue';
 import QuizSelectField from '@/components/QuizSelectField.vue';
+import StudyFlashcardCarousel from '@/components/StudyFlashcardCarousel.vue';
 import { getEnglishList, hydrateRemoteEnglishLists, listEnglishOptions } from '@/features/languages/englishLists';
 
 const cardDirectionStorageKey = 'manabuplay_english_card_direction';
@@ -15,22 +16,23 @@ const ttsPlaybackRates = [0.9, 0.6];
 
 const selectedList = ref('');
 const words = ref([]);
-const currentIndex = ref(0);
-const isFlipped = ref(false);
+const flashcardState = ref({
+  currentCard: null,
+  currentIndex: 0,
+  totalCards: 0,
+  isFlipped: false,
+});
 
 const cardDirection = ref('en-first');
 const ttsNextRateIndex = ref(0);
 const ttsVoices = ref([]);
 const isSpeaking = ref(false);
 const ttsStatus = ref('');
-const transitionDirection = ref('next');
 
 let currentUtterance = null;
 let voicesChangedHandler = null;
-
-const touchStartX = ref(0);
-const touchStartY = ref(0);
-const suppressNextFlip = ref(false);
+const isRemoteSyncPending = ref(false);
+const hasPendingListInteraction = ref(false);
 
 const availableEnglishOptions = ref(listEnglishOptions());
 const activeList = computed(() => (selectedList.value ? getEnglishList(selectedList.value) : null));
@@ -50,28 +52,31 @@ const listSelectOptions = computed(() =>
   }))
 );
 
-const cardTransitionName = computed(() =>
-  transitionDirection.value === 'previous' ? 'card-shared-prev' : 'card-shared-next'
-);
-
-const currentWord = computed(() => words.value[currentIndex.value] || null);
-const cardNumber = computed(() => (words.value.length ? currentIndex.value + 1 : 0));
-const totalCards = computed(() => words.value.length);
 const isFrenchFirst = computed(() => cardDirection.value === 'fr-first');
-const frontText = computed(() => {
-  if (!currentWord.value) {
-    return 'Choisir une liste';
+const flashcards = computed(() =>
+  words.value.map((word, index) => ({
+    id: `${selectedList.value || 'english'}-${index}-${word.english}-${word.french}`,
+    english: word.english,
+    french: word.french,
+    front: isFrenchFirst.value ? word.french : word.english,
+    back: isFrenchFirst.value ? word.english : word.french,
+  }))
+);
+const currentWord = computed(() => {
+  const card = flashcardState.value.currentCard;
+  if (!card) {
+    return null;
   }
-  return isFrenchFirst.value ? currentWord.value.french : currentWord.value.english;
-});
-const backText = computed(() => {
-  if (!currentWord.value) {
-    return '';
-  }
-  return isFrenchFirst.value ? currentWord.value.english : currentWord.value.french;
+  return {
+    english: card.english,
+    french: card.french,
+  };
 });
 const canPlayTts = computed(
-  () => ttsSupported && !!currentWord.value && (!isFrenchFirst.value || isFlipped.value)
+  () => ttsSupported && !!currentWord.value && (!isFrenchFirst.value || flashcardState.value.isFlipped)
+);
+const showRemoteSyncHint = computed(
+  () => isRemoteSyncPending.value && hasPendingListInteraction.value
 );
 
 function cloneWords(sourceWords) {
@@ -82,8 +87,6 @@ function loadList(listKey) {
   if (!listKey) {
     stopSpeech();
     words.value = [];
-    currentIndex.value = 0;
-    isFlipped.value = false;
     ttsNextRateIndex.value = 0;
     return;
   }
@@ -91,100 +94,18 @@ function loadList(listKey) {
   const list = getEnglishList(listKey);
   if (!list || !Array.isArray(list.words)) {
     words.value = [];
-    currentIndex.value = 0;
-    isFlipped.value = false;
     ttsNextRateIndex.value = 0;
     return;
   }
 
   stopSpeech();
   words.value = cloneWords(list.words);
-  currentIndex.value = 0;
-  isFlipped.value = false;
   ttsNextRateIndex.value = 0;
 }
 
-function showCard(index) {
-  if (!words.value.length) {
-    currentIndex.value = 0;
-    isFlipped.value = false;
-    return;
-  }
-
-  stopSpeech();
-  currentIndex.value = index;
-  isFlipped.value = false;
-  ttsNextRateIndex.value = 0;
-}
-
-function nextCard() {
-  if (!words.value.length) {
-    return;
-  }
-  transitionDirection.value = 'next';
-  const nextIndex = (currentIndex.value + 1) % words.value.length;
-  showCard(nextIndex);
-}
-
-function previousCard() {
-  if (!words.value.length) {
-    return;
-  }
-  transitionDirection.value = 'previous';
-  const previousIndex = (currentIndex.value - 1 + words.value.length) % words.value.length;
-  showCard(previousIndex);
-}
-
-function shuffleCards() {
-  if (!words.value.length) {
-    return;
-  }
-
-  stopSpeech();
-  transitionDirection.value = 'next';
-  const shuffled = cloneWords(words.value);
-  for (let i = shuffled.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-
-  words.value = shuffled;
-  currentIndex.value = 0;
-  isFlipped.value = false;
-  ttsNextRateIndex.value = 0;
-}
-
-function flipCard() {
-  if (suppressNextFlip.value) {
-    suppressNextFlip.value = false;
-    return;
-  }
-  isFlipped.value = !isFlipped.value;
-}
-
-function onTouchStart(event) {
-  const touch = event.changedTouches[0];
-  touchStartX.value = touch.clientX;
-  touchStartY.value = touch.clientY;
-}
-
-function onTouchEnd(event) {
-  const touch = event.changedTouches[0];
-  const deltaX = touch.clientX - touchStartX.value;
-  const deltaY = touch.clientY - touchStartY.value;
-  const horizontalThreshold = 45;
-  const isHorizontalSwipe =
-    Math.abs(deltaX) > horizontalThreshold && Math.abs(deltaX) > Math.abs(deltaY);
-
-  if (!isHorizontalSwipe) {
-    return;
-  }
-
-  suppressNextFlip.value = true;
-  if (deltaX < 0) {
-    nextCard();
-  } else {
-    previousCard();
+function markListInteraction() {
+  if (isRemoteSyncPending.value) {
+    hasPendingListInteraction.value = true;
   }
 }
 
@@ -279,21 +200,10 @@ function toggleSpeakWord() {
   ttsNextRateIndex.value = (ttsNextRateIndex.value + 1) % ttsPlaybackRates.length;
 }
 
-function handleKeyboardNav(event) {
-  const targetTag = event.target && event.target.tagName ? event.target.tagName.toLowerCase() : '';
-  const isTypingField =
-    targetTag === 'input' || targetTag === 'textarea' || targetTag === 'select' || event.target?.isContentEditable;
-  if (isTypingField) {
-    return;
-  }
-
-  if (event.key === 'ArrowLeft') {
-    event.preventDefault();
-    previousCard();
-  } else if (event.key === 'ArrowRight') {
-    event.preventDefault();
-    nextCard();
-  }
+function handleFlashcardStateChange(state) {
+  flashcardState.value = state;
+  stopSpeech();
+  ttsNextRateIndex.value = 0;
 }
 
 watch(selectedList, (newList) => {
@@ -304,8 +214,8 @@ watch(cardDirection, (direction) => {
   if (direction !== 'en-first' && direction !== 'fr-first') {
     return;
   }
-  isFlipped.value = false;
   stopSpeech();
+  ttsNextRateIndex.value = 0;
   if (typeof window !== 'undefined') {
     localStorage.setItem(cardDirectionStorageKey, direction);
   }
@@ -325,11 +235,18 @@ onMounted(async () => {
     }
   }
 
-  await hydrateRemoteEnglishLists();
   availableEnglishOptions.value = listEnglishOptions();
-
   loadList(selectedList.value);
-  window.addEventListener('keydown', handleKeyboardNav);
+
+  isRemoteSyncPending.value = true;
+  hydrateRemoteEnglishLists()
+    .then(() => {
+      availableEnglishOptions.value = listEnglishOptions();
+      loadList(selectedList.value);
+    })
+    .finally(() => {
+      isRemoteSyncPending.value = false;
+    });
 
   if (!ttsSupported) {
     return;
@@ -345,7 +262,6 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
-  window.removeEventListener('keydown', handleKeyboardNav);
   stopSpeech();
 
   if (!ttsSupported || !voicesChangedHandler) {
@@ -373,7 +289,14 @@ onUnmounted(() => {
           placeholder="-- Choisir une liste --"
           :placeholder-disabled="true"
           :options="listSelectOptions"
+          @pointerdown.capture="markListInteraction"
+          @focusin="markListInteraction"
+          @keydown.capture="markListInteraction"
         />
+        <div v-if="showRemoteSyncHint" class="background-sync-hint" role="status" aria-live="polite">
+          <span class="background-sync-hint__spinner" aria-hidden="true" />
+          <span>Les listes se mettent encore à jour en arriere-plan…</span>
+        </div>
       </div>
 
       <div class="grid grid-cols-1 items-start gap-3 md:grid-cols-[minmax(180px,_1fr)]">
@@ -390,55 +313,28 @@ onUnmounted(() => {
     <p v-if="activeList?.description" class="list-description">{{ activeList.description }}</p>
 
     <template v-if="selectedList">
-      <div class="flashcard-carousel">
-        <Transition :name="cardTransitionName" mode="out-in">
-          <div
-            :key="`${selectedList}-${currentIndex}`"
-            class="flashcard"
-            :class="{ flipped: isFlipped }"
-            @click="flipCard"
-            @touchstart.passive="onTouchStart"
-            @touchend.passive="onTouchEnd"
+      <StudyFlashcardCarousel
+        :cards="flashcards"
+        hint="Cliquer pour révéler la traduction"
+        shuffle-label="🔀 Mélanger"
+        @state-change="handleFlashcardStateChange"
+      >
+        <template v-if="ttsSupported" #aside-control>
+          <button
+            class="tts-inline-btn"
+            :class="{ 'is-speaking': isSpeaking }"
+            type="button"
+            :disabled="!canPlayTts"
+            :aria-disabled="!canPlayTts"
+            :aria-label="isSpeaking ? 'Arrêter la lecture' : 'Écouter le mot'"
+            @click.stop="toggleSpeakWord"
           >
-            <button class="carousel-rail carousel-rail-left" type="button" aria-label="Carte précédente" @click.stop="previousCard">
-              <span aria-hidden="true">❮</span>
-            </button>
-
-            <button class="carousel-rail carousel-rail-right" type="button" aria-label="Carte suivante" @click.stop="nextCard">
-              <span aria-hidden="true">❯</span>
-            </button>
-
-            <div class="flashcard-count">{{ cardNumber }}/{{ totalCards }}</div>
-
-            <div v-if="canPlayTts" class="tts-inline-control">
-              <button
-                class="tts-inline-btn"
-                :class="{ 'is-speaking': isSpeaking }"
-                type="button"
-                :aria-label="isSpeaking ? 'Arrêter la lecture' : 'Écouter le mot'"
-                @click.stop="toggleSpeakWord"
-              >
-                <span class="tts-icon" aria-hidden="true">🔊</span>
-              </button>
-            </div>
-
-            <div class="flashcard-content">
-              <div class="flashcard-word">{{ frontText }}</div>
-              <div class="flashcard-translation" :style="{ display: isFlipped ? 'block' : 'none' }">
-                {{ backText }}
-              </div>
-            </div>
-
-            <div v-if="!isFlipped && currentWord" class="flashcard-hint">Cliquer pour révéler la traduction</div>
-          </div>
-        </Transition>
-      </div>
+            <span class="tts-icon" aria-hidden="true">🔊</span>
+          </button>
+        </template>
+      </StudyFlashcardCarousel>
 
       <div v-if="ttsStatus" class="tts-status" aria-live="polite">{{ ttsStatus }}</div>
-
-      <div class="mt-2 flex justify-center">
-        <button class="mp-btn mp-btn-secondary" type="button" @click="shuffleCards">🔀 Mélanger</button>
-      </div>
     </template>
 
     <QuizEmptyState v-else message="Choisir une liste pour commencer." />
@@ -459,6 +355,28 @@ onUnmounted(() => {
   border: 1px solid rgba(78, 205, 196, 0.45);
   border-radius: 12px;
   padding: 12px 14px;
+}
+
+.background-sync-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(53, 109, 188, 0.09);
+  color: #264767;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.background-sync-hint__spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(53, 109, 188, 0.18);
+  border-top-color: #356dbc;
+  border-radius: 999px;
+  animation: english-background-sync-spin 0.8s linear infinite;
 }
 
 .flashcard-carousel {
@@ -652,17 +570,28 @@ onUnmounted(() => {
   box-shadow: 0 2px 0 rgba(15, 23, 42, 0.14);
 }
 
-.flashcard.flipped .flashcard-count {
-  color: #0f5f5a;
-  text-shadow: 0 2px 2px rgba(247, 249, 252, 0.6);
+.tts-inline-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
+  transform: none;
+  box-shadow: 0 2px 0 rgba(15, 23, 42, 0.08);
 }
 
-.flashcard.flipped .tts-inline-btn {
+.tts-inline-btn:disabled:hover,
+.tts-inline-btn:disabled:focus-visible,
+.tts-inline-btn:disabled:active {
+  transform: none;
+  border-color: rgba(36, 48, 65, 0.26);
+  background: #fbfdff;
+  box-shadow: 0 2px 0 rgba(15, 23, 42, 0.08);
+}
+
+:deep(.flashcard.flipped) .tts-inline-btn {
   border-color: rgba(15, 95, 90, 0.35);
   color: #0f5f5a;
 }
 
-.flashcard.flipped .tts-inline-btn.is-speaking {
+:deep(.flashcard.flipped) .tts-inline-btn.is-speaking {
   border-color: #0f5f5a;
   box-shadow:
     0 8px 16px rgba(15, 23, 42, 0.16),
@@ -712,6 +641,12 @@ onUnmounted(() => {
   }
   100% {
     transform: translateY(-2px) scale(1.04);
+  }
+}
+
+@keyframes english-background-sync-spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 

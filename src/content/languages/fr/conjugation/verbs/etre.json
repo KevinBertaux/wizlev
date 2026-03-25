@@ -1,0 +1,197 @@
+{
+  "key": "etre",
+  "lemma": "être",
+  "label": "Être",
+  "meta": {
+    "group": "3",
+    "auxiliary": "avoir",
+    "irregular": true,
+    "tags": [
+      "core"
+    ]
+  },
+  "forms": {
+    "indicatif.present": {
+      "je": "suis",
+      "tu": "es",
+      "il": "est",
+      "elle": "est",
+      "on": "est",
+      "nous": "sommes",
+      "vous": "êtes",
+      "ils": "sont",
+      "elles": "sont"
+    },
+    "indicatif.passe-compose": {
+      "je": "ai été",
+      "tu": "as été",
+      "il": "a été",
+      "elle": "a été",
+      "on": "a été",
+      "nous": "avons été",
+      "vous": "avez été",
+      "ils": "ont été",
+      "elles": "ont été"
+    },
+    "indicatif.imparfait": {
+      "je": "étais",
+      "tu": "étais",
+      "il": "était",
+      "elle": "était",
+      "on": "était",
+      "nous": "étions",
+      "vous": "étiez",
+      "ils": "étaient",
+      "elles": "étaient"
+    },
+    "indicatif.plus-que-parfait": {
+      "je": "avais été",
+      "tu": "avais été",
+      "il": "avait été",
+      "elle": "avait été",
+      "on": "avait été",
+      "nous": "avions été",
+      "vous": "aviez été",
+      "ils": "avaient été",
+      "elles": "avaient été"
+    },
+    "indicatif.passe-simple": {
+      "je": "fus",
+      "tu": "fus",
+      "il": "fut",
+      "elle": "fut",
+      "on": "fut",
+      "nous": "fûmes",
+      "vous": "fûtes",
+      "ils": "furent",
+      "elles": "furent"
+    },
+    "indicatif.passe-anterieur": {
+      "je": "eus été",
+      "tu": "eus été",
+      "il": "eut été",
+      "elle": "eut été",
+      "on": "eut été",
+      "nous": "eûmes été",
+      "vous": "eûtes été",
+      "ils": "eurent été",
+      "elles": "eurent été"
+    },
+    "indicatif.futur-simple": {
+      "je": "serai",
+      "tu": "seras",
+      "il": "sera",
+      "elle": "sera",
+      "on": "sera",
+      "nous": "serons",
+      "vous": "serez",
+      "ils": "seront",
+      "elles": "seront"
+    },
+    "indicatif.futur-anterieur": {
+      "je": "aurai été",
+      "tu": "auras été",
+      "il": "aura été",
+      "elle": "aura été",
+      "on": "aura été",
+      "nous": "aurons été",
+      "vous": "aurez été",
+      "ils": "auront été",
+      "elles": "auront été"
+    },
+    "conditionnel.present": {
+      "je": "serais",
+      "tu": "serais",
+      "il": "serait",
+      "elle": "serait",
+      "on": "serait",
+      "nous": "serions",
+      "vous": "seriez",
+      "ils": "seraient",
+      "elles": "seraient"
+    },
+    "conditionnel.passe": {
+      "je": "aurais été",
+      "tu": "aurais été",
+      "il": "aurait été",
+      "elle": "aurait été",
+      "on": "aurait été",
+      "nous": "aurions été",
+      "vous": "auriez été",
+      "ils": "auraient été",
+      "elles": "auraient été"
+    },
+    "subjonctif.present": {
+      "je": "sois",
+      "tu": "sois",
+      "il": "soit",
+      "elle": "soit",
+      "on": "soit",
+      "nous": "soyons",
+      "vous": "soyez",
+      "ils": "soient",
+      "elles": "soient"
+    },
+    "subjonctif.passe": {
+      "je": "aie été",
+      "tu": "aies été",
+      "il": "ait été",
+      "elle": "ait été",
+      "on": "ait été",
+      "nous": "ayons été",
+      "vous": "ayez été",
+      "ils": "aient été",
+      "elles": "aient été"
+    },
+    "subjonctif.imparfait": {
+      "je": "fusse",
+      "tu": "fusses",
+      "il": "fût",
+      "elle": "fût",
+      "on": "fût",
+      "nous": "fussions",
+      "vous": "fussiez",
+      "ils": "fussent",
+      "elles": "fussent"
+    },
+    "subjonctif.plus-que-parfait": {
+      "je": "eusse été",
+      "tu": "eusses été",
+      "il": "eût été",
+      "elle": "eût été",
+      "on": "eût été",
+      "nous": "eussions été",
+      "vous": "eussiez été",
+      "ils": "eussent été",
+      "elles": "eussent été"
+    },
+    "imperatif.present": {
+      "tu": "sois",
+      "nous": "soyons",
+      "vous": "soyez"
+    },
+    "imperatif.passe": {
+      "tu": "aie été",
+      "nous": "ayons été",
+      "vous": "ayez été"
+    },
+    "infinitif.present": {
+      "base": "être"
+    },
+    "infinitif.passe": {
+      "base": "avoir été"
+    },
+    "participe.present": {
+      "base": "étant"
+    },
+    "participe.passe": {
+      "base": "été"
+    },
+    "gerondif.present": {
+      "base": "en étant"
+    },
+    "gerondif.passe": {
+      "base": "en ayant été"
+    }
+  }
+}

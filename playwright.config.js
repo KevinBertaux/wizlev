@@ -17,7 +17,7 @@ export default defineConfig({
     video: 'retain-on-failure',
   },
   webServer: {
-    command: 'npm run build -- --mode e2e && npm run preview -- --strictPort --host 127.0.0.1 --port 4173',
+    command: 'npm run build:e2e && npm run preview -- --strictPort --host 127.0.0.1 --port 4173',
     url: 'http://127.0.0.1:4173',
     reuseExistingServer: false,
     timeout: 180 * 1000,
@@ -43,6 +43,42 @@ export default defineConfig({
       name: 'mobile-safari',
       use: { ...devices['iPhone 14'] },
     },
+    {
+      name: 'responsive-mobile',
+      testMatch: '**/*responsive.playwright.js',
+      use: {
+        browserName: 'chromium',
+        viewport: { width: 390, height: 844 },
+        hasTouch: true,
+        isMobile: true,
+      },
+    },
+    {
+      name: 'responsive-mobile-max',
+      testMatch: '**/*responsive.playwright.js',
+      use: {
+        browserName: 'chromium',
+        viewport: { width: 767, height: 900 },
+        hasTouch: true,
+        isMobile: true,
+      },
+    },
+    {
+      name: 'responsive-tablet',
+      testMatch: '**/*responsive.playwright.js',
+      use: {
+        browserName: 'chromium',
+        viewport: { width: 768, height: 1024 },
+        hasTouch: true,
+      },
+    },
+    {
+      name: 'responsive-desktop-min',
+      testMatch: '**/*responsive.playwright.js',
+      use: {
+        browserName: 'chromium',
+        viewport: { width: 1024, height: 768 },
+      },
+    },
   ],
 });
-

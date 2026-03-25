@@ -2,11 +2,39 @@
   "version": "backlog",
   "items": [
     {
-      "id": "backlog-sym-45",
+      "id": "backlog-sym-v3",
       "priority": "High",
       "domain": "math",
       "feature": "symetrie",
+      "label": "Symétrie V3: sac 96 variantes (axe + ouvert/fermé + côté d'origine cohérent)",
+      "dependsOn": ["scope-060-sym-render-contract"],
+      "done": false
+    },
+    {
+      "id": "backlog-sym-45",
+      "priority": "Med",
+      "domain": "math",
+      "feature": "symetrie",
       "label": "Symétrie 45° gauche/droite",
+      "dependsOn": ["backlog-sym-v3"],
+      "done": false
+    },
+    {
+      "id": "backlog-sym-grid-placement",
+      "priority": "Med",
+      "domain": "math",
+      "feature": "symetrie",
+      "dependsOn": ["scope-060-sym-v2"],
+      "label": "Symétrie : édition et placement manuel de points sur quadrillage dans le reviewer",
+      "done": false
+    },
+    {
+      "id": "backlog-sym-render-contract",
+      "priority": "High",
+      "domain": "tech",
+      "feature": "symetrie",
+      "dependsOn": ["scope-060-sym-v2"],
+      "label": "Symétrie : rendre le composant partagé purement visuel et sortir la projection/orientation hors composant",
       "done": false
     },
     {
@@ -18,19 +46,37 @@
       "done": false
     },
     {
+      "id": "backlog-math-divisions",
+      "priority": "High",
+      "domain": "math",
+      "feature": "divisions",
+      "label": "Module divisions V1",
+      "done": false
+    },
+    {
       "id": "backlog-admin-advanced",
       "priority": "Med",
       "domain": "admin",
       "feature": "dashboard",
+      "dependsOn": ["scope-060-roadmap-dependencies"],
       "label": "UX admin V2 (édition par lots, filtres avancés)",
+      "done": false
+    },
+    {
+      "id": "backlog-drawing-guided",
+      "priority": "Med",
+      "domain": "arts",
+      "feature": "drawing-guided",
+      "label": "Dessin guidé : reprendre le module à partir de fiches vectorielles fidèles, étape par étape, sans interprétation libre des modèles",
       "done": false
     },
     {
       "id": "backlog-course-arts-plastiques",
       "priority": "Med",
-      "domain": "ui",
+      "domain": "arts",
       "feature": "cours",
-      "label": "Préparer la catégorie Arts plastiques (Dessin) pour les futurs modules",
+      "dependsOn": ["backlog-drawing-guided"],
+      "label": "Préparer les futurs modules Arts plastiques après un premier module Dessin guidé propre et stabilisé",
       "done": false
     },
     {
@@ -38,7 +84,33 @@
       "priority": "Med",
       "domain": "ui",
       "feature": "design-system",
+      "dependsOn": ["backlog-brand-book"],
       "label": "Refonte globale post-Tailwind v4: CSS/UI/UX + design system + harmonisation complète des breakpoints sur tous les modules",
+      "done": false
+    },
+    {
+      "id": "backlog-ui-foundation-post-v4",
+      "priority": "Med",
+      "domain": "ui",
+      "feature": "design-system",
+      "label": "Faire évoluer les composants/composables côté client pour coller à l'état actuel de ManabuPlay (hors admin), avec plus de factorisation et d'harmonisation UI",
+      "done": false
+    },
+    {
+      "id": "backlog-tooltip-system",
+      "priority": "Med",
+      "domain": "ui",
+      "feature": "tooltips",
+      "dependsOn": ["backlog-ui-foundation-post-v4"],
+      "label": "Système global d'info-bulles cohérent",
+      "done": false
+    },
+    {
+      "id": "backlog-brand-book",
+      "priority": "Med",
+      "domain": "ui",
+      "feature": "brand-book",
+      "label": "Formaliser un brand book / design system (couleurs, typographies, composants, états, ton visuel)",
       "done": false
     },
     {
@@ -62,15 +134,157 @@
       "priority": "Med",
       "domain": "admin",
       "feature": "monitoring",
+      "dependsOn": ["scope-050-high-r2-v1"],
       "label": "Afficher dans le panneau admin l etat HTTP des listes distantes (200, 3xx, 4xx, 5xx)",
       "done": false
     },
     {
-      "id": "backlog-drop-legacy-vocab-keys",
+      "id": "backlog-language-rich-form-objects-v2",
+      "priority": "Low",
+      "domain": "langues",
+      "feature": "architecture",
+      "dependsOn": ["scope-060-language-quiz-pattern"],
+      "label": "Langues V2 : autoriser des objets de forme plus riches que string simple (acceptedAnswers, audio, note, meta) sans casser le moteur V1",
+      "done": false
+    },
+    {
+      "id": "backlog-language-workspace-alignment",
+      "priority": "High",
+      "domain": "langues",
+      "feature": "architecture",
+      "dependsOn": ["scope-060-language-quiz-pattern", "scope-060-french-tts-flashcards"],
+      "label": "Langues : aligner les modules sur le workspace validé en Français, avec shell commun, QCM, réponse libre et TTS partagé",
+      "done": false
+    },
+    {
+      "id": "backlog-multi-lang-structure",
       "priority": "Med",
+      "domain": "langues",
+      "feature": "architecture",
+      "dependsOn": ["scope-050-high-r2-v1", "scope-060-language-quiz-pattern"],
+      "label": "Structure multi-langues extensible pour futures matières Langues (latin, espagnol, autres) à horizon rentrée 2026-2027",
+      "done": false
+    },
+    {
+      "id": "backlog-admin-ui-foundation-audit",
+      "priority": "Med",
+      "domain": "admin",
+      "feature": "design-system",
+      "label": "Admin : audit composants/composables pour préparer un futur chantier d'harmonisation sans toucher l'admin tout de suite",
+      "done": false
+    },
+    {
+      "id": "backlog-lab-json-viewer",
+      "priority": "Med",
+      "domain": "admin",
+      "feature": "lab",
+      "label": "Lab : rendre l'affichage des JSON plus humain-friendly",
+      "done": false
+    },
+    {
+      "id": "backlog-mailer-foundation",
+      "priority": "Med",
+      "domain": "infra",
+      "feature": "mailer",
+      "label": "Ajouter une fondation mailer transactionnelle exploitable plus tard par les alertes et digests",
+      "done": false
+    },
+    {
+      "id": "backlog-public-contact-form",
+      "priority": "Low",
+      "domain": "legal",
+      "feature": "contact",
+      "dependsOn": ["backlog-mailer-foundation"],
+      "label": "Formulaire de contact public avec anti-spam, validation et traitement conforme aux pages légales",
+      "done": false
+    },
+    {
+      "id": "backlog-content-missing-digest",
+      "priority": "Low",
+      "domain": "admin",
+      "feature": "alerting",
+      "dependsOn": ["backlog-mailer-foundation"],
+      "label": "Journaliser les demandes d'éléments indisponibles et préparer un digest HTML quotidien côté support/admin",
+      "done": false
+    },
+    {
+      "id": "backlog-language-fill-in-the-blank",
+      "priority": "Med",
+      "domain": "langues",
+      "feature": "exercises",
+      "dependsOn": ["scope-060-language-workspace-alignment"],
+      "label": "Langues : exercices de texte à trou en QCM et réponse libre",
+      "done": false
+    },
+    {
+      "id": "backlog-language-tts-foundation",
+      "priority": "Med",
+      "domain": "langues",
+      "feature": "tts",
+      "dependsOn": ["scope-060-language-quiz-pattern"],
+      "label": "Langues : cadrer une fondation TTS commune (navigateur, voix, fallback, cache et futures options offline/cloud)",
+      "done": false
+    },
+    {
+      "id": "backlog-french-tts-qcm",
+      "priority": "Low",
+      "domain": "langues",
+      "feature": "francais",
+      "dependsOn": ["scope-060-french-tts-flashcards"],
+      "label": "Français : brancher le TTS sur le QCM",
+      "done": false
+    },
+    {
+      "id": "backlog-french-tts-input",
+      "priority": "Low",
+      "domain": "langues",
+      "feature": "francais",
+      "dependsOn": ["scope-060-french-tts-flashcards"],
+      "label": "Français : brancher le TTS sur la réponse libre",
+      "done": false
+    },
+    {
+      "id": "backlog-drop-legacy-vocab-keys",
+      "priority": "Low",
       "domain": "tech",
       "feature": "nettoyage-legacy",
-      "label": "Retirer la compatibilité legacy localStorage manabuplay_vocab_* après la période tampon de migration 0.5",
+      "dependsOn": ["scope-050-high-r2-v1"],
+      "label": "Retirer la compatibilité legacy localStorage manabuplay_vocab_* après nettoyage des routes et flux legacy, cible 0.7",
+      "done": false
+    },
+    {
+      "id": "backlog-admin-front-only-hardening",
+      "priority": "High",
+      "domain": "admin",
+      "feature": "security",
+      "dependsOn": ["scope-050-high-admin-dashboard", "scope-050-high-admin-maintenance"],
+      "label": "Durcir l'admin front-only (docs publiques nettoyées, placeholders de configuration, limites explicites)",
+      "done": false
+    },
+    {
+      "id": "backlog-playwright-responsive-1280",
+      "priority": "Low",
+      "domain": "qa",
+      "feature": "playwright",
+      "label": "Ajouter une passe Playwright/QA responsive dédiée au palier 1280px",
+      "done": false
+    },
+    {
+      "id": "backlog-ui-minor-polish",
+      "priority": "Low",
+      "domain": "ui",
+      "feature": "polish",
+      "dependsOn": ["backlog-ui-foundation-post-v4"],
+      "label": "Finitions UI mineures",
+      "done": false
+    },
+    {
+      "id": "backlog-r2-secure",
+      "priority": "High",
+      "domain": "infra",
+      "feature": "content-storage",
+      "dependsOn": ["scope-050-high-r2-v1"],
+      "label": "Cloudflare R2 V2: acces securise (URL signees/Worker) + controle d integrite",
       "done": false
     }
   ]

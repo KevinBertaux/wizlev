@@ -1,5 +1,5 @@
 {
-  "version": "0.5.0-prep",
+  "version": "0.5.0",
   "items": [
     {
       "id": "scope-050-crit-cms",
@@ -39,13 +39,14 @@
       "domain": "infra",
       "feature": "quality",
       "label": "QA manuelle ciblée (vrais appareils mobile + validation TTS)",
-      "done": false
+      "done": true
     },
     {
       "id": "scope-050-high-home",
       "priority": "High",
       "domain": "ui",
       "feature": "home",
+      "dependsOn": ["scope-050-crit-static"],
       "label": "Refonte accueil V1 par sections matières",
       "done": true
     },
@@ -54,6 +55,7 @@
       "priority": "High",
       "domain": "math",
       "feature": "symetrie",
+      "dependsOn": ["scope-050-crit-static"],
       "label": "Symétrie V1 QCM (axes vertical + horizontal)",
       "done": true
     },
@@ -86,6 +88,7 @@
       "priority": "High",
       "domain": "admin",
       "feature": "dashboard",
+      "dependsOn": ["scope-040-admin-lite-guard"],
       "label": "Dashboard admin avec sidebar repliable + navigation interne",
       "done": true
     },
@@ -94,16 +97,9 @@
       "priority": "High",
       "domain": "admin",
       "feature": "maintenance",
+      "dependsOn": ["scope-050-high-admin-dashboard"],
       "label": "Maintenance locale (RAZ granulaire + rollback)",
       "done": true
-    },
-    {
-      "id": "scope-050-high-admin-front-only-hardening",
-      "priority": "High",
-      "domain": "admin",
-      "feature": "security",
-      "label": "Durcir l’admin front-only (docs publiques nettoyées, placeholders de configuration, limites explicites)",
-      "done": false
     },
     {
       "id": "scope-050-med-refactor",
@@ -135,7 +131,7 @@
       "domain": "docs",
       "feature": "release",
       "label": "Modernisation documentaire 0.5.0 (README, hubs, checklists, références)",
-      "done": false
+      "done": true
     },
     {
       "id": "scope-050-med-typography-pass",
@@ -143,15 +139,7 @@
       "domain": "docs",
       "feature": "typography",
       "label": "Passe typographique propre (accents, apostrophes, ponctuation, cohérence éditoriale)",
-      "done": false
-    },
-    {
-      "id": "scope-050-low-polish",
-      "priority": "Low",
-      "domain": "ui",
-      "feature": "polish",
-      "label": "Polissage visuel léger",
-      "done": false
+      "done": true
     },
     {
       "id": "scope-050-high-tailwind-v4",
@@ -166,6 +154,7 @@
       "priority": "High",
       "domain": "infra",
       "feature": "content-storage",
+      "dependsOn": ["scope-050-crit-static"],
       "label": "Cloudflare R2 V1: lecture distante des listes JSON avec fallback local",
       "done": true
     },
@@ -174,6 +163,7 @@
       "priority": "High",
       "domain": "langues",
       "feature": "anglais",
+      "dependsOn": ["scope-020-tts-v1"],
       "label": "Anglais : TTS simplifié (en-US fixe, alternance 0.9/0.6 au clic, feedback visuel lecture)",
       "done": true
     },
@@ -182,9 +172,9 @@
       "priority": "Med",
       "domain": "docs",
       "feature": "coherence",
+      "dependsOn": ["scope-050-high-english-tts-simplified"],
       "label": "Nettoyage naming vocab -> english (tests E2E, snapshots visuels, captures, libellés docs)",
       "done": true
     }
   ]
 }
-

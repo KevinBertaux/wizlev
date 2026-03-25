@@ -1,0 +1,531 @@
+{
+  "schemaVersion": 1,
+  "kind": "inflection-module",
+  "languages": [
+    {
+      "key": "fr",
+      "locale": "fr-FR",
+      "label": "Français",
+      "rows": [
+        {
+          "key": "je",
+          "label": "Je"
+        },
+        {
+          "key": "tu",
+          "label": "Tu"
+        },
+        {
+          "key": "thirdSingular",
+          "label": "Il / Elle / On"
+        },
+        {
+          "key": "nous",
+          "label": "Nous"
+        },
+        {
+          "key": "vous",
+          "label": "Vous"
+        },
+        {
+          "key": "thirdPlural",
+          "label": "Ils / Elles"
+        },
+        {
+          "key": "base",
+          "label": "Forme"
+        }
+      ],
+      "slotSets": [
+        {
+          "key": "personal-9",
+          "label": "Formes personnelles",
+          "slots": [
+            {
+              "key": "je",
+              "label": "Je",
+              "rowKey": "je"
+            },
+            {
+              "key": "tu",
+              "label": "Tu",
+              "rowKey": "tu"
+            },
+            {
+              "key": "il",
+              "label": "Il",
+              "rowKey": "thirdSingular"
+            },
+            {
+              "key": "elle",
+              "label": "Elle",
+              "rowKey": "thirdSingular"
+            },
+            {
+              "key": "on",
+              "label": "On",
+              "rowKey": "thirdSingular"
+            },
+            {
+              "key": "nous",
+              "label": "Nous",
+              "rowKey": "nous"
+            },
+            {
+              "key": "vous",
+              "label": "Vous",
+              "rowKey": "vous"
+            },
+            {
+              "key": "ils",
+              "label": "Ils",
+              "rowKey": "thirdPlural"
+            },
+            {
+              "key": "elles",
+              "label": "Elles",
+              "rowKey": "thirdPlural"
+            }
+          ]
+        },
+        {
+          "key": "imperative-3",
+          "label": "Impératif",
+          "slots": [
+            {
+              "key": "tu",
+              "label": "Tu",
+              "rowKey": "tu"
+            },
+            {
+              "key": "nous",
+              "label": "Nous",
+              "rowKey": "nous"
+            },
+            {
+              "key": "vous",
+              "label": "Vous",
+              "rowKey": "vous"
+            }
+          ]
+        },
+        {
+          "key": "non-finite-1",
+          "label": "Forme non personnelle",
+          "slots": [
+            {
+              "key": "base",
+              "label": "Forme",
+              "rowKey": "base"
+            }
+          ]
+        }
+      ],
+      "moods": [
+        {
+          "key": "indicatif",
+          "label": "Indicatif",
+          "families": [
+            "present",
+            "past",
+            "future"
+          ],
+          "tenses": [
+            {
+              "key": "present",
+              "label": "Indicatif présent",
+              "slotSetKey": "personal-9",
+              "compound": false
+            },
+            {
+              "key": "passe-compose",
+              "label": "Indicatif passé composé",
+              "slotSetKey": "personal-9",
+              "compound": true
+            },
+            {
+              "key": "imparfait",
+              "label": "Indicatif imparfait",
+              "slotSetKey": "personal-9",
+              "compound": false
+            },
+            {
+              "key": "plus-que-parfait",
+              "label": "Indicatif plus-que-parfait",
+              "slotSetKey": "personal-9",
+              "compound": true
+            },
+            {
+              "key": "passe-simple",
+              "label": "Indicatif passé simple",
+              "slotSetKey": "personal-9",
+              "compound": false
+            },
+            {
+              "key": "passe-anterieur",
+              "label": "Indicatif passé antérieur",
+              "slotSetKey": "personal-9",
+              "compound": true
+            },
+            {
+              "key": "futur-simple",
+              "label": "Indicatif futur simple",
+              "slotSetKey": "personal-9",
+              "compound": false
+            },
+            {
+              "key": "futur-anterieur",
+              "label": "Indicatif futur antérieur",
+              "slotSetKey": "personal-9",
+              "compound": true
+            }
+          ]
+        },
+        {
+          "key": "conditionnel",
+          "label": "Conditionnel",
+          "families": [
+            "present",
+            "past"
+          ],
+          "tenses": [
+            {
+              "key": "present",
+              "label": "Conditionnel présent",
+              "slotSetKey": "personal-9",
+              "compound": false
+            },
+            {
+              "key": "passe",
+              "label": "Conditionnel passé",
+              "slotSetKey": "personal-9",
+              "compound": true
+            }
+          ]
+        },
+        {
+          "key": "subjonctif",
+          "label": "Subjonctif",
+          "families": [
+            "present",
+            "past"
+          ],
+          "tenses": [
+            {
+              "key": "present",
+              "label": "Subjonctif présent",
+              "slotSetKey": "personal-9",
+              "compound": false
+            },
+            {
+              "key": "passe",
+              "label": "Subjonctif passé",
+              "slotSetKey": "personal-9",
+              "compound": true
+            },
+            {
+              "key": "imparfait",
+              "label": "Subjonctif imparfait",
+              "slotSetKey": "personal-9",
+              "compound": false
+            },
+            {
+              "key": "plus-que-parfait",
+              "label": "Subjonctif plus-que-parfait",
+              "slotSetKey": "personal-9",
+              "compound": true
+            }
+          ]
+        },
+        {
+          "key": "imperatif",
+          "label": "Impératif",
+          "families": [
+            "present",
+            "past"
+          ],
+          "tenses": [
+            {
+              "key": "present",
+              "label": "Impératif présent",
+              "slotSetKey": "imperative-3",
+              "compound": false
+            },
+            {
+              "key": "passe",
+              "label": "Impératif passé",
+              "slotSetKey": "imperative-3",
+              "compound": true
+            }
+          ]
+        },
+        {
+          "key": "infinitif",
+          "label": "Infinitif",
+          "families": [
+            "present",
+            "past"
+          ],
+          "tenses": [
+            {
+              "key": "present",
+              "label": "Infinitif présent",
+              "slotSetKey": "non-finite-1",
+              "compound": false
+            },
+            {
+              "key": "passe",
+              "label": "Infinitif passé",
+              "slotSetKey": "non-finite-1",
+              "compound": true
+            }
+          ]
+        },
+        {
+          "key": "participe",
+          "label": "Participe",
+          "families": [
+            "present",
+            "past"
+          ],
+          "tenses": [
+            {
+              "key": "present",
+              "label": "Participe présent",
+              "slotSetKey": "non-finite-1",
+              "compound": false
+            },
+            {
+              "key": "passe",
+              "label": "Participe passé",
+              "slotSetKey": "non-finite-1",
+              "compound": false
+            }
+          ]
+        },
+        {
+          "key": "gerondif",
+          "label": "Gérondif",
+          "families": [
+            "present",
+            "past"
+          ],
+          "tenses": [
+            {
+              "key": "present",
+              "label": "Gérondif présent",
+              "slotSetKey": "non-finite-1",
+              "compound": false
+            },
+            {
+              "key": "passe",
+              "label": "Gérondif passé",
+              "slotSetKey": "non-finite-1",
+              "compound": true
+            }
+          ]
+        }
+      ],
+      "verbs": [
+        {
+          "key": "manabuer",
+          "lemma": "manabuer",
+          "label": "Manabuer",
+          "meta": {
+            "group": "1",
+            "auxiliary": "avoir",
+            "irregular": false,
+            "tags": [
+              "poc",
+              "easter-egg"
+            ]
+          },
+          "forms": {
+            "indicatif.present": {
+              "je": "manabue",
+              "tu": "manabues",
+              "il": "manabue",
+              "elle": "manabue",
+              "on": "manabue",
+              "nous": "manabuons",
+              "vous": "manabuez",
+              "ils": "manabuent",
+              "elles": "manabuent"
+            },
+            "indicatif.passe-compose": {
+              "je": "ai manabué",
+              "tu": "as manabué",
+              "il": "a manabué",
+              "elle": "a manabué",
+              "on": "a manabué",
+              "nous": "avons manabué",
+              "vous": "avez manabué",
+              "ils": "ont manabué",
+              "elles": "ont manabué"
+            },
+            "indicatif.imparfait": {
+              "je": "manabuais",
+              "tu": "manabuais",
+              "il": "manabuait",
+              "elle": "manabuait",
+              "on": "manabuait",
+              "nous": "manabuions",
+              "vous": "manabuiez",
+              "ils": "manabuaient",
+              "elles": "manabuaient"
+            },
+            "indicatif.plus-que-parfait": {
+              "je": "avais manabué",
+              "tu": "avais manabué",
+              "il": "avait manabué",
+              "elle": "avait manabué",
+              "on": "avait manabué",
+              "nous": "avions manabué",
+              "vous": "aviez manabué",
+              "ils": "avaient manabué",
+              "elles": "avaient manabué"
+            },
+            "indicatif.passe-simple": {
+              "je": "manabuai",
+              "tu": "manabuas",
+              "il": "manabua",
+              "elle": "manabua",
+              "on": "manabua",
+              "nous": "manabuâmes",
+              "vous": "manabuâtes",
+              "ils": "manabuèrent",
+              "elles": "manabuèrent"
+            },
+            "indicatif.passe-anterieur": {
+              "je": "eus manabué",
+              "tu": "eus manabué",
+              "il": "eut manabué",
+              "elle": "eut manabué",
+              "on": "eut manabué",
+              "nous": "eûmes manabué",
+              "vous": "eûtes manabué",
+              "ils": "eurent manabué",
+              "elles": "eurent manabué"
+            },
+            "indicatif.futur-simple": {
+              "je": "manabuerai",
+              "tu": "manabueras",
+              "il": "manabuera",
+              "elle": "manabuera",
+              "on": "manabuera",
+              "nous": "manabuerons",
+              "vous": "manabuerez",
+              "ils": "manabueront",
+              "elles": "manabueront"
+            },
+            "indicatif.futur-anterieur": {
+              "je": "aurai manabué",
+              "tu": "auras manabué",
+              "il": "aura manabué",
+              "elle": "aura manabué",
+              "on": "aura manabué",
+              "nous": "aurons manabué",
+              "vous": "aurez manabué",
+              "ils": "auront manabué",
+              "elles": "auront manabué"
+            },
+            "conditionnel.present": {
+              "je": "manabuerais",
+              "tu": "manabuerais",
+              "il": "manabuerait",
+              "elle": "manabuerait",
+              "on": "manabuerait",
+              "nous": "manabuerions",
+              "vous": "manabueriez",
+              "ils": "manabueraient",
+              "elles": "manabueraient"
+            },
+            "conditionnel.passe": {
+              "je": "aurais manabué",
+              "tu": "aurais manabué",
+              "il": "aurait manabué",
+              "elle": "aurait manabué",
+              "on": "aurait manabué",
+              "nous": "aurions manabué",
+              "vous": "auriez manabué",
+              "ils": "auraient manabué",
+              "elles": "auraient manabué"
+            },
+            "subjonctif.present": {
+              "je": "manabue",
+              "tu": "manabues",
+              "il": "manabue",
+              "elle": "manabue",
+              "on": "manabue",
+              "nous": "manabuions",
+              "vous": "manabuiez",
+              "ils": "manabuent",
+              "elles": "manabuent"
+            },
+            "subjonctif.passe": {
+              "je": "aie manabué",
+              "tu": "aies manabué",
+              "il": "ait manabué",
+              "elle": "ait manabué",
+              "on": "ait manabué",
+              "nous": "ayons manabué",
+              "vous": "ayez manabué",
+              "ils": "aient manabué",
+              "elles": "aient manabué"
+            },
+            "subjonctif.imparfait": {
+              "je": "manabuasse",
+              "tu": "manabuasses",
+              "il": "manabuât",
+              "elle": "manabuât",
+              "on": "manabuât",
+              "nous": "manabuassions",
+              "vous": "manabuassiez",
+              "ils": "manabuassent",
+              "elles": "manabuassent"
+            },
+            "subjonctif.plus-que-parfait": {
+              "je": "eusse manabué",
+              "tu": "eusses manabué",
+              "il": "eût manabué",
+              "elle": "eût manabué",
+              "on": "eût manabué",
+              "nous": "eussions manabué",
+              "vous": "eussiez manabué",
+              "ils": "eussent manabué",
+              "elles": "eussent manabué"
+            },
+            "imperatif.present": {
+              "tu": "manabue",
+              "nous": "manabuons",
+              "vous": "manabuez"
+            },
+            "imperatif.passe": {
+              "tu": "aie manabué",
+              "nous": "ayons manabué",
+              "vous": "ayez manabué"
+            },
+            "infinitif.present": {
+              "base": "manabuer"
+            },
+            "infinitif.passe": {
+              "base": "avoir manabué"
+            },
+            "participe.present": {
+              "base": "manabuant"
+            },
+            "participe.passe": {
+              "base": "manabué"
+            },
+            "gerondif.present": {
+              "base": "en manabuant"
+            },
+            "gerondif.passe": {
+              "base": "en ayant manabué"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

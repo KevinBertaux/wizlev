@@ -1,0 +1,67 @@
+{
+  "version": "ads-foundation",
+  "items": [
+    {
+      "id": "scope-ads-consent-core",
+      "priority": "High",
+      "domain": "infra",
+      "feature": "consent",
+      "label": "CMP léger front-only : catégories de consentement, stockage local et application du consentement aux scripts",
+      "done": true
+    },
+    {
+      "id": "scope-ads-runtime-core",
+      "priority": "High",
+      "domain": "infra",
+      "feature": "ads",
+      "dependsOn": ["scope-ads-consent-core"],
+      "label": "Runtime publicitaire piloté par consentement (provider config, bootstrap script, état runtime)",
+      "done": true
+    },
+    {
+      "id": "scope-ads-consent-bridge",
+      "priority": "High",
+      "domain": "infra",
+      "feature": "ads",
+      "dependsOn": ["scope-ads-consent-core", "scope-ads-runtime-core"],
+      "label": "Pont de consentement compatible Google Consent Mode et séparation analytics / ads",
+      "done": true
+    },
+    {
+      "id": "scope-ads-slot-foundation",
+      "priority": "Med",
+      "domain": "ui",
+      "feature": "ads",
+      "dependsOn": ["scope-ads-runtime-core"],
+      "label": "Définition des emplacements publicitaires et résolution par route",
+      "done": true
+    },
+    {
+      "id": "scope-ads-kids-safe-policy",
+      "priority": "High",
+      "domain": "legal",
+      "feature": "monetisation",
+      "dependsOn": ["scope-ads-consent-bridge", "scope-ads-slot-foundation"],
+      "label": "Cadrer une monétisation kids-safe : types de pubs autorisées, limites UX, conformité et garde-fous produit",
+      "done": false
+    },
+    {
+      "id": "scope-ads-provider-integration",
+      "priority": "Med",
+      "domain": "infra",
+      "feature": "ads",
+      "dependsOn": ["scope-ads-kids-safe-policy"],
+      "label": "Brancher une intégration provider réelle sous contraintes kids-safe avec fallback sans pub",
+      "done": false
+    },
+    {
+      "id": "scope-ads-config-hardening",
+      "priority": "Med",
+      "domain": "admin",
+      "feature": "ads",
+      "dependsOn": ["scope-ads-provider-integration"],
+      "label": "Rendre explicites la configuration Ads, les placeholders et les limites de fonctionnement dans l'admin et la documentation",
+      "done": false
+    }
+  ]
+}

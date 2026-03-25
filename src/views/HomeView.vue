@@ -17,10 +17,15 @@
 
     <div class="page-block section-block">
       <h1>🗣️ Langues</h1>
-      <div class="cards-grid grid grid-cols-1 gap-4">
+      <div class="cards-grid grid grid-cols-1 gap-4 lg:grid-cols-2">
         <router-link class="home-card" :to="{ name: 'languages-english' }">
           <h2>🇬🇧 Anglais</h2>
           <p>Apprends l'anglais avec des listes, des flashcards et la lecture des mots à voix haute.</p>
+        </router-link>
+
+        <router-link class="home-card" :to="{ name: 'languages-french' }">
+          <h2>🇫🇷 Français</h2>
+          <p>Révise la conjugaison française par verbe, avec fiche de référence et parcours progressif.</p>
         </router-link>
       </div>
     </div>

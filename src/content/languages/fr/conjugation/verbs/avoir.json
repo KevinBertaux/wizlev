@@ -1,0 +1,197 @@
+{
+  "key": "avoir",
+  "lemma": "avoir",
+  "label": "Avoir",
+  "meta": {
+    "group": "3",
+    "auxiliary": "avoir",
+    "irregular": true,
+    "tags": [
+      "core"
+    ]
+  },
+  "forms": {
+    "indicatif.present": {
+      "je": "ai",
+      "tu": "as",
+      "il": "a",
+      "elle": "a",
+      "on": "a",
+      "nous": "avons",
+      "vous": "avez",
+      "ils": "ont",
+      "elles": "ont"
+    },
+    "indicatif.passe-compose": {
+      "je": "ai eu",
+      "tu": "as eu",
+      "il": "a eu",
+      "elle": "a eu",
+      "on": "a eu",
+      "nous": "avons eu",
+      "vous": "avez eu",
+      "ils": "ont eu",
+      "elles": "ont eu"
+    },
+    "indicatif.imparfait": {
+      "je": "avais",
+      "tu": "avais",
+      "il": "avait",
+      "elle": "avait",
+      "on": "avait",
+      "nous": "avions",
+      "vous": "aviez",
+      "ils": "avaient",
+      "elles": "avaient"
+    },
+    "indicatif.plus-que-parfait": {
+      "je": "avais eu",
+      "tu": "avais eu",
+      "il": "avait eu",
+      "elle": "avait eu",
+      "on": "avait eu",
+      "nous": "avions eu",
+      "vous": "aviez eu",
+      "ils": "avaient eu",
+      "elles": "avaient eu"
+    },
+    "indicatif.passe-simple": {
+      "je": "eus",
+      "tu": "eus",
+      "il": "eut",
+      "elle": "eut",
+      "on": "eut",
+      "nous": "eûmes",
+      "vous": "eûtes",
+      "ils": "eurent",
+      "elles": "eurent"
+    },
+    "indicatif.passe-anterieur": {
+      "je": "eus eu",
+      "tu": "eus eu",
+      "il": "eut eu",
+      "elle": "eut eu",
+      "on": "eut eu",
+      "nous": "eûmes eu",
+      "vous": "eûtes eu",
+      "ils": "eurent eu",
+      "elles": "eurent eu"
+    },
+    "indicatif.futur-simple": {
+      "je": "aurai",
+      "tu": "auras",
+      "il": "aura",
+      "elle": "aura",
+      "on": "aura",
+      "nous": "aurons",
+      "vous": "aurez",
+      "ils": "auront",
+      "elles": "auront"
+    },
+    "indicatif.futur-anterieur": {
+      "je": "aurai eu",
+      "tu": "auras eu",
+      "il": "aura eu",
+      "elle": "aura eu",
+      "on": "aura eu",
+      "nous": "aurons eu",
+      "vous": "aurez eu",
+      "ils": "auront eu",
+      "elles": "auront eu"
+    },
+    "conditionnel.present": {
+      "je": "aurais",
+      "tu": "aurais",
+      "il": "aurait",
+      "elle": "aurait",
+      "on": "aurait",
+      "nous": "aurions",
+      "vous": "auriez",
+      "ils": "auraient",
+      "elles": "auraient"
+    },
+    "conditionnel.passe": {
+      "je": "aurais eu",
+      "tu": "aurais eu",
+      "il": "aurait eu",
+      "elle": "aurait eu",
+      "on": "aurait eu",
+      "nous": "aurions eu",
+      "vous": "auriez eu",
+      "ils": "auraient eu",
+      "elles": "auraient eu"
+    },
+    "subjonctif.present": {
+      "je": "aie",
+      "tu": "aies",
+      "il": "ait",
+      "elle": "ait",
+      "on": "ait",
+      "nous": "ayons",
+      "vous": "ayez",
+      "ils": "aient",
+      "elles": "aient"
+    },
+    "subjonctif.passe": {
+      "je": "aie eu",
+      "tu": "aies eu",
+      "il": "ait eu",
+      "elle": "ait eu",
+      "on": "ait eu",
+      "nous": "ayons eu",
+      "vous": "ayez eu",
+      "ils": "aient eu",
+      "elles": "aient eu"
+    },
+    "subjonctif.imparfait": {
+      "je": "eusse",
+      "tu": "eusses",
+      "il": "eût",
+      "elle": "eût",
+      "on": "eût",
+      "nous": "eussions",
+      "vous": "eussiez",
+      "ils": "eussent",
+      "elles": "eussent"
+    },
+    "subjonctif.plus-que-parfait": {
+      "je": "eusse eu",
+      "tu": "eusses eu",
+      "il": "eût eu",
+      "elle": "eût eu",
+      "on": "eût eu",
+      "nous": "eussions eu",
+      "vous": "eussiez eu",
+      "ils": "eussent eu",
+      "elles": "eussent eu"
+    },
+    "imperatif.present": {
+      "tu": "aie",
+      "nous": "ayons",
+      "vous": "ayez"
+    },
+    "imperatif.passe": {
+      "tu": "aie eu",
+      "nous": "ayons eu",
+      "vous": "ayez eu"
+    },
+    "infinitif.present": {
+      "base": "avoir"
+    },
+    "infinitif.passe": {
+      "base": "avoir eu"
+    },
+    "participe.present": {
+      "base": "ayant"
+    },
+    "participe.passe": {
+      "base": "eu"
+    },
+    "gerondif.present": {
+      "base": "en ayant"
+    },
+    "gerondif.passe": {
+      "base": "en ayant eu"
+    }
+  }
+}

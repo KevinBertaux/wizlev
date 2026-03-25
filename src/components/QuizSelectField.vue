@@ -24,6 +24,10 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  optionGroups: {
+    type: Array,
+    default: () => [],
+  },
 });
 
 defineEmits(['update:modelValue']);
@@ -39,6 +43,20 @@ defineEmits(['update:modelValue']);
       @change="$emit('update:modelValue', $event.target.value)"
     >
       <option v-if="placeholder" value="" :disabled="placeholderDisabled">{{ placeholder }}</option>
+      <optgroup
+        v-for="group in optionGroups"
+        :key="String(group.key || group.label)"
+        :label="group.label"
+      >
+        <option
+          v-for="option in group.options || []"
+          :key="String(option.value)"
+          :value="option.value"
+          :disabled="option.disabled"
+        >
+          {{ option.label }}
+        </option>
+      </optgroup>
       <option v-for="option in options" :key="String(option.value)" :value="option.value" :disabled="option.disabled">
         {{ option.label }}
       </option>

@@ -6,8 +6,8 @@ Hub de documentation en français. Ce document détaille où trouver l’informa
 
 ## Statut
 
-- Version produit en cours : `0.5.0-prep`
-- Branche produit active : `feat/0.5.0-prep`
+- Version produit publiée : `0.6.0`
+- Branche produit active : `feat/0.6.0-prep`
 - Ligne monétisation séparée : `epic/ads-cmp`
 
 ## Carte de la documentation
@@ -16,7 +16,7 @@ Hub de documentation en français. Ce document détaille où trouver l’informa
 
 - Présentation rapide du projet : `README.md`
 - Synthèse de pilotage : `ROADMAP.md`
-- Notes de version en cours : `docs/RELEASE-NOTES.0.5.0-prep.fr.md`
+- Dernières notes de version publiées : `docs/RELEASE-NOTES.0.6.0.fr.md`
 
 ### Exploitation / qualité
 
@@ -75,7 +75,7 @@ Hub de documentation en français. Ce document détaille où trouver l’informa
   - modules : `multiplications`, `symmetry`
 - `Langues`
   - hub : `/languages`
-  - module : `english`
+  - modules : `english`, `french`
 - `Panneau interne`
   - documentation et accès réservés à l'usage interne
 

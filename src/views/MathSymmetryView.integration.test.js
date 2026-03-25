@@ -1,13 +1,20 @@
 // @vitest-environment jsdom
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
 import MathSymmetryView from './MathSymmetryView.vue';
 
 describe('MathSymmetryView integration', () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
   it('selects an option, verifies, then moves to next question on Enter', async () => {
+    vi.stubEnv('VITE_REMOTE_CONTENT_BASE_URL', '');
+    vi.stubEnv('VITE_SYMMETRY_REMOTE_BASE_URL', '');
     const wrapper = mount(MathSymmetryView, {
       attachTo: document.body,
     });
+    await flushPromises();
 
     const prompt = wrapper.get('.prompt-box p');
     const firstPrompt = prompt.text();
