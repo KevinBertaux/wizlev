@@ -43,5 +43,42 @@ export default defineConfig({
       name: 'mobile-safari',
       use: { ...devices['iPhone 14'] },
     },
+    {
+      name: 'responsive-mobile',
+      testMatch: '**/*responsive.playwright.js',
+      use: {
+        browserName: 'chromium',
+        viewport: { width: 390, height: 844 },
+        hasTouch: true,
+        isMobile: true,
+      },
+    },
+    {
+      name: 'responsive-mobile-max',
+      testMatch: '**/*responsive.playwright.js',
+      use: {
+        browserName: 'chromium',
+        viewport: { width: 767, height: 900 },
+        hasTouch: true,
+        isMobile: true,
+      },
+    },
+    {
+      name: 'responsive-tablet',
+      testMatch: '**/*responsive.playwright.js',
+      use: {
+        browserName: 'chromium',
+        viewport: { width: 768, height: 1024 },
+        hasTouch: true,
+      },
+    },
+    {
+      name: 'responsive-desktop-min',
+      testMatch: '**/*responsive.playwright.js',
+      use: {
+        browserName: 'chromium',
+        viewport: { width: 1024, height: 768 },
+      },
+    },
   ],
 });
