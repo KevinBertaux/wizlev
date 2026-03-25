@@ -243,6 +243,15 @@
       "dependsOn": ["scope-050-high-r2-v1"],
       "label": "Retirer la compatibilité legacy localStorage manabuplay_vocab_* après nettoyage des routes et flux legacy, cible 0.7",
       "done": false
+    },
+    {
+      "id": "backlog-admin-front-only-hardening",
+      "priority": "High",
+      "domain": "admin",
+      "feature": "security",
+      "dependsOn": ["scope-050-high-admin-dashboard", "scope-050-high-admin-maintenance"],
+      "label": "Durcir l'admin front-only (docs publiques nettoyées, placeholders de configuration, limites explicites)",
+      "done": false
     }
   ]
 }

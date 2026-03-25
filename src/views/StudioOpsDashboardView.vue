@@ -1929,6 +1929,7 @@ initAdminData();
                     <th>Catégorie</th>
                     <th>Sous-catégorie</th>
                     <th>Dépendances</th>
+                    <th>Item</th>
                     <th>Description</th>
                   </tr>
                 </thead>
@@ -1960,11 +1961,14 @@ initAdminData();
                       <span v-else class="meta-line">-</span>
                     </td>
                     <td>
+                      <div class="roadmap-item-id">{{ item.id }}</div>
+                    </td>
+                    <td>
                       <div class="roadmap-item-label">{{ item.label }}</div>
                     </td>
                   </tr>
                   <tr v-if="sortedRoadmapItems.length === 0">
-                    <td colspan="6" class="meta-line">Aucun item pour ces filtres.</td>
+                    <td colspan="7" class="meta-line">Aucun item pour ces filtres.</td>
                   </tr>
                 </tbody>
               </table>

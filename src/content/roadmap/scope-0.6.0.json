@@ -144,18 +144,6 @@
       "done": false
     },
     {
-      "id": "scope-060-admin-front-only-hardening",
-      "priority": "High",
-      "domain": "admin",
-      "feature": "security",
-      "dependsOn": [
-        "scope-050-high-admin-dashboard",
-        "scope-050-high-admin-maintenance"
-      ],
-      "label": "Durcir l'admin front-only (docs publiques nettoyées, placeholders de configuration, limites explicites)",
-      "done": false
-    },
-    {
       "id": "scope-060-ui-minor-polish",
       "priority": "Low",
       "domain": "ui",

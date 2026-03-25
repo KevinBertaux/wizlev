@@ -679,10 +679,24 @@
 
 .roadmap-table th:nth-child(5),
 .roadmap-table td:nth-child(5) {
-  width: 260px;
+  width: 240px;
 }
 
+.roadmap-table th:nth-child(6),
 .roadmap-table td:nth-child(6) {
+  width: 240px;
+}
+
+.roadmap-table td:nth-child(7) {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.roadmap-item-id {
+  font-family: Consolas, "SFMono-Regular", Menlo, Monaco, monospace;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #244666;
   white-space: normal;
   overflow-wrap: anywhere;
 }
