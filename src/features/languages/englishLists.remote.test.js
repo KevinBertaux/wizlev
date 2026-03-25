@@ -74,10 +74,8 @@ function okJson(payload) {
 
 describe('englishLists remote hydration', () => {
   it('returns disabled when remote base URL is empty', async () => {
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_BASE_URL', '');
-    vi.stubEnv('VITE_VOCAB_REMOTE_BASE_URL', '');
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_LANG', '');
-    vi.stubEnv('VITE_VOCAB_REMOTE_LANG', '');
+    vi.stubEnv('VITE_REMOTE_CONTENT_BASE_URL', '');
+    vi.stubEnv('VITE_ENGLISH_VOCAB_REMOTE_FOLDER', '');
 
     const { hydrateRemoteEnglishLists } = await loadEnglishModule();
     const result = await hydrateRemoteEnglishLists();
@@ -91,8 +89,8 @@ describe('englishLists remote hydration', () => {
   });
 
   it('keeps local fallback when remote manifest version is not newer', async () => {
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_BASE_URL', 'https://example.test');
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_LANG', 'en');
+    vi.stubEnv('VITE_REMOTE_CONTENT_BASE_URL', 'https://example.test');
+    vi.stubEnv('VITE_ENGLISH_VOCAB_REMOTE_FOLDER', 'en');
 
     const fetchMock = vi.fn(async (url) => {
       const asText = String(url);
@@ -125,8 +123,8 @@ describe('englishLists remote hydration', () => {
   });
 
   it('hydrates only manifest-declared lists when remote manifest is newer', async () => {
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_BASE_URL', 'https://example.test');
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_LANG', 'en');
+    vi.stubEnv('VITE_REMOTE_CONTENT_BASE_URL', 'https://example.test');
+    vi.stubEnv('VITE_ENGLISH_VOCAB_REMOTE_FOLDER', 'en');
 
     const fetchMock = vi.fn(async (url) => {
       const asText = String(url);
@@ -179,8 +177,8 @@ describe('englishLists remote hydration', () => {
   });
 
   it('downloads only entries marked as changed when the remote manifest exposes per-entry versions', async () => {
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_BASE_URL', 'https://example.test');
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_LANG', 'en');
+    vi.stubEnv('VITE_REMOTE_CONTENT_BASE_URL', 'https://example.test');
+    vi.stubEnv('VITE_ENGLISH_VOCAB_REMOTE_FOLDER', 'en');
 
     const fetchMock = vi.fn(async (url) => {
       const asText = String(url);
@@ -225,8 +223,8 @@ describe('englishLists remote hydration', () => {
   });
 
   it('reuses cached remote payloads on next import when cache version is newer than local', async () => {
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_BASE_URL', 'https://example.test');
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_LANG', 'en');
+    vi.stubEnv('VITE_REMOTE_CONTENT_BASE_URL', 'https://example.test');
+    vi.stubEnv('VITE_ENGLISH_VOCAB_REMOTE_FOLDER', 'en');
 
     const fetchMock = vi.fn(async (url) => {
       const asText = String(url);
@@ -257,16 +255,16 @@ describe('englishLists remote hydration', () => {
     expect(englishModule.getEnglishList('fruits')?.name).toBe('🍓 Fruits en cache');
 
     vi.resetModules();
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_BASE_URL', '');
-    vi.stubEnv('VITE_VOCAB_REMOTE_BASE_URL', '');
+    vi.stubEnv('VITE_REMOTE_CONTENT_BASE_URL', '');
+    vi.stubEnv('VITE_ENGLISH_VOCAB_REMOTE_FOLDER', '');
     englishModule = await loadEnglishModule();
 
     expect(englishModule.getEnglishList('fruits')?.name).toBe('🍓 Fruits en cache');
   });
 
   it('does not cache a partial remote hydration', async () => {
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_BASE_URL', 'https://example.test');
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_LANG', 'en');
+    vi.stubEnv('VITE_REMOTE_CONTENT_BASE_URL', 'https://example.test');
+    vi.stubEnv('VITE_ENGLISH_VOCAB_REMOTE_FOLDER', 'en');
 
     const fetchMock = vi.fn(async (url) => {
       const asText = String(url);
@@ -308,8 +306,8 @@ describe('englishLists remote hydration', () => {
     expect(englishModule.getEnglishList('fruits')?.name).toBe('🍏 Fruits partiels');
 
     vi.resetModules();
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_BASE_URL', '');
-    vi.stubEnv('VITE_VOCAB_REMOTE_BASE_URL', '');
+    vi.stubEnv('VITE_REMOTE_CONTENT_BASE_URL', '');
+    vi.stubEnv('VITE_ENGLISH_VOCAB_REMOTE_FOLDER', '');
     englishModule = await loadEnglishModule();
 
     expect(englishModule.getEnglishList('fruits')).toEqual(baseline);
@@ -317,8 +315,8 @@ describe('englishLists remote hydration', () => {
   });
 
   it('hydrates only once and returns cached state on subsequent call', async () => {
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_BASE_URL', 'https://example.test');
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_LANG', 'en');
+    vi.stubEnv('VITE_REMOTE_CONTENT_BASE_URL', 'https://example.test');
+    vi.stubEnv('VITE_ENGLISH_VOCAB_REMOTE_FOLDER', 'en');
 
     const fetchMock = vi.fn(async (url) => {
       const asText = String(url);

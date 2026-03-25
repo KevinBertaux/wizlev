@@ -430,7 +430,9 @@ export async function hydrateRemoteSymmetryShapesConfig() {
     return remoteHydrationPromise;
   }
 
-  const baseUrl = getEnvValue('VITE_SYMMETRY_REMOTE_BASE_URL', '');
+  const baseUrl =
+    getEnvValue('VITE_SYMMETRY_REMOTE_BASE_URL', '') ||
+    getEnvValue('VITE_REMOTE_CONTENT_BASE_URL', '');
   if (!baseUrl) {
     return {
       enabled: false,

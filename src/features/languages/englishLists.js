@@ -38,6 +38,7 @@ const LEGACY_STORAGE_PREFIX = 'manabuplay_vocab_list_';
 const REMOTE_CACHE_STORAGE_KEY = 'manabuplay_english_remote_cache_v1';
 const REMOTE_TIMEOUT_MS = 3500;
 const DEFAULT_REMOTE_LANG = 'en';
+const DEFAULT_REMOTE_FOLDER = 'languages/en/vocabulary';
 const LOCAL_MANIFEST_VERSION = getManifestVersionToken(localManifest);
 const LOCAL_MANIFEST_ENTRY_INDEX = indexManifestEntriesByKey(localManifest, LOCAL_MANIFEST_VERSION);
 
@@ -384,8 +385,8 @@ function extractRemoteEntries(payload) {
 }
 
 async function resolveRemoteManifest(baseUrl) {
-  const remoteLang = getRemoteLanguage();
-  const payload = await fetchJsonWithTimeout(`${baseUrl}/${remoteLang}/manifest.json`);
+  const remoteFolder = getRemoteFolder();
+  const payload = await fetchJsonWithTimeout(`${baseUrl}/${remoteFolder}/manifest.json`);
   const version = getManifestVersionToken(payload);
   const normalizedEntries = normalizeManifestEntries(payload, version);
 
@@ -462,8 +463,20 @@ function getEnvValue(keys) {
   return '';
 }
 
+function trimRemoteFolder(value) {
+  return String(value || '')
+    .replace(/^\/+/, '')
+    .replace(/\/+$/, '')
+    .trim();
+}
+
 function getRemoteBaseUrl() {
-  const env = getEnvValue(['VITE_LANGUAGES_REMOTE_BASE_URL', 'VITE_VOCAB_REMOTE_BASE_URL']);
+  const env = getEnvValue([
+    'VITE_ENGLISH_VOCAB_REMOTE_BASE_URL',
+    'VITE_REMOTE_CONTENT_BASE_URL',
+    'VITE_LANGUAGES_REMOTE_BASE_URL',
+    'VITE_VOCAB_REMOTE_BASE_URL',
+  ]);
 
   if (!env) {
     return '';
@@ -472,11 +485,27 @@ function getRemoteBaseUrl() {
   return env.replace(/\/$/, '');
 }
 
-function getRemoteLanguage() {
+function getLegacyRemoteLanguage() {
   const env = getEnvValue(['VITE_LANGUAGES_REMOTE_LANG', 'VITE_VOCAB_REMOTE_LANG']);
 
   const lang = typeof env === 'string' ? env.toLowerCase() : '';
   return lang || DEFAULT_REMOTE_LANG;
+}
+
+function getRemoteFolder() {
+  const explicitFolder = trimRemoteFolder(
+    getEnvValue(['VITE_ENGLISH_VOCAB_REMOTE_FOLDER', 'VITE_LANGUAGES_REMOTE_FOLDER'])
+  );
+
+  if (explicitFolder) {
+    return explicitFolder;
+  }
+
+  if (getEnvValue(['VITE_LANGUAGES_REMOTE_BASE_URL', 'VITE_VOCAB_REMOTE_BASE_URL'])) {
+    return getLegacyRemoteLanguage();
+  }
+
+  return DEFAULT_REMOTE_FOLDER;
 }
 
 resetRuntimeEnglishListsToBase();
@@ -527,7 +556,7 @@ export async function hydrateRemoteEnglishLists() {
       return { enabled: true, loaded: 0, updated: 0, skipped: 1 };
     }
 
-    const remoteLang = getRemoteLanguage();
+    const remoteFolder = getRemoteFolder();
     const payloads = {};
     const persistedPayloads = { ...(currentCache.payloads || {}) };
     const persistedEntries = { ...(currentCache.entries || {}) };
@@ -547,7 +576,7 @@ export async function hydrateRemoteEnglishLists() {
         continue;
       }
 
-      const payload = await fetchJsonWithTimeout(`${baseUrl}/${remoteLang}/${file}`);
+      const payload = await fetchJsonWithTimeout(`${baseUrl}/${remoteFolder}/${file}`);
       if (!payload) {
         skipped += 1;
         failed += 1;
