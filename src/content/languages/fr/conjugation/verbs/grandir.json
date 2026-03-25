@@ -1,0 +1,35 @@
+{
+  "key": "grandir",
+  "lemma": "grandir",
+  "label": "Grandir",
+  "meta": {
+    "group": "2",
+    "auxiliary": "avoir",
+    "irregular": false,
+    "tags": ["school"]
+  },
+  "forms": {
+    "indicatif.present": { "je": "grandis", "tu": "grandis", "il": "grandit", "elle": "grandit", "on": "grandit", "nous": "grandissons", "vous": "grandissez", "ils": "grandissent", "elles": "grandissent" },
+    "indicatif.passe-compose": { "je": "ai grandi", "tu": "as grandi", "il": "a grandi", "elle": "a grandi", "on": "a grandi", "nous": "avons grandi", "vous": "avez grandi", "ils": "ont grandi", "elles": "ont grandi" },
+    "indicatif.imparfait": { "je": "grandissais", "tu": "grandissais", "il": "grandissait", "elle": "grandissait", "on": "grandissait", "nous": "grandissions", "vous": "grandissiez", "ils": "grandissaient", "elles": "grandissaient" },
+    "indicatif.plus-que-parfait": { "je": "avais grandi", "tu": "avais grandi", "il": "avait grandi", "elle": "avait grandi", "on": "avait grandi", "nous": "avions grandi", "vous": "aviez grandi", "ils": "avaient grandi", "elles": "avaient grandi" },
+    "indicatif.passe-simple": { "je": "grandis", "tu": "grandis", "il": "grandit", "elle": "grandit", "on": "grandit", "nous": "grandîmes", "vous": "grandîtes", "ils": "grandirent", "elles": "grandirent" },
+    "indicatif.passe-anterieur": { "je": "eus grandi", "tu": "eus grandi", "il": "eut grandi", "elle": "eut grandi", "on": "eut grandi", "nous": "eûmes grandi", "vous": "eûtes grandi", "ils": "eurent grandi", "elles": "eurent grandi" },
+    "indicatif.futur-simple": { "je": "grandirai", "tu": "grandiras", "il": "grandira", "elle": "grandira", "on": "grandira", "nous": "grandirons", "vous": "grandirez", "ils": "grandiront", "elles": "grandiront" },
+    "indicatif.futur-anterieur": { "je": "aurai grandi", "tu": "auras grandi", "il": "aura grandi", "elle": "aura grandi", "on": "aura grandi", "nous": "aurons grandi", "vous": "aurez grandi", "ils": "auront grandi", "elles": "auront grandi" },
+    "conditionnel.present": { "je": "grandirais", "tu": "grandirais", "il": "grandirait", "elle": "grandirait", "on": "grandirait", "nous": "grandirions", "vous": "grandiriez", "ils": "grandiraient", "elles": "grandiraient" },
+    "conditionnel.passe": { "je": "aurais grandi", "tu": "aurais grandi", "il": "aurait grandi", "elle": "aurait grandi", "on": "aurait grandi", "nous": "aurions grandi", "vous": "auriez grandi", "ils": "auraient grandi", "elles": "auraient grandi" },
+    "subjonctif.present": { "je": "grandisse", "tu": "grandisses", "il": "grandisse", "elle": "grandisse", "on": "grandisse", "nous": "grandissions", "vous": "grandissiez", "ils": "grandissent", "elles": "grandissent" },
+    "subjonctif.passe": { "je": "aie grandi", "tu": "aies grandi", "il": "ait grandi", "elle": "ait grandi", "on": "ait grandi", "nous": "ayons grandi", "vous": "ayez grandi", "ils": "aient grandi", "elles": "aient grandi" },
+    "subjonctif.imparfait": { "je": "grandisse", "tu": "grandisses", "il": "grandît", "elle": "grandît", "on": "grandît", "nous": "grandissions", "vous": "grandissiez", "ils": "grandissent", "elles": "grandissent" },
+    "subjonctif.plus-que-parfait": { "je": "eusse grandi", "tu": "eusses grandi", "il": "eût grandi", "elle": "eût grandi", "on": "eût grandi", "nous": "eussions grandi", "vous": "eussiez grandi", "ils": "eussent grandi", "elles": "eussent grandi" },
+    "imperatif.present": { "tu": "grandis", "nous": "grandissons", "vous": "grandissez" },
+    "imperatif.passe": { "tu": "aie grandi", "nous": "ayons grandi", "vous": "ayez grandi" },
+    "infinitif.present": { "base": "grandir" },
+    "infinitif.passe": { "base": "avoir grandi" },
+    "participe.present": { "base": "grandissant" },
+    "participe.passe": { "base": "grandi" },
+    "gerondif.present": { "base": "en grandissant" },
+    "gerondif.passe": { "base": "en ayant grandi" }
+  }
+}

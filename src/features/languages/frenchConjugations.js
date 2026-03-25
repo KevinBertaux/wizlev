@@ -8,6 +8,7 @@ import chanterVerb from '@/content/languages/fr/conjugation/verbs/chanter.json';
 import etreVerb from '@/content/languages/fr/conjugation/verbs/etre.json';
 import faireVerb from '@/content/languages/fr/conjugation/verbs/faire.json';
 import finirVerb from '@/content/languages/fr/conjugation/verbs/finir.json';
+import grandirVerb from '@/content/languages/fr/conjugation/verbs/grandir.json';
 import manabuerVerb from '@/content/languages/fr/conjugation/verbs/manabuer.json';
 import prendreVerb from '@/content/languages/fr/conjugation/verbs/prendre.json';
 import venirVerb from '@/content/languages/fr/conjugation/verbs/venir.json';
@@ -50,6 +51,7 @@ const inflectionVerbRecords = [
   etreVerb,
   faireVerb,
   finirVerb,
+  grandirVerb,
   manabuerVerb,
   prendreVerb,
   venirVerb,

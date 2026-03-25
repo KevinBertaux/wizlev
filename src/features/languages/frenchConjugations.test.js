@@ -94,6 +94,7 @@ describe('frenchConjugations', () => {
       { value: 'etre', label: 'Être', group: '3', irregular: true },
       { value: 'faire', label: 'Faire', group: '3', irregular: true },
       { value: 'finir', label: 'Finir', group: '2', irregular: false },
+      { value: 'grandir', label: 'Grandir', group: '2', irregular: false },
       { value: 'manabuer', label: 'Manabuer', group: '1', irregular: false },
       { value: 'prendre', label: 'Prendre', group: '3', irregular: true },
       { value: 'venir', label: 'Venir', group: '3', irregular: true },
@@ -111,7 +112,10 @@ describe('frenchConjugations', () => {
       {
         key: '2',
         label: '2e groupe',
-        options: [{ value: 'finir', label: 'Finir', disabled: false }],
+        options: [
+          { value: 'finir', label: 'Finir', disabled: false },
+          { value: 'grandir', label: 'Grandir', disabled: false },
+        ],
       },
       {
         key: '3',
@@ -166,7 +170,7 @@ describe('frenchConjugations', () => {
     expect(runtime).not.toBe(base);
     expect(getFrenchInflectionRuntimeMeta()).toEqual({
       source: 'local',
-      version: '2026-03-25.1',
+      version: '2026-03-25.2',
     });
   });
 
@@ -191,7 +195,7 @@ describe('frenchConjugations', () => {
     expect(getFrenchVerb('aimer', getFrenchInflectionModule())?.label).toBe('Aimer');
     expect(getFrenchInflectionRuntimeMeta()).toEqual({
       source: 'local',
-      version: '2026-03-25.1',
+      version: '2026-03-25.2',
     });
   });
 
@@ -209,7 +213,7 @@ describe('frenchConjugations', () => {
     expect(getFrenchVerb('aimer', getFrenchInflectionModule())?.forms.je).toBe('aime');
     expect(getFrenchInflectionRuntimeMeta()).toEqual({
       source: 'local',
-      version: '2026-03-25.1',
+      version: '2026-03-25.2',
     });
   });
 });

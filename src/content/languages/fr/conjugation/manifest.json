@@ -6,7 +6,7 @@
     "locale": "fr-FR",
     "label": "Français"
   },
-  "version": "2026-03-25.1",
+  "version": "2026-03-25.2",
   "generatedAt": "2026-03-25",
   "schemaFile": "schema.fr.v1.json",
   "schemaUpdatedAt": "2026-03-17.1",
@@ -52,6 +52,12 @@
       "label": "Finir",
       "file": "verbs/finir.json",
       "version": "2026-03-17.1"
+    },
+    {
+      "key": "grandir",
+      "label": "Grandir",
+      "file": "verbs/grandir.json",
+      "version": "2026-03-25.2"
     },
     {
       "key": "manabuer",

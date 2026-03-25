@@ -101,7 +101,7 @@ describe('frenchConjugations remote hydration', () => {
     const fetchMock = vi.fn(async (url) => {
       if (String(url).endsWith('/languages/fr/conjugation/manifest.json')) {
         return okJson({
-          version: '2026-03-25.1',
+          version: '2026-03-25.2',
           schemaFile: 'schema.fr.v1.json',
           verbs: [{ key: 'aimer', file: 'verbs/aimer.json' }],
         });
@@ -132,7 +132,7 @@ describe('frenchConjugations remote hydration', () => {
     expect(getFrenchInflectionModule()).toEqual(baseline);
     expect(getFrenchInflectionRuntimeMeta()).toEqual({
       source: 'local',
-      version: '2026-03-25.1',
+      version: '2026-03-25.2',
     });
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
@@ -156,7 +156,7 @@ describe('frenchConjugations remote hydration', () => {
             locale: 'fr-FR',
             label: 'Français',
           },
-          version: '2026-03-25.2',
+          version: '2026-03-25.3',
           generatedAt: '2026-03-25',
           schemaFile: 'schema.fr.v1.json',
           schemaUpdatedAt: '2026-03-17.1',
@@ -171,7 +171,7 @@ describe('frenchConjugations remote hydration', () => {
               key: 'venir',
               label: 'Venir',
               file: 'verbs/venir.json',
-              version: '2026-03-25.2',
+              version: '2026-03-25.3',
             },
           ],
         });
@@ -205,7 +205,7 @@ describe('frenchConjugations remote hydration', () => {
     });
     expect(getFrenchInflectionRuntimeMeta()).toEqual({
       source: 'remote',
-      version: '2026-03-25.2',
+      version: '2026-03-25.3',
     });
     expect(getFrenchVerb('aimer', source, 'indicatif', 'present')?.forms?.je).toBe('aime');
     expect(getFrenchVerb('venir', source, 'indicatif', 'present')?.forms?.je).toBe('viens remote');
@@ -231,7 +231,7 @@ describe('frenchConjugations remote hydration', () => {
             locale: 'fr-FR',
             label: 'Français',
           },
-          version: '2026-03-25.2',
+          version: '2026-03-25.4',
           generatedAt: '2026-03-25',
           schemaFile: 'schema.fr.v1.json',
           schemaUpdatedAt: '2026-03-17.1',
@@ -240,7 +240,7 @@ describe('frenchConjugations remote hydration', () => {
               key: 'aimer',
               label: 'Aimer',
               file: 'verbs/aimer.json',
-              version: '2026-03-25.2',
+              version: '2026-03-25.4',
             },
           ],
         });
@@ -276,7 +276,7 @@ describe('frenchConjugations remote hydration', () => {
 
     expect(frenchModule.getFrenchInflectionRuntimeMeta()).toEqual({
       source: 'remote-cache',
-      version: '2026-03-25.2',
+      version: '2026-03-25.4',
     });
     expect(
       frenchModule.getFrenchVerb(
@@ -343,7 +343,7 @@ describe('frenchConjugations remote hydration', () => {
     });
     expect(getFrenchInflectionRuntimeMeta()).toEqual({
       source: 'local',
-      version: '2026-03-25.1',
+      version: '2026-03-25.2',
     });
     expect(getFrenchInflectionModule()).toEqual(baseline);
     expect(
