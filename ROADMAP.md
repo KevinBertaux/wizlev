@@ -7,8 +7,9 @@ Document de synthèse. Les scopes détaillés, historiques de version et backlog
 ### Ligne produit
 
 - branche active actuelle : `feat/0.6.0-prep`
+- version publique publiée : `0.6.0`
 - but :
-  - lancer la `0.6.0`
+  - stabiliser la ligne après sortie de la `0.6.0`
   - garder la monétisation sur `epic/ads-cmp`, hors ligne produit
 
 ### Ligne monétisation
@@ -24,7 +25,7 @@ Document de synthèse. Les scopes détaillés, historiques de version et backlog
 - `0.3.0` : migration vers Vue 3 + Vite
 - `0.4.0` : release stable sans backend
 - `0.5.0` : release produit sortie le 13 mars 2026
-- `0.6.0-prep` : ligne produit active
+- `0.6.0` : release produit sortie le 25 mars 2026
 
 ## Sources de vérité
 
@@ -77,4 +78,4 @@ Ils sont considérés comme des prérequis site-level, pas comme une feature pub
   - `docs/RELEASE-CHECKLIST.fr.md`
   - `docs/QA-CHECKLIST.fr.md`
 - notes de version :
-  - `docs/RELEASE-NOTES.0.5.0-prep.fr.md`
+  - `docs/RELEASE-NOTES.0.6.0.fr.md`
