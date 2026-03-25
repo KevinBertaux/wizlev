@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import aimerVerb from '@/content/languages/fr/conjugation/verbs/aimer.json';
+import grandirVerb from '@/content/languages/fr/conjugation/verbs/grandir.json';
 import venirVerb from '@/content/languages/fr/conjugation/verbs/venir.json';
 
 class MemoryStorage {
@@ -37,6 +38,23 @@ function okJson(payload) {
     ok: true,
     json: async () => clone(payload),
   };
+}
+
+function renameVerbPayload(payload, { key, lemma, label }) {
+  const renamed = clone(payload);
+  renamed.key = key;
+  renamed.lemma = lemma;
+  renamed.label = label;
+  renamed.forms['indicatif.present'].je = 'bondis';
+  renamed.forms['indicatif.present'].tu = 'bondis';
+  renamed.forms['indicatif.present'].il = 'bondit';
+  renamed.forms['indicatif.present'].elle = 'bondit';
+  renamed.forms['indicatif.present'].on = 'bondit';
+  renamed.forms['indicatif.present'].nous = 'bondissons';
+  renamed.forms['indicatif.present'].vous = 'bondissez';
+  renamed.forms['indicatif.present'].ils = 'bondissent';
+  renamed.forms['indicatif.present'].elles = 'bondissent';
+  return renamed;
 }
 
 async function loadFrenchModule() {
@@ -209,6 +227,84 @@ describe('frenchConjugations remote hydration', () => {
     });
     expect(getFrenchVerb('aimer', source, 'indicatif', 'present')?.forms?.je).toBe('aime');
     expect(getFrenchVerb('venir', source, 'indicatif', 'present')?.forms?.je).toBe('viens remote');
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('hydrates a new remote-only verb entry when the manifest adds it', async () => {
+    vi.stubEnv('VITE_REMOTE_CONTENT_BASE_URL', 'https://example.test');
+    vi.stubEnv('VITE_FRENCH_CONJUGATION_REMOTE_FOLDER', 'languages/fr/conjugation');
+
+    const remoteBondir = renameVerbPayload(clone(grandirVerb), {
+      key: 'bondir',
+      lemma: 'bondir',
+      label: 'Bondir',
+    });
+
+    const fetchMock = vi.fn(async (url) => {
+      const asText = String(url);
+      if (asText.endsWith('/languages/fr/conjugation/manifest.json')) {
+        return okJson({
+          schemaVersion: 1,
+          kind: 'inflection-manifest',
+          language: {
+            key: 'fr',
+            locale: 'fr-FR',
+            label: 'Français',
+          },
+          version: '2026-03-25.3',
+          generatedAt: '2026-03-25',
+          schemaFile: 'schema.fr.v1.json',
+          schemaUpdatedAt: '2026-03-17.1',
+          verbs: [
+            {
+              key: 'aimer',
+              label: 'Aimer',
+              file: 'verbs/aimer.json',
+              version: '2026-03-17.1',
+            },
+            {
+              key: 'bondir',
+              label: 'Bondir',
+              file: 'verbs/bondir.json',
+              version: '2026-03-25.3',
+            },
+          ],
+        });
+      }
+      if (asText.endsWith('/languages/fr/conjugation/verbs/bondir.json')) {
+        return okJson(remoteBondir);
+      }
+
+      return { ok: false, json: async () => ({}) };
+    });
+
+    Object.defineProperty(globalThis, 'fetch', {
+      configurable: true,
+      value: fetchMock,
+    });
+
+    const {
+      getFrenchInflectionModule,
+      getFrenchInflectionRuntimeMeta,
+      getFrenchVerb,
+      hydrateRemoteFrenchConjugationModule,
+      listFrenchVerbOptions,
+    } = await loadFrenchModule();
+    const result = await hydrateRemoteFrenchConjugationModule();
+    const source = getFrenchInflectionModule();
+
+    expect(result).toEqual({
+      enabled: true,
+      loaded: 1,
+      updated: 1,
+      skipped: 2,
+    });
+    expect(getFrenchInflectionRuntimeMeta()).toEqual({
+      source: 'remote',
+      version: '2026-03-25.3',
+    });
+    expect(listFrenchVerbOptions(source).some((option) => option.value === 'bondir')).toBe(true);
+    expect(getFrenchVerb('bondir', source, 'indicatif', 'present')?.forms?.je).toBe('bondis');
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 

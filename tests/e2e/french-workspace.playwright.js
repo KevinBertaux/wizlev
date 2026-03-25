@@ -74,3 +74,27 @@ test('french workspace: empty state, mode flows, and reset after leaving', async
   await expect(tenseSelect).toHaveValue('');
   await expect(page.getByText('Choisis un verbe et un temps pour commencer.')).toBeVisible();
 });
+
+test('french workspace: grandir is selectable and works across table and flashcards', async ({ page }) => {
+  await page.goto('/languages/french');
+
+  const verbSelect = page.getByLabel('Choisir un verbe :');
+  const tenseSelect = page.getByLabel('Choisir un temps :');
+  const flashcardsMode = page.getByRole('button', { name: /🃏 Flashcards/i });
+
+  await expect(verbSelect.locator('option[value="grandir"]')).toHaveText('Grandir');
+
+  await verbSelect.selectOption('grandir');
+  await tenseSelect.selectOption('present');
+
+  const firstConjugationRow = page.locator('.conjugation-row').first();
+  await expect(firstConjugationRow).toContainText('Je');
+  await expect(firstConjugationRow).toContainText('grandis');
+
+  await flashcardsMode.click();
+  await expect(page.locator('.flashcard')).toBeVisible();
+  await expect(page.locator('.flashcard-word')).toContainText('Je + grandir');
+
+  await page.locator('.flashcard').click();
+  await expect(page.locator('.flashcard-translation')).toContainText('Je grandis');
+});
