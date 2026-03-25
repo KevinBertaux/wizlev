@@ -89,11 +89,19 @@
       "done": false
     },
     {
+      "id": "backlog-ui-foundation-post-v4",
+      "priority": "Med",
+      "domain": "ui",
+      "feature": "design-system",
+      "label": "Faire évoluer les composants/composables côté client pour coller à l'état actuel de ManabuPlay (hors admin), avec plus de factorisation et d'harmonisation UI",
+      "done": false
+    },
+    {
       "id": "backlog-tooltip-system",
       "priority": "Med",
       "domain": "ui",
       "feature": "tooltips",
-      "dependsOn": ["scope-060-ui-foundation-post-v4"],
+      "dependsOn": ["backlog-ui-foundation-post-v4"],
       "label": "Système global d'info-bulles cohérent",
       "done": false
     },
@@ -251,6 +259,24 @@
       "feature": "security",
       "dependsOn": ["scope-050-high-admin-dashboard", "scope-050-high-admin-maintenance"],
       "label": "Durcir l'admin front-only (docs publiques nettoyées, placeholders de configuration, limites explicites)",
+      "done": false
+    },
+    {
+      "id": "backlog-ui-minor-polish",
+      "priority": "Low",
+      "domain": "ui",
+      "feature": "polish",
+      "dependsOn": ["backlog-ui-foundation-post-v4"],
+      "label": "Finitions UI mineures",
+      "done": false
+    },
+    {
+      "id": "backlog-r2-secure",
+      "priority": "High",
+      "domain": "infra",
+      "feature": "content-storage",
+      "dependsOn": ["scope-050-high-r2-v1"],
+      "label": "Cloudflare R2 V2: acces securise (URL signees/Worker) + controle d integrite",
       "done": false
     }
   ]
