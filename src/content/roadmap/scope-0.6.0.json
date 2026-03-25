@@ -68,7 +68,7 @@
         "scope-050-high-r2-v1"
       ],
       "label": "Anglais : chargement en tâche de fond et affichage du loader seulement si l'utilisateur interagit avant la fin du chargement R2",
-      "done": false
+      "done": true
     },
     {
       "id": "scope-060-french-tts-flashcards",
