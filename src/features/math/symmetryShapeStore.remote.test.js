@@ -71,6 +71,7 @@ function okJson(payload) {
 describe('symmetryShapeStore remote hydration', () => {
   it('returns disabled when remote base URL is empty', async () => {
     vi.stubEnv('VITE_SYMMETRY_REMOTE_BASE_URL', '');
+    vi.stubEnv('VITE_REMOTE_CONTENT_BASE_URL', '');
 
     const { hydrateRemoteSymmetryShapesConfig } = await loadSymmetryModule();
     const result = await hydrateRemoteSymmetryShapesConfig();

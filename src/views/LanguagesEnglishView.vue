@@ -2,7 +2,6 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import QuizEmptyState from '@/components/QuizEmptyState.vue';
 import QuizSelectField from '@/components/QuizSelectField.vue';
-import RemoteContentLoading from '@/components/RemoteContentLoading.vue';
 import StudyFlashcardCarousel from '@/components/StudyFlashcardCarousel.vue';
 import { getEnglishList, hydrateRemoteEnglishLists, listEnglishOptions } from '@/features/languages/englishLists';
 
@@ -32,7 +31,8 @@ const ttsStatus = ref('');
 
 let currentUtterance = null;
 let voicesChangedHandler = null;
-const isLoadingLists = ref(true);
+const isRemoteSyncPending = ref(false);
+const hasPendingListInteraction = ref(false);
 
 const availableEnglishOptions = ref(listEnglishOptions());
 const activeList = computed(() => (selectedList.value ? getEnglishList(selectedList.value) : null));
@@ -75,6 +75,9 @@ const currentWord = computed(() => {
 const canPlayTts = computed(
   () => ttsSupported && !!currentWord.value && (!isFrenchFirst.value || flashcardState.value.isFlipped)
 );
+const showRemoteSyncHint = computed(
+  () => isRemoteSyncPending.value && hasPendingListInteraction.value
+);
 
 function cloneWords(sourceWords) {
   return sourceWords.map((word) => ({ ...word }));
@@ -98,6 +101,12 @@ function loadList(listKey) {
   stopSpeech();
   words.value = cloneWords(list.words);
   ttsNextRateIndex.value = 0;
+}
+
+function markListInteraction() {
+  if (isRemoteSyncPending.value) {
+    hasPendingListInteraction.value = true;
+  }
 }
 
 function refreshVoices() {
@@ -226,13 +235,18 @@ onMounted(async () => {
     }
   }
 
-  try {
-    await hydrateRemoteEnglishLists();
-    availableEnglishOptions.value = listEnglishOptions();
-    loadList(selectedList.value);
-  } finally {
-    isLoadingLists.value = false;
-  }
+  availableEnglishOptions.value = listEnglishOptions();
+  loadList(selectedList.value);
+
+  isRemoteSyncPending.value = true;
+  hydrateRemoteEnglishLists()
+    .then(() => {
+      availableEnglishOptions.value = listEnglishOptions();
+      loadList(selectedList.value);
+    })
+    .finally(() => {
+      isRemoteSyncPending.value = false;
+    });
 
   if (!ttsSupported) {
     return;
@@ -266,13 +280,6 @@ onUnmounted(() => {
   <section class="page-block quiz-module">
     <h1>Vocabulaire anglais</h1>
 
-    <RemoteContentLoading
-      v-if="isLoadingLists"
-      title="Préparation des cartes"
-      message="Chargement des listes de vocabulaire…"
-    />
-
-    <template v-else>
     <div class="settings-box">
       <div class="mb-3">
         <QuizSelectField
@@ -282,7 +289,14 @@ onUnmounted(() => {
           placeholder="-- Choisir une liste --"
           :placeholder-disabled="true"
           :options="listSelectOptions"
+          @pointerdown.capture="markListInteraction"
+          @focusin="markListInteraction"
+          @keydown.capture="markListInteraction"
         />
+        <div v-if="showRemoteSyncHint" class="background-sync-hint" role="status" aria-live="polite">
+          <span class="background-sync-hint__spinner" aria-hidden="true" />
+          <span>Les listes se mettent encore à jour en arriere-plan…</span>
+        </div>
       </div>
 
       <div class="grid grid-cols-1 items-start gap-3 md:grid-cols-[minmax(180px,_1fr)]">
@@ -324,7 +338,6 @@ onUnmounted(() => {
     </template>
 
     <QuizEmptyState v-else message="Choisir une liste pour commencer." />
-    </template>
   </section>
 </template>
 
@@ -342,6 +355,28 @@ onUnmounted(() => {
   border: 1px solid rgba(78, 205, 196, 0.45);
   border-radius: 12px;
   padding: 12px 14px;
+}
+
+.background-sync-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(53, 109, 188, 0.09);
+  color: #264767;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.background-sync-hint__spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(53, 109, 188, 0.18);
+  border-top-color: #356dbc;
+  border-radius: 999px;
+  animation: english-background-sync-spin 0.8s linear infinite;
 }
 
 .flashcard-carousel {
@@ -606,6 +641,12 @@ onUnmounted(() => {
   }
   100% {
     transform: translateY(-2px) scale(1.04);
+  }
+}
+
+@keyframes english-background-sync-spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 

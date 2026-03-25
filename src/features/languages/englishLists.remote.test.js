@@ -16,6 +16,10 @@ class MemoryStorage {
   removeItem(key) {
     this.map.delete(key);
   }
+
+  clear() {
+    this.map.clear();
+  }
 }
 
 let originalWindow;
@@ -70,10 +74,8 @@ function okJson(payload) {
 
 describe('englishLists remote hydration', () => {
   it('returns disabled when remote base URL is empty', async () => {
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_BASE_URL', '');
-    vi.stubEnv('VITE_VOCAB_REMOTE_BASE_URL', '');
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_LANG', '');
-    vi.stubEnv('VITE_VOCAB_REMOTE_LANG', '');
+    vi.stubEnv('VITE_REMOTE_CONTENT_BASE_URL', '');
+    vi.stubEnv('VITE_ENGLISH_VOCAB_REMOTE_FOLDER', '');
 
     const { hydrateRemoteEnglishLists } = await loadEnglishModule();
     const result = await hydrateRemoteEnglishLists();
@@ -84,31 +86,18 @@ describe('englishLists remote hydration', () => {
       updated: 0,
       skipped: 0,
     });
-  }, 10000);
+  });
 
-  it('hydrates known list and appends unknown list from remote manifest', async () => {
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_BASE_URL', 'https://example.test');
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_LANG', 'en');
+  it('keeps local fallback when remote manifest version is not newer', async () => {
+    vi.stubEnv('VITE_REMOTE_CONTENT_BASE_URL', 'https://example.test');
+    vi.stubEnv('VITE_ENGLISH_VOCAB_REMOTE_FOLDER', 'en');
 
     const fetchMock = vi.fn(async (url) => {
       const asText = String(url);
       if (asText.endsWith('/en/manifest.json')) {
-        return okJson({ lists: [{ key: 'bonusList', file: 'bonus.json' }] });
-      }
-      if (asText.endsWith('/en/fruits.json')) {
         return okJson({
-          name: '🍉 Fruits distants',
-          label: '🍉 Fruits distants',
-          description: 'Liste chargée depuis R2',
-          words: [{ english: 'Watermelon', french: 'Pastèque' }],
-        });
-      }
-      if (asText.endsWith('/en/bonus.json')) {
-        return okJson({
-          name: '🧪 Bonus',
-          label: '🧪 Bonus',
-          description: 'Liste injectée via manifest distant',
-          words: [{ english: 'Test', french: 'Essai' }],
+          version: '2026-03-25.1',
+          lists: [{ key: 'fruits', file: 'fruits.json' }],
         });
       }
       return { ok: false, json: async () => ({}) };
@@ -119,52 +108,49 @@ describe('englishLists remote hydration', () => {
       value: fetchMock,
     });
 
-    const { getEnglishList, hydrateRemoteEnglishLists, listEnglishOptions } = await loadEnglishModule();
+    const { getEnglishList, hydrateRemoteEnglishLists } = await loadEnglishModule();
+    const baseline = getEnglishList('fruits');
     const result = await hydrateRemoteEnglishLists();
 
-    expect(result.enabled).toBe(true);
-    expect(result.loaded).toBeGreaterThanOrEqual(2);
-    expect(result.updated).toBeGreaterThanOrEqual(2);
-
-    expect(getEnglishList('fruits')?.name).toBe('🍉 Fruits distants');
-    expect(getEnglishList('bonusList')?.name).toBe('🧪 Bonus');
-    expect(listEnglishOptions().some((item) => item.key === 'bonusList')).toBe(true);
+    expect(result).toEqual({
+      enabled: true,
+      loaded: 0,
+      updated: 0,
+      skipped: 1,
+    });
+    expect(getEnglishList('fruits')).toEqual(baseline);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
-  it('downloads two additional remote lists declared only in the manifest', async () => {
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_BASE_URL', 'https://example.test');
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_LANG', 'en');
+  it('hydrates only manifest-declared lists when remote manifest is newer', async () => {
+    vi.stubEnv('VITE_REMOTE_CONTENT_BASE_URL', 'https://example.test');
+    vi.stubEnv('VITE_ENGLISH_VOCAB_REMOTE_FOLDER', 'en');
 
     const fetchMock = vi.fn(async (url) => {
       const asText = String(url);
       if (asText.endsWith('/en/manifest.json')) {
         return okJson({
+          version: '2026-03-25.3',
           lists: [
-            { key: 'actionsVerbs1', file: 'actions-verbs-1.json' },
-            { key: 'actionsVerbs2', file: 'actions-verbs-2.json' },
+            { key: 'fruits', file: 'fruits.json' },
+            { key: 'bonusList', file: 'bonus.json' },
           ],
         });
       }
-      if (asText.endsWith('/en/actions-verbs-1.json')) {
+      if (asText.endsWith('/en/fruits.json')) {
         return okJson({
-          name: 'Verbes d’action 1',
-          label: '🏃 Verbes d’action 1',
-          description: 'Liste distante supplémentaire',
-          words: [
-            { english: 'Smile', french: 'Sourire' },
-            { english: 'Carry', french: 'Porter' },
-          ],
+          name: '🍉 Fruits distants',
+          label: '🍉 Fruits distants',
+          description: 'Liste chargee depuis R2',
+          words: [{ english: 'Watermelon', french: 'Pasteque' }],
         });
       }
-      if (asText.endsWith('/en/actions-verbs-2.json')) {
+      if (asText.endsWith('/en/bonus.json')) {
         return okJson({
-          name: 'Verbes d’action 2',
-          label: '🏃 Verbes d’action 2',
-          description: 'Deuxième liste distante supplémentaire',
-          words: [
-            { english: 'Climb', french: 'Grimper' },
-            { english: 'Play', french: 'Jouer' },
-          ],
+          name: '🧪 Bonus',
+          label: '🧪 Bonus',
+          description: 'Liste injectee via manifest distant',
+          words: [{ english: 'Test', french: 'Essai' }],
         });
       }
       return { ok: false, json: async () => ({}) };
@@ -182,43 +168,35 @@ describe('englishLists remote hydration', () => {
       enabled: true,
       loaded: 2,
       updated: 2,
-      skipped: expect.any(Number),
+      skipped: 0,
     });
-
-    expect(fetchMock).toHaveBeenCalledWith(
-      'https://example.test/en/manifest.json',
-      expect.objectContaining({ method: 'GET' }),
-    );
-    expect(fetchMock).toHaveBeenCalledWith(
-      'https://example.test/en/actions-verbs-1.json',
-      expect.objectContaining({ method: 'GET' }),
-    );
-    expect(fetchMock).toHaveBeenCalledWith(
-      'https://example.test/en/actions-verbs-2.json',
-      expect.objectContaining({ method: 'GET' }),
-    );
-
-    expect(getEnglishList('actionsVerbs1')?.name).toBe('Verbes d’action 1');
-    expect(getEnglishList('actionsVerbs2')?.name).toBe('Verbes d’action 2');
-    expect(listEnglishOptions().some((item) => item.key === 'actionsVerbs1')).toBe(true);
-    expect(listEnglishOptions().some((item) => item.key === 'actionsVerbs2')).toBe(true);
+    expect(getEnglishList('fruits')?.name).toBe('🍉 Fruits distants');
+    expect(getEnglishList('bonusList')?.name).toBe('🧪 Bonus');
+    expect(listEnglishOptions().some((item) => item.key === 'bonusList')).toBe(true);
+    expect(fetchMock).toHaveBeenCalledTimes(3);
   });
 
-  it('ignores remote payload with empty words and keeps local fallback', async () => {
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_BASE_URL', 'https://example.test');
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_LANG', 'en');
+  it('downloads only entries marked as changed when the remote manifest exposes per-entry versions', async () => {
+    vi.stubEnv('VITE_REMOTE_CONTENT_BASE_URL', 'https://example.test');
+    vi.stubEnv('VITE_ENGLISH_VOCAB_REMOTE_FOLDER', 'en');
 
     const fetchMock = vi.fn(async (url) => {
       const asText = String(url);
       if (asText.endsWith('/en/manifest.json')) {
-        return okJson([]);
-      }
-      if (asText.endsWith('/en/fruits.json')) {
         return okJson({
-          name: 'Remote invalid',
-          label: 'Remote invalid',
-          description: 'should be ignored',
-          words: [],
+          version: '2026-03-25.3',
+          lists: [
+            { key: 'fruits', file: 'fruits.json', version: '2026-03-25.2' },
+            { key: 'bonusList', file: 'bonus.json', version: '2026-03-25.3' },
+          ],
+        });
+      }
+      if (asText.endsWith('/en/bonus.json')) {
+        return okJson({
+          name: '🧪 Bonus delta',
+          label: '🧪 Bonus delta',
+          description: 'Liste distante delta',
+          words: [{ english: 'Delta', french: 'Delta' }],
         });
       }
       return { ok: false, json: async () => ({}) };
@@ -230,30 +208,130 @@ describe('englishLists remote hydration', () => {
     });
 
     const { getEnglishList, hydrateRemoteEnglishLists } = await loadEnglishModule();
-    const baseline = getEnglishList('fruits');
-
+    const baselineFruits = getEnglishList('fruits');
     const result = await hydrateRemoteEnglishLists();
-    const afterHydration = getEnglishList('fruits');
 
-    expect(result.enabled).toBe(true);
-    expect(afterHydration).toEqual(baseline);
+    expect(result).toEqual({
+      enabled: true,
+      loaded: 1,
+      updated: 1,
+      skipped: 1,
+    });
+    expect(getEnglishList('fruits')).toEqual(baselineFruits);
+    expect(getEnglishList('bonusList')?.name).toBe('🧪 Bonus delta');
+    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
-  it('hydrates only once and returns cached state on subsequent call', async () => {
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_BASE_URL', 'https://example.test');
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_LANG', 'en');
+  it('reuses cached remote payloads on next import when cache version is newer than local', async () => {
+    vi.stubEnv('VITE_REMOTE_CONTENT_BASE_URL', 'https://example.test');
+    vi.stubEnv('VITE_ENGLISH_VOCAB_REMOTE_FOLDER', 'en');
 
     const fetchMock = vi.fn(async (url) => {
       const asText = String(url);
       if (asText.endsWith('/en/manifest.json')) {
-        return okJson([]);
+        return okJson({
+          version: '2026-03-25.3',
+          lists: [{ key: 'fruits', file: 'fruits.json' }],
+        });
       }
       if (asText.endsWith('/en/fruits.json')) {
         return okJson({
-          name: '🍓 Fruits',
-          label: '🍓 Fruits',
-          description: 'First load',
+          name: '🍓 Fruits en cache',
+          label: '🍓 Fruits en cache',
+          description: 'Version remote a remettre sans reseau',
           words: [{ english: 'Strawberry', french: 'Fraise' }],
+        });
+      }
+      return { ok: false, json: async () => ({}) };
+    });
+
+    Object.defineProperty(globalThis, 'fetch', {
+      configurable: true,
+      value: fetchMock,
+    });
+
+    let englishModule = await loadEnglishModule();
+    await englishModule.hydrateRemoteEnglishLists();
+    expect(englishModule.getEnglishList('fruits')?.name).toBe('🍓 Fruits en cache');
+
+    vi.resetModules();
+    vi.stubEnv('VITE_REMOTE_CONTENT_BASE_URL', '');
+    vi.stubEnv('VITE_ENGLISH_VOCAB_REMOTE_FOLDER', '');
+    englishModule = await loadEnglishModule();
+
+    expect(englishModule.getEnglishList('fruits')?.name).toBe('🍓 Fruits en cache');
+  });
+
+  it('does not cache a partial remote hydration', async () => {
+    vi.stubEnv('VITE_REMOTE_CONTENT_BASE_URL', 'https://example.test');
+    vi.stubEnv('VITE_ENGLISH_VOCAB_REMOTE_FOLDER', 'en');
+
+    const fetchMock = vi.fn(async (url) => {
+      const asText = String(url);
+      if (asText.endsWith('/en/manifest.json')) {
+        return okJson({
+          version: '2026-03-25.3',
+          lists: [
+            { key: 'fruits', file: 'fruits.json' },
+            { key: 'bonusList', file: 'bonus.json' },
+          ],
+        });
+      }
+      if (asText.endsWith('/en/fruits.json')) {
+        return okJson({
+          name: '🍏 Fruits partiels',
+          label: '🍏 Fruits partiels',
+          description: 'Hydratation incomplete',
+          words: [{ english: 'Green apple', french: 'Pomme verte' }],
+        });
+      }
+      return { ok: false, json: async () => ({}) };
+    });
+
+    Object.defineProperty(globalThis, 'fetch', {
+      configurable: true,
+      value: fetchMock,
+    });
+
+    let englishModule = await loadEnglishModule();
+    const baseline = englishModule.getEnglishList('fruits');
+    const result = await englishModule.hydrateRemoteEnglishLists();
+
+    expect(result).toEqual({
+      enabled: true,
+      loaded: 1,
+      updated: 1,
+      skipped: 1,
+    });
+    expect(englishModule.getEnglishList('fruits')?.name).toBe('🍏 Fruits partiels');
+
+    vi.resetModules();
+    vi.stubEnv('VITE_REMOTE_CONTENT_BASE_URL', '');
+    vi.stubEnv('VITE_ENGLISH_VOCAB_REMOTE_FOLDER', '');
+    englishModule = await loadEnglishModule();
+
+    expect(englishModule.getEnglishList('fruits')).toEqual(baseline);
+    expect(englishModule.getEnglishList('bonusList')).toBeNull();
+  });
+
+  it('hydrates only once and returns cached state on subsequent call', async () => {
+    vi.stubEnv('VITE_REMOTE_CONTENT_BASE_URL', 'https://example.test');
+    vi.stubEnv('VITE_ENGLISH_VOCAB_REMOTE_FOLDER', 'en');
+
+    const fetchMock = vi.fn(async (url) => {
+      const asText = String(url);
+      if (asText.endsWith('/en/manifest.json')) {
+        return okJson({
+          version: '2026-03-25.3',
+          lists: [{ key: 'fruits', file: 'fruits.json' }],
+        });
+      }
+      if (asText.endsWith('/en/fruits.json')) {
+        return okJson({
+          name: '🍍 Fruits distants',
+          label: '🍍 Fruits distants',
+          description: 'First load',
+          words: [{ english: 'Pineapple', french: 'Ananas' }],
         });
       }
       return { ok: false, json: async () => ({}) };
@@ -279,97 +357,5 @@ describe('englishLists remote hydration', () => {
       skipped: 0,
     });
     expect(secondCallCount).toBe(firstCallCount);
-  });
-
-  it('keeps known queue when manifest format is invalid', async () => {
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_BASE_URL', 'https://example.test');
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_LANG', 'en');
-
-    const fetchMock = vi.fn(async (url) => {
-      const asText = String(url);
-      if (asText.endsWith('/en/manifest.json')) {
-        return okJson({ bad: 'shape' });
-      }
-      if (asText.endsWith('/en/fruits.json')) {
-        return okJson({
-          name: '🍏 Fruits depuis queue connue',
-          label: '🍏 Fruits depuis queue connue',
-          description: 'manifest invalide mais queue locale active',
-          words: [{ english: 'Green apple', french: 'Pomme verte' }],
-        });
-      }
-      return { ok: false, json: async () => ({}) };
-    });
-
-    Object.defineProperty(globalThis, 'fetch', {
-      configurable: true,
-      value: fetchMock,
-    });
-
-    const { getEnglishList, hydrateRemoteEnglishLists } = await loadEnglishModule();
-    const result = await hydrateRemoteEnglishLists();
-
-    expect(result.enabled).toBe(true);
-    expect(getEnglishList('fruits')?.name).toBe('🍏 Fruits depuis queue connue');
-    expect(getEnglishList('bonusList')).toBeNull();
-  });
-
-  it('continues hydration when some remote files fail', async () => {
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_BASE_URL', 'https://example.test');
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_LANG', 'en');
-
-    const fetchMock = vi.fn(async (url) => {
-      const asText = String(url);
-      if (asText.endsWith('/en/manifest.json')) {
-        return okJson([]);
-      }
-      if (asText.endsWith('/en/fruits.json')) {
-        return okJson({
-          name: '🍓 Fruits distants robustes',
-          label: '🍓 Fruits distants robustes',
-          description: 'ok',
-          words: [{ english: 'Strawberry', french: 'Fraise' }],
-        });
-      }
-      if (asText.endsWith('/en/legumes.json')) {
-        throw new Error('network failure');
-      }
-      return { ok: false, json: async () => ({}) };
-    });
-
-    Object.defineProperty(globalThis, 'fetch', {
-      configurable: true,
-      value: fetchMock,
-    });
-
-    const { getEnglishList, hydrateRemoteEnglishLists } = await loadEnglishModule();
-    const result = await hydrateRemoteEnglishLists();
-
-    expect(result.enabled).toBe(true);
-    expect(result.loaded).toBeGreaterThanOrEqual(1);
-    expect(result.skipped).toBeGreaterThan(0);
-    expect(getEnglishList('fruits')?.name).toBe('🍓 Fruits distants robustes');
-  });
-
-  it('handles fetch errors without crashing hydration', async () => {
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_BASE_URL', 'https://example.test');
-    vi.stubEnv('VITE_LANGUAGES_REMOTE_LANG', 'en');
-
-    const fetchMock = vi.fn(async () => {
-      throw new Error('AbortError');
-    });
-
-    Object.defineProperty(globalThis, 'fetch', {
-      configurable: true,
-      value: fetchMock,
-    });
-
-    const { hydrateRemoteEnglishLists } = await loadEnglishModule();
-    const result = await hydrateRemoteEnglishLists();
-
-    expect(result.enabled).toBe(true);
-    expect(result.loaded).toBe(0);
-    expect(result.updated).toBe(0);
-    expect(result.skipped).toBeGreaterThan(0);
   });
 });

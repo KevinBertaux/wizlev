@@ -1,3 +1,4 @@
+import localManifest from '@/content/languages/en/manifest.json';
 import identiteEcole from '@/content/languages/en/identite-ecole.json';
 import salutationsPolitesse from '@/content/languages/en/salutations-politesse.json';
 import etatsRessentis from '@/content/languages/en/etats-ressentis.json';
@@ -21,11 +22,25 @@ import legumes from '@/content/languages/en/legumes.json';
 import fruits2 from '@/content/languages/en/fruits-2.json';
 import legumes2 from '@/content/languages/en/legumes-2.json';
 import meteo from '@/content/languages/en/meteo.json';
+import {
+  compareManifestVersionTokens,
+  getLatestManifestVersionToken,
+  getManifestVersionToken,
+  hasManifestEntryChanged,
+  indexManifestEntriesByKey,
+  normalizeManifestEntries,
+  readRemotePayloadCache,
+  writeRemotePayloadCache,
+} from '@/features/remote/manifestSync';
 
 const STORAGE_PREFIX = 'manabuplay_english_list_';
 const LEGACY_STORAGE_PREFIX = 'manabuplay_vocab_list_';
+const REMOTE_CACHE_STORAGE_KEY = 'manabuplay_english_remote_cache_v1';
 const REMOTE_TIMEOUT_MS = 3500;
 const DEFAULT_REMOTE_LANG = 'en';
+const DEFAULT_REMOTE_FOLDER = 'languages/en/vocabulary';
+const LOCAL_MANIFEST_VERSION = getManifestVersionToken(localManifest);
+const LOCAL_MANIFEST_ENTRY_INDEX = indexManifestEntriesByKey(localManifest, LOCAL_MANIFEST_VERSION);
 
 const baseEnglishLists = {
   identiteEcole: {
@@ -217,56 +232,44 @@ const listFileByKey = {
   meteo: 'meteo.json',
 };
 
-const runtimeEnglishLists = { ...baseEnglishLists };
+const runtimeEnglishLists = {};
 
 export const englishLists = runtimeEnglishLists;
 export const englishListOptions = [];
 
 let remoteHydrated = false;
 let remoteHydrationPromise = null;
-
-rebuildEnglishListOptions();
-
-function getEnvValue(keys) {
-  if (typeof import.meta === 'undefined' || !import.meta.env) {
-    return '';
-  }
-
-  for (const key of keys) {
-    const value = import.meta.env[key];
-    if (typeof value === 'string' && value.trim()) {
-      return value.trim();
-    }
-  }
-
-  return '';
-}
-
-function getRemoteBaseUrl() {
-  const env = getEnvValue(['VITE_LANGUAGES_REMOTE_BASE_URL', 'VITE_VOCAB_REMOTE_BASE_URL']);
-
-  if (!env) {
-    return '';
-  }
-
-  return env.replace(/\/$/, '');
-}
-
-function getRemoteLanguage() {
-  const env = getEnvValue(['VITE_LANGUAGES_REMOTE_LANG', 'VITE_VOCAB_REMOTE_LANG']);
-
-  const lang = typeof env === 'string' ? env.toLowerCase() : '';
-  return lang || DEFAULT_REMOTE_LANG;
-}
+let cachedRemoteVersion = '';
 
 function cloneWords(words) {
   if (!Array.isArray(words)) {
     return [];
   }
+
   return words.map((word) => ({
     english: typeof word.english === 'string' ? word.english : '',
     french: typeof word.french === 'string' ? word.french : '',
   }));
+}
+
+function getBaseListEntries() {
+  return Object.entries(baseEnglishLists).map(([key, list]) => [
+    key,
+    {
+      ...list,
+      words: cloneWords(list.words),
+    },
+  ]);
+}
+
+function resetRuntimeEnglishListsToBase() {
+  for (const key of Object.keys(runtimeEnglishLists)) {
+    delete runtimeEnglishLists[key];
+  }
+
+  for (const [key, list] of getBaseListEntries()) {
+    runtimeEnglishLists[key] = list;
+  }
 }
 
 function sanitizeRuntimeList(payload, fallbackList) {
@@ -330,13 +333,13 @@ function getLegacyStorageKey(listKey) {
 }
 
 async function fetchJsonWithTimeout(url, timeoutMs = REMOTE_TIMEOUT_MS) {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  const controller = typeof AbortController === 'undefined' ? null : new AbortController();
+  const timeoutId = setTimeout(() => controller?.abort(), timeoutMs);
 
   try {
     const response = await fetch(url, {
       method: 'GET',
-      signal: controller.signal,
+      signal: controller?.signal,
       headers: { Accept: 'application/json' },
     });
 
@@ -381,10 +384,20 @@ function extractRemoteEntries(payload) {
   return list.map(normalizeRemoteIndexEntry).filter(Boolean);
 }
 
-async function resolveRemoteIndex(baseUrl) {
-  const remoteLang = getRemoteLanguage();
-  const manifestPayload = await fetchJsonWithTimeout(`${baseUrl}/${remoteLang}/manifest.json`);
-  return extractRemoteEntries(manifestPayload);
+async function resolveRemoteManifest(baseUrl) {
+  const remoteFolder = getRemoteFolder();
+  const payload = await fetchJsonWithTimeout(`${baseUrl}/${remoteFolder}/manifest.json`);
+  const version = getManifestVersionToken(payload);
+  const normalizedEntries = normalizeManifestEntries(payload, version);
+
+  return {
+    payload,
+    version,
+    entries:
+      normalizedEntries.length > 0
+        ? normalizedEntries
+        : extractRemoteEntries(payload).map((entry) => ({ ...entry, token: version, hasExplicitToken: false })),
+  };
 }
 
 function upsertRuntimeList(listKey, payload) {
@@ -406,6 +419,99 @@ function upsertRuntimeList(listKey, payload) {
   return true;
 }
 
+function applyRemotePayloads(payloads) {
+  const entries = payloads && typeof payloads === 'object' ? Object.entries(payloads) : [];
+  let updated = 0;
+
+  for (const [key, payload] of entries) {
+    if (upsertRuntimeList(key, payload)) {
+      updated += 1;
+    }
+  }
+
+  if (updated > 0) {
+    rebuildEnglishListOptions();
+  }
+
+  return updated;
+}
+
+function applyCachedRemoteLists() {
+  const cache = readRemotePayloadCache(REMOTE_CACHE_STORAGE_KEY);
+  if (!cache.version || compareManifestVersionTokens(cache.version, LOCAL_MANIFEST_VERSION) <= 0) {
+    cachedRemoteVersion = '';
+    return 0;
+  }
+
+  const updated = applyRemotePayloads(cache.payloads);
+  cachedRemoteVersion = updated > 0 ? cache.version : '';
+  return updated;
+}
+
+function getEnvValue(keys) {
+  if (typeof import.meta === 'undefined' || !import.meta.env) {
+    return '';
+  }
+
+  for (const key of keys) {
+    const value = import.meta.env[key];
+    if (typeof value === 'string' && value.trim()) {
+      return value.trim();
+    }
+  }
+
+  return '';
+}
+
+function trimRemoteFolder(value) {
+  return String(value || '')
+    .replace(/^\/+/, '')
+    .replace(/\/+$/, '')
+    .trim();
+}
+
+function getRemoteBaseUrl() {
+  const env = getEnvValue([
+    'VITE_ENGLISH_VOCAB_REMOTE_BASE_URL',
+    'VITE_REMOTE_CONTENT_BASE_URL',
+    'VITE_LANGUAGES_REMOTE_BASE_URL',
+    'VITE_VOCAB_REMOTE_BASE_URL',
+  ]);
+
+  if (!env) {
+    return '';
+  }
+
+  return env.replace(/\/$/, '');
+}
+
+function getLegacyRemoteLanguage() {
+  const env = getEnvValue(['VITE_LANGUAGES_REMOTE_LANG', 'VITE_VOCAB_REMOTE_LANG']);
+
+  const lang = typeof env === 'string' ? env.toLowerCase() : '';
+  return lang || DEFAULT_REMOTE_LANG;
+}
+
+function getRemoteFolder() {
+  const explicitFolder = trimRemoteFolder(
+    getEnvValue(['VITE_ENGLISH_VOCAB_REMOTE_FOLDER', 'VITE_LANGUAGES_REMOTE_FOLDER'])
+  );
+
+  if (explicitFolder) {
+    return explicitFolder;
+  }
+
+  if (getEnvValue(['VITE_LANGUAGES_REMOTE_BASE_URL', 'VITE_VOCAB_REMOTE_BASE_URL'])) {
+    return getLegacyRemoteLanguage();
+  }
+
+  return DEFAULT_REMOTE_FOLDER;
+}
+
+resetRuntimeEnglishListsToBase();
+applyCachedRemoteLists();
+rebuildEnglishListOptions();
+
 export function listEnglishOptions() {
   return Object.values(runtimeEnglishLists).map((list) => ({
     key: list.key,
@@ -425,44 +531,92 @@ export async function hydrateRemoteEnglishLists() {
 
   remoteHydrationPromise = (async () => {
     const baseUrl = getRemoteBaseUrl();
-    const remoteLang = getRemoteLanguage();
     if (!baseUrl || typeof window === 'undefined' || typeof fetch !== 'function') {
       remoteHydrated = true;
       return { enabled: false, loaded: 0, updated: 0, skipped: 0 };
     }
 
-    const queue = Object.entries(listFileByKey).map(([key, file]) => ({ key, file }));
-    const remoteIndex = await resolveRemoteIndex(baseUrl);
+    const { version: remoteManifestVersion, entries } = await resolveRemoteManifest(baseUrl);
+    const baselineVersion = getLatestManifestVersionToken(LOCAL_MANIFEST_VERSION, cachedRemoteVersion);
+    const currentCache = readRemotePayloadCache(REMOTE_CACHE_STORAGE_KEY);
+    const cachedEntryIndex = currentCache.entries || {};
 
-    for (const entry of remoteIndex) {
-      if (!queue.some((item) => item.key === entry.key)) {
-        queue.push(entry);
-      }
+    if (!remoteManifestVersion || compareManifestVersionTokens(remoteManifestVersion, baselineVersion) <= 0) {
+      remoteHydrated = true;
+      return {
+        enabled: true,
+        loaded: 0,
+        updated: 0,
+        skipped: entries.length > 0 || remoteManifestVersion ? 1 : 0,
+      };
     }
 
+    if (entries.length === 0) {
+      remoteHydrated = true;
+      return { enabled: true, loaded: 0, updated: 0, skipped: 1 };
+    }
+
+    const remoteFolder = getRemoteFolder();
+    const payloads = {};
+    const persistedPayloads = { ...(currentCache.payloads || {}) };
+    const persistedEntries = { ...(currentCache.entries || {}) };
     let loaded = 0;
     let updated = 0;
+    let skipped = 0;
+    let failed = 0;
 
-    for (const { key, file } of queue) {
-      const payload = await fetchJsonWithTimeout(`${baseUrl}/${remoteLang}/${file}`);
+    const manifestProvidesEntryTokens = entries.some((entry) => entry.hasExplicitToken);
+
+    for (const entry of entries) {
+      const { key, file } = entry;
+      const baselineEntry = cachedEntryIndex[key] || LOCAL_MANIFEST_ENTRY_INDEX[key] || { token: baselineVersion };
+      if (manifestProvidesEntryTokens && !hasManifestEntryChanged(entry, baselineEntry)) {
+        persistedEntries[key] = baselineEntry;
+        skipped += 1;
+        continue;
+      }
+
+      const payload = await fetchJsonWithTimeout(`${baseUrl}/${remoteFolder}/${file}`);
       if (!payload) {
+        skipped += 1;
+        failed += 1;
         continue;
       }
 
       loaded += 1;
+      payloads[key] = payload;
+      persistedPayloads[key] = payload;
+      persistedEntries[key] = {
+        key,
+        file,
+        token: entry.token || remoteManifestVersion,
+      };
       if (upsertRuntimeList(key, payload)) {
         updated += 1;
       }
     }
 
     rebuildEnglishListOptions();
+
+    if (failed === 0) {
+      if (
+        writeRemotePayloadCache(REMOTE_CACHE_STORAGE_KEY, {
+          version: remoteManifestVersion,
+          entries: persistedEntries,
+          payloads: persistedPayloads,
+        })
+      ) {
+        cachedRemoteVersion = remoteManifestVersion;
+      }
+    }
+
     remoteHydrated = true;
 
     return {
       enabled: true,
       loaded,
       updated,
-      skipped: Math.max(0, queue.length - loaded),
+      skipped,
     };
   })();
 
@@ -538,5 +692,11 @@ export function resetEnglishList(listKey) {
   localStorage.removeItem(getLegacyStorageKey(listKey));
 }
 
-
-
+export function resetEnglishListsRuntimeForTests() {
+  resetRuntimeEnglishListsToBase();
+  remoteHydrated = false;
+  remoteHydrationPromise = null;
+  cachedRemoteVersion = '';
+  applyCachedRemoteLists();
+  rebuildEnglishListOptions();
+}
