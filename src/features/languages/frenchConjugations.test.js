@@ -166,7 +166,7 @@ describe('frenchConjugations', () => {
     expect(runtime).not.toBe(base);
     expect(getFrenchInflectionRuntimeMeta()).toEqual({
       source: 'local',
-      version: '2026-03-17.1',
+      version: '2026-03-25.1',
     });
   });
 
@@ -191,7 +191,7 @@ describe('frenchConjugations', () => {
     expect(getFrenchVerb('aimer', getFrenchInflectionModule())?.label).toBe('Aimer');
     expect(getFrenchInflectionRuntimeMeta()).toEqual({
       source: 'local',
-      version: '2026-03-17.1',
+      version: '2026-03-25.1',
     });
   });
 
@@ -209,7 +209,7 @@ describe('frenchConjugations', () => {
     expect(getFrenchVerb('aimer', getFrenchInflectionModule())?.forms.je).toBe('aime');
     expect(getFrenchInflectionRuntimeMeta()).toEqual({
       source: 'local',
-      version: '2026-03-17.1',
+      version: '2026-03-25.1',
     });
   });
 });
