@@ -903,7 +903,7 @@ watch(
   min-width: 0;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .french-hub__header {
     grid-template-columns: auto minmax(0, 1fr);
     align-items: baseline;
