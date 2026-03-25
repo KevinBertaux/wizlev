@@ -48,6 +48,11 @@ describe('symmetryReviewExport', () => {
       gridSize: 5,
       axes: ['vertical', 'horizontal'],
     });
+    expect(payload.manifest.groups).toEqual([
+      { key: 'threePoints', file: 'shapes-3-points.json', points: 3, updatedAt: '2026-03-14.1' },
+      { key: 'fourPoints', file: 'shapes-4-points.json', points: 4, updatedAt: '2026-03-14.1' },
+      { key: 'fivePoints', file: 'shapes-5-points.json', points: 5, updatedAt: '2026-03-14.1' },
+    ]);
     expect(payload.files[0].shapes).toEqual([
       {
         id: 'shape-3-01',

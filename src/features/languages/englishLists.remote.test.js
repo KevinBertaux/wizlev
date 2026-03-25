@@ -132,7 +132,7 @@ describe('englishLists remote hydration', () => {
       const asText = String(url);
       if (asText.endsWith('/en/manifest.json')) {
         return okJson({
-          version: '2026-03-25.2',
+          version: '2026-03-25.3',
           lists: [
             { key: 'fruits', file: 'fruits.json' },
             { key: 'bonusList', file: 'bonus.json' },
@@ -178,6 +178,52 @@ describe('englishLists remote hydration', () => {
     expect(fetchMock).toHaveBeenCalledTimes(3);
   });
 
+  it('downloads only entries marked as changed when the remote manifest exposes per-entry versions', async () => {
+    vi.stubEnv('VITE_LANGUAGES_REMOTE_BASE_URL', 'https://example.test');
+    vi.stubEnv('VITE_LANGUAGES_REMOTE_LANG', 'en');
+
+    const fetchMock = vi.fn(async (url) => {
+      const asText = String(url);
+      if (asText.endsWith('/en/manifest.json')) {
+        return okJson({
+          version: '2026-03-25.3',
+          lists: [
+            { key: 'fruits', file: 'fruits.json', version: '2026-03-25.2' },
+            { key: 'bonusList', file: 'bonus.json', version: '2026-03-25.3' },
+          ],
+        });
+      }
+      if (asText.endsWith('/en/bonus.json')) {
+        return okJson({
+          name: '🧪 Bonus delta',
+          label: '🧪 Bonus delta',
+          description: 'Liste distante delta',
+          words: [{ english: 'Delta', french: 'Delta' }],
+        });
+      }
+      return { ok: false, json: async () => ({}) };
+    });
+
+    Object.defineProperty(globalThis, 'fetch', {
+      configurable: true,
+      value: fetchMock,
+    });
+
+    const { getEnglishList, hydrateRemoteEnglishLists } = await loadEnglishModule();
+    const baselineFruits = getEnglishList('fruits');
+    const result = await hydrateRemoteEnglishLists();
+
+    expect(result).toEqual({
+      enabled: true,
+      loaded: 1,
+      updated: 1,
+      skipped: 1,
+    });
+    expect(getEnglishList('fruits')).toEqual(baselineFruits);
+    expect(getEnglishList('bonusList')?.name).toBe('🧪 Bonus delta');
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
   it('reuses cached remote payloads on next import when cache version is newer than local', async () => {
     vi.stubEnv('VITE_LANGUAGES_REMOTE_BASE_URL', 'https://example.test');
     vi.stubEnv('VITE_LANGUAGES_REMOTE_LANG', 'en');
@@ -186,7 +232,7 @@ describe('englishLists remote hydration', () => {
       const asText = String(url);
       if (asText.endsWith('/en/manifest.json')) {
         return okJson({
-          version: '2026-03-25.2',
+          version: '2026-03-25.3',
           lists: [{ key: 'fruits', file: 'fruits.json' }],
         });
       }
@@ -226,7 +272,7 @@ describe('englishLists remote hydration', () => {
       const asText = String(url);
       if (asText.endsWith('/en/manifest.json')) {
         return okJson({
-          version: '2026-03-25.2',
+          version: '2026-03-25.3',
           lists: [
             { key: 'fruits', file: 'fruits.json' },
             { key: 'bonusList', file: 'bonus.json' },
@@ -278,7 +324,7 @@ describe('englishLists remote hydration', () => {
       const asText = String(url);
       if (asText.endsWith('/en/manifest.json')) {
         return okJson({
-          version: '2026-03-25.2',
+          version: '2026-03-25.3',
           lists: [{ key: 'fruits', file: 'fruits.json' }],
         });
       }

@@ -75,9 +75,9 @@ export function buildSymmetryExportPayload({
     gridSize,
     axes,
     groups: [
-      { key: 'threePoints', file: 'shapes-3-points.json', points: 3 },
-      { key: 'fourPoints', file: 'shapes-4-points.json', points: 4 },
-      { key: 'fivePoints', file: 'shapes-5-points.json', points: 5 },
+      { key: 'threePoints', file: 'shapes-3-points.json', points: 3, updatedAt: nextUpdatedAt },
+      { key: 'fourPoints', file: 'shapes-4-points.json', points: 4, updatedAt: nextUpdatedAt },
+      { key: 'fivePoints', file: 'shapes-5-points.json', points: 5, updatedAt: nextUpdatedAt },
     ],
   };
 

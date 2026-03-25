@@ -13,52 +13,62 @@
     {
       "key": "aimer",
       "label": "Aimer",
-      "file": "verbs/aimer.json"
+      "file": "verbs/aimer.json",
+      "version": "2026-03-17.1"
     },
     {
       "key": "aller",
       "label": "Aller",
-      "file": "verbs/aller.json"
+      "file": "verbs/aller.json",
+      "version": "2026-03-17.1"
     },
     {
       "key": "avoir",
       "label": "Avoir",
-      "file": "verbs/avoir.json"
+      "file": "verbs/avoir.json",
+      "version": "2026-03-17.1"
     },
     {
       "key": "chanter",
       "label": "Chanter",
-      "file": "verbs/chanter.json"
+      "file": "verbs/chanter.json",
+      "version": "2026-03-17.1"
     },
     {
       "key": "etre",
       "label": "Être",
-      "file": "verbs/etre.json"
+      "file": "verbs/etre.json",
+      "version": "2026-03-17.1"
     },
     {
       "key": "faire",
       "label": "Faire",
-      "file": "verbs/faire.json"
+      "file": "verbs/faire.json",
+      "version": "2026-03-17.1"
     },
     {
       "key": "finir",
       "label": "Finir",
-      "file": "verbs/finir.json"
+      "file": "verbs/finir.json",
+      "version": "2026-03-17.1"
     },
     {
       "key": "manabuer",
       "label": "Manabuer",
-      "file": "verbs/manabuer.json"
+      "file": "verbs/manabuer.json",
+      "version": "2026-03-17.1"
     },
     {
       "key": "prendre",
       "label": "Prendre",
-      "file": "verbs/prendre.json"
+      "file": "verbs/prendre.json",
+      "version": "2026-03-17.1"
     },
     {
       "key": "venir",
       "label": "Venir",
-      "file": "verbs/venir.json"
+      "file": "verbs/venir.json",
+      "version": "2026-03-17.1"
     }
   ]
 }

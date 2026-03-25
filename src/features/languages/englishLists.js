@@ -26,6 +26,9 @@ import {
   compareManifestVersionTokens,
   getLatestManifestVersionToken,
   getManifestVersionToken,
+  hasManifestEntryChanged,
+  indexManifestEntriesByKey,
+  normalizeManifestEntries,
   readRemotePayloadCache,
   writeRemotePayloadCache,
 } from '@/features/remote/manifestSync';
@@ -36,6 +39,7 @@ const REMOTE_CACHE_STORAGE_KEY = 'manabuplay_english_remote_cache_v1';
 const REMOTE_TIMEOUT_MS = 3500;
 const DEFAULT_REMOTE_LANG = 'en';
 const LOCAL_MANIFEST_VERSION = getManifestVersionToken(localManifest);
+const LOCAL_MANIFEST_ENTRY_INDEX = indexManifestEntriesByKey(localManifest, LOCAL_MANIFEST_VERSION);
 
 const baseEnglishLists = {
   identiteEcole: {
@@ -382,11 +386,16 @@ function extractRemoteEntries(payload) {
 async function resolveRemoteManifest(baseUrl) {
   const remoteLang = getRemoteLanguage();
   const payload = await fetchJsonWithTimeout(`${baseUrl}/${remoteLang}/manifest.json`);
+  const version = getManifestVersionToken(payload);
+  const normalizedEntries = normalizeManifestEntries(payload, version);
 
   return {
     payload,
-    version: getManifestVersionToken(payload),
-    entries: extractRemoteEntries(payload),
+    version,
+    entries:
+      normalizedEntries.length > 0
+        ? normalizedEntries
+        : extractRemoteEntries(payload).map((entry) => ({ ...entry, token: version, hasExplicitToken: false })),
   };
 }
 
@@ -500,6 +509,8 @@ export async function hydrateRemoteEnglishLists() {
 
     const { version: remoteManifestVersion, entries } = await resolveRemoteManifest(baseUrl);
     const baselineVersion = getLatestManifestVersionToken(LOCAL_MANIFEST_VERSION, cachedRemoteVersion);
+    const currentCache = readRemotePayloadCache(REMOTE_CACHE_STORAGE_KEY);
+    const cachedEntryIndex = currentCache.entries || {};
 
     if (!remoteManifestVersion || compareManifestVersionTokens(remoteManifestVersion, baselineVersion) <= 0) {
       remoteHydrated = true;
@@ -518,19 +529,39 @@ export async function hydrateRemoteEnglishLists() {
 
     const remoteLang = getRemoteLanguage();
     const payloads = {};
+    const persistedPayloads = { ...(currentCache.payloads || {}) };
+    const persistedEntries = { ...(currentCache.entries || {}) };
     let loaded = 0;
     let updated = 0;
     let skipped = 0;
+    let failed = 0;
 
-    for (const { key, file } of entries) {
+    const manifestProvidesEntryTokens = entries.some((entry) => entry.hasExplicitToken);
+
+    for (const entry of entries) {
+      const { key, file } = entry;
+      const baselineEntry = cachedEntryIndex[key] || LOCAL_MANIFEST_ENTRY_INDEX[key] || { token: baselineVersion };
+      if (manifestProvidesEntryTokens && !hasManifestEntryChanged(entry, baselineEntry)) {
+        persistedEntries[key] = baselineEntry;
+        skipped += 1;
+        continue;
+      }
+
       const payload = await fetchJsonWithTimeout(`${baseUrl}/${remoteLang}/${file}`);
       if (!payload) {
         skipped += 1;
+        failed += 1;
         continue;
       }
 
       loaded += 1;
       payloads[key] = payload;
+      persistedPayloads[key] = payload;
+      persistedEntries[key] = {
+        key,
+        file,
+        token: entry.token || remoteManifestVersion,
+      };
       if (upsertRuntimeList(key, payload)) {
         updated += 1;
       }
@@ -538,8 +569,14 @@ export async function hydrateRemoteEnglishLists() {
 
     rebuildEnglishListOptions();
 
-    if (skipped === 0 && updated === entries.length) {
-      if (writeRemotePayloadCache(REMOTE_CACHE_STORAGE_KEY, { version: remoteManifestVersion, payloads })) {
+    if (failed === 0) {
+      if (
+        writeRemotePayloadCache(REMOTE_CACHE_STORAGE_KEY, {
+          version: remoteManifestVersion,
+          entries: persistedEntries,
+          payloads: persistedPayloads,
+        })
+      ) {
         cachedRemoteVersion = remoteManifestVersion;
       }
     }
