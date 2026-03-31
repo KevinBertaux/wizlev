@@ -7,7 +7,7 @@
       "domain": "seo",
       "feature": "foundation",
       "label": "SEO technique V1 : sitemap, canonical, Open Graph, Twitter card et gestion du domaine secondaire historique",
-      "done": false
+      "done": true
     },
     {
       "id": "scope-070-english-vocab-canon-sync",
@@ -18,8 +18,7 @@
         "scope-070-seo-foundation"
       ],
       "label": "Anglais : integrer en canon local les nouvelles listes deja publiees dans R2 et realigner le manifest local",
-      "done": false
+      "done": true
     }
   ]
 }
-
