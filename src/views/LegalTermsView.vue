@@ -3,7 +3,7 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
 </script>
 
 <template>
-  <LegalPageLayout title="Conditions générales d'utilisation (CGU)" updated-at="25 mars 2026">
+  <LegalPageLayout title="Conditions générales d'utilisation (CGU)" updated-at="31 mars 2026">
     <h2>1. Objet</h2>
     <p>
       Les présentes conditions générales d'utilisation définissent les règles d'accès et d'usage du site

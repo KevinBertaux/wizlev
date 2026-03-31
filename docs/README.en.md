@@ -7,7 +7,8 @@ English documentation hub. This file points to the right sources instead of dupl
 ## Status
 
 - Published product version: `0.6.0`
-- Active product branch: `feat/0.6.0-prep`
+- Current prep version: `0.7.0-dev`
+- Active product branch: `feat/0.7.0-prep`
 - Separate monetization line: `epic/ads-cmp`
 
 ## Documentation map

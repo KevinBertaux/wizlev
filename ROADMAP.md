@@ -6,18 +6,19 @@ Document de synthèse. Les scopes détaillés, historiques de version et backlog
 
 ### Ligne produit
 
-- branche active actuelle : `feat/0.6.0-prep`
+- branche active actuelle : `feat/0.7.0-prep`
 - version publique publiée : `0.6.0`
+- version de préparation en cours : `0.7.0-dev`
 - but :
-  - stabiliser la ligne après sortie de la `0.6.0`
+  - faire avancer la ligne `0.7.0-dev` sans casser la prod `0.6.0`
   - garder la monétisation sur `epic/ads-cmp`, hors ligne produit
 
 ### Ligne plateforme
 
-- branche transverse en cours : `refactor/wizlev-rebrand`
+- track transverse actif : `platform` (déjà intégré dans `main`)
 - but :
   - tracer les chantiers de plateforme hors version produit stricte
-  - conserver visibles le rebrand, le routage canonique et le durcissement CI/QA
+  - conserver visibles le rebrand, le routage canonique et le durcissement CI/QA dans `scope-platform.json`
 
 ### Ligne monétisation
 
@@ -38,29 +39,8 @@ Document de synthèse. Les scopes détaillés, historiques de version et backlog
 
 ### Produit
 
-- scopes par version :
-  - `src/content/roadmap/scope-*.json`
-- backlog :
-  - `src/content/roadmap/backlog.json`
-- index de roadmap :
-  - `src/content/roadmap/roadmap-index.json`
-- chantiers transverses :
-  - `src/content/roadmap/scope-platform.json`
-
-### Admin interne
-
-- contenus spécifiques au panneau :
-  - `src/content/admin/*`
-- règle retenue :
-  - `roadmap` reste un domaine produit global
-  - `admin` reste réservé au pilotage strictement interne
-
-## Règles de merge
-
-### Produit
-
-- `feature/*` -> `feat/0.6.0-prep`
-- `feat/0.6.0-prep` -> `main` quand release validée
+- `feature/*` -> `feat/0.7.0-prep`
+- `feat/0.7.0-prep` -> `main` quand release validée
 
 ### Monétisation
 

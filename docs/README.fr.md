@@ -7,7 +7,8 @@ Hub de documentation en français. Ce document détaille où trouver l’informa
 ## Statut
 
 - Version produit publiée : `0.6.0`
-- Branche produit active : `feat/0.6.0-prep`
+- Version de préparation en cours : `0.7.0-dev`
+- Branche produit active : `feat/0.7.0-prep`
 - Ligne monétisation séparée : `epic/ads-cmp`
 
 ## Carte de la documentation

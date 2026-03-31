@@ -50,9 +50,9 @@ const selectedList = ref('');
 const statusType = ref('');
 const statusMessage = ref('');
 const englishInputRefs = ref([]);
-const APP_VERSION = '0.6.0';
-const ACTIVE_SCOPE_ID = '0.6.0';
-const LAST_UPDATE_FR = '25 mars 2026';
+const APP_VERSION = '0.7.0-dev';
+const ACTIVE_SCOPE_ID = '0.7.0';
+const LAST_UPDATE_FR = '31 mars 2026';
 const RESET_CONFIRM_TEXT = 'SUPPRIMER';
 const buildInfo = ref(null);
 

@@ -5,7 +5,8 @@ Application web éducative pour faire réviser les enfants en autonomie, avec un
 ## Statut
 
 - Version produit publiée : `0.6.0`
-- Branche produit active : `feat/0.6.0-prep`
+- Version de préparation en cours : `0.7.0-dev`
+- Branche produit active : `feat/0.7.0-prep`
 - Ligne monétisation séparée : `epic/ads-cmp`
 
 ## Modules actuellement disponibles
