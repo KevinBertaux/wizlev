@@ -14,6 +14,8 @@ Document qualité cible. Il sert à préparer et exécuter la validation fonctio
 - [ ] `npm run check:brand` 
 - [ ] `npm run check:routes` 
 - [ ] `npm run check:storage-keys` 
+- [ ] `npm run check:legal` 
+- [ ] `npm run check:env` 
 - [ ] `npm run check:breakpoints`
 - [ ] `npm run check:px-values`
 - [ ] `npm test`

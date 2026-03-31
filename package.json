@@ -18,8 +18,10 @@
     "check:px-values": "node scripts/check-px-values.mjs",
     "check:spacing": "npm run check:px-values",
     "lighthouse:ci": "node scripts/run-lhci.mjs",
-    "qa:release": "npm run check:brand && npm run check:routes && npm run check:storage-keys && npm run check:breakpoints && npm run check:px-values && npm test -- --coverage && npm run test:e2e:release && npm run build && npm run lighthouse:ci",
-    "validate:symmetry-shapes": "node scripts/validate-symmetry-shapes.mjs"
+    "qa:release": "npm run check:brand && npm run check:routes && npm run check:storage-keys && npm run check:legal && npm run check:env && npm run check:breakpoints && npm run check:px-values && npm test -- --coverage && npm run test:e2e:release && npm run build && npm run lighthouse:ci",
+    "validate:symmetry-shapes": "node scripts/validate-symmetry-shapes.mjs",
+    "check:env": "node scripts/check-env.mjs",
+    "check:legal": "node scripts/check-legal.mjs"
   },
   "dependencies": {
     "@fontsource/lexend": "^5.2.11",
