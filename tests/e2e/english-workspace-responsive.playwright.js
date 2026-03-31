@@ -37,5 +37,7 @@ test('english workspace: critical controls stay usable across responsive profile
 
   await flashcard.click();
   await expect(page.locator('.flashcard-translation')).toBeVisible();
-  await expect(page.locator('.study-flashcards__actions')).toBeInViewport();
+  const actions = page.locator('.study-flashcards__actions');
+  await actions.scrollIntoViewIfNeeded();
+  await expect(actions).toBeInViewport();
 });

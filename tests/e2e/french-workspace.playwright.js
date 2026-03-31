@@ -62,7 +62,8 @@ test('french workspace: empty state, mode flows, and reset after leaving', async
   await expect(page.locator('.mp-panel-info')).toContainText(/Temps : .*présent/i);
   await expect(flashcardsMode).toBeInViewport();
 
-  await page.getByRole('button', { name: /✍️ Réponse libre/i }).click();
+  await inputMode.click();
+  await expect(inputMode).toHaveClass(/is-active/);
   await expect(page.locator('.answer-input')).toBeVisible();
   await expect(page.locator('.mp-panel-info')).toContainText(/Temps : .*présent/i);
   await expect(qcmMode).toBeInViewport();
