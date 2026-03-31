@@ -13,8 +13,19 @@ on:
           - update
   pull_request:
     branches:
-      - feat/0.6.0-prep
       - main
+      - feat/0.*-prep
+    paths:
+      - "src/**"
+      - "tests/e2e/visual-regression.playwright.js"
+      - "playwright.config.js"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/qa-visual-regression.yml"
+  push:
+    branches:
+      - main
+      - feat/0.*-prep
     paths:
       - "src/**"
       - "tests/e2e/visual-regression.playwright.js"

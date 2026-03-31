@@ -3,11 +3,12 @@ name: QA Release Automation
 on:
   pull_request:
     branches:
-      - feat/0.6.0-prep
       - main
+      - feat/0.*-prep
   push:
     branches:
-      - feat/0.6.0-prep
+      - main
+      - feat/0.*-prep
 
 jobs:
   quality-gate:
@@ -27,6 +28,9 @@ jobs:
 
       - name: Breakpoint guard
         run: npm run check:breakpoints
+
+      - name: Px value guard
+        run: npm run check:px-values
 
       - name: Unit + coverage
         run: npm test -- --coverage

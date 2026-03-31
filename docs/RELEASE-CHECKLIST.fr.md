@@ -21,7 +21,7 @@ Document opérationnel de sortie. Il sert à décider si une branche produit peu
 
 - [ ] `npm install` OK
 - [ ] `npm run check:breakpoints` OK
-- [ ] `npm run check:spacing` OK
+- [ ] `npm run check:px-values` OK
 - [ ] `npm test` OK
 - [ ] `npm run test:e2e` OK
 - [ ] `npm test -- --coverage` OK

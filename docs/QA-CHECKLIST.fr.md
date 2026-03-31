@@ -12,7 +12,7 @@ Document qualité cible. Il sert à préparer et exécuter la validation fonctio
 ## 2. Contrôles automatisés
 
 - [ ] `npm run check:breakpoints`
-- [ ] `npm run check:spacing`
+- [ ] `npm run check:px-values`
 - [ ] `npm test`
 - [ ] `npm run test:e2e`
 - [ ] `npm test -- --coverage`
