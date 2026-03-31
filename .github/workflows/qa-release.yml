@@ -3,11 +3,11 @@ name: QA Release Automation
 on:
   pull_request:
     branches:
-      - feat/0.5.0-prep
+      - feat/0.6.0-prep
       - main
   push:
     branches:
-      - feat/0.5.0-prep
+      - feat/0.6.0-prep
 
 jobs:
   quality-gate:
