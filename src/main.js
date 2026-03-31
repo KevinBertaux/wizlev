@@ -8,6 +8,7 @@ import '@fontsource/nunito/700.css';
 import '@fontsource/nunito/800.css';
 import App from './App.vue';
 import router from './router';
+import { applyPublicSeoToDocument } from './features/seo/publicSeo';
 import './styles/base.css';
 import './styles/quiz-modules.css';
 
@@ -29,6 +30,12 @@ const app = createApp(App);
 
 app.use(createPinia());
 app.use(router);
+router.isReady().then(() => {
+  if (typeof window !== 'undefined') {
+    applyPublicSeoToDocument({ pathname: router.currentRoute.value.fullPath, hostname: window.location.hostname });
+  }
+});
 app.mount('#app');
 
 console.log('App Vue initialisée');
+

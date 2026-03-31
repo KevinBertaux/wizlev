@@ -1,5 +1,9 @@
 User-agent: *
 Allow: /
+Disallow: /-/
 
 User-agent: Mediapartners-Google
 Allow: /
+Disallow: /-/
+
+Sitemap: https://wizlev.com/sitemap.xml

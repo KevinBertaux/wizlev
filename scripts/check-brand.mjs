@@ -13,6 +13,9 @@ const TARGETS = [
   'package.json',
 ];
 const TARGET_EXTENSIONS = new Set(['.js', '.json', '.md', '.vue', '.yml', '.yaml', '.html', '.txt', '.css']);
+const ALLOWED_MATCHES = [
+  { file: /src[\\/]features[\\/]seo[\\/]publicSeo(\.test)?\.js$/, labels: new Set(['legacy app slug', 'legacy domain']) },
+];
 const FORBIDDEN_PATTERNS = [
   { label: 'legacy visible brand', regex: /ManabuPlay/g },
   { label: 'legacy app slug', regex: /manabuplay/g },
@@ -47,6 +50,10 @@ function collectFiles(targetPath) {
   return isTargetFile(fullPath) ? [fullPath] : [];
 }
 
+function isAllowed(relativePath, label) {
+  return ALLOWED_MATCHES.some((entry) => entry.file.test(relativePath) && entry.labels.has(label));
+}
+
 const issues = [];
 for (const target of TARGETS) {
   const full = join(process.cwd(), target);
@@ -57,9 +64,13 @@ for (const target of TARGETS) {
   }
 
   for (const filePath of collectFiles(target)) {
+    const relativePath = relative(process.cwd(), filePath);
     const content = readFileSync(filePath, 'utf8');
     for (const pattern of FORBIDDEN_PATTERNS) {
       for (const match of content.matchAll(pattern.regex)) {
+        if (isAllowed(relativePath, pattern.label)) {
+          continue;
+        }
         const before = content.slice(0, match.index);
         const line = before.split('\n').length;
         issues.push({

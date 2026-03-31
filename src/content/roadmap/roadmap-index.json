@@ -48,6 +48,13 @@
       "startDate": "2026-03-13"
     },
     {
+      "id": "0.7.0",
+      "title": "Scope 0.7.0",
+      "type": "scope",
+      "sourceKey": "scope-0.7.0",
+      "startDate": "2026-03-31"
+    },
+    {
       "id": "ads-foundation",
       "title": "Scope Ads Foundation",
       "type": "scope",
@@ -69,3 +76,4 @@
     }
   ]
 }
+

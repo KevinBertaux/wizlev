@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { isAdminSessionValid } from '@/features/admin/auth';
 import { PUBLIC_LOCALE_PREFIX, ROUTE_NAMES, ROUTE_PATHS } from './routes';
+import { applyPublicSeoToDocument } from '@/features/seo/publicSeo';
 
 function createLegacyPublicRedirects() {
   return [
@@ -188,4 +189,9 @@ router.beforeEach((to) => {
   return { name: ROUTE_NAMES.STUDIO_OPS_LOGIN };
 });
 
+router.afterEach((to) => {
+  applyPublicSeoToDocument({ pathname: to.fullPath });
+});
+
 export default router;
+
