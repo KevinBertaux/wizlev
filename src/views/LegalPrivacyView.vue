@@ -5,10 +5,7 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
 <template>
   <LegalPageLayout title="Politique de confidentialité" updated-at="25 mars 2026">
     <h2>1. Responsable du traitement</h2>
-    <p>
-      Le site <strong>ManabuPlay</strong> est exploité par un éditeur non professionnel. Contact vie privée : contact
-      [at] manabuplay [dot] fr
-    </p>
+    <p>Le site <strong>WizLev</strong> est exploité par un éditeur non professionnel. Contact vie privée : contact@wizlev.com</p>
 
     <h2>2. Données traitées</h2>
     <p>
@@ -77,7 +74,7 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
       Conformément au RGPD et à la loi Informatique et Libertés, vous disposez notamment des droits d'accès, de
       rectification, d'effacement, de limitation, d'opposition et, selon les cas, de portabilité.
     </p>
-    <p>Pour exercer vos droits : contact [at] manabuplay [dot] fr</p>
+    <p>Pour exercer vos droits : contact@wizlev.com</p>
     <p>
       Vous pouvez également introduire une réclamation auprès de la CNIL :
       <a href="https://www.cnil.fr" target="_blank" rel="noreferrer">cnil.fr</a>

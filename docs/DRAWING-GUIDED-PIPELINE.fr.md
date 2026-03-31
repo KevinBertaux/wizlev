@@ -148,7 +148,7 @@ Donc :
 7. validation humaine
 8. export final vers :
    - SVG propres
-   - ou JSON declaratif ManabuPlay
+   - ou JSON declaratif WizLev
 
 ## Recommendation nette
 

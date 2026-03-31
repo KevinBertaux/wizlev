@@ -1,4 +1,4 @@
-# ROADMAP - ManabuPlay
+# ROADMAP - WizLev
 
 Document de synthèse. Les scopes détaillés, historiques de version et backlogs restent pilotés par les fichiers JSON dans `src/content/roadmap/*.json` et par le panneau interne.
 

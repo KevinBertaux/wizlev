@@ -18,7 +18,7 @@ const { shouldDisplayBanner } = storeToRefs(consentStore);
       <div class="consent-banner__text">
         <p class="consent-banner__title">Gestion des cookies</p>
         <p class="consent-banner__description">
-          Nous utilisons des cookies essentiels pour faire fonctionner ManabuPlay et, sur consentement, des solutions de
+          Nous utilisons des cookies essentiels pour faire fonctionner WizLev et, sur consentement, des solutions de
           mesure d'audience et de monétisation. Vous pouvez modifier vos choix à tout moment.
         </p>
       </div>

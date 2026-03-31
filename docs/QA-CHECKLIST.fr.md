@@ -1,4 +1,4 @@
-# Checklist QA - ManabuPlay
+# Checklist QA - WizLev
 
 Document qualité cible. Il sert à préparer et exécuter la validation fonctionnelle et technique avant une release ou un lot sensible.
 

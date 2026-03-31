@@ -93,7 +93,7 @@
       "priority": "Med",
       "domain": "ui",
       "feature": "design-system",
-      "label": "Faire évoluer les composants/composables côté client pour coller à l'état actuel de ManabuPlay (hors admin), avec plus de factorisation et d'harmonisation UI",
+      "label": "Faire évoluer les composants/composables côté client pour coller à l'état actuel de WizLev (hors admin), avec plus de factorisation et d'harmonisation UI",
       "done": false
     },
     {

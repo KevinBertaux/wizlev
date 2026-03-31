@@ -1,4 +1,4 @@
-# Git Cheat Sheet - ManabuPlay
+# Git Cheat Sheet - WizLev
 
 Document court pour garder un workflow Git propre.
 

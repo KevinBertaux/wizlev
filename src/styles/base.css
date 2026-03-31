@@ -155,11 +155,23 @@ a:focus-visible {
   min-height: 32px;
 }
 
-.brand-logo {
-  display: block;
-  height: 30px;
-  width: auto;
-  transition: height 0.18s ease;
+.brand-wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  font-family: 'Lexend', sans-serif;
+  font-size: 1.82rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  transition: font-size 0.18s ease;
+}
+
+.brand-wordmark__wiz {
+  color: #1498ee;
+}
+
+.brand-wordmark__lev {
+  color: #7ac943;
 }
 
 .main-nav {
@@ -227,8 +239,8 @@ a:focus-visible {
   box-shadow: 0 8px 18px rgba(36, 48, 65, 0.08);
 }
 
-.topbar--compact .brand-logo {
-  height: 24px;
+.topbar--compact .brand-wordmark {
+  font-size: 1.54rem;
 }
 
 .topbar--compact .nav-trigger {
@@ -860,8 +872,8 @@ a:focus-visible {
     min-height: 28px;
   }
 
-  .brand-logo {
-    height: 26px;
+  .brand-wordmark {
+    font-size: 1.56rem;
   }
 
   .burger {
@@ -878,8 +890,8 @@ a:focus-visible {
     padding: 4px 12px;
   }
 
-  .topbar--compact .brand-logo {
-    height: 22px;
+  .topbar--compact .brand-wordmark {
+    font-size: 1.38rem;
   }
 
   .topbar--compact .burger {
@@ -1029,8 +1041,8 @@ a:focus-visible {
     min-height: 26px;
   }
 
-  .brand-logo {
-    height: 22px;
+  .brand-wordmark {
+    font-size: 1.32rem;
   }
 
   .burger {
@@ -1045,8 +1057,8 @@ a:focus-visible {
     padding: 3px 8px;
   }
 
-  .topbar--compact .brand-logo {
-    height: 20px;
+  .topbar--compact .brand-wordmark {
+    font-size: 1.18rem;
   }
 
   .topbar--compact .burger {

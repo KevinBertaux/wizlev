@@ -139,7 +139,9 @@ onUnmounted(() => {
   <div class="app-shell">
     <header class="topbar" :class="{ 'topbar--compact': isHeaderCompact }">
       <router-link :to="{ name: ROUTE_NAMES.HOME }" class="brand" aria-label="Accueil" @click="closeNav">
-        <img src="/brand-logo.png" alt="ManabuPlay" class="brand-logo" />
+        <span class="brand-wordmark" aria-hidden="true">
+          <span class="brand-wordmark__wiz">Wiz</span><span class="brand-wordmark__lev">Lev</span>
+        </span>
       </router-link>
 
       <button

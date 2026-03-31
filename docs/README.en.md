@@ -1,4 +1,4 @@
-# English Documentation - ManabuPlay
+# English Documentation - WizLev
 
 English documentation hub. This file points to the right sources instead of duplicating the whole product scope.
 

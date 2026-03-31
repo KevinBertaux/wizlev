@@ -1,4 +1,4 @@
-# Checklist Release - ManabuPlay
+# Checklist Release - WizLev
 
 Document opérationnel de sortie. Il sert à décider si une branche produit peut passer vers `main`, puis être déployée.
 

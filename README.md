@@ -1,4 +1,4 @@
-# ManabuPlay
+# WizLev
 
 Application web éducative pour faire réviser les enfants en autonomie, avec une base Vue 3 + Vite orientée modules, contenu versionné et déploiement statique.
 

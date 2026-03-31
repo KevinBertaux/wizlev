@@ -5,7 +5,7 @@ export const CONSENT_CATEGORIES = Object.freeze([
   {
     id: 'necessary',
     label: 'Essentiel',
-    description: 'Stockages obligatoires pour faire fonctionner ManabuPlay.',
+    description: 'Stockages obligatoires pour faire fonctionner WizLev.',
     locked: true,
   },
   {
