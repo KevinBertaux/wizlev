@@ -378,7 +378,7 @@ onUnmounted(() => {
   background: #fbfdff;
   color: #243041;
   font: inherit;
-  padding: 9px 14px;
+  padding: 10px 14px;
 }
 
 @keyframes tts-speaking-pulse {

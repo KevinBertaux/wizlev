@@ -192,7 +192,11 @@ a:focus-visible {
 }
 
 .nav-cluster .nav-group + .nav-group {
-  margin-left: -1px;
+  margin-left: 0;
+}
+
+.nav-cluster .nav-group + .nav-group .nav-trigger {
+  border-left-width: 0;
 }
 
 .nav-group--legal {
@@ -245,7 +249,7 @@ a:focus-visible {
 
 .topbar--compact .nav-trigger {
   padding: 6px 10px;
-  border-radius: 9px;
+  border-radius: 10px;
 }
 
 .nav-trigger:hover,
@@ -344,7 +348,7 @@ a:focus-visible {
 .submenu-link:focus-visible {
   background: #d4ebff;
   color: #194665;
-  box-shadow: inset 0 0 0 1px rgba(74, 142, 184, 0.14);
+  box-shadow: inset 0 0 0 2px rgba(74, 142, 184, 0.14);
 }
 
 .submenu-link:first-child {
@@ -354,7 +358,7 @@ a:focus-visible {
 .submenu-link.router-link-active {
   color: var(--ink-inverse);
   background: var(--btn-primary-grad);
-  box-shadow: inset 0 0 0 1px rgba(247, 249, 252, 0.12);
+  box-shadow: inset 0 0 0 2px rgba(247, 249, 252, 0.12);
 }
 
 .burger {
@@ -576,7 +580,7 @@ a:focus-visible {
   background: transparent;
   border-color: #8ebedc;
   color: #1d4b6a;
-  box-shadow: inset 0 0 0 1px rgba(94, 143, 179, 0.6);
+  box-shadow: inset 0 0 0 2px rgba(94, 143, 179, 0.6);
 }
 
 .mp-btn-ghost:hover:not(:disabled),
@@ -959,15 +963,15 @@ a:focus-visible {
   .nav-trigger {
     width: 100%;
     text-align: left;
-    padding: 7px 10px;
-    border-radius: 9px;
+    padding: 8px 10px;
+    border-radius: 10px;
   }
 
   .nav-cluster .nav-group:first-child .nav-trigger,
   .nav-cluster .nav-group:last-child .nav-trigger,
   .nav-cluster .nav-group:first-child.open .nav-trigger,
   .nav-cluster .nav-group:last-child.open .nav-trigger {
-    border-radius: 9px;
+    border-radius: 10px;
   }
 
   .submenu {
@@ -1054,7 +1058,7 @@ a:focus-visible {
   }
 
   .topbar--compact {
-    padding: 3px 8px;
+    padding: 4px 8px;
   }
 
   .topbar--compact .brand-wordmark {
@@ -1073,7 +1077,7 @@ a:focus-visible {
     top: calc(100% + 6px);
     right: 8px;
     width: min(312px, calc(100vw - 16px));
-    padding: 7px;
+    padding: 8px;
   }
 
   .site-footer--study-ads {

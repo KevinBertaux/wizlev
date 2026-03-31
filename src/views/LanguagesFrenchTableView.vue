@@ -162,7 +162,7 @@ function openFlashcards() {
   line-height: 1.5;
 }
 
-@media (min-width: 980px) {
+@media (min-width: 1024px) {
   .conjugation-row {
     grid-template-columns: 180px minmax(0, 1fr);
     align-items: center;

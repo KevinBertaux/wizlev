@@ -628,9 +628,9 @@ watch(
 .french-hub__select-field.is-guided {
   background: rgba(224, 255, 235, 0.9);
   box-shadow:
-    0 0 0 3px rgba(47, 163, 107, 0.22),
+    0 0 0 4px rgba(47, 163, 107, 0.22),
     0 10px 20px rgba(47, 163, 107, 0.18);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 }
 
 .french-hub__bands {
@@ -640,11 +640,11 @@ watch(
 
 .french-hub__band {
   display: grid;
-  gap: 1px;
+  gap: 2px;
   text-align: left;
   border: 1px solid rgba(140, 167, 193, 0.35);
   border-radius: 14px;
-  padding: 7px 10px;
+  padding: 8px 10px;
   background: rgba(245, 248, 252, 0.92);
   color: #17304d;
   cursor: pointer;
@@ -667,7 +667,7 @@ watch(
 
 .french-hub__band.is-active {
   opacity: 1;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   box-shadow: 0 8px 18px rgba(22, 49, 77, 0.08);
 }
 
@@ -744,12 +744,12 @@ watch(
       transparent 0,
       transparent 42px,
       rgba(140, 167, 193, 0.08) 42px,
-      rgba(140, 167, 193, 0.08) 43px
+      rgba(140, 167, 193, 0.08) 44px
     );
 }
 
 .french-hub__table-wrap.is-locked .french-hub__table-content {
-  filter: blur(7px);
+  filter: blur(8px);
   opacity: 0.42;
   pointer-events: none;
   user-select: none;
@@ -814,7 +814,7 @@ watch(
   background: rgba(255, 255, 255, 0.98);
   box-shadow:
     0 12px 24px rgba(32, 49, 74, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+    inset 0 2px 0 rgba(255, 255, 255, 0.85);
   text-align: left;
   cursor: pointer;
   transition:
@@ -825,17 +825,17 @@ watch(
 
 .french-hub__mode-card:hover:not(.is-disabled),
 .french-hub__mode-card:focus-visible:not(.is-disabled) {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   box-shadow:
     0 16px 28px rgba(32, 49, 74, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    inset 0 2px 0 rgba(255, 255, 255, 0.9);
 }
 
 .french-hub__mode-card.is-active {
   border-color: rgba(87, 153, 255, 0.45);
   box-shadow:
     0 16px 28px rgba(42, 76, 122, 0.12),
-    0 0 0 3px rgba(87, 153, 255, 0.14);
+    0 0 0 4px rgba(87, 153, 255, 0.14);
 }
 
 .french-hub__mode-card h3 {
@@ -940,7 +940,7 @@ watch(
 
 @media (max-width: 767px) {
   .french-hub__panel.is-mode-flashcards {
-    margin-inline: -17px;
+    margin-inline: -16px;
   }
 }
 </style>
