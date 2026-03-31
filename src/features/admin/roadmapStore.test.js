@@ -33,6 +33,11 @@ describe('roadmapStore', () => {
     expect(adsFoundation?.id).toBe('ads-foundation');
     expect(adsFoundation?.items.length).toBeGreaterThan(0);
 
+    const platform = getRoadmapEntryById('platform');
+    expect(platform).not.toBeNull();
+    expect(platform?.id).toBe('platform');
+    expect(platform?.items.length).toBeGreaterThan(0);
+
     expect(getRoadmapEntryById('unknown-scope-id')).toBeNull();
   });
 

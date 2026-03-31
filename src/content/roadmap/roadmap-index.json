@@ -55,6 +55,13 @@
       "startDate": "2026-03-19"
     },
     {
+      "id": "platform",
+      "title": "Chantiers plateforme",
+      "type": "scope",
+      "sourceKey": "scope-platform",
+      "startDate": "2026-03-31"
+    },
+    {
       "id": "backlog",
       "title": "Backlog produit",
       "type": "backlog",
