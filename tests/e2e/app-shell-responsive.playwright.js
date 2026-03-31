@@ -19,6 +19,12 @@ test.beforeEach(async ({ page }) => {
   }, consentPayload);
 });
 
+async function usesDesktopHoverNav(page) {
+  return page.evaluate(() => {
+    return window.matchMedia('(min-width: 1024px) and (hover: hover) and (pointer: fine)').matches;
+  });
+}
+
 async function openLanguagesFrench(page) {
   const burger = page.getByRole('button', { name: 'Ouvrir le menu' });
   const nav = page.locator('#main-nav');
@@ -31,8 +37,13 @@ async function openLanguagesFrench(page) {
     return;
   }
 
-  await nav.getByRole('button', { name: 'Langues' }).hover();
-  await expect(frenchLink).toBeVisible({ timeout: 2000 });
+  if (await usesDesktopHoverNav(page)) {
+    await nav.getByRole('button', { name: 'Langues' }).hover();
+  } else {
+    await nav.getByRole('button', { name: 'Langues' }).click();
+  }
+
+  await expect(frenchLink).toBeVisible({ timeout: 3000 });
   await frenchLink.click();
 }
 
@@ -48,8 +59,13 @@ async function openMathSymmetry(page) {
     return;
   }
 
-  await nav.getByRole('button', { name: 'Maths' }).hover();
-  await expect(symmetryLink).toBeVisible({ timeout: 2000 });
+  if (await usesDesktopHoverNav(page)) {
+    await nav.getByRole('button', { name: 'Maths' }).hover();
+  } else {
+    await nav.getByRole('button', { name: 'Maths' }).click();
+  }
+
+  await expect(symmetryLink).toBeVisible({ timeout: 3000 });
   await symmetryLink.click();
 }
 

@@ -59,13 +59,13 @@ jobs:
         if: ${{ github.event_name != 'workflow_dispatch' || inputs.mode == 'check' }}
         env:
           PW_VISUAL: "1"
-        run: npx playwright test --project=desktop-chromium --grep @visual
+        run: npx playwright test --project=desktop-chromium --grep '@visual'
 
       - name: Run visual regression (update candidates)
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'update' }}
         env:
           PW_VISUAL: "1"
-        run: npx playwright test --project=desktop-chromium --grep @visual --update-snapshots
+        run: npx playwright test --project=desktop-chromium --grep '@visual' --update-snapshots
 
       - name: Upload visual artifacts
         if: always()
@@ -77,3 +77,4 @@ jobs:
             playwright-report/
             tests/e2e/*-snapshots/
           if-no-files-found: ignore
+
