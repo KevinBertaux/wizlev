@@ -22,6 +22,8 @@ import legumes from '@/content/languages/en/legumes.json';
 import fruits2 from '@/content/languages/en/fruits-2.json';
 import legumes2 from '@/content/languages/en/legumes-2.json';
 import meteo from '@/content/languages/en/meteo.json';
+import apparencePhysique from '@/content/languages/en/apparence-physique.json';
+import corpsEtVisage from '@/content/languages/en/corps-et-visage.json';
 import {
   compareManifestVersionTokens,
   getLatestManifestVersionToken,
@@ -97,20 +99,6 @@ const baseEnglishLists = {
     name: activitesCapacites.name,
     description: activitesCapacites.description,
     words: activitesCapacites.words,
-  },
-  actionsVerbs1: {
-    key: 'actionsVerbs1',
-    label: actionsVerbs1.label || actionsVerbs1.name,
-    name: actionsVerbs1.name,
-    description: actionsVerbs1.description,
-    words: actionsVerbs1.words,
-  },
-  actionsVerbs2: {
-    key: 'actionsVerbs2',
-    label: actionsVerbs2.label || actionsVerbs2.name,
-    name: actionsVerbs2.name,
-    description: actionsVerbs2.description,
-    words: actionsVerbs2.words,
   },
   fetesSymboles: {
     key: 'fetesSymboles',
@@ -203,6 +191,34 @@ const baseEnglishLists = {
     description: meteo.description,
     words: meteo.words,
   },
+  actionsVerbs1: {
+    key: 'actionsVerbs1',
+    label: actionsVerbs1.label || actionsVerbs1.name,
+    name: actionsVerbs1.name,
+    description: actionsVerbs1.description,
+    words: actionsVerbs1.words,
+  },
+  actionsVerbs2: {
+    key: 'actionsVerbs2',
+    label: actionsVerbs2.label || actionsVerbs2.name,
+    name: actionsVerbs2.name,
+    description: actionsVerbs2.description,
+    words: actionsVerbs2.words,
+  },
+  apparencePhysique: {
+    key: 'apparencePhysique',
+    label: apparencePhysique.label || apparencePhysique.name,
+    name: apparencePhysique.name,
+    description: apparencePhysique.description,
+    words: apparencePhysique.words,
+  },
+  corpsEtVisage: {
+    key: 'corpsEtVisage',
+    label: corpsEtVisage.label || corpsEtVisage.name,
+    name: corpsEtVisage.name,
+    description: corpsEtVisage.description,
+    words: corpsEtVisage.words,
+  },
 };
 
 const listFileByKey = {
@@ -214,8 +230,6 @@ const listFileByKey = {
   reglesClasse: 'regles-classe.json',
   materielScolaire: 'materiel-scolaire.json',
   activitesCapacites: 'activites-capacites.json',
-  actionsVerbs1: 'actions-verbs-1.json',
-  actionsVerbs2: 'actions-verbs-2.json',
   fetesSymboles: 'fetes-symboles.json',
   thanksgiving: 'thanksgiving.json',
   paysNationalites: 'pays-nationalites.json',
@@ -229,6 +243,10 @@ const listFileByKey = {
   fruits2: 'fruits-2.json',
   legumes2: 'legumes-2.json',
   meteo: 'meteo.json',
+  actionsVerbs1: 'actions-verbs-1.json',
+  actionsVerbs2: 'actions-verbs-2.json',
+  apparencePhysique: 'apparence-physique.json',
+  corpsEtVisage: 'corps-et-visage.json',
 };
 
 const runtimeEnglishLists = {};
@@ -659,3 +677,5 @@ export function resetEnglishListsRuntimeForTests() {
   applyCachedRemoteLists();
   rebuildEnglishListOptions();
 }
+
+

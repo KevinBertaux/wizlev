@@ -50,6 +50,11 @@ const listSelectOptions = computed(() =>
     label: `${list.label} (${list.wordCount} mots)`,
   }))
 );
+const listSelectLabel = computed(() => {
+  const count = availableEnglishOptions.value.length;
+  const suffix = count === 1 ? '' : 's';
+  return `Choisir une liste : ${count} liste${suffix}`;
+});
 
 const isFrenchFirst = computed(() => cardDirection.value === 'fr-first');
 const flashcards = computed(() =>
@@ -280,7 +285,7 @@ onUnmounted(() => {
         <QuizSelectField
           v-model="selectedList"
           select-id="englishListSelect"
-          label="Choisir une liste :"
+          :label="listSelectLabel"
           placeholder="-- Choisir une liste --"
           :placeholder-disabled="true"
           :options="listSelectOptions"
@@ -728,3 +733,4 @@ onUnmounted(() => {
   }
 }
 </style>
+

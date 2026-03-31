@@ -83,6 +83,23 @@ describe('englishLists storage behavior', () => {
     expect(options.some((item) => item.key === 'actionsVerbs2')).toBe(true);
   });
 
+  it('exposes apparencePhysique and corpsEtVisage in local canon', () => {
+    const apparence = getEnglishList('apparencePhysique');
+    const corps = getEnglishList('corpsEtVisage');
+    const options = listEnglishOptions();
+
+    expect(apparence).not.toBeNull();
+    expect(apparence.name).toBe('Apparence physique');
+    expect(apparence.words.length).toBe(27);
+
+    expect(corps).not.toBeNull();
+    expect(corps.name).toBe('Corps et visage');
+    expect(corps.words.length).toBe(29);
+
+    expect(options.some((item) => item.key === 'apparencePhysique')).toBe(true);
+    expect(options.some((item) => item.key === 'corpsEtVisage')).toBe(true);
+  });
+
   it('saves and returns sanitized payload', () => {
     const saved = saveEnglishList('fruits', {
       name: '  Fruits perso ',

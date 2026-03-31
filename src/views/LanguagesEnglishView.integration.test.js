@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
+import QuizSelectField from '@/components/QuizSelectField.vue';
 import LanguagesEnglishView from './LanguagesEnglishView.vue';
 
 const listEnglishOptionsMock = vi.fn();
@@ -58,6 +59,7 @@ describe('LanguagesEnglishView integration', () => {
     await Promise.resolve();
 
     expect(wrapper.find('#englishListSelect').exists()).toBe(true);
+    expect(wrapper.getComponent(QuizSelectField).props('label')).toBe('Choisir une liste : 1 liste');
     expect(wrapper.find('.remote-loading-state').exists()).toBe(false);
     expect(wrapper.find('.background-sync-hint').exists()).toBe(false);
 
@@ -87,3 +89,4 @@ describe('LanguagesEnglishView integration', () => {
     wrapper.unmount();
   });
 });
+

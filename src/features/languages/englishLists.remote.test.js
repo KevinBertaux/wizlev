@@ -130,7 +130,7 @@ describe('englishLists remote hydration', () => {
       const asText = String(url);
       if (asText.endsWith('/en/manifest.json')) {
         return okJson({
-          version: '2026-03-25.3',
+          version: '2026-04-01.1',
           lists: [
             { key: 'fruits', file: 'fruits.json' },
             { key: 'bonusList', file: 'bonus.json' },
@@ -184,10 +184,10 @@ describe('englishLists remote hydration', () => {
       const asText = String(url);
       if (asText.endsWith('/en/manifest.json')) {
         return okJson({
-          version: '2026-03-25.3',
+          version: '2026-04-01.1',
           lists: [
             { key: 'fruits', file: 'fruits.json', version: '2026-03-25.2' },
-            { key: 'bonusList', file: 'bonus.json', version: '2026-03-25.3' },
+            { key: 'bonusList', file: 'bonus.json', version: '2026-04-01.1' },
           ],
         });
       }
@@ -230,7 +230,7 @@ describe('englishLists remote hydration', () => {
       const asText = String(url);
       if (asText.endsWith('/en/manifest.json')) {
         return okJson({
-          version: '2026-03-25.3',
+          version: '2026-04-01.1',
           lists: [{ key: 'fruits', file: 'fruits.json' }],
         });
       }
@@ -270,7 +270,7 @@ describe('englishLists remote hydration', () => {
       const asText = String(url);
       if (asText.endsWith('/en/manifest.json')) {
         return okJson({
-          version: '2026-03-25.3',
+          version: '2026-04-01.1',
           lists: [
             { key: 'fruits', file: 'fruits.json' },
             { key: 'bonusList', file: 'bonus.json' },
@@ -322,7 +322,7 @@ describe('englishLists remote hydration', () => {
       const asText = String(url);
       if (asText.endsWith('/en/manifest.json')) {
         return okJson({
-          version: '2026-03-25.3',
+          version: '2026-04-01.1',
           lists: [{ key: 'fruits', file: 'fruits.json' }],
         });
       }

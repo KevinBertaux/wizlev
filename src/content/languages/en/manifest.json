@@ -1,29 +1,131 @@
 {
-  "version": "2026-03-25.2",
-  "generatedAt": "2026-03-25",
+  "version": "2026-03-31.1",
+  "generatedAt": "2026-03-31",
   "lists": [
-    { "key": "identiteEcole", "file": "identite-ecole.json", "version": "2026-03-25.2" },
-    { "key": "salutationsPolitesse", "file": "salutations-politesse.json", "version": "2026-03-25.2" },
-    { "key": "etatsRessentis", "file": "etats-ressentis.json", "version": "2026-03-25.2" },
-    { "key": "tempsSemaine", "file": "temps-semaine.json", "version": "2026-03-25.2" },
-    { "key": "consignesClasse", "file": "consignes-classe.json", "version": "2026-03-25.2" },
-    { "key": "reglesClasse", "file": "regles-classe.json", "version": "2026-03-25.2" },
-    { "key": "materielScolaire", "file": "materiel-scolaire.json", "version": "2026-03-25.2" },
-    { "key": "activitesCapacites", "file": "activites-capacites.json", "version": "2026-03-25.2" },
-    { "key": "actionsVerbs1", "file": "actions-verbs-1.json", "version": "2026-03-25.2" },
-    { "key": "actionsVerbs2", "file": "actions-verbs-2.json", "version": "2026-03-25.2" },
-    { "key": "fetesSymboles", "file": "fetes-symboles.json", "version": "2026-03-25.2" },
-    { "key": "thanksgiving", "file": "thanksgiving.json", "version": "2026-03-25.2" },
-    { "key": "paysNationalites", "file": "pays-nationalites.json", "version": "2026-03-25.2" },
-    { "key": "prepositionsLieu", "file": "prepositions-lieu.json", "version": "2026-03-25.2" },
-    { "key": "villePersonnes", "file": "ville-personnes.json", "version": "2026-03-25.2" },
-    { "key": "maisonVetements", "file": "maison-vetements.json", "version": "2026-03-25.2" },
-    { "key": "animauxObjets", "file": "animaux-objets.json", "version": "2026-03-25.2" },
-    { "key": "alimentsBoissons", "file": "aliments-boissons.json", "version": "2026-03-25.2" },
-    { "key": "fruits", "file": "fruits.json", "version": "2026-03-25.2" },
-    { "key": "legumes", "file": "legumes.json", "version": "2026-03-25.2" },
-    { "key": "fruits2", "file": "fruits-2.json", "version": "2026-03-25.2" },
-    { "key": "legumes2", "file": "legumes-2.json", "version": "2026-03-25.2" },
-    { "key": "meteo", "file": "meteo.json", "version": "2026-03-25.2" }
+    {
+      "key": "identiteEcole",
+      "file": "identite-ecole.json",
+      "version": "2026-03-25.2"
+    },
+    {
+      "key": "salutationsPolitesse",
+      "file": "salutations-politesse.json",
+      "version": "2026-03-25.2"
+    },
+    {
+      "key": "etatsRessentis",
+      "file": "etats-ressentis.json",
+      "version": "2026-03-25.2"
+    },
+    {
+      "key": "tempsSemaine",
+      "file": "temps-semaine.json",
+      "version": "2026-03-25.2"
+    },
+    {
+      "key": "consignesClasse",
+      "file": "consignes-classe.json",
+      "version": "2026-03-25.2"
+    },
+    {
+      "key": "reglesClasse",
+      "file": "regles-classe.json",
+      "version": "2026-03-25.2"
+    },
+    {
+      "key": "materielScolaire",
+      "file": "materiel-scolaire.json",
+      "version": "2026-03-25.2"
+    },
+    {
+      "key": "activitesCapacites",
+      "file": "activites-capacites.json",
+      "version": "2026-03-25.2"
+    },
+    {
+      "key": "fetesSymboles",
+      "file": "fetes-symboles.json",
+      "version": "2026-03-25.2"
+    },
+    {
+      "key": "thanksgiving",
+      "file": "thanksgiving.json",
+      "version": "2026-03-25.2"
+    },
+    {
+      "key": "paysNationalites",
+      "file": "pays-nationalites.json",
+      "version": "2026-03-25.2"
+    },
+    {
+      "key": "prepositionsLieu",
+      "file": "prepositions-lieu.json",
+      "version": "2026-03-25.2"
+    },
+    {
+      "key": "villePersonnes",
+      "file": "ville-personnes.json",
+      "version": "2026-03-25.2"
+    },
+    {
+      "key": "maisonVetements",
+      "file": "maison-vetements.json",
+      "version": "2026-03-25.2"
+    },
+    {
+      "key": "animauxObjets",
+      "file": "animaux-objets.json",
+      "version": "2026-03-25.2"
+    },
+    {
+      "key": "alimentsBoissons",
+      "file": "aliments-boissons.json",
+      "version": "2026-03-25.2"
+    },
+    {
+      "key": "fruits",
+      "file": "fruits.json",
+      "version": "2026-03-25.2"
+    },
+    {
+      "key": "legumes",
+      "file": "legumes.json",
+      "version": "2026-03-25.2"
+    },
+    {
+      "key": "fruits2",
+      "file": "fruits-2.json",
+      "version": "2026-03-25.2"
+    },
+    {
+      "key": "legumes2",
+      "file": "legumes-2.json",
+      "version": "2026-03-25.2"
+    },
+    {
+      "key": "meteo",
+      "file": "meteo.json",
+      "version": "2026-03-25.2"
+    },
+    {
+      "key": "actionsVerbs1",
+      "file": "actions-verbs-1.json",
+      "version": "2026-03-25.2"
+    },
+    {
+      "key": "actionsVerbs2",
+      "file": "actions-verbs-2.json",
+      "version": "2026-03-25.2"
+    },
+    {
+      "key": "apparencePhysique",
+      "file": "apparence-physique.json",
+      "version": "2026-03-31.1"
+    },
+    {
+      "key": "corpsEtVisage",
+      "file": "corps-et-visage.json",
+      "version": "2026-03-31.1"
+    }
   ]
 }
