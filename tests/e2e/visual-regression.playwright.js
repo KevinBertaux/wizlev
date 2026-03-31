@@ -27,17 +27,17 @@ test.describe('@visual visual regression smoke', () => {
   });
 
   test('home visual baseline', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/fr');
     await expect(page).toHaveScreenshot('home.png', { fullPage: true, maxDiffPixelRatio: 0.02 });
   });
 
   test('math visual baseline', async ({ page }) => {
-    await page.goto('/math/multiplications');
+    await page.goto('/fr/math/multiplications');
     await expect(page).toHaveScreenshot('math.png', { fullPage: true, maxDiffPixelRatio: 0.02 });
   });
 
   test('english visual baseline', async ({ page }) => {
-    await page.goto('/languages/english');
+    await page.goto('/fr/languages/english');
     await expect(page).toHaveScreenshot('english.png', { fullPage: true, maxDiffPixelRatio: 0.02 });
   });
 
