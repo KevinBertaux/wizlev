@@ -15,7 +15,7 @@ import {
   resetMotivationRunState,
 } from '@/features/motivation/toastEngine';
 
-const BEST_STREAK_KEY = 'manabuplay_symmetry_best_streak_v1';
+const BEST_STREAK_KEY = 'wizlev_symmetry_best_streak_v1';
 const AUTO_NEXT_DELAY_MS = 2000;
 
 const questionBag = ref(createSymmetryQuestionBag());

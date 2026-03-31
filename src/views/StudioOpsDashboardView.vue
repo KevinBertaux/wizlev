@@ -188,7 +188,7 @@ const tmpFolderOpen = ref({});
 
 const TMP_TEXT_EXTENSIONS = new Set(['.json', '.txt', '.md', '.csv', '.log', '.env', '.mjs', '.js']);
 const TMP_IMAGE_EXTENSIONS = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp']);
-const TMP_DIRECTORY_DB_NAME = 'manabuplay-admin-tmp-lab-v1';
+const TMP_DIRECTORY_DB_NAME = 'wizlev-admin-tmp-lab-v1';
 const TMP_DIRECTORY_DB_STORE = 'handles';
 const TMP_DIRECTORY_DB_KEY = 'tmp-directory-handle';
 
@@ -1484,7 +1484,7 @@ async function exportSymmetryReviewZip() {
 
   try {
     const blob = await buildSymmetryExportZipBlob(symmetryExportPayload.value);
-    const fileName = `manabuplay-content-symmetry-${symmetryExportPayload.value.nextUpdatedAt}.zip`;
+    const fileName = `wizlev-content-symmetry-${symmetryExportPayload.value.nextUpdatedAt}.zip`;
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = fileName;

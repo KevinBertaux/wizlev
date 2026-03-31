@@ -40,6 +40,6 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
     </p>
 
     <h2>6. Contact</h2>
-    <p>Pour toute question relative aux cookies et traceurs : contact@wizlev.com</p>
+    <p>Pour toute question relative aux cookies et traceurs : contact [at] wizlev [dot] com</p>
   </LegalPageLayout>
 </template>

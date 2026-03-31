@@ -22,7 +22,7 @@ class MemoryStorage {
   }
 }
 
-const SESSION_KEY = 'manabuplay_admin_session_v1';
+const SESSION_KEY = 'wizlev_admin_session_v1';
 
 let originalWindow;
 let originalLocalStorage;

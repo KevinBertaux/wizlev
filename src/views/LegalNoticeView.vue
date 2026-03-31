@@ -25,7 +25,7 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
     <p>Directeur de la publication : éditeur non professionnel du site WizLev.</p>
 
     <h2>Contact</h2>
-    <p>Pour toute question légale, éditoriale ou relative aux données personnelles : contact@wizlev.com</p>
+    <p>Pour toute question légale, éditoriale ou relative aux données personnelles : contact [at] wizlev [dot] com</p>
 
     <h2>Hébergement</h2>
     <p>

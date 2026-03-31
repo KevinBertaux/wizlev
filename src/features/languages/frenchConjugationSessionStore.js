@@ -1,4 +1,4 @@
-const STORAGE_PREFIX = 'manabuplay_french_';
+const STORAGE_PREFIX = 'wizlev_french_';
 
 function getStorage() {
   if (typeof window === 'undefined') {

@@ -5,7 +5,7 @@ export const SYMMETRY_REVIEW_STATUS = Object.freeze({
   REJECTED: 'rejected',
 });
 
-export const SYMMETRY_REVIEW_SESSION_STORAGE_KEY = 'manabuplay_admin_symmetry_review_session_v1';
+export const SYMMETRY_REVIEW_SESSION_STORAGE_KEY = 'wizlev_admin_symmetry_review_session_v1';
 
 const VALID_REVIEW_STATUS = new Set(Object.values(SYMMETRY_REVIEW_STATUS));
 const AUTO_DRIVEN_REVIEW_STATUS = new Set([

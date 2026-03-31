@@ -19,7 +19,7 @@ import {
 
 const DEFAULT_MOOD_KEY = 'indicatif';
 const DEFAULT_MODE_KEY = 'table';
-const FRENCH_WORKSPACE_STORAGE_KEY = 'manabuplay_french_workspace';
+const FRENCH_WORKSPACE_STORAGE_KEY = 'wizlev_french_workspace';
 
 const route = useRoute();
 const router = useRouter();

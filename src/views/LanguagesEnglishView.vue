@@ -5,8 +5,7 @@ import QuizSelectField from '@/components/QuizSelectField.vue';
 import StudyFlashcardCarousel from '@/components/StudyFlashcardCarousel.vue';
 import { getEnglishList, hydrateRemoteEnglishLists, listEnglishOptions } from '@/features/languages/englishLists';
 
-const cardDirectionStorageKey = 'manabuplay_english_card_direction';
-const legacyCardDirectionStorageKey = 'manabuplay_vocab_card_direction';
+const cardDirectionStorageKey = 'wizlev_english_card_direction';
 const ttsSupported =
   typeof window !== 'undefined' &&
   'speechSynthesis' in window &&
@@ -223,15 +222,11 @@ watch(cardDirection, (direction) => {
 
 onMounted(async () => {
   if (typeof window !== 'undefined') {
-    localStorage.removeItem('manabuplay_tts_accent');
+    localStorage.removeItem('wizlev_tts_accent');
 
-    const savedDirection =
-      localStorage.getItem(cardDirectionStorageKey) ||
-      localStorage.getItem(legacyCardDirectionStorageKey);
+    const savedDirection = localStorage.getItem(cardDirectionStorageKey);
     if (savedDirection === 'en-first' || savedDirection === 'fr-first') {
       cardDirection.value = savedDirection;
-      localStorage.setItem(cardDirectionStorageKey, savedDirection);
-      localStorage.removeItem(legacyCardDirectionStorageKey);
     }
   }
 

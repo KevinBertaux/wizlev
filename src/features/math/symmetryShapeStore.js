@@ -7,7 +7,7 @@ import {
   getManifestVersionToken,
 } from '../remote/manifestSync';
 
-export const SYMMETRY_SHAPES_STORAGE_KEY = 'manabuplay_symmetry_shapes_v1';
+export const SYMMETRY_SHAPES_STORAGE_KEY = 'wizlev_symmetry_shapes_v1';
 
 const DEFAULT_GRID_SIZE = 5;
 const DEFAULT_AXES = ['vertical', 'horizontal'];

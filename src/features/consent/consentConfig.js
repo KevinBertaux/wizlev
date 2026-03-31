@@ -1,5 +1,5 @@
 export const CONSENT_VERSION = '2026-03-10';
-export const CONSENT_STORAGE_KEY = 'manabuplay_consent';
+export const CONSENT_STORAGE_KEY = 'wizlev_consent';
 
 export const CONSENT_CATEGORIES = Object.freeze([
   {

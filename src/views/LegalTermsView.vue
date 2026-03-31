@@ -65,6 +65,6 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
 
     <h2>9. Droit applicable et contact</h2>
     <p>Les présentes CGU sont soumises au droit français.</p>
-    <p>Pour toute question relative à ces CGU : contact@wizlev.com</p>
+    <p>Pour toute question relative à ces CGU : contact [at] wizlev [dot] com</p>
   </LegalPageLayout>
 </template>

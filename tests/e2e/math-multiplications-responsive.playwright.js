@@ -15,7 +15,7 @@ test.beforeEach(async ({ page }) => {
   await page.addInitScript((payload) => {
     window.localStorage.clear();
     window.sessionStorage.clear();
-    window.localStorage.setItem('manabuplay_consent', JSON.stringify(payload));
+    window.localStorage.setItem('wizlev_consent', JSON.stringify(payload));
   }, consentPayload);
 });
 

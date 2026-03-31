@@ -1,10 +1,10 @@
 import { englishListOptions } from '@/features/languages/englishLists';
 import { SYMMETRY_SHAPES_STORAGE_KEY } from '@/features/math/symmetryShapeStore';
 
-const APP_PREFIX = 'manabuplay_';
-const HISTORY_KEY = 'manabuplay_admin_storage_history_v1';
-const HISTORY_LIMIT_KEY = 'manabuplay_admin_storage_history_limit_v1';
-const SIDEBAR_COLLAPSED_KEY = 'manabuplay_admin_sidebar_collapsed_v1';
+const APP_PREFIX = 'wizlev_';
+const HISTORY_KEY = 'wizlev_admin_storage_history_v1';
+const HISTORY_LIMIT_KEY = 'wizlev_admin_storage_history_limit_v1';
+const SIDEBAR_COLLAPSED_KEY = 'wizlev_admin_sidebar_collapsed_v1';
 
 const DEFAULT_HISTORY_LIMIT = 20;
 const HISTORY_LIMIT_MIN = 10;
@@ -13,38 +13,32 @@ const HISTORY_LIMIT_STEP = 5;
 
 const KNOWN_ENTRY_DEFS = [
   {
-    key: 'manabuplay_math_best_streak_v1',
+    key: 'wizlev_math_best_streak_v1',
     label: 'Math - meilleure série (multiplications)',
     group: 'math',
     storage: 'local',
   },
   {
-    key: 'manabuplay_symmetry_best_streak_v1',
+    key: 'wizlev_symmetry_best_streak_v1',
     label: 'Math - meilleure série (symétrie)',
     group: 'math',
     storage: 'local',
   },
   {
-    key: 'manabuplay_tts_accent',
+    key: 'wizlev_tts_accent',
     label: 'Langues - accent TTS',
     group: 'languages',
     storage: 'local',
   },
   {
-    key: 'manabuplay_tts_rate',
+    key: 'wizlev_tts_rate',
     label: 'Langues - vitesse TTS',
     group: 'languages',
     storage: 'local',
   },
   {
-    key: 'manabuplay_english_card_direction',
+    key: 'wizlev_english_card_direction',
     label: 'Langues - sens des cartes',
-    group: 'languages',
-    storage: 'local',
-  },
-  {
-    key: 'manabuplay_vocab_card_direction',
-    label: 'Langues - sens des cartes (legacy)',
     group: 'languages',
     storage: 'local',
   },
@@ -55,13 +49,13 @@ const KNOWN_ENTRY_DEFS = [
     storage: 'local',
   },
   {
-    key: 'manabuplay_admin_rate_limit_v1',
+    key: 'wizlev_admin_rate_limit_v1',
     label: 'Admin - sécurité anti-bruteforce',
     group: 'admin',
     storage: 'local',
   },
   {
-    key: 'manabuplay_admin_session_v1',
+    key: 'wizlev_admin_session_v1',
     label: 'Admin - session active',
     group: 'admin',
     storage: 'session',
@@ -121,20 +115,12 @@ function normalizeHistoryLimit(value) {
 }
 
 function toEnglishEntries() {
-  return englishListOptions.flatMap((list) => [
-    {
-      key: `${APP_PREFIX}english_list_${list.key}`,
-      label: `Langues - liste anglais ${list.label}`,
-      group: 'languages',
-      storage: 'local',
-    },
-    {
-      key: `${APP_PREFIX}vocab_list_${list.key}`,
-      label: `Langues - liste anglais ${list.label} (legacy)`,
-      group: 'languages',
-      storage: 'local',
-    },
-  ]);
+  return englishListOptions.map((list) => ({
+    key: `${APP_PREFIX}english_list_${list.key}`,
+    label: `Langues - liste anglais ${list.label}`,
+    group: 'languages',
+    storage: 'local',
+  }));
 }
 
 function buildKnownEntries() {
@@ -223,7 +209,7 @@ function removeEntry(entry) {
 }
 
 function isStreakKey(key) {
-  return key === 'manabuplay_math_best_streak_v1' || key === 'manabuplay_symmetry_best_streak_v1';
+  return key === 'wizlev_math_best_streak_v1' || key === 'wizlev_symmetry_best_streak_v1';
 }
 
 function isProtectedEntry(entry) {
