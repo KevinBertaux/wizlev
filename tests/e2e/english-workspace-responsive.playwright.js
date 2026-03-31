@@ -20,7 +20,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('english workspace: critical controls stay usable across responsive profiles', async ({ page }) => {
-  await page.goto('/languages/english');
+  await page.goto('/fr/languages/english');
 
   const listSelect = page.getByLabel('Choisir une liste :');
   const directionSelect = page.getByLabel('Sens :');

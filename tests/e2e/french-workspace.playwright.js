@@ -20,7 +20,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('french workspace: empty state, mode flows, and reset after leaving', async ({ page }) => {
-  await page.goto('/languages/french');
+  await page.goto('/fr/languages/french');
 
   const verbSelect = page.getByLabel('Choisir un verbe :');
   const tenseSelect = page.getByLabel('Choisir un temps :');
@@ -68,7 +68,7 @@ test('french workspace: empty state, mode flows, and reset after leaving', async
   await expect(qcmMode).toBeInViewport();
 
   await page.goto('/');
-  await page.goto('/languages/french');
+  await page.goto('/fr/languages/french');
 
   await expect(verbSelect).toHaveValue('');
   await expect(tenseSelect).toHaveValue('');
@@ -76,7 +76,7 @@ test('french workspace: empty state, mode flows, and reset after leaving', async
 });
 
 test('french workspace: grandir is selectable and works across table and flashcards', async ({ page }) => {
-  await page.goto('/languages/french');
+  await page.goto('/fr/languages/french');
 
   const verbSelect = page.getByLabel('Choisir un verbe :');
   const tenseSelect = page.getByLabel('Choisir un temps :');

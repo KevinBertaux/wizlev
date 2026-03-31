@@ -5,8 +5,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import App from './App.vue';
 
 const route = reactive({
-  path: '/',
-  fullPath: '/',
+  path: '/fr',
+  fullPath: '/fr',
 });
 
 vi.mock('vue-router', async () => {
@@ -19,8 +19,8 @@ vi.mock('vue-router', async () => {
 
 describe('App product shell', () => {
   beforeEach(() => {
-    route.path = '/';
-    route.fullPath = '/';
+    route.path = '/fr';
+    route.fullPath = '/fr';
   });
 
   it('renders a plain public shell without consent or study ads overlays', () => {

@@ -34,7 +34,7 @@ async function disableMotion(page) {
 }
 
 async function prepareSelectedWorkspace(page) {
-  await page.goto('/languages/french');
+  await page.goto('/fr/languages/french');
   await page.getByLabel('Choisir un verbe :').selectOption('aimer');
   await page.getByLabel('Choisir un temps :').selectOption('present');
   await expect(page.locator('.conjugation-row').first()).toContainText('Je');
@@ -59,7 +59,7 @@ test.beforeEach(async ({ page }) => {
 
 test.describe('french workspace screenshots', () => {
   test('capture key french workspace states', async ({ page }, testInfo) => {
-    await page.goto('/languages/french');
+    await page.goto('/fr/languages/french');
     await disableMotion(page);
     await expect(page.getByText('Choisis un verbe et un temps pour commencer.')).toBeVisible();
     await saveArtifact(page, testInfo, 'french-empty');

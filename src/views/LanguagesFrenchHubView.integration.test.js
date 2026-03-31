@@ -7,7 +7,7 @@ import { getFrenchInflectionModule, getFrenchVerb } from '@/features/languages/f
 const replaceMock = vi.fn();
 const routeState = {
   query: {},
-  path: '/languages/french',
+  path: '/fr/languages/french',
   name: 'languages-french',
 };
 

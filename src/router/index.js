@@ -1,8 +1,74 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { isAdminSessionValid } from '@/features/admin/auth';
-import { ROUTE_NAMES, ROUTE_PATHS } from './routes';
+import { PUBLIC_LOCALE_PREFIX, ROUTE_NAMES, ROUTE_PATHS } from './routes';
+
+function createLegacyPublicRedirects() {
+  return [
+    {
+      path: '/',
+      redirect: ROUTE_PATHS.HOME,
+    },
+    {
+      path: '/math',
+      redirect: ROUTE_PATHS.MATH_HUB,
+    },
+    {
+      path: '/math/multiplications',
+      redirect: ROUTE_PATHS.MATH_MULTIPLICATIONS,
+    },
+    {
+      path: '/math/symmetry',
+      redirect: ROUTE_PATHS.MATH_SYMMETRY,
+    },
+    {
+      path: '/languages',
+      redirect: ROUTE_PATHS.LANGUAGES_HUB,
+    },
+    {
+      path: '/languages/english',
+      redirect: ROUTE_PATHS.LANGUAGES_ENGLISH,
+    },
+    {
+      path: '/languages/french',
+      redirect: ROUTE_PATHS.LANGUAGES_FRENCH,
+    },
+    {
+      path: '/languages/french/table/:verbKey',
+      redirect: (to) => ({ name: ROUTE_NAMES.LANGUAGES_FRENCH_TABLE, params: to.params }),
+    },
+    {
+      path: '/languages/french/flashcards/:verbKey',
+      redirect: (to) => ({ name: ROUTE_NAMES.LANGUAGES_FRENCH_FLASHCARDS, params: to.params }),
+    },
+    {
+      path: '/languages/french/qcm/:verbKey',
+      redirect: (to) => ({ name: ROUTE_NAMES.LANGUAGES_FRENCH_QCM, params: to.params }),
+    },
+    {
+      path: '/languages/french/input/:verbKey',
+      redirect: (to) => ({ name: ROUTE_NAMES.LANGUAGES_FRENCH_INPUT, params: to.params }),
+    },
+    {
+      path: '/legal/legal-notice',
+      redirect: ROUTE_PATHS.LEGAL_NOTICE,
+    },
+    {
+      path: '/legal/privacy-policy',
+      redirect: ROUTE_PATHS.LEGAL_PRIVACY,
+    },
+    {
+      path: '/legal/terms-of-use',
+      redirect: ROUTE_PATHS.LEGAL_TERMS,
+    },
+    {
+      path: '/legal/cookie-policy',
+      redirect: ROUTE_PATHS.LEGAL_COOKIES,
+    },
+  ];
+}
 
 const routes = [
+  ...createLegacyPublicRedirects(),
   {
     path: ROUTE_PATHS.HOME,
     name: ROUTE_NAMES.HOME,
@@ -94,6 +160,10 @@ const routes = [
     path: ROUTE_PATHS.LEGAL_COOKIES,
     name: ROUTE_NAMES.LEGAL_COOKIES,
     component: () => import('@/views/LegalCookiesView.vue'),
+  },
+  {
+    path: `${PUBLIC_LOCALE_PREFIX}/:pathMatch(.*)*`,
+    redirect: ROUTE_PATHS.HOME,
   },
   {
     path: '/:pathMatch(.*)*',

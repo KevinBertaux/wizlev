@@ -66,11 +66,11 @@ test('app shell responsive: navigation stays usable on all viewport profiles', a
   }
 
   await openLanguagesFrench(page);
-  await expect(page).toHaveURL(/\/languages\/french$/);
+  await expect(page).toHaveURL(/\/fr\/languages\/french$/);
   await expect(page.getByRole('heading', { level: 1, name: 'Conjugaison française' })).toBeVisible();
 
   await page.goto('/');
   await openMathSymmetry(page);
-  await expect(page).toHaveURL(/\/math\/symmetry$/);
+  await expect(page).toHaveURL(/\/fr\/math\/symmetry$/);
   await expect(page.locator('.prompt-box')).toBeVisible();
 });

@@ -20,7 +20,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('math multiplications: critical controls stay usable across responsive profiles', async ({ page }) => {
-  await page.goto('/math/multiplications');
+  await page.goto('/fr/math/multiplications');
 
   const heading = page.getByRole('heading', { level: 1, name: 'Math - Tables de multiplication' });
   const tablePicker = page.getByRole('group', { name: 'Choix des tables' });

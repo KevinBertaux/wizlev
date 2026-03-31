@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { ROUTE_NAMES } from "@/router/routes";
+import { ROUTE_NAMES, ROUTE_PATHS } from "@/router/routes";
 
 const navOpen = ref(false);
 const openGroup = ref("");
@@ -11,10 +11,40 @@ const hoverCloseTimer = ref(null);
 const route = useRoute();
 const router = useRouter();
 
-const isMathRoute = computed(() => route.path.startsWith("/math"));
-const isLangRoute = computed(() => route.path.startsWith("/languages"));
-const isLegalRoute = computed(() => route.path.startsWith("/legal"));
-const isAdminPanelRoute = computed(() => route.path.startsWith("/-/studio-ops/panel"));
+const mathRouteNames = new Set([ROUTE_NAMES.MATH_HUB, ROUTE_NAMES.MATH_MULTIPLICATIONS, ROUTE_NAMES.MATH_SYMMETRY]);
+const languageRouteNames = new Set([
+  ROUTE_NAMES.LANGUAGES_HUB,
+  ROUTE_NAMES.LANGUAGES_ENGLISH,
+  ROUTE_NAMES.LANGUAGES_FRENCH,
+  ROUTE_NAMES.LANGUAGES_FRENCH_TABLE,
+  ROUTE_NAMES.LANGUAGES_FRENCH_FLASHCARDS,
+  ROUTE_NAMES.LANGUAGES_FRENCH_QCM,
+  ROUTE_NAMES.LANGUAGES_FRENCH_INPUT,
+]);
+const legalRouteNames = new Set([
+  ROUTE_NAMES.LEGAL_NOTICE,
+  ROUTE_NAMES.LEGAL_PRIVACY,
+  ROUTE_NAMES.LEGAL_TERMS,
+  ROUTE_NAMES.LEGAL_COOKIES,
+]);
+
+function getRouteNameValue() {
+  return typeof route.name === 'string' ? route.name : '';
+}
+
+const isMathRoute = computed(() => {
+  const routeName = getRouteNameValue();
+  return mathRouteNames.has(routeName) || route.path === ROUTE_PATHS.MATH_HUB || route.path.startsWith(`${ROUTE_PATHS.MATH_HUB}/`);
+});
+const isLangRoute = computed(() => {
+  const routeName = getRouteNameValue();
+  return languageRouteNames.has(routeName) || route.path === ROUTE_PATHS.LANGUAGES_HUB || route.path.startsWith(`${ROUTE_PATHS.LANGUAGES_HUB}/`);
+});
+const isLegalRoute = computed(() => {
+  const routeName = getRouteNameValue();
+  return legalRouteNames.has(routeName) || route.path === ROUTE_PATHS.LEGAL_NOTICE || route.path.startsWith('/fr/legal/');
+});
+const isAdminPanelRoute = computed(() => route.path === ROUTE_PATHS.STUDIO_OPS_PANEL);
 
 watch(
   () => route.fullPath,

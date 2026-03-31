@@ -20,7 +20,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('french workspace: critical controls stay visible across responsive states', async ({ page }) => {
-  await page.goto('/languages/french');
+  await page.goto('/fr/languages/french');
 
   const heading = page.getByRole('heading', { level: 1, name: 'Conjugaison française' });
   const verbSelect = page.getByLabel('Choisir un verbe :');

@@ -112,16 +112,16 @@ test('legal pages smoke: footer links open expected legal headings', async ({ pa
   await page.goto('/');
 
   await openLegalLink(page, 'Mentions légales');
-  await expect(page).toHaveURL(/\/legal\/legal-notice$/);
+  await expect(page).toHaveURL(/\/fr\/legal\/legal-notice$/);
   await expect(page.getByRole('heading', { level: 1, name: 'Mentions légales' })).toBeVisible();
 
   await page.goto('/');
   await openLegalLink(page, 'Politique de confidentialité');
-  await expect(page).toHaveURL(/\/legal\/privacy-policy$/);
+  await expect(page).toHaveURL(/\/fr\/legal\/privacy-policy$/);
   await expect(page.getByRole('heading', { level: 1, name: 'Politique de confidentialité' })).toBeVisible();
 
   await page.goto('/');
   await openLegalLink(page, 'CGU');
-  await expect(page).toHaveURL(/\/legal\/terms-of-use$/);
+  await expect(page).toHaveURL(/\/fr\/legal\/terms-of-use$/);
   await expect(page.getByRole('heading', { level: 1, name: /Conditions générales d'utilisation/ })).toBeVisible();
 });

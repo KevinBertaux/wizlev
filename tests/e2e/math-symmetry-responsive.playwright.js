@@ -20,7 +20,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('math symmetry: prompt and answer controls stay usable across responsive profiles', async ({ page }) => {
-  await page.goto('/math/symmetry');
+  await page.goto('/fr/math/symmetry');
 
   const heading = page.getByRole('heading', { level: 1, name: 'Math - Symétrie' });
   const promptBox = page.locator('.prompt-box');
