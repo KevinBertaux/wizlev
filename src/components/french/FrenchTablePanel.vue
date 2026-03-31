@@ -51,8 +51,8 @@ const rows = computed(() =>
 
 .conjugation-row {
   display: grid;
-  gap: 5px;
-  padding: 9px 12px;
+  gap: 6px;
+  padding: 10px 12px;
   border-radius: 12px;
   border: 1px solid rgba(140, 167, 193, 0.35);
   background: rgba(245, 248, 252, 0.92);
@@ -68,7 +68,7 @@ const rows = computed(() =>
   line-height: 1.35;
 }
 
-@media (min-width: 980px) {
+@media (min-width: 1024px) {
   .conjugation-row {
     grid-template-columns: 160px minmax(0, 1fr);
     align-items: center;

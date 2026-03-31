@@ -1,4 +1,4 @@
-# Documentation FR - ManabuPlay
+# Documentation FR - WizLev
 
 Hub de documentation en français. Ce document détaille où trouver l’information utile sans re-dupliquer les sources de vérité métier.
 

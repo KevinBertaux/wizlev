@@ -36,7 +36,7 @@ const props = defineProps({
 .remote-loading-state__spinner {
   width: 28px;
   height: 28px;
-  border: 3px solid #d4e2f5;
+  border: 4px solid #d4e2f5;
   border-top-color: #4b7bd1;
   border-radius: 999px;
   animation: remote-loading-spin 0.8s linear infinite;

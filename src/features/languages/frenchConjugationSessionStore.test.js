@@ -35,7 +35,7 @@ afterEach(() => {
 describe('frenchConjugationSessionStore', () => {
   it('builds stable keys per mode and scope token', () => {
     expect(buildFrenchSessionKey('qcm', 'etre', 'best_score')).toBe(
-      'manabuplay_french_qcm_etre_best_score'
+      'wizlev_french_qcm_etre_best_score'
     );
   });
 
@@ -47,7 +47,7 @@ describe('frenchConjugationSessionStore', () => {
     expect(store.readBestScore()).toBe(7);
     expect(store.readBestStreak()).toBe(0);
     expect(store.bestScoreKey).toBe(
-      'manabuplay_french_qcm_aller_indicatif_imparfait_best_score'
+      'wizlev_french_qcm_aller_indicatif_imparfait_best_score'
     );
   });
 });

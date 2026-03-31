@@ -7,7 +7,7 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
     <h2>1. Objet</h2>
     <p>
       Les présentes conditions générales d'utilisation définissent les règles d'accès et d'usage du site
-      <strong>ManabuPlay</strong>, service éducatif de révision scolaire.
+      <strong>WizLev</strong>, service éducatif de révision scolaire.
     </p>
 
     <h2>2. Accès et acceptation</h2>
@@ -65,6 +65,6 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
 
     <h2>9. Droit applicable et contact</h2>
     <p>Les présentes CGU sont soumises au droit français.</p>
-    <p>Pour toute question relative à ces CGU : contact [at] manabuplay [dot] fr</p>
+    <p>Pour toute question relative à ces CGU : contact [at] wizlev [dot] com</p>
   </LegalPageLayout>
 </template>

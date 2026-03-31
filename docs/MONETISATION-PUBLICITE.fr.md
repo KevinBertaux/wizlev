@@ -1,4 +1,4 @@
-# Monétisation et publicité - ManabuPlay
+# Monétisation et publicité - WizLev
 
 Document de cadrage. Il décrit la ligne monétisation du projet, ses prérequis et ses garde-fous. Il ne doit plus être interprété comme une feuille de route produit `0.5` / `0.6`.
 

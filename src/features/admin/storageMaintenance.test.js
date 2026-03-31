@@ -78,9 +78,9 @@ describe('storageMaintenance', () => {
   });
 
   it('resets streak keys with preset and keeps unrelated keys', () => {
-    localStorage.setItem('manabuplay_math_best_streak_v1', '12');
-    localStorage.setItem('manabuplay_symmetry_best_streak_v1', '8');
-    localStorage.setItem('manabuplay_tts_rate', '1');
+    localStorage.setItem('wizlev_math_best_streak_v1', '12');
+    localStorage.setItem('wizlev_symmetry_best_streak_v1', '8');
+    localStorage.setItem('wizlev_tts_rate', '1');
 
     const result = executeResetAction({
       actionLabel: 'Reset streaks',
@@ -90,9 +90,9 @@ describe('storageMaintenance', () => {
 
     expect(result.targetCount).toBe(2);
     expect(result.removedCount).toBe(2);
-    expect(localStorage.getItem('manabuplay_math_best_streak_v1')).toBeNull();
-    expect(localStorage.getItem('manabuplay_symmetry_best_streak_v1')).toBeNull();
-    expect(localStorage.getItem('manabuplay_tts_rate')).toBe('1');
+    expect(localStorage.getItem('wizlev_math_best_streak_v1')).toBeNull();
+    expect(localStorage.getItem('wizlev_symmetry_best_streak_v1')).toBeNull();
+    expect(localStorage.getItem('wizlev_tts_rate')).toBe('1');
 
     const history = getMaintenanceHistory();
     expect(history).toHaveLength(1);
@@ -100,8 +100,8 @@ describe('storageMaintenance', () => {
   });
 
   it('rolls back a maintenance action from history', () => {
-    localStorage.setItem('manabuplay_math_best_streak_v1', '10');
-    localStorage.setItem('manabuplay_symmetry_best_streak_v1', '6');
+    localStorage.setItem('wizlev_math_best_streak_v1', '10');
+    localStorage.setItem('wizlev_symmetry_best_streak_v1', '6');
 
     const resetResult = executeResetAction({
       actionLabel: 'Reset streaks',
@@ -112,8 +112,8 @@ describe('storageMaintenance', () => {
 
     expect(rollback.found).toBe(true);
     expect(rollback.restoredCount).toBe(2);
-    expect(localStorage.getItem('manabuplay_math_best_streak_v1')).toBe('10');
-    expect(localStorage.getItem('manabuplay_symmetry_best_streak_v1')).toBe('6');
+    expect(localStorage.getItem('wizlev_math_best_streak_v1')).toBe('10');
+    expect(localStorage.getItem('wizlev_symmetry_best_streak_v1')).toBe('6');
   });
 
   it('excludes session targets from admin preview when includeSession=false', () => {
@@ -138,11 +138,11 @@ describe('storageMaintenance', () => {
     });
   });
 
-  it('detects unknown manabuplay keys in snapshot', () => {
-    localStorage.setItem('manabuplay_custom_experiment_v1', 'enabled');
+  it('detects unknown wizlev keys in snapshot', () => {
+    localStorage.setItem('wizlev_custom_experiment_v1', 'enabled');
 
     const snapshot = getStorageSnapshot();
-    const unknown = snapshot.find((entry) => entry.key === 'manabuplay_custom_experiment_v1');
+    const unknown = snapshot.find((entry) => entry.key === 'wizlev_custom_experiment_v1');
 
     expect(unknown).toBeDefined();
     expect(unknown?.label).toContain('Clé non référencée');
@@ -150,19 +150,19 @@ describe('storageMaintenance', () => {
   });
 
   it('supports targeted custom preview using selected key refs', () => {
-    localStorage.setItem('manabuplay_tts_rate', '1');
-    sessionStorage.setItem('manabuplay_admin_session_v1', '{"expiresAtMs":123}');
+    localStorage.setItem('wizlev_tts_rate', '1');
+    sessionStorage.setItem('wizlev_admin_session_v1', '{"expiresAtMs":123}');
 
     const preview = previewResetAction({
       selectedKeys: [
-        'local:manabuplay_tts_rate',
-        'session:manabuplay_admin_session_v1',
+        'local:wizlev_tts_rate',
+        'session:wizlev_admin_session_v1',
       ],
       includeSession: false,
     });
 
     expect(preview.targets).toHaveLength(1);
-    expect(preview.targets[0].key).toBe('manabuplay_tts_rate');
+    expect(preview.targets[0].key).toBe('wizlev_tts_rate');
     expect(preview.targets[0].storage).toBe('local');
   });
 });

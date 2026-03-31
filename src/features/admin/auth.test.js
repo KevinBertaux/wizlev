@@ -220,7 +220,7 @@ describe('session lifecycle', () => {
   });
 
   it('treats corrupted session payload as invalid', () => {
-    window.sessionStorage.setItem('manabuplay_admin_session_v1', '{broken');
+    window.sessionStorage.setItem('wizlev_admin_session_v1', '{broken');
     expect(isAdminSessionValid()).toBe(false);
     expect(getAdminSessionRemainingMs()).toBe(0);
   });

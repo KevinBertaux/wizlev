@@ -22,7 +22,7 @@ class MemoryStorage {
   }
 }
 
-const SESSION_KEY = 'manabuplay_admin_session_v1';
+const SESSION_KEY = 'wizlev_admin_session_v1';
 
 let originalWindow;
 let originalLocalStorage;
@@ -89,6 +89,26 @@ afterEach(() => {
 });
 
 describe('studio-ops flow integration', () => {
+  it(
+    'redirects public legacy routes to the /fr canonical space',
+    async () => {
+      const router = await loadRouterWithMemoryHistory();
+
+      await router.push('/');
+      expect(router.currentRoute.value.fullPath).toBe('/fr');
+      expect(router.currentRoute.value.name).toBe('home');
+
+      await router.push('/languages/english');
+      expect(router.currentRoute.value.fullPath).toBe('/fr/languages/english');
+      expect(router.currentRoute.value.name).toBe('languages-english');
+
+      await router.push('/legal/privacy-policy');
+      expect(router.currentRoute.value.fullPath).toBe('/fr/legal/privacy-policy');
+      expect(router.currentRoute.value.name).toBe('legal-privacy');
+    },
+    20000
+  );
+
   it(
     'redirects unauthenticated access from panel to login',
     async () => {

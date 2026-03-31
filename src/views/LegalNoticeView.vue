@@ -12,7 +12,7 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
 
     <h2>Éditeur du site</h2>
     <p>
-      Le site <strong>ManabuPlay</strong>, publié sous le domaine <strong>manabuplay.fr</strong>, est édité à titre non
+      Le site <strong>WizLev</strong>, publié sous le domaine <strong>wizlev.com</strong>, est édité à titre non
       professionnel. Conformément à l'article 6, III, 2
       de la loi n° 2004-575 du 21 juin 2004 (LCEN), l'éditeur a choisi de préserver son anonymat public.
     </p>
@@ -22,13 +22,10 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
     </p>
 
     <h2>Directeur de la publication</h2>
-    <p>Directeur de la publication : éditeur non professionnel du site ManabuPlay.</p>
+    <p>Directeur de la publication : éditeur non professionnel du site WizLev.</p>
 
     <h2>Contact</h2>
-    <p>
-      Pour toute question légale, éditoriale ou relative aux données personnelles : contact [at] manabuplay [dot]
-      fr
-    </p>
+    <p>Pour toute question légale, éditoriale ou relative aux données personnelles : contact [at] wizlev [dot] com</p>
 
     <h2>Hébergement</h2>
     <p>
@@ -53,7 +50,7 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
 
     <h2>Public concerné</h2>
     <p>
-      ManabuPlay est un service éducatif destiné à la révision scolaire, y compris par des mineurs. Les responsables
+      WizLev est un service éducatif destiné à la révision scolaire, y compris par des mineurs. Les responsables
       légaux sont invités à accompagner l'usage du site lorsque cela est pertinent.
     </p>
 

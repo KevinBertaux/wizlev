@@ -15,12 +15,12 @@ test.beforeEach(async ({ page }) => {
   await page.addInitScript((payload) => {
     window.localStorage.clear();
     window.sessionStorage.clear();
-    window.localStorage.setItem('manabuplay_consent', JSON.stringify(payload));
+    window.localStorage.setItem('wizlev_consent', JSON.stringify(payload));
   }, consentPayload);
 });
 
 test('french workspace: critical controls stay visible across responsive states', async ({ page }) => {
-  await page.goto('/languages/french');
+  await page.goto('/fr/languages/french');
 
   const heading = page.getByRole('heading', { level: 1, name: 'Conjugaison française' });
   const verbSelect = page.getByLabel('Choisir un verbe :');

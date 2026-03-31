@@ -7,7 +7,9 @@
       "domain": "math",
       "feature": "symetrie",
       "label": "Symétrie V3: sac 96 variantes (axe + ouvert/fermé + côté d'origine cohérent)",
-      "dependsOn": ["scope-060-sym-render-contract"],
+      "dependsOn": [
+        "scope-060-sym-render-contract"
+      ],
       "done": false
     },
     {
@@ -16,7 +18,9 @@
       "domain": "math",
       "feature": "symetrie",
       "label": "Symétrie 45° gauche/droite",
-      "dependsOn": ["backlog-sym-v3"],
+      "dependsOn": [
+        "backlog-sym-v3"
+      ],
       "done": false
     },
     {
@@ -24,7 +28,9 @@
       "priority": "Med",
       "domain": "math",
       "feature": "symetrie",
-      "dependsOn": ["scope-060-sym-v2"],
+      "dependsOn": [
+        "scope-060-sym-v2"
+      ],
       "label": "Symétrie : édition et placement manuel de points sur quadrillage dans le reviewer",
       "done": false
     },
@@ -33,7 +39,9 @@
       "priority": "High",
       "domain": "tech",
       "feature": "symetrie",
-      "dependsOn": ["scope-060-sym-v2"],
+      "dependsOn": [
+        "scope-060-sym-v2"
+      ],
       "label": "Symétrie : rendre le composant partagé purement visuel et sortir la projection/orientation hors composant",
       "done": false
     },
@@ -58,7 +66,9 @@
       "priority": "Med",
       "domain": "admin",
       "feature": "dashboard",
-      "dependsOn": ["scope-060-roadmap-dependencies"],
+      "dependsOn": [
+        "scope-060-roadmap-dependencies"
+      ],
       "label": "UX admin V2 (édition par lots, filtres avancés)",
       "done": false
     },
@@ -75,7 +85,9 @@
       "priority": "Med",
       "domain": "arts",
       "feature": "cours",
-      "dependsOn": ["backlog-drawing-guided"],
+      "dependsOn": [
+        "backlog-drawing-guided"
+      ],
       "label": "Préparer les futurs modules Arts plastiques après un premier module Dessin guidé propre et stabilisé",
       "done": false
     },
@@ -84,7 +96,9 @@
       "priority": "Med",
       "domain": "ui",
       "feature": "design-system",
-      "dependsOn": ["backlog-brand-book"],
+      "dependsOn": [
+        "backlog-brand-book"
+      ],
       "label": "Refonte globale post-Tailwind v4: CSS/UI/UX + design system + harmonisation complète des breakpoints sur tous les modules",
       "done": false
     },
@@ -93,7 +107,7 @@
       "priority": "Med",
       "domain": "ui",
       "feature": "design-system",
-      "label": "Faire évoluer les composants/composables côté client pour coller à l'état actuel de ManabuPlay (hors admin), avec plus de factorisation et d'harmonisation UI",
+      "label": "Faire évoluer les composants/composables côté client pour coller à l'état actuel de WizLev (hors admin), avec plus de factorisation et d'harmonisation UI",
       "done": false
     },
     {
@@ -101,7 +115,9 @@
       "priority": "Med",
       "domain": "ui",
       "feature": "tooltips",
-      "dependsOn": ["backlog-ui-foundation-post-v4"],
+      "dependsOn": [
+        "backlog-ui-foundation-post-v4"
+      ],
       "label": "Système global d'info-bulles cohérent",
       "done": false
     },
@@ -134,7 +150,9 @@
       "priority": "Med",
       "domain": "admin",
       "feature": "monitoring",
-      "dependsOn": ["scope-050-high-r2-v1"],
+      "dependsOn": [
+        "scope-050-high-r2-v1"
+      ],
       "label": "Afficher dans le panneau admin l etat HTTP des listes distantes (200, 3xx, 4xx, 5xx)",
       "done": false
     },
@@ -143,7 +161,9 @@
       "priority": "Low",
       "domain": "langues",
       "feature": "architecture",
-      "dependsOn": ["scope-060-language-quiz-pattern"],
+      "dependsOn": [
+        "scope-060-language-quiz-pattern"
+      ],
       "label": "Langues V2 : autoriser des objets de forme plus riches que string simple (acceptedAnswers, audio, note, meta) sans casser le moteur V1",
       "done": false
     },
@@ -152,7 +172,10 @@
       "priority": "High",
       "domain": "langues",
       "feature": "architecture",
-      "dependsOn": ["scope-060-language-quiz-pattern", "scope-060-french-tts-flashcards"],
+      "dependsOn": [
+        "scope-060-language-quiz-pattern",
+        "scope-060-french-tts-flashcards"
+      ],
       "label": "Langues : aligner les modules sur le workspace validé en Français, avec shell commun, QCM, réponse libre et TTS partagé",
       "done": false
     },
@@ -161,7 +184,10 @@
       "priority": "Med",
       "domain": "langues",
       "feature": "architecture",
-      "dependsOn": ["scope-050-high-r2-v1", "scope-060-language-quiz-pattern"],
+      "dependsOn": [
+        "scope-050-high-r2-v1",
+        "scope-060-language-quiz-pattern"
+      ],
       "label": "Structure multi-langues extensible pour futures matières Langues (latin, espagnol, autres) à horizon rentrée 2026-2027",
       "done": false
     },
@@ -194,7 +220,9 @@
       "priority": "Low",
       "domain": "legal",
       "feature": "contact",
-      "dependsOn": ["backlog-mailer-foundation"],
+      "dependsOn": [
+        "backlog-mailer-foundation"
+      ],
       "label": "Formulaire de contact public avec anti-spam, validation et traitement conforme aux pages légales",
       "done": false
     },
@@ -203,7 +231,9 @@
       "priority": "Low",
       "domain": "admin",
       "feature": "alerting",
-      "dependsOn": ["backlog-mailer-foundation"],
+      "dependsOn": [
+        "backlog-mailer-foundation"
+      ],
       "label": "Journaliser les demandes d'éléments indisponibles et préparer un digest HTML quotidien côté support/admin",
       "done": false
     },
@@ -212,7 +242,9 @@
       "priority": "Med",
       "domain": "langues",
       "feature": "exercises",
-      "dependsOn": ["scope-060-language-workspace-alignment"],
+      "dependsOn": [
+        "scope-060-language-workspace-alignment"
+      ],
       "label": "Langues : exercices de texte à trou en QCM et réponse libre",
       "done": false
     },
@@ -221,7 +253,9 @@
       "priority": "Med",
       "domain": "langues",
       "feature": "tts",
-      "dependsOn": ["scope-060-language-quiz-pattern"],
+      "dependsOn": [
+        "scope-060-language-quiz-pattern"
+      ],
       "label": "Langues : cadrer une fondation TTS commune (navigateur, voix, fallback, cache et futures options offline/cloud)",
       "done": false
     },
@@ -230,7 +264,9 @@
       "priority": "Low",
       "domain": "langues",
       "feature": "francais",
-      "dependsOn": ["scope-060-french-tts-flashcards"],
+      "dependsOn": [
+        "scope-060-french-tts-flashcards"
+      ],
       "label": "Français : brancher le TTS sur le QCM",
       "done": false
     },
@@ -239,17 +275,10 @@
       "priority": "Low",
       "domain": "langues",
       "feature": "francais",
-      "dependsOn": ["scope-060-french-tts-flashcards"],
+      "dependsOn": [
+        "scope-060-french-tts-flashcards"
+      ],
       "label": "Français : brancher le TTS sur la réponse libre",
-      "done": false
-    },
-    {
-      "id": "backlog-drop-legacy-vocab-keys",
-      "priority": "Low",
-      "domain": "tech",
-      "feature": "nettoyage-legacy",
-      "dependsOn": ["scope-050-high-r2-v1"],
-      "label": "Retirer la compatibilité legacy localStorage manabuplay_vocab_* après nettoyage des routes et flux legacy, cible 0.7",
       "done": false
     },
     {
@@ -257,7 +286,10 @@
       "priority": "High",
       "domain": "admin",
       "feature": "security",
-      "dependsOn": ["scope-050-high-admin-dashboard", "scope-050-high-admin-maintenance"],
+      "dependsOn": [
+        "scope-050-high-admin-dashboard",
+        "scope-050-high-admin-maintenance"
+      ],
       "label": "Durcir l'admin front-only (docs publiques nettoyées, placeholders de configuration, limites explicites)",
       "done": false
     },
@@ -274,7 +306,9 @@
       "priority": "Low",
       "domain": "ui",
       "feature": "polish",
-      "dependsOn": ["backlog-ui-foundation-post-v4"],
+      "dependsOn": [
+        "backlog-ui-foundation-post-v4"
+      ],
       "label": "Finitions UI mineures",
       "done": false
     },
@@ -283,7 +317,9 @@
       "priority": "High",
       "domain": "infra",
       "feature": "content-storage",
-      "dependsOn": ["scope-050-high-r2-v1"],
+      "dependsOn": [
+        "scope-050-high-r2-v1"
+      ],
       "label": "Cloudflare R2 V2: acces securise (URL signees/Worker) + controle d integrite",
       "done": false
     }

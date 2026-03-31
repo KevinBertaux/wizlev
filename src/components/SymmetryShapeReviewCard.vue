@@ -246,7 +246,7 @@ const reviewSummary = computed(() => {
   background: #dcecff;
   border-color: #67a5d6;
   color: #123b5f;
-  box-shadow: inset 0 0 0 1px rgba(18, 59, 95, 0.12);
+  box-shadow: inset 0 0 0 2px rgba(18, 59, 95, 0.12);
 }
 
 .sym-review-card__auto-status,
@@ -300,7 +300,7 @@ const reviewSummary = computed(() => {
   background: #dcecff;
   border-color: #67a5d6;
   color: #123b5f;
-  box-shadow: inset 0 0 0 1px rgba(18, 59, 95, 0.12);
+  box-shadow: inset 0 0 0 2px rgba(18, 59, 95, 0.12);
 }
 
 .sym-review-card__delete-btn {

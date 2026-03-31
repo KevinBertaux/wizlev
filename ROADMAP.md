@@ -1,4 +1,4 @@
-# ROADMAP - ManabuPlay
+# ROADMAP - WizLev
 
 Document de synthèse. Les scopes détaillés, historiques de version et backlogs restent pilotés par les fichiers JSON dans `src/content/roadmap/*.json` et par le panneau interne.
 
@@ -11,6 +11,13 @@ Document de synthèse. Les scopes détaillés, historiques de version et backlog
 - but :
   - stabiliser la ligne après sortie de la `0.6.0`
   - garder la monétisation sur `epic/ads-cmp`, hors ligne produit
+
+### Ligne plateforme
+
+- branche transverse en cours : `refactor/wizlev-rebrand`
+- but :
+  - tracer les chantiers de plateforme hors version produit stricte
+  - conserver visibles le rebrand, le routage canonique et le durcissement CI/QA
 
 ### Ligne monétisation
 
@@ -37,6 +44,8 @@ Document de synthèse. Les scopes détaillés, historiques de version et backlog
   - `src/content/roadmap/backlog.json`
 - index de roadmap :
   - `src/content/roadmap/roadmap-index.json`
+- chantiers transverses :
+  - `src/content/roadmap/scope-platform.json`
 
 ### Admin interne
 

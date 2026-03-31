@@ -320,7 +320,7 @@ onUnmounted(() => {
   min-height: 72px;
   padding: 12px 16px;
   border-radius: 16px;
-  border: 3px solid #58d4df;
+  border: 4px solid #58d4df;
   font-size: clamp(1.3rem, 3.2vw, 1.7rem);
   text-align: center;
   font-weight: 800;
@@ -332,7 +332,7 @@ onUnmounted(() => {
 .answer-input:focus-visible {
   outline: none;
   border-color: #2bb6c5;
-  box-shadow: 0 0 0 5px rgba(88, 212, 223, 0.22);
+  box-shadow: 0 0 0 4px rgba(88, 212, 223, 0.22);
 }
 
 .french-input-page :deep(.mp-actions) {

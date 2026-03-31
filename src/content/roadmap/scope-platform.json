@@ -1,0 +1,58 @@
+{
+  "version": "platform",
+  "items": [
+    {
+      "id": "platform-wizlev-rebrand",
+      "priority": "High",
+      "domain": "platform",
+      "feature": "brand",
+      "label": "Refactor transverse de rebrand vers WizLev : marque visible, package, domaines publics, docs et pages legales alignes",
+      "done": true
+    },
+    {
+      "id": "platform-storage-reset-and-legacy-drop",
+      "priority": "High",
+      "domain": "platform",
+      "feature": "storage",
+      "dependsOn": [
+        "platform-wizlev-rebrand"
+      ],
+      "label": "Renommer les prefixes techniques en wizlev_* et supprimer le legacy restant avec cassure locale assumee",
+      "done": true
+    },
+    {
+      "id": "platform-public-locale-routing",
+      "priority": "High",
+      "domain": "platform",
+      "feature": "routing",
+      "dependsOn": [
+        "platform-wizlev-rebrand"
+      ],
+      "label": "Canoniser l espace public sous /fr avec redirects legacy et base prete pour de futures locales de site",
+      "done": true
+    },
+    {
+      "id": "platform-release-guards",
+      "priority": "High",
+      "domain": "qa",
+      "feature": "release-guards",
+      "dependsOn": [
+        "platform-public-locale-routing",
+        "platform-storage-reset-and-legacy-drop"
+      ],
+      "label": "Durcir la release avec gardes brand/routes/storage/legal/env/breakpoints/px, Lighthouse canonique et rulesets GitHub obligatoires",
+      "done": true
+    },
+    {
+      "id": "platform-ads-safe-placeholders",
+      "priority": "Med",
+      "domain": "platform",
+      "feature": "ads",
+      "dependsOn": [
+        "platform-release-guards"
+      ],
+      "label": "Remplacer les identifiants pub par des placeholders dummy et verrouiller les templates d env tant que le compte pro n est pas pret",
+      "done": true
+    }
+  ]
+}

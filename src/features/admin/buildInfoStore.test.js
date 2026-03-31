@@ -4,7 +4,7 @@ import { fetchBuildInfo, normalizeBuildInfo } from './buildInfoStore';
 describe('buildInfoStore', () => {
   it('normalizes a build payload', () => {
     const result = normalizeBuildInfo({
-      appName: 'manabuplay',
+      appName: 'wizlev',
       appVersion: '0.5.0',
       gitSha: 'ad85f98abcdef',
       gitBranch: 'main',

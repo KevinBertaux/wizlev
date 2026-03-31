@@ -13,11 +13,24 @@ on:
           - update
   pull_request:
     branches:
-      - feat/0.5.0-prep
       - main
+      - feat/0.*-prep
     paths:
       - "src/**"
       - "tests/e2e/visual-regression.playwright.js"
+      - "tests/e2e/*-snapshots/**"
+      - "playwright.config.js"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/qa-visual-regression.yml"
+  push:
+    branches:
+      - main
+      - feat/0.*-prep
+    paths:
+      - "src/**"
+      - "tests/e2e/visual-regression.playwright.js"
+      - "tests/e2e/*-snapshots/**"
       - "playwright.config.js"
       - "package.json"
       - "package-lock.json"
@@ -25,7 +38,7 @@ on:
 
 jobs:
   visual-regression:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -40,19 +53,19 @@ jobs:
         run: npm ci
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install chromium
 
       - name: Run visual regression (check)
         if: ${{ github.event_name != 'workflow_dispatch' || inputs.mode == 'check' }}
         env:
           PW_VISUAL: "1"
-        run: npx playwright test --project=desktop-chromium --grep @visual
+        run: npx playwright test --project=desktop-chromium --grep '@visual'
 
       - name: Run visual regression (update candidates)
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'update' }}
         env:
           PW_VISUAL: "1"
-        run: npx playwright test --project=desktop-chromium --grep @visual --update-snapshots
+        run: npx playwright test --project=desktop-chromium --grep '@visual' --update-snapshots
 
       - name: Upload visual artifacts
         if: always()
@@ -64,3 +77,4 @@ jobs:
             playwright-report/
             tests/e2e/*-snapshots/
           if-no-files-found: ignore
+

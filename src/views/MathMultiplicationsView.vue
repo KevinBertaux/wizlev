@@ -19,7 +19,7 @@ import {
   resetMotivationRunState,
 } from '@/features/motivation/toastEngine';
 
-const BEST_STREAK_KEY = 'manabuplay_math_best_streak_v1';
+const BEST_STREAK_KEY = 'wizlev_math_best_streak_v1';
 const AUTO_NEXT_DELAY_MS = 2000;
 const DIFFICULTY_OPTIONS = Object.freeze([
   { value: 'discovery', label: 'Découverte' },

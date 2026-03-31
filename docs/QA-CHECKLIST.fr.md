@@ -1,4 +1,4 @@
-# Checklist QA - ManabuPlay
+# Checklist QA - WizLev
 
 Document qualité cible. Il sert à préparer et exécuter la validation fonctionnelle et technique avant une release ou un lot sensible.
 
@@ -11,8 +11,13 @@ Document qualité cible. Il sert à préparer et exécuter la validation fonctio
 
 ## 2. Contrôles automatisés
 
+- [ ] `npm run check:brand` 
+- [ ] `npm run check:routes` 
+- [ ] `npm run check:storage-keys` 
+- [ ] `npm run check:legal` 
+- [ ] `npm run check:env` 
 - [ ] `npm run check:breakpoints`
-- [ ] `npm run check:spacing`
+- [ ] `npm run check:px-values`
 - [ ] `npm test`
 - [ ] `npm run test:e2e`
 - [ ] `npm test -- --coverage`

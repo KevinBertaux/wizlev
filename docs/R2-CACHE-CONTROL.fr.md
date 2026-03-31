@@ -1,4 +1,4 @@
-# Cache-Control R2 (ManabuPlay)
+# Cache-Control R2 (WizLev)
 
 ## Objectif
 Configurer des headers de cache cohérents sur Cloudflare R2 pour:

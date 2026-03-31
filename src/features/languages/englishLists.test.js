@@ -109,41 +109,18 @@ describe('englishLists storage behavior', () => {
 
   it('falls back to base list when stored JSON is invalid', () => {
     const baseline = getEnglishList('fruits');
-    storage.setItem('manabuplay_english_list_fruits', '{broken-json');
+    storage.setItem('wizlev_english_list_fruits', '{broken-json');
 
     const list = getEnglishList('fruits');
     expect(list).toEqual(baseline);
   });
 
-  it('reads legacy key and migrates it to the english key', () => {
-    storage.setItem(
-      'manabuplay_vocab_list_fruits',
-      JSON.stringify({
-        name: 'Legacy fruits',
-        description: 'legacy',
-        words: [{ english: 'Apple', french: 'Pomme' }],
-      })
-    );
-
-    const list = getEnglishList('fruits');
-
-    expect(list).toEqual({
-      name: 'Legacy fruits',
-      description: 'legacy',
-      words: [{ english: 'Apple', french: 'Pomme' }],
-    });
-    expect(storage.getItem('manabuplay_english_list_fruits')).not.toBeNull();
-    expect(storage.getItem('manabuplay_vocab_list_fruits')).toBeNull();
-  });
-
   it('resets current override', () => {
-    storage.setItem('manabuplay_english_list_fruits', JSON.stringify({ name: 'Current', words: [] }));
-    storage.setItem('manabuplay_vocab_list_fruits', JSON.stringify({ name: 'Legacy', words: [] }));
+    storage.setItem('wizlev_english_list_fruits', JSON.stringify({ name: 'Current', words: [] }));
 
     resetEnglishList('fruits');
 
-    expect(storage.getItem('manabuplay_english_list_fruits')).toBeNull();
-    expect(storage.getItem('manabuplay_vocab_list_fruits')).toBeNull();
+    expect(storage.getItem('wizlev_english_list_fruits')).toBeNull();
   });
 
 

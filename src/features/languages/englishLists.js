@@ -33,9 +33,8 @@ import {
   writeRemotePayloadCache,
 } from '@/features/remote/manifestSync';
 
-const STORAGE_PREFIX = 'manabuplay_english_list_';
-const LEGACY_STORAGE_PREFIX = 'manabuplay_vocab_list_';
-const REMOTE_CACHE_STORAGE_KEY = 'manabuplay_english_remote_cache_v1';
+const STORAGE_PREFIX = 'wizlev_english_list_';
+const REMOTE_CACHE_STORAGE_KEY = 'wizlev_english_remote_cache_v1';
 const REMOTE_TIMEOUT_MS = 3500;
 const DEFAULT_REMOTE_LANG = 'en';
 const DEFAULT_REMOTE_FOLDER = 'languages/en/vocabulary';
@@ -328,10 +327,6 @@ function getStorageKey(listKey) {
   return `${STORAGE_PREFIX}${listKey}`;
 }
 
-function getLegacyStorageKey(listKey) {
-  return `${LEGACY_STORAGE_PREFIX}${listKey}`;
-}
-
 async function fetchJsonWithTimeout(url, timeoutMs = REMOTE_TIMEOUT_MS) {
   const controller = typeof AbortController === 'undefined' ? null : new AbortController();
   const timeoutId = setTimeout(() => controller?.abort(), timeoutMs);
@@ -471,12 +466,7 @@ function trimRemoteFolder(value) {
 }
 
 function getRemoteBaseUrl() {
-  const env = getEnvValue([
-    'VITE_ENGLISH_VOCAB_REMOTE_BASE_URL',
-    'VITE_REMOTE_CONTENT_BASE_URL',
-    'VITE_LANGUAGES_REMOTE_BASE_URL',
-    'VITE_VOCAB_REMOTE_BASE_URL',
-  ]);
+  const env = getEnvValue(['VITE_ENGLISH_VOCAB_REMOTE_BASE_URL', 'VITE_REMOTE_CONTENT_BASE_URL']);
 
   if (!env) {
     return '';
@@ -485,24 +475,11 @@ function getRemoteBaseUrl() {
   return env.replace(/\/$/, '');
 }
 
-function getLegacyRemoteLanguage() {
-  const env = getEnvValue(['VITE_LANGUAGES_REMOTE_LANG', 'VITE_VOCAB_REMOTE_LANG']);
-
-  const lang = typeof env === 'string' ? env.toLowerCase() : '';
-  return lang || DEFAULT_REMOTE_LANG;
-}
-
 function getRemoteFolder() {
-  const explicitFolder = trimRemoteFolder(
-    getEnvValue(['VITE_ENGLISH_VOCAB_REMOTE_FOLDER', 'VITE_LANGUAGES_REMOTE_FOLDER'])
-  );
+  const explicitFolder = trimRemoteFolder(getEnvValue(['VITE_ENGLISH_VOCAB_REMOTE_FOLDER']));
 
   if (explicitFolder) {
     return explicitFolder;
-  }
-
-  if (getEnvValue(['VITE_LANGUAGES_REMOTE_BASE_URL', 'VITE_VOCAB_REMOTE_BASE_URL'])) {
-    return getLegacyRemoteLanguage();
   }
 
   return DEFAULT_REMOTE_FOLDER;
@@ -638,12 +615,7 @@ export function getEnglishList(listKey) {
   }
 
   const key = getStorageKey(listKey);
-  const legacyKey = getLegacyStorageKey(listKey);
-  let raw = localStorage.getItem(key);
-
-  if (!raw) {
-    raw = localStorage.getItem(legacyKey);
-  }
+  const raw = localStorage.getItem(key);
 
   if (!raw) {
     return sanitizeListPayload(baseList, baseList);
@@ -651,18 +623,7 @@ export function getEnglishList(listKey) {
 
   try {
     const parsed = JSON.parse(raw);
-    const sanitized = sanitizeListPayload(parsed, baseList);
-
-    if (!localStorage.getItem(key)) {
-      try {
-        localStorage.setItem(key, JSON.stringify(sanitized));
-        localStorage.removeItem(legacyKey);
-      } catch {
-        // Ignore migration write errors.
-      }
-    }
-
-    return sanitized;
+    return sanitizeListPayload(parsed, baseList);
   } catch {
     return sanitizeListPayload(baseList, baseList);
   }
@@ -677,7 +638,6 @@ export function saveEnglishList(listKey, payload) {
   const sanitized = sanitizeListPayload(payload, baseList);
   try {
     localStorage.setItem(getStorageKey(listKey), JSON.stringify(sanitized));
-    localStorage.removeItem(getLegacyStorageKey(listKey));
     return true;
   } catch {
     return false;
@@ -689,7 +649,6 @@ export function resetEnglishList(listKey) {
     return;
   }
   localStorage.removeItem(getStorageKey(listKey));
-  localStorage.removeItem(getLegacyStorageKey(listKey));
 }
 
 export function resetEnglishListsRuntimeForTests() {

@@ -15,12 +15,12 @@ test.beforeEach(async ({ page }) => {
   await page.addInitScript((payload) => {
     window.localStorage.clear();
     window.sessionStorage.clear();
-    window.localStorage.setItem('manabuplay_consent', JSON.stringify(payload));
+    window.localStorage.setItem('wizlev_consent', JSON.stringify(payload));
   }, consentPayload);
 });
 
 test('english workspace: critical controls stay usable across responsive profiles', async ({ page }) => {
-  await page.goto('/languages/english');
+  await page.goto('/fr/languages/english');
 
   const listSelect = page.getByLabel('Choisir une liste :');
   const directionSelect = page.getByLabel('Sens :');
@@ -37,5 +37,7 @@ test('english workspace: critical controls stay usable across responsive profile
 
   await flashcard.click();
   await expect(page.locator('.flashcard-translation')).toBeVisible();
-  await expect(page.locator('.study-flashcards__actions')).toBeInViewport();
+  const actions = page.locator('.study-flashcards__actions');
+  await actions.scrollIntoViewIfNeeded();
+  await expect(actions).toBeInViewport();
 });

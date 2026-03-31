@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 const ADMIN_LOGIN = ['e2e', 'admin'].join('-');
 const ADMIN_KEY = ['E2E', 'Admin', '123!'].join('_');
-const SESSION_KEY = 'manabuplay_admin_session_v1';
+const SESSION_KEY = 'wizlev_admin_session_v1';
 
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {

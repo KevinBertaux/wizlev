@@ -6,7 +6,7 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
   <LegalPageLayout title="Politique cookies" updated-at="25 mars 2026">
     <h2>1. Objet</h2>
     <p>
-      Cette page explique l'usage des cookies, stockages locaux et technologies similaires sur <strong>ManabuPlay</strong>,
+      Cette page explique l'usage des cookies, stockages locaux et technologies similaires sur <strong>WizLev</strong>,
       ainsi que les informations utiles mises à disposition de l'utilisateur.
     </p>
 
@@ -40,6 +40,6 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
     </p>
 
     <h2>6. Contact</h2>
-    <p>Pour toute question relative aux cookies et traceurs : contact [at] manabuplay [dot] fr</p>
+    <p>Pour toute question relative aux cookies et traceurs : contact [at] wizlev [dot] com</p>
   </LegalPageLayout>
 </template>

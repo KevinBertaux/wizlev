@@ -1,4 +1,4 @@
-# Règles UI - ManabuPlay
+# Règles UI - WizLev
 
 Document de référence UI/UX. Il sert à garder une interface cohérente entre les modules élève, le panneau interne et les évolutions futures.
 
@@ -62,7 +62,7 @@ Document de référence UI/UX. Il sert à garder une interface cohérente entre 
 ## 6. Couleurs et états
 
 - actif principal :
-  - turquoise / bleu clair de la palette ManabuPlay
+  - turquoise / bleu clair de la palette WizLev
 - secondaire :
   - violet
 - succès :

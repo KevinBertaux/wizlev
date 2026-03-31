@@ -24,7 +24,7 @@ Cette release `0.6.0` consolide la base produit autour du Français, du chargeme
 - Qualité :
   - matrice Playwright responsive étendue sur app shell, Anglais, Français et Mathématiques.
 - Légal / documentation :
-  - pages légales alignées sur `manabuplay.fr` ;
+  - pages légales alignées sur `wizlev.com` ;
   - documentation et références de version mises à jour pour la sortie `0.6.0`.
 
 ## Notes techniques

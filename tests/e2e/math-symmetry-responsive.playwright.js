@@ -15,12 +15,12 @@ test.beforeEach(async ({ page }) => {
   await page.addInitScript((payload) => {
     window.localStorage.clear();
     window.sessionStorage.clear();
-    window.localStorage.setItem('manabuplay_consent', JSON.stringify(payload));
+    window.localStorage.setItem('wizlev_consent', JSON.stringify(payload));
   }, consentPayload);
 });
 
 test('math symmetry: prompt and answer controls stay usable across responsive profiles', async ({ page }) => {
-  await page.goto('/math/symmetry');
+  await page.goto('/fr/math/symmetry');
 
   const heading = page.getByRole('heading', { level: 1, name: 'Math - Symétrie' });
   const promptBox = page.locator('.prompt-box');

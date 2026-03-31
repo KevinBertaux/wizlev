@@ -38,7 +38,7 @@ const GROUP_LABELS = Object.freeze({
   '3': '3e groupe',
 });
 const ELIDABLE_INITIAL_RE = /^[aeiouyàâäæéèêëîïôöœùûüÿh]/i;
-const REMOTE_CACHE_STORAGE_KEY = 'manabuplay_french_conjugation_remote_cache_v1';
+const REMOTE_CACHE_STORAGE_KEY = 'wizlev_french_conjugation_remote_cache_v1';
 const REMOTE_TIMEOUT_MS = 3500;
 const DEFAULT_REMOTE_FOLDER = 'languages/fr/conjugation';
 const REMOTE_SCHEMA_KEY = '__schema';
@@ -137,11 +137,7 @@ function trimRemoteFolder(value) {
 }
 
 function getRemoteBaseUrl() {
-  const env = getEnvValue([
-    'VITE_FRENCH_CONJUGATION_REMOTE_BASE_URL',
-    'VITE_REMOTE_CONTENT_BASE_URL',
-    'VITE_LANGUAGES_REMOTE_BASE_URL',
-  ]);
+  const env = getEnvValue(['VITE_FRENCH_CONJUGATION_REMOTE_BASE_URL', 'VITE_REMOTE_CONTENT_BASE_URL']);
 
   if (!env) {
     return '';
@@ -151,9 +147,7 @@ function getRemoteBaseUrl() {
 }
 
 function getRemoteFolder() {
-  const explicitFolder = trimRemoteFolder(
-    getEnvValue(['VITE_FRENCH_CONJUGATION_REMOTE_FOLDER', 'VITE_LANGUAGES_REMOTE_FOLDER'])
-  );
+  const explicitFolder = trimRemoteFolder(getEnvValue(['VITE_FRENCH_CONJUGATION_REMOTE_FOLDER']));
 
   return explicitFolder || DEFAULT_REMOTE_FOLDER;
 }

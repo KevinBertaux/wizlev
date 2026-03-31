@@ -16,7 +16,7 @@ test.beforeEach(async ({ page }) => {
   await page.addInitScript((payload) => {
     window.localStorage.clear();
     window.sessionStorage.clear();
-    window.localStorage.setItem('manabuplay_consent', JSON.stringify(payload));
+    window.localStorage.setItem('wizlev_consent', JSON.stringify(payload));
   }, consentPayload);
 });
 
@@ -36,19 +36,19 @@ test('a11y smoke: home', async ({ page }) => {
 });
 
 test('a11y smoke: math multiplications', async ({ page }) => {
-  await expectNoSeriousA11yViolations(page, '/math/multiplications');
+  await expectNoSeriousA11yViolations(page, '/fr/math/multiplications');
 });
 
 test('a11y smoke: math hub', async ({ page }) => {
-  await expectNoSeriousA11yViolations(page, '/math');
+  await expectNoSeriousA11yViolations(page, '/fr/math');
 });
 
 test('a11y smoke: english module', async ({ page }) => {
-  await expectNoSeriousA11yViolations(page, '/languages/english');
+  await expectNoSeriousA11yViolations(page, '/fr/languages/english');
 });
 
 test('a11y smoke: languages hub', async ({ page }) => {
-  await expectNoSeriousA11yViolations(page, '/languages');
+  await expectNoSeriousA11yViolations(page, '/fr/languages');
 });
 
 test('a11y smoke: studio ops login', async ({ page }) => {

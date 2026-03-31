@@ -15,7 +15,7 @@ import {
   resetMotivationRunState,
 } from '@/features/motivation/toastEngine';
 
-const BEST_STREAK_KEY = 'manabuplay_symmetry_best_streak_v1';
+const BEST_STREAK_KEY = 'wizlev_symmetry_best_streak_v1';
 const AUTO_NEXT_DELAY_MS = 2000;
 
 const questionBag = ref(createSymmetryQuestionBag());
@@ -355,7 +355,7 @@ onUnmounted(() => {
   box-shadow:
     0 0 0 2px rgba(21, 94, 117, 0.22),
     0 10px 18px rgba(15, 23, 42, 0.14);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 }
 
 .option-btn.is-correct {
