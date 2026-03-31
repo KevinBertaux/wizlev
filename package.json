@@ -11,11 +11,14 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "test:e2e:release": "playwright test --reporter=line",
+    "check:brand": "node scripts/check-brand.mjs",
     "check:breakpoints": "node scripts/check-breakpoints.mjs",
+    "check:routes": "node scripts/check-routes.mjs",
+    "check:storage-keys": "node scripts/check-storage-keys.mjs",
     "check:px-values": "node scripts/check-px-values.mjs",
     "check:spacing": "npm run check:px-values",
     "lighthouse:ci": "node scripts/run-lhci.mjs",
-    "qa:release": "npm run check:breakpoints && npm run check:px-values && npm test -- --coverage && npm run test:e2e:release && npm run build && npm run lighthouse:ci",
+    "qa:release": "npm run check:brand && npm run check:routes && npm run check:storage-keys && npm run check:breakpoints && npm run check:px-values && npm test -- --coverage && npm run test:e2e:release && npm run build && npm run lighthouse:ci",
     "validate:symmetry-shapes": "node scripts/validate-symmetry-shapes.mjs"
   },
   "dependencies": {

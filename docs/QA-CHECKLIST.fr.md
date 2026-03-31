@@ -11,6 +11,9 @@ Document qualité cible. Il sert à préparer et exécuter la validation fonctio
 
 ## 2. Contrôles automatisés
 
+- [ ] `npm run check:brand` 
+- [ ] `npm run check:routes` 
+- [ ] `npm run check:storage-keys` 
 - [ ] `npm run check:breakpoints`
 - [ ] `npm run check:px-values`
 - [ ] `npm test`

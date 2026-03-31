@@ -26,6 +26,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Brand guard
+        run: npm run check:brand
+
+      - name: Route guard
+        run: npm run check:routes
+
+      - name: Storage key guard
+        run: npm run check:storage-keys
+
       - name: Breakpoint guard
         run: npm run check:breakpoints
 
