@@ -13,7 +13,11 @@ async function loadRouterModule(isAuthenticated) {
       beforeEach: vi.fn((guard) => {
         router.guard = guard;
       }),
+      afterEach: vi.fn((guard) => {
+        router.afterGuard = guard;
+      }),
       guard: null,
+      afterGuard: null,
     };
     return router;
   });
