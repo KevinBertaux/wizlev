@@ -28,7 +28,7 @@ function setLang(lang) {
 
     <template v-if="isFr">
       <h1>Manuel du panneau interne</h1>
-      <p class="updated">Version : 0.7.0-dev • Révision du manuel : 31 mars 2026</p>
+      <p class="updated">Version : 0.7.0 • Révision du manuel : 31 mars 2026</p>
       <p>
         Cette page sert de manuel d'usage. Le pilotage produit reste visible dans le dashboard, via les sections
         roadmap, maintenance et suivi interne.
@@ -81,7 +81,7 @@ function setLang(lang) {
 
     <template v-else>
       <h1>Internal Panel Manual</h1>
-      <p class="updated">Version: 0.7.0-dev • Manual revision: March 31, 2026</p>
+      <p class="updated">Version: 0.7.0 • Manual revision: March 31, 2026</p>
       <p>
         This page is an operating manual. Product steering stays inside the dashboard through roadmap, maintenance and
         internal follow-up sections.

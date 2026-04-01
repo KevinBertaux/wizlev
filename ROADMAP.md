@@ -8,9 +8,9 @@ Document de synthèse. Les scopes détaillés, historiques de version et backlog
 
 - branche active actuelle : `feat/0.7.0-prep`
 - version publique publiée : `0.6.0`
-- version de préparation en cours : `0.7.0-dev`
+- version de préparation en cours : `0.7.0`
 - but :
-  - faire avancer la ligne `0.7.0-dev` sans casser la prod `0.6.0`
+  - faire avancer la ligne `0.7.0` sans casser la prod `0.6.0`
   - garder la monétisation sur `epic/ads-cmp`, hors ligne produit
 
 ### Ligne plateforme
