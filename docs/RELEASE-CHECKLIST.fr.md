@@ -4,9 +4,10 @@ Document opérationnel de sortie. Il sert à décider si une branche produit peu
 
 ## Périmètre
 
-- branche produit cible : `feat/0.6.0-prep`
+- branche produit cible : `feat/0.7.0-prep`
 - branche de publication : `main`
 - la ligne monétisation (`epic/ads-cmp`) suit son propre cycle et ne bloque pas la release produit
+- un hotfix critique peut partir de `main` via `hotfix/*`
 
 ## 1. Go / No-Go release
 
@@ -58,7 +59,7 @@ Si un de ces points est faux : **NO-GO déploiement**.
 
 ## 3. Publication
 
-- [ ] merge `feat/0.6.0-prep` -> `main`
+- [ ] merge `feat/0.7.0-prep` -> `main`
 - [ ] push final sur `main`
 - [ ] déploiement Netlify lancé
 - [ ] déploiement Netlify terminé avec succès
