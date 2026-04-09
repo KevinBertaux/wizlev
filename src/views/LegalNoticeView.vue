@@ -3,11 +3,11 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
 </script>
 
 <template>
-  <LegalPageLayout title="Mentions légales" updated-at="25 mars 2026">
+  <LegalPageLayout title="Mentions légales" updated-at="9 avril 2026">
     <h2>Version du service</h2>
     <p>
-      Version en cours : <strong>0.6.0</strong><br />
-      Dernière révision éditoriale : 25 mars 2026
+      Version en cours : <strong>0.6.1</strong><br />
+      Dernière révision éditoriale : 9 avril 2026
     </p>
 
     <h2>Éditeur du site</h2>
@@ -29,7 +29,7 @@ import LegalPageLayout from '@/components/LegalPageLayout.vue';
 
     <h2>Hébergement</h2>
     <p>
-      Hébergeur au 25 mars 2026 : <strong>Netlify, Inc.</strong><br />
+      Hébergeur au 9 avril 2026 : <strong>Netlify, Inc.</strong><br />
       512 2nd Street, Suite 200, San Francisco, CA 94107, USA<br />
       Site : <a href="https://www.netlify.com" target="_blank" rel="noreferrer">netlify.com</a>
     </p>

@@ -7,7 +7,7 @@ Document court pour garder un workflow Git propre.
 ### Produit
 
 - `main` = stable / deployable
-- `feat/0.6.0-prep` = ligne produit actuelle
+- `feat/0.7.0-prep` = ligne produit actuelle
 - futures lignes produit :
   - `feat/0.7.0-prep`
   - etc.
@@ -33,7 +33,7 @@ git log --oneline --graph --decorate -20
 ## 4. Workflow feature produit
 
 ```bash
-git checkout feat/0.6.0-prep
+git checkout feat/0.7.0-prep
 git pull
 git checkout -b feature/mon-sujet-produit
 git push -u origin feature/mon-sujet-produit
@@ -61,7 +61,7 @@ git push -u origin feature/mon-sujet-pub
 ### Produit
 
 ```bash
-git checkout feat/0.6.0-prep
+git checkout feat/0.7.0-prep
 git pull
 git merge --no-ff feature/mon-sujet-produit
 git push
@@ -81,8 +81,17 @@ git push
 ```bash
 git checkout main
 git pull
-git merge --no-ff feat/0.6.0-prep
+git merge --no-ff feat/0.7.0-prep
 git push
+```
+
+## 7bis. Hotfix prod
+
+```bash
+git checkout main
+git pull
+git checkout -b hotfix/0.6.1-mon-sujet
+git push -u origin hotfix/0.6.1-mon-sujet
 ```
 
 ## 8. Anti-bazar

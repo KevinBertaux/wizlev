@@ -99,7 +99,7 @@ describe('symmetryShapeStore remote hydration', () => {
           groups: [{ key: 'threePoints', file: 'shapes-3-points.remote.json', points: 3 }],
         });
       }
-      if (asText.endsWith('/math/symmetry/shapes-3-points.remote.json')) {
+      if (asText.includes('/math/symmetry/shapes-3-points.remote.json?v=2026-03-13.3')) {
         return okJson({
           shapes: [
             {
@@ -136,7 +136,7 @@ describe('symmetryShapeStore remote hydration', () => {
     expect(config.shapes[0].id).toBe('remote-shape-01');
     expect(fetchMock).toHaveBeenCalledWith(
       'https://example.test/math/symmetry/manifest.json',
-      expect.any(Object)
+      expect.objectContaining({ cache: 'no-store', method: 'GET' })
     );
   });
 
@@ -237,6 +237,11 @@ describe('symmetryShapeStore remote hydration', () => {
       skipped: 0,
     });
     expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      'https://example.test/math/symmetry/shapes-3-points.remote.json?v=2026-03-13.3',
+      expect.objectContaining({ method: 'GET' })
+    );
 
     const active = getActiveSymmetryShapesConfig();
     expect(active.axes).toEqual(['horizontal']);

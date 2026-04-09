@@ -6,10 +6,10 @@ Document de synthèse. Les scopes détaillés, historiques de version et backlog
 
 ### Ligne produit
 
-- branche active actuelle : `feat/0.6.0-prep`
-- version publique publiée : `0.6.0`
+- branche active actuelle : `feat/0.7.0-prep`
+- version publique publiée : `0.6.1`
 - but :
-  - stabiliser la ligne après sortie de la `0.6.0`
+  - préparer la `0.7.0` sans casser la production
   - garder la monétisation sur `epic/ads-cmp`, hors ligne produit
 
 ### Ligne plateforme
@@ -33,6 +33,7 @@ Document de synthèse. Les scopes détaillés, historiques de version et backlog
 - `0.4.0` : release stable sans backend
 - `0.5.0` : release produit sortie le 13 mars 2026
 - `0.6.0` : release produit sortie le 25 mars 2026
+- `0.6.1` : hotfix produit sorti le 9 avril 2026
 
 ## Sources de vérité
 
@@ -59,8 +60,9 @@ Document de synthèse. Les scopes détaillés, historiques de version et backlog
 
 ### Produit
 
-- `feature/*` -> `feat/0.6.0-prep`
-- `feat/0.6.0-prep` -> `main` quand release validée
+- `feature/*` -> `feat/0.7.0-prep`
+- `feat/0.7.0-prep` -> `main` quand release validée
+- `hotfix/*` -> `main` pour les correctifs critiques de prod
 
 ### Monétisation
 
@@ -87,4 +89,4 @@ Ils sont considérés comme des prérequis site-level, pas comme une feature pub
   - `docs/RELEASE-CHECKLIST.fr.md`
   - `docs/QA-CHECKLIST.fr.md`
 - notes de version :
-  - `docs/RELEASE-NOTES.0.6.0.fr.md`
+  - `docs/RELEASE-NOTES.0.6.1.fr.md`

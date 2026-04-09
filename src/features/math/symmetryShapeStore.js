@@ -3,6 +3,7 @@ import shapesThreePoints from '../../content/math/symmetry/shapes-3-points.json'
 import shapesFourPoints from '../../content/math/symmetry/shapes-4-points.json';
 import shapesFivePoints from '../../content/math/symmetry/shapes-5-points.json';
 import {
+  buildRemoteAssetUrl,
   compareManifestVersionTokens,
   getManifestVersionToken,
 } from '../remote/manifestSync';
@@ -77,7 +78,20 @@ function normalizeManifestGroupEntry(entry) {
     return null;
   }
 
-  return { key, file, points };
+  const explicitToken =
+    typeof entry.updatedAt === 'string' && entry.updatedAt.trim()
+      ? entry.updatedAt.trim()
+      : typeof entry.version === 'string' && entry.version.trim()
+        ? entry.version.trim()
+        : '';
+
+  return {
+    key,
+    file,
+    points,
+    token: explicitToken,
+    hasExplicitToken: Boolean(explicitToken),
+  };
 }
 
 function extractManifestGroups(payload) {
@@ -304,14 +318,6 @@ function stripLeadingSlashes(value) {
   return value.replace(/^\/+/, '');
 }
 
-function joinRemoteUrl(baseUrl, ...segments) {
-  const cleaned = segments
-    .map((segment) => stripLeadingSlashes(String(segment ?? '').trim()))
-    .filter(Boolean);
-
-  return [stripTrailingSlashes(baseUrl), ...cleaned].join('/');
-}
-
 function createTimeoutSignal(timeoutMs) {
   if (typeof AbortController === 'undefined') {
     return { signal: undefined, clear: () => {} };
@@ -326,14 +332,16 @@ function createTimeoutSignal(timeoutMs) {
   };
 }
 
-async function fetchJson(url) {
+async function fetchJson(url, requestOptions = {}) {
   const { signal, clear } = createTimeoutSignal(REMOTE_TIMEOUT_MS);
 
   try {
     const response = await fetch(url, {
+      ...requestOptions,
       method: 'GET',
       headers: {
         Accept: 'application/json',
+        ...(requestOptions.headers || {}),
       },
       signal,
     });
@@ -362,8 +370,8 @@ export function resetSymmetryShapesRuntimeForTests() {
 }
 
 async function hydrateFromRemoteManifest(baseUrl, folder, fallbackFile) {
-  const manifestUrl = joinRemoteUrl(baseUrl, folder, DEFAULT_REMOTE_MANIFEST_FILE);
-  const remoteManifestPayload = await fetchJson(manifestUrl);
+  const manifestUrl = buildRemoteAssetUrl(baseUrl, folder, DEFAULT_REMOTE_MANIFEST_FILE);
+  const remoteManifestPayload = await fetchJson(manifestUrl, { cache: 'no-store' });
   const manifest = sanitizeManifest(remoteManifestPayload, localManifest);
   const remoteManifestVersion = getManifestVersionToken(remoteManifestPayload);
 
@@ -380,7 +388,9 @@ async function hydrateFromRemoteManifest(baseUrl, folder, fallbackFile) {
   let loaded = 0;
 
   for (const group of manifest.groups) {
-    const payload = await fetchJson(joinRemoteUrl(baseUrl, folder, group.file));
+    const payload = await fetchJson(
+      buildRemoteAssetUrl(baseUrl, folder, group.file, group.token || remoteManifestVersion)
+    );
     if (!payload) {
       return null;
     }
@@ -400,7 +410,9 @@ async function hydrateFromRemoteManifest(baseUrl, folder, fallbackFile) {
 }
 
 async function hydrateFromRemoteFile(baseUrl, folder, file) {
-  const remotePayload = await fetchJson(joinRemoteUrl(baseUrl, folder, file || DEFAULT_REMOTE_CONFIG_FILE));
+  const remotePayload = await fetchJson(
+    buildRemoteAssetUrl(baseUrl, folder, file || DEFAULT_REMOTE_CONFIG_FILE)
+  );
   if (!remotePayload) {
     return null;
   }

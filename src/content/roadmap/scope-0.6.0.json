@@ -1,5 +1,5 @@
 {
-  "version": "0.6.0",
+  "version": "0.6.1",
   "items": [
     {
       "id": "scope-060-sym-v2",
@@ -134,6 +134,19 @@
       "domain": "legal",
       "feature": "pages",
       "label": "Mettre à jour les pages légales avec wizlev.com, le contact public et des informations produit cohérentes",
+      "done": true
+    },
+    {
+      "id": "scope-061-r2-cache-hardening",
+      "priority": "High",
+      "domain": "plateforme",
+      "feature": "r2",
+      "dependsOn": [
+        "scope-060-french-conjugation-r2",
+        "scope-060-english-background-loading",
+        "scope-060-sym-v2"
+      ],
+      "label": "Hotfix 0.6.1 : forcer un manifest R2 frais et versionner les payloads distants pour éviter qu'un cache navigateur masque des nouveautés",
       "done": true
     }
   ]
