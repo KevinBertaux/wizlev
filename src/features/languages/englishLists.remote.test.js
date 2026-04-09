@@ -120,6 +120,10 @@ describe('englishLists remote hydration', () => {
     });
     expect(getEnglishList('fruits')).toEqual(baseline);
     expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://example.test/en/manifest.json',
+      expect.objectContaining({ cache: 'no-store', method: 'GET' })
+    );
   });
 
   it('hydrates only manifest-declared lists when remote manifest is newer', async () => {
@@ -137,7 +141,7 @@ describe('englishLists remote hydration', () => {
           ],
         });
       }
-      if (asText.endsWith('/en/fruits.json')) {
+      if (asText.includes('/en/fruits.json?v=2026-03-25.3')) {
         return okJson({
           name: '🍉 Fruits distants',
           label: '🍉 Fruits distants',
@@ -145,7 +149,7 @@ describe('englishLists remote hydration', () => {
           words: [{ english: 'Watermelon', french: 'Pasteque' }],
         });
       }
-      if (asText.endsWith('/en/bonus.json')) {
+      if (asText.includes('/en/bonus.json?v=2026-03-25.3')) {
         return okJson({
           name: '🧪 Bonus',
           label: '🧪 Bonus',
@@ -174,6 +178,11 @@ describe('englishLists remote hydration', () => {
     expect(getEnglishList('bonusList')?.name).toBe('🧪 Bonus');
     expect(listEnglishOptions().some((item) => item.key === 'bonusList')).toBe(true);
     expect(fetchMock).toHaveBeenCalledTimes(3);
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      1,
+      'https://example.test/en/manifest.json',
+      expect.objectContaining({ cache: 'no-store', method: 'GET' })
+    );
   });
 
   it('downloads only entries marked as changed when the remote manifest exposes per-entry versions', async () => {
@@ -191,7 +200,7 @@ describe('englishLists remote hydration', () => {
           ],
         });
       }
-      if (asText.endsWith('/en/bonus.json')) {
+      if (asText.includes('/en/bonus.json?v=2026-03-25.3')) {
         return okJson({
           name: '🧪 Bonus delta',
           label: '🧪 Bonus delta',
@@ -220,6 +229,11 @@ describe('englishLists remote hydration', () => {
     expect(getEnglishList('fruits')).toEqual(baselineFruits);
     expect(getEnglishList('bonusList')?.name).toBe('🧪 Bonus delta');
     expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      'https://example.test/en/bonus.json?v=2026-03-25.3',
+      expect.objectContaining({ method: 'GET' })
+    );
   });
 
   it('reuses cached remote payloads on next import when cache version is newer than local', async () => {
@@ -234,7 +248,7 @@ describe('englishLists remote hydration', () => {
           lists: [{ key: 'fruits', file: 'fruits.json' }],
         });
       }
-      if (asText.endsWith('/en/fruits.json')) {
+      if (asText.includes('/en/fruits.json?v=2026-03-25.3')) {
         return okJson({
           name: '🍓 Fruits en cache',
           label: '🍓 Fruits en cache',
@@ -277,7 +291,7 @@ describe('englishLists remote hydration', () => {
           ],
         });
       }
-      if (asText.endsWith('/en/fruits.json')) {
+      if (asText.includes('/en/fruits.json?v=2026-03-25.3')) {
         return okJson({
           name: '🍏 Fruits partiels',
           label: '🍏 Fruits partiels',

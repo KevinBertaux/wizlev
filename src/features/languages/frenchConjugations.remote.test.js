@@ -153,6 +153,10 @@ describe('frenchConjugations remote hydration', () => {
       version: '2026-03-25.2',
     });
     expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://example.test/languages/fr/conjugation/manifest.json',
+      expect.objectContaining({ cache: 'no-store', method: 'GET' })
+    );
   });
 
   it('hydrates the french runtime with a newer remote manifest and fetches only changed entries', async () => {
@@ -194,7 +198,7 @@ describe('frenchConjugations remote hydration', () => {
           ],
         });
       }
-      if (asText.endsWith('/languages/fr/conjugation/verbs/venir.json')) {
+      if (asText.includes('/languages/fr/conjugation/verbs/venir.json?v=2026-03-25.3')) {
         return okJson(remoteVenir);
       }
 
@@ -228,6 +232,11 @@ describe('frenchConjugations remote hydration', () => {
     expect(getFrenchVerb('aimer', source, 'indicatif', 'present')?.forms?.je).toBe('aime');
     expect(getFrenchVerb('venir', source, 'indicatif', 'present')?.forms?.je).toBe('viens remote');
     expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      1,
+      'https://example.test/languages/fr/conjugation/manifest.json',
+      expect.objectContaining({ cache: 'no-store', method: 'GET' })
+    );
   });
 
   it('hydrates a new remote-only verb entry when the manifest adds it', async () => {
@@ -271,7 +280,7 @@ describe('frenchConjugations remote hydration', () => {
           ],
         });
       }
-      if (asText.endsWith('/languages/fr/conjugation/verbs/bondir.json')) {
+      if (asText.includes('/languages/fr/conjugation/verbs/bondir.json?v=2026-03-25.3')) {
         return okJson(remoteBondir);
       }
 
@@ -306,6 +315,11 @@ describe('frenchConjugations remote hydration', () => {
     expect(listFrenchVerbOptions(source).some((option) => option.value === 'bondir')).toBe(true);
     expect(getFrenchVerb('bondir', source, 'indicatif', 'present')?.forms?.je).toBe('bondis');
     expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      'https://example.test/languages/fr/conjugation/verbs/bondir.json?v=2026-03-25.3',
+      expect.objectContaining({ method: 'GET' })
+    );
   });
 
   it('reuses the cached remote module on the next import when cache version is newer than local', async () => {
@@ -341,7 +355,7 @@ describe('frenchConjugations remote hydration', () => {
           ],
         });
       }
-      if (asText.endsWith('/languages/fr/conjugation/verbs/aimer.json')) {
+      if (asText.includes('/languages/fr/conjugation/verbs/aimer.json?v=2026-03-25.4')) {
         return okJson(remoteAimer);
       }
 

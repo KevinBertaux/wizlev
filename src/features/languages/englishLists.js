@@ -23,6 +23,7 @@ import fruits2 from '@/content/languages/en/fruits-2.json';
 import legumes2 from '@/content/languages/en/legumes-2.json';
 import meteo from '@/content/languages/en/meteo.json';
 import {
+  buildRemoteAssetUrl,
   compareManifestVersionTokens,
   getLatestManifestVersionToken,
   getManifestVersionToken,
@@ -327,15 +328,16 @@ function getStorageKey(listKey) {
   return `${STORAGE_PREFIX}${listKey}`;
 }
 
-async function fetchJsonWithTimeout(url, timeoutMs = REMOTE_TIMEOUT_MS) {
+async function fetchJsonWithTimeout(url, timeoutMs = REMOTE_TIMEOUT_MS, requestOptions = {}) {
   const controller = typeof AbortController === 'undefined' ? null : new AbortController();
   const timeoutId = setTimeout(() => controller?.abort(), timeoutMs);
 
   try {
     const response = await fetch(url, {
+      ...requestOptions,
       method: 'GET',
       signal: controller?.signal,
-      headers: { Accept: 'application/json' },
+      headers: { Accept: 'application/json', ...(requestOptions.headers || {}) },
     });
 
     if (!response.ok) {
@@ -381,7 +383,11 @@ function extractRemoteEntries(payload) {
 
 async function resolveRemoteManifest(baseUrl) {
   const remoteFolder = getRemoteFolder();
-  const payload = await fetchJsonWithTimeout(`${baseUrl}/${remoteFolder}/manifest.json`);
+  const payload = await fetchJsonWithTimeout(
+    buildRemoteAssetUrl(baseUrl, remoteFolder, 'manifest.json'),
+    REMOTE_TIMEOUT_MS,
+    { cache: 'no-store' }
+  );
   const version = getManifestVersionToken(payload);
   const normalizedEntries = normalizeManifestEntries(payload, version);
 
@@ -553,7 +559,9 @@ export async function hydrateRemoteEnglishLists() {
         continue;
       }
 
-      const payload = await fetchJsonWithTimeout(`${baseUrl}/${remoteFolder}/${file}`);
+      const payload = await fetchJsonWithTimeout(
+        buildRemoteAssetUrl(baseUrl, remoteFolder, file, entry.token || remoteManifestVersion)
+      );
       if (!payload) {
         skipped += 1;
         failed += 1;

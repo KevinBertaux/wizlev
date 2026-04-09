@@ -13,6 +13,7 @@ import manabuerVerb from '@/content/languages/fr/conjugation/verbs/manabuer.json
 import prendreVerb from '@/content/languages/fr/conjugation/verbs/prendre.json';
 import venirVerb from '@/content/languages/fr/conjugation/verbs/venir.json';
 import {
+  buildRemoteAssetUrl,
   compareManifestVersionTokens,
   getLatestManifestVersionToken,
   getManifestVersionToken,
@@ -152,15 +153,16 @@ function getRemoteFolder() {
   return explicitFolder || DEFAULT_REMOTE_FOLDER;
 }
 
-async function fetchJsonWithTimeout(url, timeoutMs = REMOTE_TIMEOUT_MS) {
+async function fetchJsonWithTimeout(url, timeoutMs = REMOTE_TIMEOUT_MS, requestOptions = {}) {
   const controller = typeof AbortController === 'undefined' ? null : new AbortController();
   const timeoutId = setTimeout(() => controller?.abort(), timeoutMs);
 
   try {
     const response = await fetch(url, {
+      ...requestOptions,
       method: 'GET',
       signal: controller?.signal,
-      headers: { Accept: 'application/json' },
+      headers: { Accept: 'application/json', ...(requestOptions.headers || {}) },
     });
 
     if (!response.ok) {
@@ -658,7 +660,11 @@ function applyCachedRemoteFrenchModule() {
 
 async function resolveRemoteFrenchManifest(baseUrl) {
   const remoteFolder = getRemoteFolder();
-  const payload = await fetchJsonWithTimeout(`${baseUrl}/${remoteFolder}/manifest.json`);
+  const payload = await fetchJsonWithTimeout(
+    buildRemoteAssetUrl(baseUrl, remoteFolder, 'manifest.json'),
+    REMOTE_TIMEOUT_MS,
+    { cache: 'no-store' }
+  );
   const version = getManifestVersionToken(payload);
 
   return {
@@ -732,7 +738,9 @@ export async function hydrateRemoteFrenchConjugationModule() {
     }
 
     if (!schemaPayload) {
-      schemaPayload = await fetchJsonWithTimeout(`${baseUrl}/${remoteFolder}/${schemaEntry.file}`);
+      schemaPayload = await fetchJsonWithTimeout(
+        buildRemoteAssetUrl(baseUrl, remoteFolder, schemaEntry.file, schemaEntry.token || remoteManifestVersion)
+      );
       if (schemaPayload) {
         loaded += 1;
       } else {
@@ -763,7 +771,9 @@ export async function hydrateRemoteFrenchConjugationModule() {
       }
 
       if (!payload) {
-        payload = await fetchJsonWithTimeout(`${baseUrl}/${remoteFolder}/${entry.file}`);
+        payload = await fetchJsonWithTimeout(
+          buildRemoteAssetUrl(baseUrl, remoteFolder, entry.file, entry.token || remoteManifestVersion)
+        );
         if (payload) {
           loaded += 1;
         } else {

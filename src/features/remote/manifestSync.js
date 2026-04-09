@@ -2,6 +2,14 @@ function normalizeVersionToken(value) {
   return typeof value === 'string' && value.trim() ? value.trim() : '';
 }
 
+function stripLeadingSlashes(value) {
+  return String(value || '').replace(/^\/+/, '');
+}
+
+function stripTrailingSlashes(value) {
+  return String(value || '').replace(/\/+$/, '');
+}
+
 function normalizeManifestEntry(entry, fallbackVersion = '') {
   if (!entry || typeof entry !== 'object') {
     return null;
@@ -186,4 +194,19 @@ export function clearRemotePayloadCache(storageKey) {
   }
 
   window.localStorage.removeItem(storageKey);
+}
+
+export function buildRemoteAssetUrl(baseUrl, remoteFolder, file, token = '') {
+  const normalizedBaseUrl = stripTrailingSlashes(baseUrl);
+  const normalizedFolder = stripLeadingSlashes(stripTrailingSlashes(remoteFolder));
+  const normalizedFile = stripLeadingSlashes(file);
+  const joinedPath = [normalizedBaseUrl, normalizedFolder, normalizedFile].filter(Boolean).join('/');
+  const versionToken = normalizeVersionToken(token);
+
+  if (!versionToken) {
+    return joinedPath;
+  }
+
+  const separator = joinedPath.includes('?') ? '&' : '?';
+  return `${joinedPath}${separator}v=${encodeURIComponent(versionToken)}`;
 }
